@@ -14,6 +14,13 @@ body {
   height: 100vh;
 }
 
+.content {
+  max-width: 180vh;
+  margin: 0 auto;
+  display: flex;
+  flex: 1;
+}
+
 .content-row {
   display: flex;
   flex: 1;
@@ -102,4 +109,4 @@ footer {
   font-size: 10px;
   text-align: center;
 }
-/*# sourceMappingURL=index.5686ce5d.css.map */
+/*# sourceMappingURL=index.665b3c9d.css.map */
