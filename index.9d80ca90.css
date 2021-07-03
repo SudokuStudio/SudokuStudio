@@ -92,13 +92,11 @@ main .left-panel form > div {
   flex-direction: row;
   justify-content: space-between;
 }
-main .sudoku {
+main .center-panel {
   flex: 0 0 auto;
   /* maintain square aspect ratio */
   width: min(calc(70vw - 20em), calc(100vh - 7.5rem));
   height: min(calc(70vw - 20em), calc(100vh - 7.5rem));
-  color: white;
-  background-color: #675e73;
 }
 main .right-panel {
   flex: 1 1 100%;
@@ -118,7 +116,7 @@ main .right-panel {
   main .content-row {
     flex-direction: column;
   }
-  main .sudoku {
+  main .center-panel {
     margin: 0;
     width: min(calc(100vw - 6rem), 50vh);
     height: min(calc(100vw - 6rem), 50vh);
@@ -135,4 +133,4 @@ footer {
   font-size: 0.8rem;
   text-align: center;
 }
-/*# sourceMappingURL=index.bf707b68.css.map */
+/*# sourceMappingURL=index.9d80ca90.css.map */
