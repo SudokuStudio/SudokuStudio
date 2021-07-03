@@ -1,12 +1,11 @@
 @charset "UTF-8";
 * {
   font-family: "Mulish", "Muli", sans-serif;
-  margin: 0;
-  outline: 1px dotted #888;
+  font-size: 1vw;
+  font-weight: 500;
 }
 
 body {
-  margin: 0;
   display: flex;
   flex-direction: column;
   width: 100vw;
@@ -14,7 +13,8 @@ body {
 }
 
 h1 {
-  font-size: 50px;
+  font-size: 3rem;
+  font-weight: 800;
 }
 
 .centered {
@@ -36,7 +36,7 @@ h1 {
 }
 
 .space-between {
-  padding: 10px 30px 10px 30px;
+  padding: 1vw 3vw;
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -44,11 +44,11 @@ h1 {
 }
 
 header {
-  height: 125px;
+  height: 12.5vw;
 }
 
 .main-buttons {
-  width: 40ch;
+  width: 30vw;
 }
 
 .main-buttons ul {
@@ -56,7 +56,7 @@ header {
   padding: 0;
   margin: 0;
   list-style-type: none;
-  gap: 20px;
+  gap: 2vw;
 }
 
 .main-buttons.left ul {
@@ -85,14 +85,13 @@ main {
 }
 
 .left-panel {
-  padding: 10px 30px 10px 0px;
+  padding: 1vw 3vw 1vw 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
   height: 100%;
   width: 20vw;
-  height: 100%;
 }
 
 .left-panel > ul > li::before {
@@ -133,7 +132,7 @@ main {
 
 footer {
   width: 100vw;
-  height: 30px;
+  height: 3vw;
   font-size: 10px;
 }
-/*# sourceMappingURL=index.0c639b39.css.map */
+/*# sourceMappingURL=index.702a78c4.css.map */
