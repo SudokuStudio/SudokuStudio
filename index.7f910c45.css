@@ -1,23 +1,4 @@
 @charset "UTF-8";
-.content {
-  max-width: 150vh;
-  margin: 0 auto;
-}
-
-.content-row {
-  margin: 0 3em;
-  display: flex;
-  align-items: stretch;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.content-row > * {
-  margin: 0 3em 0 0;
-}
-.content-row > :last-child {
-  margin: 0;
-}
-
 * {
   outline: 1px dotted #000;
 }
@@ -34,7 +15,31 @@ body {
   height: 100vh;
 }
 
+.content {
+  display: flex;
+  flex: 1;
+  max-width: 150vh;
+  margin: 0 auto;
+}
+
+.content-row {
+  display: flex;
+  flex: 1;
+  margin: 0 3em;
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.content-row > * {
+  margin: 0 3em 0 0;
+}
+.content-row > :last-child {
+  margin: 0;
+}
+
 header {
+  flex: 0 0 auto;
   height: 8em;
   background-color: #f88;
 }
@@ -52,16 +57,22 @@ header .header-center h1 {
   white-space: nowrap;
   margin-bottom: 0.5rem;
 }
+header .header-center .setter {
+  /* Maybe this needs a different font size. Not sure. */
+}
 header .header-right {
   flex: 1 1 100%;
   align-self: baseline;
   text-align: right;
 }
 
-.setter {
-  /* Maybe this needs a different font size. Not sure. */
+main {
+  flex: 1 0 auto;
+  display: flex;
 }
-
+main > .content {
+  flex: 1;
+}
 main .left-panel {
   flex: 1 1 100%;
   background-color: #8f8;
@@ -94,9 +105,10 @@ main .right-panel {
 }
 
 footer {
+  flex: 0 0 auto;
   width: 100vw;
   height: 3em;
   font-size: 10px;
   text-align: center;
 }
-/*# sourceMappingURL=index.f6429641.css.map */
+/*# sourceMappingURL=index.7f910c45.css.map */
