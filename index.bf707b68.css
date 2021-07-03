@@ -50,6 +50,7 @@ header .header-center {
   flex: 0 1 auto;
   align-self: baseline;
   text-align: center;
+  max-width: min(calc(70vw - 20em), calc(100vh - 7.5rem));
 }
 header .header-center h1 {
   font-size: 2rem;
@@ -103,7 +104,17 @@ main .right-panel {
   flex: 1 1 100%;
   background-color: #88f;
 }
-@media (max-width: 1200px) and (max-aspect-ratio: 5/4) {
+
+@media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
+  header .header-center {
+    margin: 0;
+    flex: 1 1 auto;
+    max-width: none;
+  }
+  header .header-left, header .header-right {
+    display: none;
+  }
+
   main .content-row {
     flex-direction: column;
   }
@@ -117,7 +128,6 @@ main .right-panel {
     display: none;
   }
 }
-
 footer {
   flex: 0 0 auto;
   height: 1.5rem;
@@ -125,4 +135,4 @@ footer {
   font-size: 0.8rem;
   text-align: center;
 }
-/*# sourceMappingURL=index.7c980156.css.map */
+/*# sourceMappingURL=index.bf707b68.css.map */
