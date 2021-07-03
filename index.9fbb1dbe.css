@@ -1,20 +1,4 @@
 @charset "UTF-8";
-* {
-  outline: 1px dotted #000;
-}
-
-header {
-  background-color: #f88;
-}
-
-.left-panel {
-  background-color: #8f8;
-}
-
-.right-panel {
-  background-color: #88f;
-}
-
 html {
   font-family: "Mulish", "Muli", sans-serif;
   font-weight: 500;
@@ -151,4 +135,4 @@ ul.constraints-list form > div {
   flex-direction: row;
   justify-content: space-between;
 }
-/*# sourceMappingURL=index.b65eb98a.css.map */
+/*# sourceMappingURL=index.9fbb1dbe.css.map */
