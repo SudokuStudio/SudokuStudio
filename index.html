@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<link href="index.d5bcbcaa.css" rel="stylesheet">
+		<meta charset="utf-8">
+		<title>Sudoku</title>
+	</head>
+	<body class="light">
+		<header class="centered space-between">
+			<div class="main-buttons left">
+				<ul>
+					<li>Solving/Setting</li>
+					<li>New Grid</li>
+					<li>Export</li>
+				</ul>
+			</div>
+			<div class="title-area">
+				<h1>Title</h1>
+				<div class="setter">setter(s)</div>
+			</div>
+			<div class="main-buttons right">
+				BUTTONS RIGHT
+			</div>
+		</header>
+		<main class="space-between">
+
+			<div class="left-panel">
+				<ul>
+					<li>Solver Panel</li>
+					<li>Global Constraints</li>
+					<ul>
+						<!-- diagonals -->
+						<li>
+					    <label for="diagonalConstraint">Diagonals</label>
+							<div>
+								<input type="checkbox" id="diagonalConstraint" name="diagonalUp" value="on">
+								<input type="checkbox" id="diagonalConstraint" name="diagonalDown" value="on">
+							</div>
+				  	</li>
+						<!-- antiknight -->
+						<li>
+					    <label for="antiknightConstraint">Antiknight</label>
+							<div>
+								<input type="checkbox" id="antiknightConstraint" name="antiknight" value="on">
+							</div>
+				  	</li>
+						<!-- antiking -->
+						<li>
+					    <label for="antikingConstraint">Antiking</label>
+							<div>
+								<input type="checkbox" id="antikingConstraint" name="antiking" value="on">
+							</div>
+				  	</li>
+						<!-- disjoint groups -->
+						<li>
+					    <label for="disjointGroupsConstraint">Antiking</label>
+							<div>
+								<input type="checkbox" id="disjointGroupsConstraint" name="disjoint" value="on">
+							</div>
+				  	</li>
+						<!-- nonconsecutive -->
+						<li>
+					    <label for="nonconsecutiveConstraint">Nonconsecutive</label>
+							<div>
+								<input type="checkbox" id="nonconsecutiveConstraint" name="nonconsecutive" value="on">
+							</div>
+				  	</li>
+					</ul>
+					<li>
+						Local Constraints
+						<ul>
+							<li>
+								<input type="radio" id="digitTool" name="localConstraints" checked="">
+								<label for="digit"> Digit </label>
+							</li>
+							<li>
+								<input type="radio" id="thermoTool" name="localConstraints">
+								<label for="thermo"> Thermo </label>
+							</li>
+							<li>
+								<input type="radio" id="arrowTool" name="localConstraints">
+								<label for="arrow"> Arrow </label>
+							</li>
+							<li>
+								<input type="radio" id="sandwichTool" name="localConstraints">
+								<label for="sandwich"> Sandwich </label>
+							</li>
+						</ul>
+					</li>
+					<li>Cosmetic Tools</li>
+				</ul>
+			</div>
+			<div class="sudoku">SUDOKU</div>
+			<div class="right-panel centered">RIGHT PANEL</div>
+		</main>
+		<footer class="centered">Website Name © 2021. All rights reserved.</footer>
+	</body>
+</html>
