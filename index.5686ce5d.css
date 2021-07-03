@@ -11,28 +11,20 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  width: 100vw;
   height: 100vh;
-}
-
-.content {
-  display: flex;
-  flex: 1;
-  max-width: 150vh;
-  margin: 0 auto;
 }
 
 .content-row {
   display: flex;
   flex: 1;
-  margin: 0 3em;
+  margin: 0 3rem;
   display: flex;
   align-items: stretch;
   flex-direction: row;
   justify-content: space-between;
 }
 .content-row > * {
-  margin: 0 3em 0 0;
+  margin: 0 3rem 0 0;
 }
 .content-row > :last-child {
   margin: 0;
@@ -40,7 +32,7 @@ body {
 
 header {
   flex: 0 0 auto;
-  height: 8em;
+  height: 8rem;
   background-color: #f88;
 }
 header .header-left {
@@ -94,8 +86,8 @@ main .left-panel form > div {
 main .sudoku {
   flex: 0 0 auto;
   /* maintain square aspect ratio */
-  width: min(50vw, 80vh);
-  height: min(50vw, 80vh);
+  width: min(50vw, calc(100vh - 11rem));
+  height: min(50vw, calc(100vh - 11rem));
   color: white;
   background-color: #675e73;
 }
@@ -106,9 +98,8 @@ main .right-panel {
 
 footer {
   flex: 0 0 auto;
-  width: 100vw;
-  height: 3em;
+  height: 3rem;
   font-size: 10px;
   text-align: center;
 }
-/*# sourceMappingURL=index.7f910c45.css.map */
+/*# sourceMappingURL=index.5686ce5d.css.map */
