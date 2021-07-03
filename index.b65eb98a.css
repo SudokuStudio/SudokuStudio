@@ -3,6 +3,18 @@
   outline: 1px dotted #000;
 }
 
+header {
+  background-color: #f88;
+}
+
+.left-panel {
+  background-color: #8f8;
+}
+
+.right-panel {
+  background-color: #88f;
+}
+
 html {
   font-family: "Mulish", "Muli", sans-serif;
   font-weight: 500;
@@ -35,7 +47,6 @@ body {
 header {
   flex: 0 0 auto;
   height: 6rem;
-  background-color: #f88;
 }
 header .header-left {
   flex: 1 1 100%;
@@ -49,6 +60,7 @@ header .header-center {
 }
 header .header-center h1 {
   font-size: 2rem;
+  font-weight: 800;
   white-space: nowrap;
   margin-bottom: 0.5rem;
 }
@@ -71,21 +83,6 @@ main > .content {
 }
 main .left-panel {
   flex: 1 1 100%;
-  background-color: #8f8;
-}
-main .left-panel > ul > li::before {
-  content: "▾ ";
-  /* This can't be the right way to do this, can it? The intent is to have a drop-down tree menu. */
-}
-main .left-panel * {
-  padding: 0;
-  list-style-type: none;
-}
-main .left-panel form > div {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
 }
 main .center-panel {
   flex: 0 0 auto;
@@ -95,7 +92,6 @@ main .center-panel {
 }
 main .right-panel {
   flex: 1 1 100%;
-  background-color: #88f;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
@@ -139,4 +135,20 @@ ul.header-buttons.left {
 ul.header-buttons.right {
   justify-content: flex-end;
 }
-/*# sourceMappingURL=index.0211dea1.css.map */
+ul.constraints-list, ul.constraints-list ul {
+  padding: 0;
+  list-style-type: none;
+}
+ul.constraints-list .section-title {
+  font-weight: 800;
+}
+ul.constraints-list .section-title::before {
+  content: "▾ ";
+}
+ul.constraints-list form > div {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+/*# sourceMappingURL=index.b65eb98a.css.map */

@@ -11,7 +11,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.666125c5.css">
-    <link href="index.0211dea1.css" rel="stylesheet">
+    <link href="index.b65eb98a.css" rel="stylesheet">
   </head>
   <body class="light">
     <header>
@@ -42,49 +42,53 @@
       <div class="content">
         <div class="content-row">
           <div class="left-panel">
-            <ul>
-              <li>Solver Panel</li>
-              <li>Global Constraints</li>
-              <ul>
-                <!-- diagonals -->
-                <li>
-                  <label for="diagonalConstraint">Diagonals</label>
-                  <div>
-                    <input type="checkbox" id="diagonalConstraint" name="diagonalUp" value="on">
-                    <input type="checkbox" id="diagonalConstraint" name="diagonalDown" value="on">
-                  </div>
-                </li>
-                <!-- antiknight -->
-                <li>
-                <label for="antiknightConstraint">Antiknight</label>
-                  <div>
-                    <input type="checkbox" id="antiknightConstraint" name="antiknight" value="on">
-                  </div>
-                </li>
-                <!-- antiking -->
-                <li>
-                <label for="antikingConstraint">Antiking</label>
-                  <div>
-                    <input type="checkbox" id="antikingConstraint" name="antiking" value="on">
-                  </div>
-                </li>
-                <!-- disjoint groups -->
-                <li>
-                <label for="disjointGroupsConstraint">Antiking</label>
-                  <div>
-                    <input type="checkbox" id="disjointGroupsConstraint" name="disjoint" value="on">
-                  </div>
-                </li>
-                <!-- nonconsecutive -->
-                <li>
-                <label for="nonconsecutiveConstraint">Nonconsecutive</label>
-                  <div>
-                    <input type="checkbox" id="nonconsecutiveConstraint" name="nonconsecutive" value="on">
-                  </div>
-                </li>
-              </ul>
+            <ul class="constraints-list">
               <li>
-                Local Constraints
+                <h4 class="section-title">Solver Panel</h4>
+              </li>
+              <li>
+                <h4 class="section-title">Global Constraints</h4>
+                <ul>
+                  <!-- diagonals -->
+                  <li>
+                    <label for="diagonalConstraint">Diagonals</label>
+                    <div>
+                      <input type="checkbox" id="diagonalConstraint" name="diagonalUp" value="on">
+                      <input type="checkbox" id="diagonalConstraint" name="diagonalDown" value="on">
+                    </div>
+                  </li>
+                  <!-- antiknight -->
+                  <li>
+                  <label for="antiknightConstraint">Antiknight</label>
+                    <div>
+                      <input type="checkbox" id="antiknightConstraint" name="antiknight" value="on">
+                    </div>
+                  </li>
+                  <!-- antiking -->
+                  <li>
+                  <label for="antikingConstraint">Antiking</label>
+                    <div>
+                      <input type="checkbox" id="antikingConstraint" name="antiking" value="on">
+                    </div>
+                  </li>
+                  <!-- disjoint groups -->
+                  <li>
+                  <label for="disjointGroupsConstraint">Antiking</label>
+                    <div>
+                      <input type="checkbox" id="disjointGroupsConstraint" name="disjoint" value="on">
+                    </div>
+                  </li>
+                  <!-- nonconsecutive -->
+                  <li>
+                  <label for="nonconsecutiveConstraint">Nonconsecutive</label>
+                    <div>
+                      <input type="checkbox" id="nonconsecutiveConstraint" name="nonconsecutive" value="on">
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <h4 class="section-title">Local Constraints</h4>
                 <ul>
                   <li>
                     <input type="radio" id="digitTool" name="localConstraints" checked="">
@@ -104,7 +108,9 @@
                   </li>
                 </ul>
               </li>
-              <li>Cosmetic Tools</li>
+              <li>
+                <h4 class="section-title">Cosmetic Tools</h4>
+              </li>
             </ul>
           </div>
           <div class="center-panel">
