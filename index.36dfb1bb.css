@@ -3,6 +3,7 @@
   font-family: "Mulish", "Muli", sans-serif;
   font-size: 1vw;
   font-weight: 500;
+  outline: 1px dotted #888;
 }
 
 body {
@@ -50,7 +51,6 @@ header {
 .main-buttons {
   width: 30vw;
 }
-
 .main-buttons ul {
   display: flex;
   padding: 0;
@@ -58,12 +58,10 @@ header {
   list-style-type: none;
   gap: 2vw;
 }
-
 .main-buttons.left ul {
   display: flex;
   align-items: flex-start;
 }
-
 .main-buttons.right ul {
   display: flex;
   align-items: flex-end;
@@ -93,17 +91,14 @@ main {
   height: 100%;
   width: 20vw;
 }
-
 .left-panel > ul > li::before {
   content: "▾ ";
   /* This can't be the right way to do this, can it? The intent is to have a drop-down tree menu. */
 }
-
 .left-panel * {
   padding: 0;
   list-style-type: none;
 }
-
 .left-panel form > div {
   width: 100%;
   display: flex;
@@ -128,6 +123,8 @@ main {
   /* maintain square aspect ratio */
   width: 70vh;
   height: 70vh;
+  color: white;
+  background-color: #675e73;
 }
 
 footer {
@@ -135,4 +132,4 @@ footer {
   height: 3vw;
   font-size: 10px;
 }
-/*# sourceMappingURL=index.702a78c4.css.map */
+/*# sourceMappingURL=index.36dfb1bb.css.map */
