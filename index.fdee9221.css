@@ -1,0 +1,96 @@
+@charset "UTF-8";
+.content-row {
+  margin: 0 3em;
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.content-row > * {
+  margin: 0 3em 0 0;
+}
+.content-row > :last-child {
+  margin: 0;
+}
+
+* {
+  outline: 1px dotted #000;
+}
+
+html {
+  font-family: "Mulish", "Muli", sans-serif;
+  font-weight: 500;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
+
+header {
+  height: 8em;
+  background-color: #f88;
+}
+header .header-left {
+  flex: 1 1 auto;
+  align-self: baseline;
+}
+header .header-center {
+  flex: 0 1 auto;
+  align-self: baseline;
+  text-align: center;
+}
+header .header-center h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+header .header-right {
+  flex: 1 1 auto;
+  align-self: baseline;
+  text-align: right;
+}
+
+.setter {
+  /* Maybe this needs a different font size. Not sure. */
+}
+
+main .left-panel {
+  flex: 1 1 auto;
+  background-color: #8f8;
+}
+main .left-panel > ul > li::before {
+  content: "▾ ";
+  /* This can't be the right way to do this, can it? The intent is to have a drop-down tree menu. */
+}
+main .left-panel * {
+  padding: 0;
+  list-style-type: none;
+}
+main .left-panel form > div {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+main .sudoku {
+  flex: 0 0 auto;
+  /* maintain square aspect ratio */
+  width: min(50vw, 80vh);
+  height: min(50vw, 80vh);
+  color: white;
+  background-color: #675e73;
+}
+main .right-panel {
+  flex: 1 1 auto;
+  background-color: #88f;
+}
+
+footer {
+  width: 100vw;
+  height: 3em;
+  font-size: 10px;
+  text-align: center;
+}
+/*# sourceMappingURL=index.fdee9221.css.map */
