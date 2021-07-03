@@ -46,6 +46,7 @@ h1 {
 
 header {
   height: 12.5vw;
+  background-color: #f88;
 }
 
 .main-buttons {
@@ -90,6 +91,7 @@ main {
   justify-content: space-between;
   height: 100%;
   width: 20vw;
+  background-color: #8f8;
 }
 .left-panel > ul > li::before {
   content: "▾ ";
@@ -114,6 +116,7 @@ main {
   flex-direction: column;
   align-items: flex-end;
   justify-content: space-between;
+  background-color: #88f;
 }
 
 .sudoku {
@@ -132,4 +135,4 @@ footer {
   height: 3vw;
   font-size: 10px;
 }
-/*# sourceMappingURL=index.36dfb1bb.css.map */
+/*# sourceMappingURL=index.2bb9755e.css.map */
