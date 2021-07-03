@@ -39,7 +39,7 @@ body {
 
 header {
   flex: 0 0 auto;
-  height: 8rem;
+  height: 6rem;
   background-color: #f88;
 }
 header .header-left {
@@ -52,11 +52,12 @@ header .header-center {
   text-align: center;
 }
 header .header-center h1 {
-  font-size: 3rem;
+  font-size: 2rem;
   white-space: nowrap;
   margin-bottom: 0.5rem;
 }
 header .header-center .setter {
+  white-space: nowrap;
   /* Maybe this needs a different font size. Not sure. */
 }
 header .header-right {
@@ -93,8 +94,8 @@ main .left-panel form > div {
 main .sudoku {
   flex: 0 0 auto;
   /* maintain square aspect ratio */
-  width: min(50vw, calc(100vh - 11rem));
-  height: min(50vw, calc(100vh - 11rem));
+  width: min(calc(70vw - 20em), calc(100vh - 7.5rem));
+  height: min(calc(70vw - 20em), calc(100vh - 7.5rem));
   color: white;
   background-color: #675e73;
 }
@@ -102,11 +103,26 @@ main .right-panel {
   flex: 1 1 100%;
   background-color: #88f;
 }
+@media (max-width: 1200px) and (max-aspect-ratio: 5/4) {
+  main .content-row {
+    flex-direction: column;
+  }
+  main .sudoku {
+    margin: 0;
+    width: min(calc(100vw - 6rem), 50vh);
+    height: min(calc(100vw - 6rem), 50vh);
+    align-self: center;
+  }
+  main .left-panel {
+    display: none;
+  }
+}
 
 footer {
   flex: 0 0 auto;
-  height: 3rem;
-  font-size: 10px;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  font-size: 0.8rem;
   text-align: center;
 }
-/*# sourceMappingURL=index.665b3c9d.css.map */
+/*# sourceMappingURL=index.7c980156.css.map */
