@@ -11,7 +11,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.666125c5.css">
-    <link href="index.eafcb158.css" rel="stylesheet">
+    <link href="index.564b997b.css" rel="stylesheet">
   </head>
   <body class="light">
     <header>
@@ -51,45 +51,91 @@
                 <ul>
                   <!-- diagonals -->
                   <li>
-                    <span class="icon icon-inline icon-trash"></span>
-                    Diagonals
-                    <label for="constraint-diagonal-positive">
-                      <span class="icon icon-inline icon-positive-diagonal"></span>
-                      <span class="sr-only">Positive Diagonal Constraint</span>
-                    </label>
-                    <input id="constraint-diagonal-positive" type="checkbox" name="constraint-diagonal-positive">
-                    <label for="constraint-diagonal-positive">
-                      <span class="icon icon-inline icon-negative-diagonal"></span>
-                      <span class="sr-only">Negative Diagonal Constraint</span>
-                    </label>
-                    <input id="constraint-diagonal-negative" type="checkbox" name="constraint-diagonal-negative">
+                    <div class="constraint-row">
+                      <span>
+                        <span class="icon icon-inline icon-trash"></span>
+                        Diagonals
+                      </span>
+                      <span>
+                        <label for="constraint-diagonal-positive">
+                          <span class="icon icon-inline icon-positive-diagonal"></span>
+                          <span class="sr-only">Positive Diagonal Constraint</span>
+                        </label>
+                        <input id="constraint-diagonal-positive" type="checkbox" name="constraint-diagonal-positive">
+                        <label for="constraint-diagonal-positive">
+                          <span class="icon icon-inline icon-negative-diagonal"></span>
+                          <span class="sr-only">Negative Diagonal Constraint</span>
+                        </label>
+                        <input id="constraint-diagonal-negative" type="checkbox" name="constraint-diagonal-negative">
+                      </span>
+                    </div>
                   </li>
                   <!-- antiknight -->
                   <li>
-                  <label for="antiknightConstraint">Antiknight</label>
-                    <div>
-                      <input type="checkbox" id="antiknightConstraint" name="antiknight" value="on">
+                    <div class="constraint-row">
+                      <span>
+                        <span class="icon icon-inline icon-trash"></span>
+                        Antiknight
+                        <span class="icon icon-inline icon-warning"></span>
+                      </span>
+                      <span>
+                        <label for="constraint-knight">
+                          <span class="icon icon-inline icon-knight"></span>
+                          <span class="sr-only">Antiknight Constraint</span>
+                        </label>
+                        <input id="constraint-knight" type="checkbox" name="constraint-knight">
+                      </span>
                     </div>
                   </li>
                   <!-- antiking -->
                   <li>
-                  <label for="antikingConstraint">Antiking</label>
-                    <div>
-                      <input type="checkbox" id="antikingConstraint" name="antiking" value="on">
+                    <div class="constraint-row">
+                      <span>
+                        <span class="icon icon-inline icon-trash"></span>
+                        Antiking
+                        <span class="icon icon-inline icon-warning"></span>
+                      </span>
+                      <span>
+                        <label for="constraint-king">
+                          <span class="icon icon-inline icon-king"></span>
+                          <span class="sr-only">Antiking Constraint</span>
+                        </label>
+                        <input id="constraint-king" type="checkbox" name="constraint-king">
+                      </span>
                     </div>
                   </li>
-                  <!-- disjoint groups -->
+                  <!-- Disjoin Groups -->
                   <li>
-                  <label for="disjointGroupsConstraint">Antiking</label>
-                    <div>
-                      <input type="checkbox" id="disjointGroupsConstraint" name="disjoint" value="on">
+                    <div class="constraint-row">
+                      <span>
+                        <span class="icon icon-inline icon-trash"></span>
+                        Disjoint Groups
+                        <span class="icon icon-inline icon-warning"></span>
+                      </span>
+                      <span>
+                        <label for="constraint-disjoint">
+                          <span class="icon icon-inline icon-disjoint"></span>
+                          <span class="sr-only">Disjoin Groups Constraint</span>
+                        </label>
+                        <input id="constraint-disjoint" type="checkbox" name="constraint-disjoint">
+                      </span>
                     </div>
                   </li>
                   <!-- nonconsecutive -->
                   <li>
-                  <label for="nonconsecutiveConstraint">Nonconsecutive</label>
-                    <div>
-                      <input type="checkbox" id="nonconsecutiveConstraint" name="nonconsecutive" value="on">
+                    <div class="constraint-row">
+                      <span>
+                        <span class="icon icon-inline icon-trash"></span>
+                        Nonconsecutive
+                        <span class="icon icon-inline icon-warning"></span>
+                      </span>
+                      <span>
+                        <label for="constraint-consec">
+                          <span class="icon icon-inline icon-consec"></span>
+                          <span class="sr-only">Nonconsecutive Constraint</span>
+                        </label>
+                        <input id="constraint-consec" type="checkbox" name="constraint-consec">
+                      </span>
                     </div>
                   </li>
                 </ul>
