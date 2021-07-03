@@ -11,7 +11,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.666125c5.css">
-    <link href="index.9fbb1dbe.css" rel="stylesheet">
+    <link href="index.eafcb158.css" rel="stylesheet">
   </head>
   <body class="light">
     <header>
@@ -51,11 +51,18 @@
                 <ul>
                   <!-- diagonals -->
                   <li>
-                    <label for="diagonalConstraint">Diagonals</label>
-                    <div>
-                      <input type="checkbox" id="diagonalConstraint" name="diagonalUp" value="on">
-                      <input type="checkbox" id="diagonalConstraint" name="diagonalDown" value="on">
-                    </div>
+                    <span class="icon icon-inline icon-trash"></span>
+                    Diagonals
+                    <label for="constraint-diagonal-positive">
+                      <span class="icon icon-inline icon-positive-diagonal"></span>
+                      <span class="sr-only">Positive Diagonal Constraint</span>
+                    </label>
+                    <input id="constraint-diagonal-positive" type="checkbox" name="constraint-diagonal-positive">
+                    <label for="constraint-diagonal-positive">
+                      <span class="icon icon-inline icon-negative-diagonal"></span>
+                      <span class="sr-only">Negative Diagonal Constraint</span>
+                    </label>
+                    <input id="constraint-diagonal-negative" type="checkbox" name="constraint-diagonal-negative">
                   </li>
                   <!-- antiknight -->
                   <li>

@@ -3,20 +3,17 @@ html {
   font-family: "Mulish", "Muli", sans-serif;
   font-weight: 500;
 }
-
 body {
   display: flex;
   flex-direction: column;
   height: 100vh;
 }
-
 .content {
   max-width: 180vh;
   margin: 0 auto;
   display: flex;
   flex: 1;
 }
-
 .content-row {
   display: flex;
   flex: 1;
@@ -27,7 +24,6 @@ body {
   justify-content: space-between;
   gap: 3rem;
 }
-
 header {
   flex: 0 0 auto;
   height: 6rem;
@@ -57,7 +53,6 @@ header .header-right {
   align-self: baseline;
   text-align: right;
 }
-
 main {
   flex: 1 0 auto;
   display: flex;
@@ -77,7 +72,6 @@ main .center-panel {
 main .right-panel {
   flex: 1 1 100%;
 }
-
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
   header .header-center {
     flex: 1 1 auto;
@@ -106,7 +100,6 @@ footer {
   font-size: 0.8rem;
   text-align: center;
 }
-
 ul.header-buttons {
   display: flex;
   gap: 1rem;
@@ -124,6 +117,7 @@ ul.constraints-list, ul.constraints-list ul {
   list-style-type: none;
 }
 ul.constraints-list .section-title {
+  margin: 0.5em 0;
   font-weight: 800;
 }
 ul.constraints-list .section-title::before {
@@ -135,4 +129,42 @@ ul.constraints-list form > div {
   flex-direction: row;
   justify-content: space-between;
 }
-/*# sourceMappingURL=index.9fbb1dbe.css.map */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+.icon {
+  display: block;
+}
+.icon::before {
+  display: block;
+  width: 100%;
+}
+.icon.icon-inline {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  position: relative;
+  vertical-align: baseline;
+}
+.icon.icon-inline::before {
+  content: "";
+  display: inline-block;
+}
+.icon.icon-trash {
+  background-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23637691;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M13.67,2h0a1,1,0,0,1-1,1H3.33a1,1,0,0,1-1-1h0a1,1,0,0,1,1-1h1.6l.79-1h4.56l.79,1h1.6A1,1,0,0,1,13.67,2Z'/%3E%3Cpath class='cls-1' d='M13.4,4v9.77A2.23,2.23,0,0,1,11.17,16H4.62A2.22,2.22,0,0,1,2.4,13.77V4Z'/%3E%3C/svg%3E");
+}
+.icon.icon-positive-diagonal {
+  background-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;stroke:%23000;stroke-miterlimit:10;stroke-width:1.5px;%7D%3C/style%3E%3C/defs%3E%3Cpath d='M12.56,1.5A1.94,1.94,0,0,1,14.5,3.44v9.12a1.94,1.94,0,0,1-1.94,1.94H3.44A1.94,1.94,0,0,1,1.5,12.56V3.44A1.94,1.94,0,0,1,3.44,1.5h9.12m0-1.5H3.44A3.44,3.44,0,0,0,0,3.44v9.12A3.44,3.44,0,0,0,3.44,16h9.12A3.44,3.44,0,0,0,16,12.56V3.44A3.44,3.44,0,0,0,12.56,0Z'/%3E%3Cline class='cls-1' x1='1.32' y1='14.77' x2='14.85' y2='1.23'/%3E%3C/svg%3E");
+}
+.icon.icon-negative-diagonal {
+  background-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;stroke:%23000;stroke-miterlimit:10;stroke-width:1.5px;%7D%3C/style%3E%3C/defs%3E%3Cpath d='M12.56,1.5A1.94,1.94,0,0,1,14.5,3.44v9.12a1.94,1.94,0,0,1-1.94,1.94H3.44A1.94,1.94,0,0,1,1.5,12.56V3.44A1.94,1.94,0,0,1,3.44,1.5h9.12m0-1.5H3.44A3.44,3.44,0,0,0,0,3.44v9.12A3.44,3.44,0,0,0,3.44,16h9.12A3.44,3.44,0,0,0,16,12.56V3.44A3.44,3.44,0,0,0,12.56,0Z'/%3E%3Cline class='cls-1' x1='1.23' y1='1.32' x2='14.77' y2='14.85'/%3E%3C/svg%3E");
+}
+/*# sourceMappingURL=index.eafcb158.css.map */
