@@ -575,6 +575,12 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   justify-content: flex-end;
 }
 
+.section-title.svelte-aoafhk {
+  margin: 0.5em 0;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .constraint-row.svelte-71bj8t.svelte-71bj8t {
   white-space: nowrap;
 }
@@ -600,12 +606,6 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
 .constraint-row.svelte-71bj8t .constraint-row-right .constraint-iconbutton.svelte-71bj8t {
   margin-left: 0.5em;
   display: inline-block;
-}
-
-.section-title.svelte-aoafhk {
-  margin: 0.5em 0;
-  font-weight: 800;
-  white-space: nowrap;
 }
 
 .constraint-row.svelte-71bj8t.svelte-71bj8t {

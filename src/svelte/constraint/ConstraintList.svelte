@@ -1,26 +1,30 @@
+<script lang="ts" context="module">
+</script>
 <script lang="ts">
     import ConstraintRow from "./ConstraintRow.svelte";
-    import type { Item } from "./ConstraintRow.svelte";
-    import Icon from "./Icon.svelte";
+    import type { Toggle } from "./ConstraintRow.svelte";
+    import Icon from "../Icon.svelte";
 
-    const diagToggles: Item[] = [
+    const diagToggles: Toggle[] = [
         {
             id: '10080',
             name: 'Positive Diagonal',
             icon: 'positive-diagonal',
+            value: true,
         },
         {
             id: '10090',
             name: 'Negative Diagonal',
             icon: 'negative-diagonal',
-        }
-    ]
+            value: false,
+        },
+    ];
 </script>
 
 <ul class="nolist">
     <!-- diagonals -->
     <li>
-        <ConstraintRow name="Diagonals" items={diagToggles} />
+        <ConstraintRow name="Diagonals" toggles={diagToggles} />
     </li>
     <!-- antiknight -->
     <li>
@@ -133,8 +137,8 @@
 </ul>
 
 <style lang="scss">
-    @use '../css/vars';
-    @use '../css/clearfix';
+    @use '../../css/vars';
+    @use '../../css/clearfix';
 
     .constraint-row {
         @include clearfix.clearfix;

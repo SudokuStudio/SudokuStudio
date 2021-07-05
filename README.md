@@ -20,3 +20,5 @@ For a live-reloading development server run:
 ```
 npm run dev
 ```
+
+If you are using VSCode (recommended) you should install the "Svelte for VS Code" extension and turn on `svelte.enable-ts-plugin`;

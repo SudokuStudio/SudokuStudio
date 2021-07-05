@@ -196,6 +196,10 @@ var app = (function () {
     function space() {
         return text(' ');
     }
+    function listen(node, event, handler, options) {
+        node.addEventListener(event, handler, options);
+        return () => node.removeEventListener(event, handler, options);
+    }
     function attr(node, attribute, value) {
         if (value == null)
             node.removeAttribute(attribute);
@@ -214,6 +218,25 @@ var app = (function () {
     let current_component;
     function set_current_component(component) {
         current_component = component;
+    }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error('Function called outside component initialization');
+        return current_component;
+    }
+    function createEventDispatcher() {
+        const component = get_current_component();
+        return (type, detail) => {
+            const callbacks = component.$$.callbacks[type];
+            if (callbacks) {
+                // TODO are there situations where events could be dispatched
+                // in a server (non-DOM) environment?
+                const event = custom_event(type, detail);
+                callbacks.slice().forEach(fn => {
+                    fn.call(component, event);
+                });
+            }
+        };
     }
 
     const dirty_components = [];
@@ -550,12 +573,29 @@ var app = (function () {
         dispatch_dev('SvelteDOMRemove', { node });
         detach(node);
     }
+    function listen_dev(node, event, handler, options, has_prevent_default, has_stop_propagation) {
+        const modifiers = options === true ? ['capture'] : options ? Array.from(Object.keys(options)) : [];
+        if (has_prevent_default)
+            modifiers.push('preventDefault');
+        if (has_stop_propagation)
+            modifiers.push('stopPropagation');
+        dispatch_dev('SvelteDOMAddEventListener', { node, event, handler, modifiers });
+        const dispose = listen(node, event, handler, options);
+        return () => {
+            dispatch_dev('SvelteDOMRemoveEventListener', { node, event, handler, modifiers });
+            dispose();
+        };
+    }
     function attr_dev(node, attribute, value) {
         attr(node, attribute, value);
         if (value == null)
             dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
+    }
+    function prop_dev(node, property, value) {
+        node[property] = value;
+        dispatch_dev('SvelteDOMSetProperty', { node, property, value });
     }
     function set_data_dev(text, data) {
         data = '' + data;
@@ -704,13 +744,14 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[2] = list[i].id;
+    	child_ctx[5] = list[i].id;
     	child_ctx[1] = list[i].name;
-    	child_ctx[3] = list[i].icon;
+    	child_ctx[6] = list[i].icon;
+    	child_ctx[7] = list[i].value;
     	return child_ctx;
     }
 
-    // (14:8) {#each items as { id, name, icon }
+    // (19:8) {#each toggles as { id, name, icon, value }
     function create_each_block(key_1, ctx) {
     	let div;
     	let label;
@@ -723,13 +764,20 @@ var app = (function () {
     	let t2;
     	let input;
     	let input_id_value;
+    	let input_checked_value;
     	let t3;
     	let current;
+    	let mounted;
+    	let dispose;
 
     	icon = new Icon({
-    			props: { icon: /*icon*/ ctx[3] },
+    			props: { icon: /*icon*/ ctx[6] },
     			$$inline: true
     		});
+
+    	function input_handler(...args) {
+    		return /*input_handler*/ ctx[3](/*id*/ ctx[5], ...args);
+    	}
 
     	const block = {
     		key: key_1,
@@ -745,14 +793,15 @@ var app = (function () {
     			input = element("input");
     			t3 = space();
     			attr_dev(span, "class", "sr-only");
-    			add_location(span, file$5, 17, 20, 517);
-    			attr_dev(label, "for", label_for_value = "checkbox-" + /*id*/ ctx[2]);
-    			add_location(label, file$5, 15, 16, 433);
-    			attr_dev(input, "id", input_id_value = "checkbox-" + /*id*/ ctx[2]);
+    			add_location(span, file$5, 22, 20, 695);
+    			attr_dev(label, "for", label_for_value = "checkbox-" + /*id*/ ctx[5]);
+    			add_location(label, file$5, 20, 16, 611);
+    			attr_dev(input, "id", input_id_value = "checkbox-" + /*id*/ ctx[5]);
     			attr_dev(input, "type", "checkbox");
-    			add_location(input, file$5, 19, 16, 594);
+    			input.checked = input_checked_value = /*value*/ ctx[7];
+    			add_location(input, file$5, 24, 16, 772);
     			attr_dev(div, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div, file$5, 14, 12, 381);
+    			add_location(div, file$5, 19, 12, 559);
     			this.first = div;
     		},
     		m: function mount(target, anchor) {
@@ -766,20 +815,29 @@ var app = (function () {
     			append_dev(div, input);
     			append_dev(div, t3);
     			current = true;
+
+    			if (!mounted) {
+    				dispose = listen_dev(input, "input", input_handler, false, false, false);
+    				mounted = true;
+    			}
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
     			const icon_changes = {};
-    			if (dirty & /*items*/ 1) icon_changes.icon = /*icon*/ ctx[3];
+    			if (dirty & /*toggles*/ 1) icon_changes.icon = /*icon*/ ctx[6];
     			icon.$set(icon_changes);
-    			if ((!current || dirty & /*items*/ 1) && t1_value !== (t1_value = /*name*/ ctx[1] + "")) set_data_dev(t1, t1_value);
+    			if ((!current || dirty & /*toggles*/ 1) && t1_value !== (t1_value = /*name*/ ctx[1] + "")) set_data_dev(t1, t1_value);
 
-    			if (!current || dirty & /*items*/ 1 && label_for_value !== (label_for_value = "checkbox-" + /*id*/ ctx[2])) {
+    			if (!current || dirty & /*toggles*/ 1 && label_for_value !== (label_for_value = "checkbox-" + /*id*/ ctx[5])) {
     				attr_dev(label, "for", label_for_value);
     			}
 
-    			if (!current || dirty & /*items*/ 1 && input_id_value !== (input_id_value = "checkbox-" + /*id*/ ctx[2])) {
+    			if (!current || dirty & /*toggles*/ 1 && input_id_value !== (input_id_value = "checkbox-" + /*id*/ ctx[5])) {
     				attr_dev(input, "id", input_id_value);
+    			}
+
+    			if (!current || dirty & /*toggles*/ 1 && input_checked_value !== (input_checked_value = /*value*/ ctx[7])) {
+    				prop_dev(input, "checked", input_checked_value);
     			}
     		},
     		i: function intro(local) {
@@ -794,6 +852,8 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
     			destroy_component(icon);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -801,7 +861,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(14:8) {#each items as { id, name, icon }",
+    		source: "(19:8) {#each toggles as { id, name, icon, value }",
     		ctx
     	});
 
@@ -820,9 +880,9 @@ var app = (function () {
     	let each_1_lookup = new Map();
     	let current;
     	icon = new Icon({ props: { icon: "trash" }, $$inline: true });
-    	let each_value = /*items*/ ctx[0];
+    	let each_value = /*toggles*/ ctx[0];
     	validate_each_argument(each_value);
-    	const get_key = ctx => /*id*/ ctx[2];
+    	const get_key = ctx => /*id*/ ctx[5];
     	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -846,11 +906,11 @@ var app = (function () {
     			}
 
     			attr_dev(div0, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div0, file$5, 8, 4, 191);
+    			add_location(div0, file$5, 13, 4, 360);
     			attr_dev(div1, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div1, file$5, 12, 4, 285);
+    			add_location(div1, file$5, 17, 4, 454);
     			attr_dev(div2, "class", "constraint-row svelte-71bj8t");
-    			add_location(div2, file$5, 7, 0, 158);
+    			add_location(div2, file$5, 12, 0, 327);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -873,8 +933,8 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			if (!current || dirty & /*name*/ 2) set_data_dev(t1, /*name*/ ctx[1]);
 
-    			if (dirty & /*items*/ 1) {
-    				each_value = /*items*/ ctx[0];
+    			if (dirty & /*toggles, onToggle*/ 5) {
+    				each_value = /*toggles*/ ctx[0];
     				validate_each_argument(each_value);
     				group_outros();
     				validate_each_keys(ctx, each_value, get_each_context, get_key);
@@ -926,36 +986,51 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ConstraintRow", slots, []);
     	let { name } = $$props;
-    	let { items } = $$props;
-    	const writable_props = ["name", "items"];
+    	let { toggles } = $$props;
+    	const dispatch = createEventDispatcher();
+
+    	function onToggle(id, event) {
+    		dispatch("toggle", { id, event });
+    	}
+
+    	const writable_props = ["name", "toggles"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ConstraintRow> was created with unknown prop '${key}'`);
     	});
 
+    	const input_handler = (id, event) => onToggle(id, event);
+
     	$$self.$$set = $$props => {
     		if ("name" in $$props) $$invalidate(1, name = $$props.name);
-    		if ("items" in $$props) $$invalidate(0, items = $$props.items);
+    		if ("toggles" in $$props) $$invalidate(0, toggles = $$props.toggles);
     	};
 
-    	$$self.$capture_state = () => ({ Icon, name, items });
+    	$$self.$capture_state = () => ({
+    		createEventDispatcher,
+    		Icon,
+    		name,
+    		toggles,
+    		dispatch,
+    		onToggle
+    	});
 
     	$$self.$inject_state = $$props => {
     		if ("name" in $$props) $$invalidate(1, name = $$props.name);
-    		if ("items" in $$props) $$invalidate(0, items = $$props.items);
+    		if ("toggles" in $$props) $$invalidate(0, toggles = $$props.toggles);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [items, name];
+    	return [toggles, name, onToggle, input_handler];
     }
 
     class ConstraintRow extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { name: 1, items: 0 });
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { name: 1, toggles: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -971,8 +1046,8 @@ var app = (function () {
     			console.warn("<ConstraintRow> was created without expected prop 'name'");
     		}
 
-    		if (/*items*/ ctx[0] === undefined && !("items" in props)) {
-    			console.warn("<ConstraintRow> was created without expected prop 'items'");
+    		if (/*toggles*/ ctx[0] === undefined && !("toggles" in props)) {
+    			console.warn("<ConstraintRow> was created without expected prop 'toggles'");
     		}
     	}
 
@@ -984,11 +1059,11 @@ var app = (function () {
     		throw new Error("<ConstraintRow>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	get items() {
+    	get toggles() {
     		throw new Error("<ConstraintRow>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set items(value) {
+    	set toggles(value) {
     		throw new Error("<ConstraintRow>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -1069,7 +1144,7 @@ var app = (function () {
     	constraintrow = new ConstraintRow({
     			props: {
     				name: "Diagonals",
-    				items: /*diagToggles*/ ctx[0]
+    				toggles: /*diagToggles*/ ctx[0]
     			},
     			$$inline: true
     		});
@@ -1170,85 +1245,85 @@ var app = (function () {
     			span7.textContent = "Nonconsecutive Constraint";
     			t23 = space();
     			input3 = element("input");
-    			add_location(li0, file$4, 19, 4, 411);
+    			add_location(li0, file$4, 21, 4, 457);
     			attr_dev(span0, "class", "icon icon-inline icon-c-warning icon-warning");
-    			add_location(span0, file$4, 28, 16, 686);
+    			add_location(span0, file$4, 30, 16, 734);
     			attr_dev(div0, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div0, file$4, 25, 12, 571);
+    			add_location(div0, file$4, 27, 12, 619);
     			attr_dev(span1, "class", "sr-only");
-    			add_location(span1, file$4, 36, 24, 1025);
+    			add_location(span1, file$4, 38, 24, 1073);
     			attr_dev(label0, "for", "constraint-knight");
-    			add_location(label0, file$4, 34, 20, 922);
+    			add_location(label0, file$4, 36, 20, 970);
     			attr_dev(input0, "id", "constraint-knight");
     			attr_dev(input0, "type", "checkbox");
     			attr_dev(input0, "name", "constraint-knight");
-    			add_location(input0, file$4, 40, 20, 1179);
+    			add_location(input0, file$4, 42, 20, 1227);
     			attr_dev(div1, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div1, file$4, 33, 16, 866);
+    			add_location(div1, file$4, 35, 16, 914);
     			attr_dev(div2, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div2, file$4, 32, 12, 815);
+    			add_location(div2, file$4, 34, 12, 863);
     			attr_dev(div3, "class", "constraint-row svelte-71bj8t");
-    			add_location(div3, file$4, 24, 8, 530);
-    			add_location(li1, file$4, 23, 4, 517);
+    			add_location(div3, file$4, 26, 8, 578);
+    			add_location(li1, file$4, 25, 4, 565);
     			attr_dev(span2, "class", "icon icon-inline icon-c-warning icon-warning");
-    			add_location(span2, file$4, 55, 16, 1605);
+    			add_location(span2, file$4, 57, 16, 1653);
     			attr_dev(div4, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div4, file$4, 52, 12, 1492);
+    			add_location(div4, file$4, 54, 12, 1540);
     			attr_dev(span3, "class", "sr-only");
-    			add_location(span3, file$4, 63, 24, 1940);
+    			add_location(span3, file$4, 65, 24, 1988);
     			attr_dev(label1, "for", "constraint-king");
-    			add_location(label1, file$4, 61, 20, 1841);
+    			add_location(label1, file$4, 63, 20, 1889);
     			attr_dev(input1, "id", "constraint-king");
     			attr_dev(input1, "type", "checkbox");
     			attr_dev(input1, "name", "constraint-king");
-    			add_location(input1, file$4, 67, 20, 2092);
+    			add_location(input1, file$4, 69, 20, 2140);
     			attr_dev(div5, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div5, file$4, 60, 16, 1785);
+    			add_location(div5, file$4, 62, 16, 1833);
     			attr_dev(div6, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div6, file$4, 59, 12, 1734);
+    			add_location(div6, file$4, 61, 12, 1782);
     			attr_dev(div7, "class", "constraint-row svelte-71bj8t");
-    			add_location(div7, file$4, 51, 8, 1451);
-    			add_location(li2, file$4, 50, 4, 1438);
+    			add_location(div7, file$4, 53, 8, 1499);
+    			add_location(li2, file$4, 52, 4, 1486);
     			attr_dev(span4, "class", "icon icon-inline icon-c-warning icon-warning");
-    			add_location(span4, file$4, 82, 16, 2528);
+    			add_location(span4, file$4, 84, 16, 2576);
     			attr_dev(div8, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div8, file$4, 79, 12, 2408);
+    			add_location(div8, file$4, 81, 12, 2456);
     			attr_dev(span5, "class", "sr-only");
-    			add_location(span5, file$4, 90, 24, 2871);
+    			add_location(span5, file$4, 92, 24, 2919);
     			attr_dev(label2, "for", "constraint-disjoint");
-    			add_location(label2, file$4, 88, 20, 2764);
+    			add_location(label2, file$4, 90, 20, 2812);
     			attr_dev(input2, "id", "constraint-disjoint");
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "name", "constraint-disjoint");
-    			add_location(input2, file$4, 94, 20, 3029);
+    			add_location(input2, file$4, 96, 20, 3077);
     			attr_dev(div9, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div9, file$4, 87, 16, 2708);
+    			add_location(div9, file$4, 89, 16, 2756);
     			attr_dev(div10, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div10, file$4, 86, 12, 2657);
+    			add_location(div10, file$4, 88, 12, 2705);
     			attr_dev(div11, "class", "constraint-row svelte-71bj8t");
-    			add_location(div11, file$4, 78, 8, 2367);
-    			add_location(li3, file$4, 77, 4, 2354);
+    			add_location(div11, file$4, 80, 8, 2415);
+    			add_location(li3, file$4, 79, 4, 2402);
     			attr_dev(span6, "class", "icon icon-inline icon-c-warning icon-warning");
-    			add_location(span6, file$4, 109, 16, 3471);
+    			add_location(span6, file$4, 111, 16, 3519);
     			attr_dev(div12, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div12, file$4, 106, 12, 3352);
+    			add_location(div12, file$4, 108, 12, 3400);
     			attr_dev(span7, "class", "sr-only");
-    			add_location(span7, file$4, 117, 24, 3810);
+    			add_location(span7, file$4, 119, 24, 3858);
     			attr_dev(label3, "for", "constraint-consec");
-    			add_location(label3, file$4, 115, 20, 3707);
+    			add_location(label3, file$4, 117, 20, 3755);
     			attr_dev(input3, "id", "constraint-consec");
     			attr_dev(input3, "type", "checkbox");
     			attr_dev(input3, "name", "constraint-consec");
-    			add_location(input3, file$4, 121, 20, 3968);
+    			add_location(input3, file$4, 123, 20, 4016);
     			attr_dev(div13, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div13, file$4, 114, 16, 3651);
+    			add_location(div13, file$4, 116, 16, 3699);
     			attr_dev(div14, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div14, file$4, 113, 12, 3600);
+    			add_location(div14, file$4, 115, 12, 3648);
     			attr_dev(div15, "class", "constraint-row svelte-71bj8t");
-    			add_location(div15, file$4, 105, 8, 3311);
-    			add_location(li4, file$4, 104, 4, 3298);
+    			add_location(div15, file$4, 107, 8, 3359);
+    			add_location(li4, file$4, 106, 4, 3346);
     			attr_dev(ul, "class", "nolist");
-    			add_location(ul, file$4, 17, 0, 364);
+    			add_location(ul, file$4, 19, 0, 410);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1383,12 +1458,14 @@ var app = (function () {
     		{
     			id: "10080",
     			name: "Positive Diagonal",
-    			icon: "positive-diagonal"
+    			icon: "positive-diagonal",
+    			value: true
     		},
     		{
     			id: "10090",
     			name: "Negative Diagonal",
-    			icon: "negative-diagonal"
+    			icon: "negative-diagonal",
+    			value: false
     		}
     	];
 
