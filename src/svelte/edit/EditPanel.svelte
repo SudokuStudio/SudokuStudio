@@ -1,5 +1,4 @@
 <script lang="ts">
-    import ConstraintList from "./ConstraintList.svelte";
     import EditSection from "./EditSection.svelte";
 
     import { globalConstraints } from "../../js/board";
@@ -16,14 +15,9 @@
     </li>
     <li>
         <EditSection title="Global Constraints">
-            {#each globalConstraintsList as { id: _, value, component }}
+            {#each globalConstraintsList as { id, value, component } (id)}
                 <svelte:component this={component} {value} />
             {/each}
-        </EditSection>
-    </li>
-    <li>
-        <EditSection title="Global Constraints">
-            <ConstraintList />
         </EditSection>
     </li>
     <li>
