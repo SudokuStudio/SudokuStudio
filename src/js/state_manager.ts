@@ -47,6 +47,10 @@ export class StateRef {
     watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean) {
         this._stateManager.watch(watcher, triggerNow, this._path.join('/'));
     }
+
+    unwatch<T extends Data>(watcher: Watcher<T>) {
+        this._stateManager.unwatch(watcher);
+    }
 }
 
 /// StateManager provides an interface for updating and reacting to changes in data.
@@ -88,6 +92,18 @@ export class StateManager {
 
         for (const pattern of patterns) {
             this._watchPattern(watcher, triggerNow, pattern);
+        }
+    }
+
+    unwatch<T extends Data>(watcher: Watcher<T>): void {
+        if (!this._watchers.has(watcher)) throw Error('Cannot find watcher.');
+
+        const patterns = this._watchers.get(watcher)!;
+        this._watchers.delete(watcher);
+
+        for (const pattern of patterns) {
+            if (!StateManager._unwatchPattern(watcher, this._watcherTreeRoot, pattern.split('/')))
+                throw Error(`Failed to remove watcher from pattern: ${pattern}.`);
         }
     }
 
@@ -137,6 +153,30 @@ export class StateManager {
         if (triggerNow) {
             StateManager._triggerNow(this._data, segs, [], watcher);
         }
+    }
+
+    private static _unwatchPattern(watcher: Watcher<any>, watcherTree: WatcherTree, segs: string[]): boolean {
+        if (0 === segs.length) {
+            const watchers = watcherTree[WatchersKey];
+            if (null == watchers)
+                return false;
+            if (!watchers.delete(watcher))
+                return false;
+
+            if (0 >= watchers.size)
+                delete watcherTree[WatchersKey];
+            return true;
+        }
+
+        const [ seg, ...restSegs ] = segs;
+        if (!Object.prototype.hasOwnProperty.call(watcherTree, seg))
+            return false;
+        if (!this._unwatchPattern(watcher, watcherTree[seg], restSegs))
+            return false;
+
+        if (0 >= Object.keys(watcherTree[seg]).length && (null == watcherTree[WatchersKey]))
+            delete watcherTree[seg];
+        return true;
     }
 
     /// Triggers a newly added watcher.
