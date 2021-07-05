@@ -1,202 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
+<html lang="en">
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
 
     <title>Sudoku</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@500;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.666125c5.css">
-    <link href="index.32e12b87.css" rel="stylesheet">
-  </head>
-  <body class="light">
-    <header>
-      <div class="content">
-        <div class="content-row">
-          <div class="header-left">
-            <ul class="header-buttons left">
-              <li>Solving/Setting</li>
-              <li>New Grid</li>
-              <li>Export</li>
-            </ul>
-          </div>
-          <div class="header-center">
-            <h1>Double Agent</h1>
-            <div class="setter">by echoes and TauCeti Deichmann</div>
-          </div>
-          <div class="header-right">
-            <ul class="header-buttons right">
-              <li>Light/dark</li>
-              <li>Help</li>
-              <li>Settings</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </header>
-    <main>
-      <div class="content">
-        <div class="content-row">
-          <div class="left-panel">
-            <ul class="constraints-list">
-              <li>
-                <h4 class="section-title">
-                  <span class="icon icon-inline icon-c-clickable icon-tree-menu-hidden"></span>
-                  Solver Panel
-                </h4>
-              </li>
-              <li>
-                <h4 class="section-title">
-                  <span class="icon icon-inline icon-c-clickable icon-tree-menu-shown"></span>
-                  Global Constraints
-                </h4>
-                <ul>
-                  <!-- diagonals -->
-                  <li>
-                    <div class="constraint-row">
-                      <div class="constraint-row-left">
-                        <span class="icon icon-inline icon-c-clickable icon-trash"></span>
-                        Diagonals
-                      </div>
-                      <div class="constraint-row-right">
-                        <div class="constraint-iconbutton">
-                          <label for="constraint-diagonal-positive">
-                            <span class="icon icon-inline icon-c-clickable icon-positive-diagonal"></span>
-                            <span class="sr-only">Positive Diagonal Constraint</span>
-                          </label>
-                          <input id="constraint-diagonal-positive" type="checkbox" name="constraint-diagonal-positive">
-                        </div>
-                        <div class="constraint-iconbutton">
-                          <label for="constraint-diagonal-negative">
-                            <span class="icon icon-inline icon-c-clickable icon-negative-diagonal"></span>
-                            <span class="sr-only">Negative Diagonal Constraint</span>
-                          </label>
-                          <input id="constraint-diagonal-negative" type="checkbox" name="constraint-diagonal-negative">
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <!-- antiknight -->
-                  <li>
-                    <div class="constraint-row">
-                      <div class="constraint-row-left">
-                        <span class="icon icon-inline icon-c-clickable icon-trash"></span>
-                        Antiknight
-                        <span class="icon icon-inline icon-c-warning icon-warning"></span>
-                      </div>
-                      <div class="constraint-row-right">
-                        <div class="constraint-iconbutton">
-                          <label for="constraint-knight">
-                            <span class="icon icon-inline icon-c-clickable icon-knight"></span>
-                            <span class="sr-only">Antiknight Constraint</span>
-                          </label>
-                          <input id="constraint-knight" type="checkbox" name="constraint-knight">
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <!-- antiking -->
-                  <li>
-                    <div class="constraint-row">
-                      <div class="constraint-row-left">
-                        <span class="icon icon-inline icon-c-clickable icon-trash"></span>
-                        Antiking
-                        <span class="icon icon-inline icon-c-warning icon-warning"></span>
-                      </div>
-                      <div class="constraint-row-right">
-                        <div class="constraint-iconbutton">
-                          <label for="constraint-king">
-                            <span class="icon icon-inline icon-c-clickable icon-king"></span>
-                            <span class="sr-only">Antiking Constraint</span>
-                          </label>
-                          <input id="constraint-king" type="checkbox" name="constraint-king">
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <!-- disjoint groups -->
-                  <li>
-                    <div class="constraint-row">
-                      <div class="constraint-row-left">
-                        <span class="icon icon-inline icon-c-clickable icon-trash"></span>
-                        Disjoint Groups
-                        <span class="icon icon-inline icon-c-warning icon-warning"></span>
-                      </div>
-                      <div class="constraint-row-right">
-                        <div class="constraint-iconbutton">
-                          <label for="constraint-disjoint">
-                            <span class="icon icon-inline icon-c-clickable icon-disjoint"></span>
-                            <span class="sr-only">Disjoin Groups Constraint</span>
-                          </label>
-                          <input id="constraint-disjoint" type="checkbox" name="constraint-disjoint">
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <!-- nonconsecutive -->
-                  <li>
-                    <div class="constraint-row">
-                      <div class="constraint-row-left">
-                        <span class="icon icon-inline icon-c-clickable icon-trash"></span>
-                        Nonconsecutive
-                        <span class="icon icon-inline icon-c-warning icon-warning"></span>
-                      </div>
-                      <div class="constraint-row-right">
-                        <div class="constraint-iconbutton">
-                          <label for="constraint-consec">
-                            <span class="icon icon-inline icon-c-clickable icon-consec"></span>
-                            <span class="sr-only">Nonconsecutive Constraint</span>
-                          </label>
-                          <input id="constraint-consec" type="checkbox" name="constraint-consec">
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <h4 class="section-title">
-                  <span class="icon icon-inline icon-c-clickable icon-tree-menu-shown"></span>
-                  Local Constraints
-                </h4>
-                <ul>
-                  <li>
-                    <input type="radio" id="digitTool" name="localConstraints" checked="">
-                    <label for="digitTool"> Digit </label>
-                  </li>
-                  <li>
-                    <input type="radio" id="thermoTool" name="localConstraints">
-                    <label for="thermoTool"> Thermo </label>
-                  </li>
-                  <li>
-                    <input type="radio" id="arrowTool" name="localConstraints">
-                    <label for="arrowTool"> Arrow </label>
-                  </li>
-                  <li>
-                    <input type="radio" id="sandwichTool" name="localConstraints">
-                    <label for="sandwichTool"> Sandwich </label>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <h4 class="section-title">
-                  <span class="icon icon-inline icon-c-clickable icon-tree-menu-hidden"></span>
-                  Cosmetic Tools
-                </h4>
-              </li>
-            </ul>
-          </div>
-          <div class="center-panel">
-            <img src="example-grid.54bae3dd.svg">
-          </div>
-          <div class="right-panel">RIGHT PANEL</div>
-        </div>
-      </div>
-    </main>
-    <footer>SudokuStudio</footer>
-  </body>
+
+    <link rel='stylesheet' href='/build/bundle.css'>
+
+    <script defer src='/build/bundle.js'></script>
+</head>
+
+<body>
+</body>
 </html>
