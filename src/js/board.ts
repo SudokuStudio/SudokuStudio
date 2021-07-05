@@ -1,13 +1,31 @@
 import { writable } from 'svelte/store';
 
-import * as schema from './board_schema';
 import { StateManager } from './state_manager';
 
-import type { Args as ConstraintRowArgs } from '../svelte/ConstraintRow.svelte';
-// import type { Args } from "../svelte/ConstraintRow.svelte";
+import Diagonal from '../svelte/edit/constraint/Diagonal.svelte';
+import Knight from '../svelte/edit/constraint/Knight.svelte';
+import King from '../svelte/edit/constraint/King.svelte';
+import DisjointGroups from '../svelte/edit/constraint/DisjointGroups.svelte';
+import Nonconsecutive from '../svelte/edit/constraint/Nonconsecutive.svelte';
 
+export type ConstraintDataAndComponent = {
+    id: string,
+    value: unknown,
+    component: ConstraintComponent,
+};
 
-export const boardState = new StateManager();
+export const boardState = (window as any).boardState = new StateManager();
+export const globalConstraints = writable<ConstraintDataAndComponent[]>([]);
+
+export type ConstraintComponent = typeof CONSTRAINT_COMPONENTS[keyof typeof CONSTRAINT_COMPONENTS];
+const CONSTRAINT_COMPONENTS = {
+    ['diagonal']: Diagonal,
+    ['knight']: Knight,
+    ['king']: King,
+    ['disjointGroups']: DisjointGroups,
+    ['consecutive']: Nonconsecutive,
+} as const;
+
 boardState.update({
     grid: {
         width: 9,
@@ -55,9 +73,17 @@ boardState.update({
     },
 });
 
-boardState.watch(([ _constraints, constraintId ], oldVal, newVal) => {
+boardState.watch<schema.Constraint>(([ _constraints, constraintId ], oldVal, newVal) => {
     if (null == oldVal) {
-        // Add
+        const component = CONSTRAINT_COMPONENTS[newVal!.type];
+        globalConstraints.update(arr => {
+            arr.push({
+                id: constraintId,
+                value: newVal!.value,
+                component
+            });
+            return arr;
+        });
     }
     else if (null == newVal) {
         // Remove
@@ -66,76 +92,3 @@ boardState.watch(([ _constraints, constraintId ], oldVal, newVal) => {
         // Change
     }
 }, true, 'constraints/*');
-
-
-const CONSTRAINT_NAMES: Record<schema.ConstraintType, string> = {
-    [schema.ConstraintType.DIAGONAL]: 'Diagonals',
-    [schema.ConstraintType.KNIGHT]: 'Anti-Knight',
-    [schema.ConstraintType.KING]: 'Anti-King',
-    [schema.ConstraintType.DISJOINT_GROUPS]: 'Disjoint Groups',
-    [schema.ConstraintType.CONSECUTIVE]: 'Nonconsecutive',
-};
-
-function handleGlobalConstraint(constraint: schema.Constraint): ConstraintRowArgs {
-    switch (constraint.type) {
-        case schema.ConstraintType.DIAGONAL:
-            return {
-                name: 'Diagonals',
-                toggles: [
-                    {
-                        id: 'positive',
-                        name: 'Positive Diagonal',
-                        icon: 'positive-diagonal',
-                        value: constraint.value.positive,
-                    },
-                    {
-                        id: 'negative',
-                        name: 'Negative Diagonal',
-                        icon: 'negative-diagonal',
-                        value: constraint.value.negative,
-                    },
-                ],
-            };
-        case schema.ConstraintType.KNIGHT:
-            return {
-                name: 'Anti-Knight',
-                toggles: [
-                    {
-                        id: 'value',
-                        name: 'Anti-Knight',
-                        icon: 'positive-diagonal',
-                        value: constraint.value.positive,
-                    },
-                ],
-            };
-        default: throw Error(`Unknown global constraint: ${constraint.type}.`);
-    }
-}
-
-
-export const globalConstraints = writable([
-    {
-        id: "10080",
-        name: 'Diagonals',
-        icons: [ 'positive-diagonal', 'negative-diagonal' ],
-        state: [ true, false ],
-    },
-    {
-        id: "10090",
-        name: 'Antiknight',
-        icons: [ 'knight' ],
-        state: [ false ],
-    },
-    {
-        id: "10100",
-        name: 'Antiking',
-        icons: [ 'king' ],
-        state: [ false ],
-    },
-    {
-        id: "10090",
-        name: 'Antiking',
-        icons: [ 'king' ],
-        state: [ false ],
-    }
-]);

@@ -9,5 +9,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
-  }
+  },
+  "typeRoots": ["src/global.d.ts"]
 }

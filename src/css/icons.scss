@@ -48,7 +48,7 @@
         "knight": "svg/16px/global-constraints/knight-constraint.svg",
         "king": "svg/16px/global-constraints/king-constraint.svg",
         "disjoint": "svg/16px/global-constraints/disjoint-constraint.svg",
-        "consec": "svg/16px/global-constraints/consec-constraint.svg",
+        "nonconsecutive": "svg/16px/global-constraints/consec-constraint.svg",
     );
 
     @each $name, $path in $icons {

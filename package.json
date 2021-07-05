@@ -17,6 +17,7 @@
     "url": "git+https://github.com/SudokuStudio/Sudoku.git"
   },
   "scripts": {
+    "clean": "rm -rf public/build",
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",

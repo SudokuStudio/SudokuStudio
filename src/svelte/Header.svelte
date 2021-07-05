@@ -18,7 +18,7 @@
 </div>
 
 <style lang="scss">
-    @use '../css/vars';
+    @use 'src/css/vars';
 
     .header-left {
         flex: 1 1 100%;

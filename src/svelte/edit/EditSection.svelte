@@ -1,7 +1,7 @@
 <script lang="ts">
     export let title: string;
 
-    import Icon from "./Icon.svelte";
+    import Icon from "../Icon.svelte";
 </script>
 
 <div>
@@ -13,7 +13,7 @@
 </div>
 
 <style lang="scss">
-    @use '../css/vars';
+    @use 'src/css/vars';
     .section-title {
         margin: 0.5em 0;
         font-weight: vars.$font-weight-heavy;

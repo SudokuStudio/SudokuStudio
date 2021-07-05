@@ -187,6 +187,12 @@ var app = (function () {
     function detach(node) {
         node.parentNode.removeChild(node);
     }
+    function destroy_each(iterations, detaching) {
+        for (let i = 0; i < iterations.length; i += 1) {
+            if (iterations[i])
+                iterations[i].d(detaching);
+        }
+    }
     function element(name) {
         return document.createElement(name);
     }
@@ -195,6 +201,9 @@ var app = (function () {
     }
     function space() {
         return text(' ');
+    }
+    function empty() {
+        return text('');
     }
     function listen(node, event, handler, options) {
         node.addEventListener(event, handler, options);
@@ -219,24 +228,15 @@ var app = (function () {
     function set_current_component(component) {
         current_component = component;
     }
-    function get_current_component() {
-        if (!current_component)
-            throw new Error('Function called outside component initialization');
-        return current_component;
-    }
-    function createEventDispatcher() {
-        const component = get_current_component();
-        return (type, detail) => {
-            const callbacks = component.$$.callbacks[type];
-            if (callbacks) {
-                // TODO are there situations where events could be dispatched
-                // in a server (non-DOM) environment?
-                const event = custom_event(type, detail);
-                callbacks.slice().forEach(fn => {
-                    fn.call(component, event);
-                });
-            }
-        };
+    // TODO figure out if we still want to support
+    // shorthand events, or if we want to implement
+    // a real bubbling mechanism
+    function bubble(component, event) {
+        const callbacks = component.$$.callbacks[event.type];
+        if (callbacks) {
+            // @ts-ignore
+            callbacks.slice().forEach(fn => fn.call(this, event));
+        }
     }
 
     const dirty_components = [];
@@ -337,96 +337,6 @@ var app = (function () {
                 }
             });
             block.o(local);
-        }
-    }
-    function outro_and_destroy_block(block, lookup) {
-        transition_out(block, 1, 1, () => {
-            lookup.delete(block.key);
-        });
-    }
-    function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
-        let o = old_blocks.length;
-        let n = list.length;
-        let i = o;
-        const old_indexes = {};
-        while (i--)
-            old_indexes[old_blocks[i].key] = i;
-        const new_blocks = [];
-        const new_lookup = new Map();
-        const deltas = new Map();
-        i = n;
-        while (i--) {
-            const child_ctx = get_context(ctx, list, i);
-            const key = get_key(child_ctx);
-            let block = lookup.get(key);
-            if (!block) {
-                block = create_each_block(key, child_ctx);
-                block.c();
-            }
-            else if (dynamic) {
-                block.p(child_ctx, dirty);
-            }
-            new_lookup.set(key, new_blocks[i] = block);
-            if (key in old_indexes)
-                deltas.set(key, Math.abs(i - old_indexes[key]));
-        }
-        const will_move = new Set();
-        const did_move = new Set();
-        function insert(block) {
-            transition_in(block, 1);
-            block.m(node, next);
-            lookup.set(block.key, block);
-            next = block.first;
-            n--;
-        }
-        while (o && n) {
-            const new_block = new_blocks[n - 1];
-            const old_block = old_blocks[o - 1];
-            const new_key = new_block.key;
-            const old_key = old_block.key;
-            if (new_block === old_block) {
-                // do nothing
-                next = new_block.first;
-                o--;
-                n--;
-            }
-            else if (!new_lookup.has(old_key)) {
-                // remove old block
-                destroy(old_block, lookup);
-                o--;
-            }
-            else if (!lookup.has(new_key) || will_move.has(new_key)) {
-                insert(new_block);
-            }
-            else if (did_move.has(old_key)) {
-                o--;
-            }
-            else if (deltas.get(new_key) > deltas.get(old_key)) {
-                did_move.add(new_key);
-                insert(new_block);
-            }
-            else {
-                will_move.add(old_key);
-                o--;
-            }
-        }
-        while (o--) {
-            const old_block = old_blocks[o];
-            if (!new_lookup.has(old_block.key))
-                destroy(old_block, lookup);
-        }
-        while (n)
-            insert(new_blocks[n - 1]);
-        return new_blocks;
-    }
-    function validate_each_keys(ctx, list, get_context, get_key) {
-        const keys = new Set();
-        for (let i = 0; i < list.length; i++) {
-            const key = get_key(get_context(ctx, list, i));
-            if (keys.has(key)) {
-                throw new Error('Cannot have duplicate keys in a keyed each');
-            }
-            keys.add(key);
         }
     }
     function create_component(block) {
@@ -642,9 +552,9 @@ var app = (function () {
 
     /* src\svelte\Icon.svelte generated by Svelte v3.38.3 */
 
-    const file$6 = "src\\svelte\\Icon.svelte";
+    const file$7 = "src\\svelte\\Icon.svelte";
 
-    function create_fragment$6(ctx) {
+    function create_fragment$c(ctx) {
     	let span;
     	let span_class_value;
 
@@ -652,7 +562,7 @@ var app = (function () {
     		c: function create() {
     			span = element("span");
     			attr_dev(span, "class", span_class_value = "icon icon-inline icon-c-clickable icon-" + /*icon*/ ctx[0]);
-    			add_location(span, file$6, 3, 0, 47);
+    			add_location(span, file$7, 3, 0, 47);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -674,7 +584,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$6.name,
+    		id: create_fragment$c.name,
     		type: "component",
     		source: "",
     		ctx
@@ -683,7 +593,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$6($$self, $$props, $$invalidate) {
+    function instance$c($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Icon", slots, []);
     	let { icon } = $$props;
@@ -713,13 +623,13 @@ var app = (function () {
     class Icon extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { icon: 0 });
+    		init(this, options, instance$c, create_fragment$c, safe_not_equal, { icon: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Icon",
     			options,
-    			id: create_fragment$6.name
+    			id: create_fragment$c.name
     		});
 
     		const { ctx } = this.$$;
@@ -739,136 +649,10 @@ var app = (function () {
     	}
     }
 
-    /* src\svelte\ConstraintRow.svelte generated by Svelte v3.38.3 */
-    const file$5 = "src\\svelte\\ConstraintRow.svelte";
+    /* src\svelte\edit\ConstraintRow.svelte generated by Svelte v3.38.3 */
+    const file$6 = "src\\svelte\\edit\\ConstraintRow.svelte";
 
-    function get_each_context(ctx, list, i) {
-    	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i].id;
-    	child_ctx[1] = list[i].name;
-    	child_ctx[6] = list[i].icon;
-    	child_ctx[7] = list[i].value;
-    	return child_ctx;
-    }
-
-    // (19:8) {#each toggles as { id, name, icon, value }
-    function create_each_block(key_1, ctx) {
-    	let div;
-    	let label;
-    	let icon;
-    	let t0;
-    	let span;
-    	let t1_value = /*name*/ ctx[1] + "";
-    	let t1;
-    	let label_for_value;
-    	let t2;
-    	let input;
-    	let input_id_value;
-    	let input_checked_value;
-    	let t3;
-    	let current;
-    	let mounted;
-    	let dispose;
-
-    	icon = new Icon({
-    			props: { icon: /*icon*/ ctx[6] },
-    			$$inline: true
-    		});
-
-    	function input_handler(...args) {
-    		return /*input_handler*/ ctx[3](/*id*/ ctx[5], ...args);
-    	}
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			div = element("div");
-    			label = element("label");
-    			create_component(icon.$$.fragment);
-    			t0 = space();
-    			span = element("span");
-    			t1 = text(t1_value);
-    			t2 = space();
-    			input = element("input");
-    			t3 = space();
-    			attr_dev(span, "class", "sr-only");
-    			add_location(span, file$5, 22, 20, 695);
-    			attr_dev(label, "for", label_for_value = "checkbox-" + /*id*/ ctx[5]);
-    			add_location(label, file$5, 20, 16, 611);
-    			attr_dev(input, "id", input_id_value = "checkbox-" + /*id*/ ctx[5]);
-    			attr_dev(input, "type", "checkbox");
-    			input.checked = input_checked_value = /*value*/ ctx[7];
-    			add_location(input, file$5, 24, 16, 772);
-    			attr_dev(div, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div, file$5, 19, 12, 559);
-    			this.first = div;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, label);
-    			mount_component(icon, label, null);
-    			append_dev(label, t0);
-    			append_dev(label, span);
-    			append_dev(span, t1);
-    			append_dev(div, t2);
-    			append_dev(div, input);
-    			append_dev(div, t3);
-    			current = true;
-
-    			if (!mounted) {
-    				dispose = listen_dev(input, "input", input_handler, false, false, false);
-    				mounted = true;
-    			}
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-    			const icon_changes = {};
-    			if (dirty & /*toggles*/ 1) icon_changes.icon = /*icon*/ ctx[6];
-    			icon.$set(icon_changes);
-    			if ((!current || dirty & /*toggles*/ 1) && t1_value !== (t1_value = /*name*/ ctx[1] + "")) set_data_dev(t1, t1_value);
-
-    			if (!current || dirty & /*toggles*/ 1 && label_for_value !== (label_for_value = "checkbox-" + /*id*/ ctx[5])) {
-    				attr_dev(label, "for", label_for_value);
-    			}
-
-    			if (!current || dirty & /*toggles*/ 1 && input_id_value !== (input_id_value = "checkbox-" + /*id*/ ctx[5])) {
-    				attr_dev(input, "id", input_id_value);
-    			}
-
-    			if (!current || dirty & /*toggles*/ 1 && input_checked_value !== (input_checked_value = /*value*/ ctx[7])) {
-    				prop_dev(input, "checked", input_checked_value);
-    			}
-    		},
-    		i: function intro(local) {
-    			if (current) return;
-    			transition_in(icon.$$.fragment, local);
-    			current = true;
-    		},
-    		o: function outro(local) {
-    			transition_out(icon.$$.fragment, local);
-    			current = false;
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			destroy_component(icon);
-    			mounted = false;
-    			dispose();
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block.name,
-    		type: "each",
-    		source: "(19:8) {#each toggles as { id, name, icon, value }",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment$5(ctx) {
+    function create_fragment$b(ctx) {
     	let div2;
     	let div0;
     	let icon;
@@ -876,20 +660,10 @@ var app = (function () {
     	let t1;
     	let t2;
     	let div1;
-    	let each_blocks = [];
-    	let each_1_lookup = new Map();
     	let current;
     	icon = new Icon({ props: { icon: "trash" }, $$inline: true });
-    	let each_value = /*toggles*/ ctx[0];
-    	validate_each_argument(each_value);
-    	const get_key = ctx => /*id*/ ctx[5];
-    	validate_each_keys(ctx, each_value, get_each_context, get_key);
-
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		let child_ctx = get_each_context(ctx, each_value, i);
-    		let key = get_key(child_ctx);
-    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
-    	}
+    	const default_slot_template = /*#slots*/ ctx[2].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[1], null);
 
     	const block = {
     		c: function create() {
@@ -897,20 +671,16 @@ var app = (function () {
     			div0 = element("div");
     			create_component(icon.$$.fragment);
     			t0 = space();
-    			t1 = text(/*name*/ ctx[1]);
+    			t1 = text(/*name*/ ctx[0]);
     			t2 = space();
     			div1 = element("div");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
-    			attr_dev(div0, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div0, file$5, 13, 4, 360);
-    			attr_dev(div1, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div1, file$5, 17, 4, 454);
-    			attr_dev(div2, "class", "constraint-row svelte-71bj8t");
-    			add_location(div2, file$5, 12, 0, 327);
+    			if (default_slot) default_slot.c();
+    			attr_dev(div0, "class", "constraint-row-left svelte-1kmaedl");
+    			add_location(div0, file$6, 5, 4, 116);
+    			attr_dev(div1, "class", "constraint-row-right svelte-1kmaedl");
+    			add_location(div1, file$6, 9, 4, 210);
+    			attr_dev(div2, "class", "constraint-row svelte-1kmaedl");
+    			add_location(div2, file$6, 4, 0, 83);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -924,50 +694,1094 @@ var app = (function () {
     			append_dev(div2, t2);
     			append_dev(div2, div1);
 
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].m(div1, null);
+    			if (default_slot) {
+    				default_slot.m(div1, null);
     			}
 
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (!current || dirty & /*name*/ 2) set_data_dev(t1, /*name*/ ctx[1]);
+    			if (!current || dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
 
-    			if (dirty & /*toggles, onToggle*/ 5) {
-    				each_value = /*toggles*/ ctx[0];
-    				validate_each_argument(each_value);
-    				group_outros();
-    				validate_each_keys(ctx, each_value, get_each_context, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div1, outro_and_destroy_block, create_each_block, null, get_each_context);
-    				check_outros();
+    			if (default_slot) {
+    				if (default_slot.p && (!current || dirty & /*$$scope*/ 2)) {
+    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[1], !current ? -1 : dirty, null, null);
+    				}
     			}
     		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(icon.$$.fragment, local);
-
-    			for (let i = 0; i < each_value.length; i += 1) {
-    				transition_in(each_blocks[i]);
-    			}
-
+    			transition_in(default_slot, local);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(icon.$$.fragment, local);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				transition_out(each_blocks[i]);
-    			}
-
+    			transition_out(default_slot, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div2);
     			destroy_component(icon);
+    			if (default_slot) default_slot.d(detaching);
+    		}
+    	};
 
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$b.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$b($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("ConstraintRow", slots, ['default']);
+    	let { name } = $$props;
+    	const writable_props = ["name"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ConstraintRow> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ("name" in $$props) $$invalidate(0, name = $$props.name);
+    		if ("$$scope" in $$props) $$invalidate(1, $$scope = $$props.$$scope);
+    	};
+
+    	$$self.$capture_state = () => ({ Icon, name });
+
+    	$$self.$inject_state = $$props => {
+    		if ("name" in $$props) $$invalidate(0, name = $$props.name);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [name, $$scope, slots];
+    }
+
+    class ConstraintRow extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$b, create_fragment$b, safe_not_equal, { name: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "ConstraintRow",
+    			options,
+    			id: create_fragment$b.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*name*/ ctx[0] === undefined && !("name" in props)) {
+    			console.warn("<ConstraintRow> was created without expected prop 'name'");
+    		}
+    	}
+
+    	get name() {
+    		throw new Error("<ConstraintRow>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set name(value) {
+    		throw new Error("<ConstraintRow>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\svelte\edit\ConstraintToggle.svelte generated by Svelte v3.38.3 */
+    const file$5 = "src\\svelte\\edit\\ConstraintToggle.svelte";
+
+    function create_fragment$a(ctx) {
+    	let div;
+    	let label;
+    	let icon_1;
+    	let t0;
+    	let span;
+    	let t1;
+    	let t2;
+    	let input;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	icon_1 = new Icon({
+    			props: { icon: /*icon*/ ctx[1] },
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			label = element("label");
+    			create_component(icon_1.$$.fragment);
+    			t0 = space();
+    			span = element("span");
+    			t1 = text(/*name*/ ctx[0]);
+    			t2 = space();
+    			input = element("input");
+    			attr_dev(span, "class", "sr-only");
+    			add_location(span, file$5, 12, 8, 314);
+    			attr_dev(label, "for", "toggle-" + ++counter);
+    			attr_dev(label, "title", /*name*/ ctx[0]);
+    			add_location(label, file$5, 10, 4, 236);
+    			attr_dev(input, "id", "toggle-" + counter);
+    			attr_dev(input, "type", "checkbox");
+    			input.checked = /*checked*/ ctx[2];
+    			add_location(input, file$5, 14, 4, 367);
+    			attr_dev(div, "class", "constraint-toggle svelte-h67gfh");
+    			add_location(div, file$5, 9, 0, 200);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, label);
+    			mount_component(icon_1, label, null);
+    			append_dev(label, t0);
+    			append_dev(label, span);
+    			append_dev(span, t1);
+    			append_dev(div, t2);
+    			append_dev(div, input);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = listen_dev(input, "input", /*input_handler*/ ctx[3], false, false, false);
+    				mounted = true;
     			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const icon_1_changes = {};
+    			if (dirty & /*icon*/ 2) icon_1_changes.icon = /*icon*/ ctx[1];
+    			icon_1.$set(icon_1_changes);
+    			if (!current || dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
+
+    			if (!current || dirty & /*name*/ 1) {
+    				attr_dev(label, "title", /*name*/ ctx[0]);
+    			}
+
+    			if (!current || dirty & /*checked*/ 4) {
+    				prop_dev(input, "checked", /*checked*/ ctx[2]);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(icon_1.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(icon_1.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_component(icon_1);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$a.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+    let counter = 0;
+
+    function instance$a($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("ConstraintToggle", slots, []);
+    	let { name } = $$props;
+    	let { icon } = $$props;
+    	let { checked } = $$props;
+    	const writable_props = ["name", "icon", "checked"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ConstraintToggle> was created with unknown prop '${key}'`);
+    	});
+
+    	function input_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ("name" in $$props) $$invalidate(0, name = $$props.name);
+    		if ("icon" in $$props) $$invalidate(1, icon = $$props.icon);
+    		if ("checked" in $$props) $$invalidate(2, checked = $$props.checked);
+    	};
+
+    	$$self.$capture_state = () => ({ counter, Icon, name, icon, checked });
+
+    	$$self.$inject_state = $$props => {
+    		if ("name" in $$props) $$invalidate(0, name = $$props.name);
+    		if ("icon" in $$props) $$invalidate(1, icon = $$props.icon);
+    		if ("checked" in $$props) $$invalidate(2, checked = $$props.checked);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [name, icon, checked, input_handler];
+    }
+
+    class ConstraintToggle extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$a, create_fragment$a, safe_not_equal, { name: 0, icon: 1, checked: 2 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "ConstraintToggle",
+    			options,
+    			id: create_fragment$a.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*name*/ ctx[0] === undefined && !("name" in props)) {
+    			console.warn("<ConstraintToggle> was created without expected prop 'name'");
+    		}
+
+    		if (/*icon*/ ctx[1] === undefined && !("icon" in props)) {
+    			console.warn("<ConstraintToggle> was created without expected prop 'icon'");
+    		}
+
+    		if (/*checked*/ ctx[2] === undefined && !("checked" in props)) {
+    			console.warn("<ConstraintToggle> was created without expected prop 'checked'");
+    		}
+    	}
+
+    	get name() {
+    		throw new Error("<ConstraintToggle>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set name(value) {
+    		throw new Error("<ConstraintToggle>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get icon() {
+    		throw new Error("<ConstraintToggle>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set icon(value) {
+    		throw new Error("<ConstraintToggle>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get checked() {
+    		throw new Error("<ConstraintToggle>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set checked(value) {
+    		throw new Error("<ConstraintToggle>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\svelte\edit\constraint\Diagonal.svelte generated by Svelte v3.38.3 */
+
+    // (6:0) <ConstraintRow name="Diagonals">
+    function create_default_slot$5(ctx) {
+    	let constrainttoggle0;
+    	let t;
+    	let constrainttoggle1;
+    	let current;
+
+    	constrainttoggle0 = new ConstraintToggle({
+    			props: {
+    				name: "Toggle Positive Diagonal",
+    				icon: "positive-diagonal",
+    				checked: /*value*/ ctx[0].positive
+    			},
+    			$$inline: true
+    		});
+
+    	constrainttoggle1 = new ConstraintToggle({
+    			props: {
+    				name: "Toggle Negative Diagonal",
+    				icon: "negative-diagonal",
+    				checked: /*value*/ ctx[0].negative
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constrainttoggle0.$$.fragment);
+    			t = space();
+    			create_component(constrainttoggle1.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constrainttoggle0, target, anchor);
+    			insert_dev(target, t, anchor);
+    			mount_component(constrainttoggle1, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const constrainttoggle0_changes = {};
+    			if (dirty & /*value*/ 1) constrainttoggle0_changes.checked = /*value*/ ctx[0].positive;
+    			constrainttoggle0.$set(constrainttoggle0_changes);
+    			const constrainttoggle1_changes = {};
+    			if (dirty & /*value*/ 1) constrainttoggle1_changes.checked = /*value*/ ctx[0].negative;
+    			constrainttoggle1.$set(constrainttoggle1_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constrainttoggle0.$$.fragment, local);
+    			transition_in(constrainttoggle1.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constrainttoggle0.$$.fragment, local);
+    			transition_out(constrainttoggle1.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constrainttoggle0, detaching);
+    			if (detaching) detach_dev(t);
+    			destroy_component(constrainttoggle1, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$5.name,
+    		type: "slot",
+    		source: "(6:0) <ConstraintRow name=\\\"Diagonals\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$9(ctx) {
+    	let constraintrow;
+    	let current;
+
+    	constraintrow = new ConstraintRow({
+    			props: {
+    				name: "Diagonals",
+    				$$slots: { default: [create_default_slot$5] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constraintrow.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constraintrow, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const constraintrow_changes = {};
+
+    			if (dirty & /*$$scope, value*/ 3) {
+    				constraintrow_changes.$$scope = { dirty, ctx };
+    			}
+
+    			constraintrow.$set(constraintrow_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constraintrow.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constraintrow.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constraintrow, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$9.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$9($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("Diagonal", slots, []);
+    	let { value } = $$props;
+    	const writable_props = ["value"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Diagonal> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
+    	};
+
+    	$$self.$capture_state = () => ({ ConstraintRow, ConstraintToggle, value });
+
+    	$$self.$inject_state = $$props => {
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [value];
+    }
+
+    class Diagonal extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$9, create_fragment$9, safe_not_equal, { value: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Diagonal",
+    			options,
+    			id: create_fragment$9.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*value*/ ctx[0] === undefined && !("value" in props)) {
+    			console.warn("<Diagonal> was created without expected prop 'value'");
+    		}
+    	}
+
+    	get value() {
+    		throw new Error("<Diagonal>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set value(value) {
+    		throw new Error("<Diagonal>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\svelte\edit\constraint\DisjointGroups.svelte generated by Svelte v3.38.3 */
+
+    // (6:0) <ConstraintRow name="Disjoint Groups">
+    function create_default_slot$4(ctx) {
+    	let constrainttoggle;
+    	let current;
+
+    	constrainttoggle = new ConstraintToggle({
+    			props: {
+    				name: "Toggle Disjoint Groups Constraint",
+    				icon: "disjoint",
+    				checked: /*value*/ ctx[0]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constrainttoggle.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constrainttoggle, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const constrainttoggle_changes = {};
+    			if (dirty & /*value*/ 1) constrainttoggle_changes.checked = /*value*/ ctx[0];
+    			constrainttoggle.$set(constrainttoggle_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constrainttoggle.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constrainttoggle.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constrainttoggle, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$4.name,
+    		type: "slot",
+    		source: "(6:0) <ConstraintRow name=\\\"Disjoint Groups\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$8(ctx) {
+    	let constraintrow;
+    	let current;
+
+    	constraintrow = new ConstraintRow({
+    			props: {
+    				name: "Disjoint Groups",
+    				$$slots: { default: [create_default_slot$4] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constraintrow.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constraintrow, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const constraintrow_changes = {};
+
+    			if (dirty & /*$$scope, value*/ 3) {
+    				constraintrow_changes.$$scope = { dirty, ctx };
+    			}
+
+    			constraintrow.$set(constraintrow_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constraintrow.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constraintrow.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constraintrow, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$8.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$8($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("DisjointGroups", slots, []);
+    	let { value } = $$props;
+    	const writable_props = ["value"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<DisjointGroups> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
+    	};
+
+    	$$self.$capture_state = () => ({ ConstraintRow, ConstraintToggle, value });
+
+    	$$self.$inject_state = $$props => {
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [value];
+    }
+
+    class DisjointGroups extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$8, create_fragment$8, safe_not_equal, { value: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "DisjointGroups",
+    			options,
+    			id: create_fragment$8.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*value*/ ctx[0] === undefined && !("value" in props)) {
+    			console.warn("<DisjointGroups> was created without expected prop 'value'");
+    		}
+    	}
+
+    	get value() {
+    		throw new Error("<DisjointGroups>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set value(value) {
+    		throw new Error("<DisjointGroups>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\svelte\edit\constraint\King.svelte generated by Svelte v3.38.3 */
+
+    // (6:0) <ConstraintRow name="Antiking">
+    function create_default_slot$3(ctx) {
+    	let constrainttoggle;
+    	let current;
+
+    	constrainttoggle = new ConstraintToggle({
+    			props: {
+    				name: "Toggle Antiking Constraint",
+    				icon: "king",
+    				checked: /*value*/ ctx[0]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constrainttoggle.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constrainttoggle, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const constrainttoggle_changes = {};
+    			if (dirty & /*value*/ 1) constrainttoggle_changes.checked = /*value*/ ctx[0];
+    			constrainttoggle.$set(constrainttoggle_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constrainttoggle.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constrainttoggle.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constrainttoggle, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$3.name,
+    		type: "slot",
+    		source: "(6:0) <ConstraintRow name=\\\"Antiking\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$7(ctx) {
+    	let constraintrow;
+    	let current;
+
+    	constraintrow = new ConstraintRow({
+    			props: {
+    				name: "Antiking",
+    				$$slots: { default: [create_default_slot$3] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constraintrow.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constraintrow, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const constraintrow_changes = {};
+
+    			if (dirty & /*$$scope, value*/ 3) {
+    				constraintrow_changes.$$scope = { dirty, ctx };
+    			}
+
+    			constraintrow.$set(constraintrow_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constraintrow.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constraintrow.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constraintrow, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$7.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$7($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("King", slots, []);
+    	let { value } = $$props;
+    	const writable_props = ["value"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<King> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
+    	};
+
+    	$$self.$capture_state = () => ({ ConstraintRow, ConstraintToggle, value });
+
+    	$$self.$inject_state = $$props => {
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [value];
+    }
+
+    class King extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$7, create_fragment$7, safe_not_equal, { value: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "King",
+    			options,
+    			id: create_fragment$7.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*value*/ ctx[0] === undefined && !("value" in props)) {
+    			console.warn("<King> was created without expected prop 'value'");
+    		}
+    	}
+
+    	get value() {
+    		throw new Error("<King>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set value(value) {
+    		throw new Error("<King>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\svelte\edit\constraint\Knight.svelte generated by Svelte v3.38.3 */
+
+    // (6:0) <ConstraintRow name="Antiknight">
+    function create_default_slot$2(ctx) {
+    	let constrainttoggle;
+    	let current;
+
+    	constrainttoggle = new ConstraintToggle({
+    			props: {
+    				name: "Toggle Anitknight Constraint",
+    				icon: "knight",
+    				checked: /*value*/ ctx[0]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constrainttoggle.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constrainttoggle, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const constrainttoggle_changes = {};
+    			if (dirty & /*value*/ 1) constrainttoggle_changes.checked = /*value*/ ctx[0];
+    			constrainttoggle.$set(constrainttoggle_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constrainttoggle.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constrainttoggle.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constrainttoggle, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$2.name,
+    		type: "slot",
+    		source: "(6:0) <ConstraintRow name=\\\"Antiknight\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$6(ctx) {
+    	let constraintrow;
+    	let current;
+
+    	constraintrow = new ConstraintRow({
+    			props: {
+    				name: "Antiknight",
+    				$$slots: { default: [create_default_slot$2] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constraintrow.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constraintrow, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const constraintrow_changes = {};
+
+    			if (dirty & /*$$scope, value*/ 3) {
+    				constraintrow_changes.$$scope = { dirty, ctx };
+    			}
+
+    			constraintrow.$set(constraintrow_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constraintrow.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constraintrow.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constraintrow, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$6.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$6($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots("Knight", slots, []);
+    	let { value } = $$props;
+    	const writable_props = ["value"];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Knight> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
+    	};
+
+    	$$self.$capture_state = () => ({ ConstraintRow, ConstraintToggle, value });
+
+    	$$self.$inject_state = $$props => {
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [value];
+    }
+
+    class Knight extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$6, create_fragment$6, safe_not_equal, { value: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Knight",
+    			options,
+    			id: create_fragment$6.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*value*/ ctx[0] === undefined && !("value" in props)) {
+    			console.warn("<Knight> was created without expected prop 'value'");
+    		}
+    	}
+
+    	get value() {
+    		throw new Error("<Knight>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set value(value) {
+    		throw new Error("<Knight>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\svelte\edit\constraint\Nonconsecutive.svelte generated by Svelte v3.38.3 */
+
+    // (6:0) <ConstraintRow name="Nonconsecutive">
+    function create_default_slot$1(ctx) {
+    	let constrainttoggle;
+    	let current;
+
+    	constrainttoggle = new ConstraintToggle({
+    			props: {
+    				name: "Toggle Nonconsecutive Constraint",
+    				icon: "nonconsecutive",
+    				checked: /*value*/ ctx[0]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constrainttoggle.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constrainttoggle, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const constrainttoggle_changes = {};
+    			if (dirty & /*value*/ 1) constrainttoggle_changes.checked = /*value*/ ctx[0];
+    			constrainttoggle.$set(constrainttoggle_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constrainttoggle.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constrainttoggle.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constrainttoggle, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$1.name,
+    		type: "slot",
+    		source: "(6:0) <ConstraintRow name=\\\"Nonconsecutive\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$5(ctx) {
+    	let constraintrow;
+    	let current;
+
+    	constraintrow = new ConstraintRow({
+    			props: {
+    				name: "Nonconsecutive",
+    				$$slots: { default: [create_default_slot$1] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			create_component(constraintrow.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(constraintrow, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const constraintrow_changes = {};
+
+    			if (dirty & /*$$scope, value*/ 3) {
+    				constraintrow_changes.$$scope = { dirty, ctx };
+    			}
+
+    			constraintrow.$set(constraintrow_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(constraintrow.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(constraintrow.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(constraintrow, detaching);
     		}
     	};
 
@@ -984,57 +1798,39 @@ var app = (function () {
 
     function instance$5($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots("ConstraintRow", slots, []);
-    	let { name } = $$props;
-    	let { toggles } = $$props;
-    	const dispatch = createEventDispatcher();
-
-    	function onToggle(id, event) {
-    		dispatch("toggle", { id, event });
-    	}
-
-    	const writable_props = ["name", "toggles"];
+    	validate_slots("Nonconsecutive", slots, []);
+    	let { value } = $$props;
+    	const writable_props = ["value"];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ConstraintRow> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Nonconsecutive> was created with unknown prop '${key}'`);
     	});
-
-    	const input_handler = (id, event) => onToggle(id, event);
 
     	$$self.$$set = $$props => {
-    		if ("name" in $$props) $$invalidate(1, name = $$props.name);
-    		if ("toggles" in $$props) $$invalidate(0, toggles = $$props.toggles);
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
     	};
 
-    	$$self.$capture_state = () => ({
-    		createEventDispatcher,
-    		Icon,
-    		name,
-    		toggles,
-    		dispatch,
-    		onToggle
-    	});
+    	$$self.$capture_state = () => ({ ConstraintRow, ConstraintToggle, value });
 
     	$$self.$inject_state = $$props => {
-    		if ("name" in $$props) $$invalidate(1, name = $$props.name);
-    		if ("toggles" in $$props) $$invalidate(0, toggles = $$props.toggles);
+    		if ("value" in $$props) $$invalidate(0, value = $$props.value);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [toggles, name, onToggle, input_handler];
+    	return [value];
     }
 
-    class ConstraintRow extends SvelteComponentDev {
+    class Nonconsecutive extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { name: 1, toggles: 0 });
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { value: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
-    			tagName: "ConstraintRow",
+    			tagName: "Nonconsecutive",
     			options,
     			id: create_fragment$5.name
     		});
@@ -1042,288 +1838,77 @@ var app = (function () {
     		const { ctx } = this.$$;
     		const props = options.props || {};
 
-    		if (/*name*/ ctx[1] === undefined && !("name" in props)) {
-    			console.warn("<ConstraintRow> was created without expected prop 'name'");
-    		}
-
-    		if (/*toggles*/ ctx[0] === undefined && !("toggles" in props)) {
-    			console.warn("<ConstraintRow> was created without expected prop 'toggles'");
+    		if (/*value*/ ctx[0] === undefined && !("value" in props)) {
+    			console.warn("<Nonconsecutive> was created without expected prop 'value'");
     		}
     	}
 
-    	get name() {
-    		throw new Error("<ConstraintRow>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	get value() {
+    		throw new Error("<Nonconsecutive>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
-    	set name(value) {
-    		throw new Error("<ConstraintRow>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get toggles() {
-    		throw new Error("<ConstraintRow>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set toggles(value) {
-    		throw new Error("<ConstraintRow>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	set value(value) {
+    		throw new Error("<Nonconsecutive>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
-    /* src\svelte\ConstraintList.svelte generated by Svelte v3.38.3 */
-    const file$4 = "src\\svelte\\ConstraintList.svelte";
+    /* src\svelte\edit\ConstraintList.svelte generated by Svelte v3.38.3 */
+    const file$4 = "src\\svelte\\edit\\ConstraintList.svelte";
 
     function create_fragment$4(ctx) {
     	let ul;
     	let li0;
-    	let constraintrow;
+    	let diagonal;
     	let t0;
     	let li1;
-    	let div3;
-    	let div0;
-    	let icon0;
+    	let knight;
     	let t1;
-    	let span0;
-    	let t2;
-    	let div2;
-    	let div1;
-    	let label0;
-    	let icon1;
-    	let t3;
-    	let span1;
-    	let t5;
-    	let input0;
-    	let t6;
     	let li2;
-    	let div7;
-    	let div4;
-    	let icon2;
-    	let t7;
-    	let span2;
-    	let t8;
-    	let div6;
-    	let div5;
-    	let label1;
-    	let icon3;
-    	let t9;
-    	let span3;
-    	let t11;
-    	let input1;
-    	let t12;
+    	let king;
+    	let t2;
     	let li3;
-    	let div11;
-    	let div8;
-    	let icon4;
-    	let t13;
-    	let span4;
-    	let t14;
-    	let div10;
-    	let div9;
-    	let label2;
-    	let icon5;
-    	let t15;
-    	let span5;
-    	let t17;
-    	let input2;
-    	let t18;
+    	let disjointgroups;
+    	let t3;
     	let li4;
-    	let div15;
-    	let div12;
-    	let icon6;
-    	let t19;
-    	let span6;
-    	let t20;
-    	let div14;
-    	let div13;
-    	let label3;
-    	let icon7;
-    	let t21;
-    	let span7;
-    	let t23;
-    	let input3;
+    	let nonconsecutive;
     	let current;
 
-    	constraintrow = new ConstraintRow({
+    	diagonal = new Diagonal({
     			props: {
-    				name: "Diagonals",
-    				toggles: /*diagToggles*/ ctx[0]
+    				value: { positive: true, negative: false }
     			},
     			$$inline: true
     		});
 
-    	icon0 = new Icon({ props: { icon: "trash" }, $$inline: true });
-
-    	icon1 = new Icon({
-    			props: { icon: "knight" },
-    			$$inline: true
-    		});
-
-    	icon2 = new Icon({ props: { icon: "trash" }, $$inline: true });
-    	icon3 = new Icon({ props: { icon: "king" }, $$inline: true });
-    	icon4 = new Icon({ props: { icon: "trash" }, $$inline: true });
-
-    	icon5 = new Icon({
-    			props: { icon: "disjoint" },
-    			$$inline: true
-    		});
-
-    	icon6 = new Icon({ props: { icon: "trash" }, $$inline: true });
-
-    	icon7 = new Icon({
-    			props: { icon: "consec" },
-    			$$inline: true
-    		});
+    	knight = new Knight({ props: { value: false }, $$inline: true });
+    	king = new King({ props: { value: false }, $$inline: true });
+    	disjointgroups = new DisjointGroups({ props: { value: false }, $$inline: true });
+    	nonconsecutive = new Nonconsecutive({ props: { value: false }, $$inline: true });
 
     	const block = {
     		c: function create() {
     			ul = element("ul");
     			li0 = element("li");
-    			create_component(constraintrow.$$.fragment);
+    			create_component(diagonal.$$.fragment);
     			t0 = space();
     			li1 = element("li");
-    			div3 = element("div");
-    			div0 = element("div");
-    			create_component(icon0.$$.fragment);
-    			t1 = text("\n                Antiknight\n                ");
-    			span0 = element("span");
-    			t2 = space();
-    			div2 = element("div");
-    			div1 = element("div");
-    			label0 = element("label");
-    			create_component(icon1.$$.fragment);
-    			t3 = space();
-    			span1 = element("span");
-    			span1.textContent = "Antiknight Constraint";
-    			t5 = space();
-    			input0 = element("input");
-    			t6 = space();
+    			create_component(knight.$$.fragment);
+    			t1 = space();
     			li2 = element("li");
-    			div7 = element("div");
-    			div4 = element("div");
-    			create_component(icon2.$$.fragment);
-    			t7 = text("\n                Antiking\n                ");
-    			span2 = element("span");
-    			t8 = space();
-    			div6 = element("div");
-    			div5 = element("div");
-    			label1 = element("label");
-    			create_component(icon3.$$.fragment);
-    			t9 = space();
-    			span3 = element("span");
-    			span3.textContent = "Antiking Constraint";
-    			t11 = space();
-    			input1 = element("input");
-    			t12 = space();
+    			create_component(king.$$.fragment);
+    			t2 = space();
     			li3 = element("li");
-    			div11 = element("div");
-    			div8 = element("div");
-    			create_component(icon4.$$.fragment);
-    			t13 = text("\n                Disjoint Groups\n                ");
-    			span4 = element("span");
-    			t14 = space();
-    			div10 = element("div");
-    			div9 = element("div");
-    			label2 = element("label");
-    			create_component(icon5.$$.fragment);
-    			t15 = space();
-    			span5 = element("span");
-    			span5.textContent = "Disjoin Groups Constraint";
-    			t17 = space();
-    			input2 = element("input");
-    			t18 = space();
+    			create_component(disjointgroups.$$.fragment);
+    			t3 = space();
     			li4 = element("li");
-    			div15 = element("div");
-    			div12 = element("div");
-    			create_component(icon6.$$.fragment);
-    			t19 = text("\n                Nonconsecutive\n                ");
-    			span6 = element("span");
-    			t20 = space();
-    			div14 = element("div");
-    			div13 = element("div");
-    			label3 = element("label");
-    			create_component(icon7.$$.fragment);
-    			t21 = space();
-    			span7 = element("span");
-    			span7.textContent = "Nonconsecutive Constraint";
-    			t23 = space();
-    			input3 = element("input");
-    			add_location(li0, file$4, 21, 4, 457);
-    			attr_dev(span0, "class", "icon icon-inline icon-c-warning icon-warning");
-    			add_location(span0, file$4, 30, 16, 734);
-    			attr_dev(div0, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div0, file$4, 27, 12, 619);
-    			attr_dev(span1, "class", "sr-only");
-    			add_location(span1, file$4, 38, 24, 1073);
-    			attr_dev(label0, "for", "constraint-knight");
-    			add_location(label0, file$4, 36, 20, 970);
-    			attr_dev(input0, "id", "constraint-knight");
-    			attr_dev(input0, "type", "checkbox");
-    			attr_dev(input0, "name", "constraint-knight");
-    			add_location(input0, file$4, 42, 20, 1227);
-    			attr_dev(div1, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div1, file$4, 35, 16, 914);
-    			attr_dev(div2, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div2, file$4, 34, 12, 863);
-    			attr_dev(div3, "class", "constraint-row svelte-71bj8t");
-    			add_location(div3, file$4, 26, 8, 578);
-    			add_location(li1, file$4, 25, 4, 565);
-    			attr_dev(span2, "class", "icon icon-inline icon-c-warning icon-warning");
-    			add_location(span2, file$4, 57, 16, 1653);
-    			attr_dev(div4, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div4, file$4, 54, 12, 1540);
-    			attr_dev(span3, "class", "sr-only");
-    			add_location(span3, file$4, 65, 24, 1988);
-    			attr_dev(label1, "for", "constraint-king");
-    			add_location(label1, file$4, 63, 20, 1889);
-    			attr_dev(input1, "id", "constraint-king");
-    			attr_dev(input1, "type", "checkbox");
-    			attr_dev(input1, "name", "constraint-king");
-    			add_location(input1, file$4, 69, 20, 2140);
-    			attr_dev(div5, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div5, file$4, 62, 16, 1833);
-    			attr_dev(div6, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div6, file$4, 61, 12, 1782);
-    			attr_dev(div7, "class", "constraint-row svelte-71bj8t");
-    			add_location(div7, file$4, 53, 8, 1499);
-    			add_location(li2, file$4, 52, 4, 1486);
-    			attr_dev(span4, "class", "icon icon-inline icon-c-warning icon-warning");
-    			add_location(span4, file$4, 84, 16, 2576);
-    			attr_dev(div8, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div8, file$4, 81, 12, 2456);
-    			attr_dev(span5, "class", "sr-only");
-    			add_location(span5, file$4, 92, 24, 2919);
-    			attr_dev(label2, "for", "constraint-disjoint");
-    			add_location(label2, file$4, 90, 20, 2812);
-    			attr_dev(input2, "id", "constraint-disjoint");
-    			attr_dev(input2, "type", "checkbox");
-    			attr_dev(input2, "name", "constraint-disjoint");
-    			add_location(input2, file$4, 96, 20, 3077);
-    			attr_dev(div9, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div9, file$4, 89, 16, 2756);
-    			attr_dev(div10, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div10, file$4, 88, 12, 2705);
-    			attr_dev(div11, "class", "constraint-row svelte-71bj8t");
-    			add_location(div11, file$4, 80, 8, 2415);
-    			add_location(li3, file$4, 79, 4, 2402);
-    			attr_dev(span6, "class", "icon icon-inline icon-c-warning icon-warning");
-    			add_location(span6, file$4, 111, 16, 3519);
-    			attr_dev(div12, "class", "constraint-row-left svelte-71bj8t");
-    			add_location(div12, file$4, 108, 12, 3400);
-    			attr_dev(span7, "class", "sr-only");
-    			add_location(span7, file$4, 119, 24, 3858);
-    			attr_dev(label3, "for", "constraint-consec");
-    			add_location(label3, file$4, 117, 20, 3755);
-    			attr_dev(input3, "id", "constraint-consec");
-    			attr_dev(input3, "type", "checkbox");
-    			attr_dev(input3, "name", "constraint-consec");
-    			add_location(input3, file$4, 123, 20, 4016);
-    			attr_dev(div13, "class", "constraint-iconbutton svelte-71bj8t");
-    			add_location(div13, file$4, 116, 16, 3699);
-    			attr_dev(div14, "class", "constraint-row-right svelte-71bj8t");
-    			add_location(div14, file$4, 115, 12, 3648);
-    			attr_dev(div15, "class", "constraint-row svelte-71bj8t");
-    			add_location(div15, file$4, 107, 8, 3359);
-    			add_location(li4, file$4, 106, 4, 3346);
+    			create_component(nonconsecutive.$$.fragment);
+    			add_location(li0, file$4, 10, 4, 395);
+    			add_location(li1, file$4, 13, 4, 477);
+    			add_location(li2, file$4, 16, 4, 529);
+    			add_location(li3, file$4, 19, 4, 579);
+    			add_location(li4, file$4, 22, 4, 639);
     			attr_dev(ul, "class", "nolist");
-    			add_location(ul, file$4, 19, 0, 410);
+    			add_location(ul, file$4, 9, 0, 371);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1331,110 +1916,46 @@ var app = (function () {
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
     			append_dev(ul, li0);
-    			mount_component(constraintrow, li0, null);
+    			mount_component(diagonal, li0, null);
     			append_dev(ul, t0);
     			append_dev(ul, li1);
-    			append_dev(li1, div3);
-    			append_dev(div3, div0);
-    			mount_component(icon0, div0, null);
-    			append_dev(div0, t1);
-    			append_dev(div0, span0);
-    			append_dev(div3, t2);
-    			append_dev(div3, div2);
-    			append_dev(div2, div1);
-    			append_dev(div1, label0);
-    			mount_component(icon1, label0, null);
-    			append_dev(label0, t3);
-    			append_dev(label0, span1);
-    			append_dev(div1, t5);
-    			append_dev(div1, input0);
-    			append_dev(ul, t6);
+    			mount_component(knight, li1, null);
+    			append_dev(ul, t1);
     			append_dev(ul, li2);
-    			append_dev(li2, div7);
-    			append_dev(div7, div4);
-    			mount_component(icon2, div4, null);
-    			append_dev(div4, t7);
-    			append_dev(div4, span2);
-    			append_dev(div7, t8);
-    			append_dev(div7, div6);
-    			append_dev(div6, div5);
-    			append_dev(div5, label1);
-    			mount_component(icon3, label1, null);
-    			append_dev(label1, t9);
-    			append_dev(label1, span3);
-    			append_dev(div5, t11);
-    			append_dev(div5, input1);
-    			append_dev(ul, t12);
+    			mount_component(king, li2, null);
+    			append_dev(ul, t2);
     			append_dev(ul, li3);
-    			append_dev(li3, div11);
-    			append_dev(div11, div8);
-    			mount_component(icon4, div8, null);
-    			append_dev(div8, t13);
-    			append_dev(div8, span4);
-    			append_dev(div11, t14);
-    			append_dev(div11, div10);
-    			append_dev(div10, div9);
-    			append_dev(div9, label2);
-    			mount_component(icon5, label2, null);
-    			append_dev(label2, t15);
-    			append_dev(label2, span5);
-    			append_dev(div9, t17);
-    			append_dev(div9, input2);
-    			append_dev(ul, t18);
+    			mount_component(disjointgroups, li3, null);
+    			append_dev(ul, t3);
     			append_dev(ul, li4);
-    			append_dev(li4, div15);
-    			append_dev(div15, div12);
-    			mount_component(icon6, div12, null);
-    			append_dev(div12, t19);
-    			append_dev(div12, span6);
-    			append_dev(div15, t20);
-    			append_dev(div15, div14);
-    			append_dev(div14, div13);
-    			append_dev(div13, label3);
-    			mount_component(icon7, label3, null);
-    			append_dev(label3, t21);
-    			append_dev(label3, span7);
-    			append_dev(div13, t23);
-    			append_dev(div13, input3);
+    			mount_component(nonconsecutive, li4, null);
     			current = true;
     		},
     		p: noop,
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(constraintrow.$$.fragment, local);
-    			transition_in(icon0.$$.fragment, local);
-    			transition_in(icon1.$$.fragment, local);
-    			transition_in(icon2.$$.fragment, local);
-    			transition_in(icon3.$$.fragment, local);
-    			transition_in(icon4.$$.fragment, local);
-    			transition_in(icon5.$$.fragment, local);
-    			transition_in(icon6.$$.fragment, local);
-    			transition_in(icon7.$$.fragment, local);
+    			transition_in(diagonal.$$.fragment, local);
+    			transition_in(knight.$$.fragment, local);
+    			transition_in(king.$$.fragment, local);
+    			transition_in(disjointgroups.$$.fragment, local);
+    			transition_in(nonconsecutive.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(constraintrow.$$.fragment, local);
-    			transition_out(icon0.$$.fragment, local);
-    			transition_out(icon1.$$.fragment, local);
-    			transition_out(icon2.$$.fragment, local);
-    			transition_out(icon3.$$.fragment, local);
-    			transition_out(icon4.$$.fragment, local);
-    			transition_out(icon5.$$.fragment, local);
-    			transition_out(icon6.$$.fragment, local);
-    			transition_out(icon7.$$.fragment, local);
+    			transition_out(diagonal.$$.fragment, local);
+    			transition_out(knight.$$.fragment, local);
+    			transition_out(king.$$.fragment, local);
+    			transition_out(disjointgroups.$$.fragment, local);
+    			transition_out(nonconsecutive.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(ul);
-    			destroy_component(constraintrow);
-    			destroy_component(icon0);
-    			destroy_component(icon1);
-    			destroy_component(icon2);
-    			destroy_component(icon3);
-    			destroy_component(icon4);
-    			destroy_component(icon5);
-    			destroy_component(icon6);
-    			destroy_component(icon7);
+    			destroy_component(diagonal);
+    			destroy_component(knight);
+    			destroy_component(king);
+    			destroy_component(disjointgroups);
+    			destroy_component(nonconsecutive);
     		}
     	};
 
@@ -1452,31 +1973,21 @@ var app = (function () {
     function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ConstraintList", slots, []);
-    	
-
-    	const diagToggles = [
-    		{
-    			id: "10080",
-    			name: "Positive Diagonal",
-    			icon: "positive-diagonal",
-    			value: true
-    		},
-    		{
-    			id: "10090",
-    			name: "Negative Diagonal",
-    			icon: "negative-diagonal",
-    			value: false
-    		}
-    	];
-
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ConstraintList> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ ConstraintRow, Icon, diagToggles });
-    	return [diagToggles];
+    	$$self.$capture_state = () => ({
+    		Diagonal,
+    		DisjointGroups,
+    		King,
+    		Knight,
+    		Nonconsecutive
+    	});
+
+    	return [];
     }
 
     class ConstraintList extends SvelteComponentDev {
@@ -1493,8 +2004,8 @@ var app = (function () {
     	}
     }
 
-    /* src\svelte\EditSection.svelte generated by Svelte v3.38.3 */
-    const file$3 = "src\\svelte\\EditSection.svelte";
+    /* src\svelte\edit\EditSection.svelte generated by Svelte v3.38.3 */
+    const file$3 = "src\\svelte\\edit\\EditSection.svelte";
 
     function create_fragment$3(ctx) {
     	let div;
@@ -1523,8 +2034,8 @@ var app = (function () {
     			t2 = space();
     			if (default_slot) default_slot.c();
     			attr_dev(h4, "class", "section-title svelte-aoafhk");
-    			add_location(h4, file$3, 5, 4, 93);
-    			add_location(div, file$3, 4, 0, 83);
+    			add_location(h4, file$3, 5, 4, 94);
+    			add_location(div, file$3, 4, 0, 84);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1638,11 +2149,409 @@ var app = (function () {
     	}
     }
 
-    /* src\svelte\EditPanel.svelte generated by Svelte v3.38.3 */
-    const file$2 = "src\\svelte\\EditPanel.svelte";
+    const subscriber_queue = [];
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     */
+    function writable(value, start = noop) {
+        let stop;
+        const subscribers = [];
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (stop) { // store is ready
+                    const run_queue = !subscriber_queue.length;
+                    for (let i = 0; i < subscribers.length; i += 1) {
+                        const s = subscribers[i];
+                        s[1]();
+                        subscriber_queue.push(s, value);
+                    }
+                    if (run_queue) {
+                        for (let i = 0; i < subscriber_queue.length; i += 2) {
+                            subscriber_queue[i][0](subscriber_queue[i + 1]);
+                        }
+                        subscriber_queue.length = 0;
+                    }
+                }
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop) {
+            const subscriber = [run, invalidate];
+            subscribers.push(subscriber);
+            if (subscribers.length === 1) {
+                stop = start(set) || noop;
+            }
+            run(value);
+            return () => {
+                const index = subscribers.indexOf(subscriber);
+                if (index !== -1) {
+                    subscribers.splice(index, 1);
+                }
+                if (subscribers.length === 0) {
+                    stop();
+                    stop = null;
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
 
-    // (9:8) <EditSection title="Solver Panel">
-    function create_default_slot_1(ctx) {
+    function objectFromEntries(entries) {
+        const obj = Object.create(null);
+        for (const [key, val] of entries) {
+            obj[key] = val;
+        }
+        return obj;
+    }
+
+    const WatchersKey = Symbol('watchers key');
+    /// Same as Object.is except that null and undefined are considered equal.
+    function isEq(a, b) {
+        return (null == a && null == b) || Object.is(a, b);
+    }
+    /// StateManager provides an interface for updating and reacting to changes in data.
+    /// Each instance stores a single JS object. Watchers can be assigned to react to changes
+    /// in specified paths of the object. When updates are given to the StateManager, it will
+    /// apply the changes and ensure all relevant watchers are called, and it will return a
+    /// undo/redo diff to the caller.
+    ///
+    /// This is where the magic happens.
+    class StateManager {
+        constructor() {
+            /// Map from each watcher to the paths it's watching.
+            this._watchers = new Map();
+            this._watcherTreeRoot = Object.create(null);
+            this._data = undefined;
+        }
+        get(...path) {
+            if (path.includes('/'))
+                throw Error('Path cannot contain "/", split into varargs.');
+            let target = this._data;
+            while (target && path.length)
+                target = target[path.shift()];
+            return target;
+        }
+        watch(watcher, triggerNow, ...patterns) {
+            let patternSet = this._watchers.get(watcher);
+            if (null == patternSet) {
+                patternSet = new Set();
+                this._watchers.set(watcher, patternSet);
+            }
+            for (const pattern of patterns) {
+                this._watchPattern(watcher, triggerNow, pattern);
+            }
+        }
+        update(update) {
+            if ('object' !== typeof update)
+                throw Error(`Invalid update object: ${update}`);
+            let changed = false;
+            const redo = [];
+            const undo = [];
+            for (const [key, data] of Object.entries(update)) {
+                if (0 >= key.length)
+                    throw Error(`Update key cannot be empty.`);
+                const segs = key.split('/');
+                const { data: newData, redo: newRedo, undo: newUndo } = StateManager._updateInternal(this._data, data, segs, [], [this._watcherTreeRoot]);
+                if (!isEq(this._data, newData)) {
+                    changed = true;
+                    this._data = newData;
+                    redo.push(...newRedo);
+                    undo.push(...newUndo);
+                }
+            }
+            if (changed) {
+                return {
+                    redo: objectFromEntries(redo),
+                    undo: objectFromEntries(undo),
+                };
+            }
+            return null;
+        }
+        _watchPattern(watcher, triggerNow, pattern) {
+            if (!pattern || 0 >= pattern.length) {
+                throw Error(`Pattern cannot be empty: ${pattern}.`);
+            }
+            const segs = pattern.split('/');
+            let watcherTree = this._watcherTreeRoot;
+            for (const seg of segs) {
+                if (!Object.prototype.hasOwnProperty.call(watcherTree, seg)) {
+                    watcherTree[seg] = Object.create(null);
+                }
+                watcherTree = watcherTree[seg];
+            }
+            (watcherTree[WatchersKey] || (watcherTree[WatchersKey] = new Set())).add(watcher);
+            if (triggerNow) {
+                StateManager._triggerNow(this._data, segs, [], watcher);
+            }
+        }
+        /// Triggers a newly added watcher.
+        static _triggerNow(data, segs, path, watcher) {
+            if (null == data)
+                return;
+            if (0 >= segs.length) {
+                // Base case - call watcher.
+                (watcher)(path, null, data);
+                return;
+            }
+            if ('object' !== typeof data)
+                return; // If segs is not empty we can ignore primitives.
+            // Recurse.
+            const [seg, ...restSegs] = segs;
+            if ('*' === seg) {
+                for (const [k, v] of Object.entries(data)) {
+                    this._triggerNow(v, restSegs, [...path, k], watcher);
+                }
+            }
+            else if (Object.prototype.hasOwnProperty.call(data, seg)) {
+                this._triggerNow(data[seg], restSegs, [...path, seg], watcher);
+            }
+        }
+        /// DATA - Current data we're looking at, traversed recursively. This will NOT be modified.
+        /// UPDATE - New data used to update DATA. I.e. when SEGS is empty we return UPDATE. Portions of
+        ///     this object (if it is an object) may/will be incorporated into the returned object so be
+        ///     careful of side-effects (TODO?).
+        /// SEGS - Remaining target segments for the update.
+        /// PATH - Path of DATA relative to the root.
+        /// WATCHER_TREES - WatcherTrees encountered at the current level, containing watchers for this DATA.
+        /// DIFF - A Diff object in which the changes this update makes are written into. This will contain
+        ///     pieces of DATA and UPDATE so be careful of side effects (TODO?).
+        /// Returns - The replacement value for DATA, or DATA itself if no updates occured.
+        ///
+        /// Diff logic:
+        /// 3 cases we care about:
+        /// - Delete: First depth where data gets replaced with null.
+        /// - Create: First depth where null gets replaced with update.
+        /// - Replace: First depth where data gets replaced with update.
+        /// Only trigger this at update-point level.
+        static _updateInternal(data, update, segs, path, watcherTrees) {
+            const atUpdateDepth = 0 >= segs.length;
+            // These will be an object or null, so primtives are coerced to null.
+            // This prevents trying to e.g. iterate strings as character array objects.
+            const dataObj = 'object' === typeof data ? data : null;
+            const updateObj = 'object' === typeof update ? update : null;
+            const { data: newData, redo, undo } = (() => {
+                if (atUpdateDepth) {
+                    // At an update point!
+                    if (null == dataObj && null == updateObj) {
+                        // We've reached a pair of primitives, this is the base case.
+                        return { data: update, undo: [], redo: [] }; // May be the same as data, or maybe not.
+                    }
+                    // Trigger update on every child key, not just one SEG.
+                    const allKeys = new Set([
+                        ...Object.keys(dataObj || {}),
+                        ...Object.keys(updateObj || {}),
+                    ]);
+                    // Stores the changes (if any).
+                    let dataUpdated = false;
+                    const dataObjNew = Object.create(null);
+                    const redo = [];
+                    const undo = [];
+                    // For child keys.
+                    for (const key of allKeys) {
+                        const innerData = dataObj && dataObj[key] || null;
+                        const innerUpdate = updateObj && updateObj[key] || null;
+                        const nextWatcherTrees = StateManager._nextWatcherTrees(key, watcherTrees);
+                        // Recurse.
+                        const { data: newInnerData, redo: innerRedo, undo: innerUndo } = StateManager._updateInternal(innerData, innerUpdate, [], [...path, key], nextWatcherTrees);
+                        if (!isEq(innerData, newInnerData)) {
+                            dataUpdated = true;
+                            redo.push(...innerRedo);
+                            undo.push(...innerUndo);
+                            if (updateObj != null && Object.prototype.hasOwnProperty.call(updateObj, key)) {
+                                // Only take the update if it came from UPDATE and therefore wasn't a delete.
+                                dataObjNew[key] = newInnerData;
+                            }
+                        }
+                    }
+                    if (!dataUpdated) {
+                        // No changes.
+                        return { data, redo, undo };
+                    }
+                    // Yes changes.
+                    if (0 >= Object.keys(dataObjNew).length) {
+                        // If dataObjNew is empty then take the update itself.
+                        return { data: update, redo, undo };
+                    }
+                    else {
+                        // Otherwise create the object.
+                        return {
+                            data: Object.assign(Object.create(null), dataObj, dataObjNew),
+                            redo, undo,
+                        };
+                    }
+                }
+                // Not at an update point, just traversing the SEGS.
+                const [key, ...segsRest] = segs;
+                const innerData = dataObj && dataObj[key] || null;
+                // Do not change UPDATE... we are not at the updating depth yet.
+                const nextWatcherTrees = StateManager._nextWatcherTrees(key, watcherTrees);
+                // Recurse.
+                const { data: newInnerData, redo, undo } = StateManager._updateInternal(innerData, update, segsRest, [...path, key], nextWatcherTrees);
+                if (isEq(innerData, newInnerData)) {
+                    // No changes.
+                    return { data, redo, undo };
+                }
+                // Yes changes.
+                return {
+                    data: Object.assign(Object.create(null), dataObj, { [key]: newInnerData }),
+                    redo, undo,
+                };
+            })();
+            if (!isEq(data, newData)) {
+                // if (0 < path.length) {
+                //     if (redo && atUpdateDepth) redo[path.join('/')] = newData;
+                //     if (undo) undo[path.join('/')] = data;
+                // }
+                {
+                    if (null == data) {
+                        if (null == newData) {
+                            throw "N/A";
+                        }
+                        if ('object' === typeof newData) ;
+                        else {
+                            redo.length = 0;
+                            redo.push([path.join('/'), newData]);
+                            undo.length = 0;
+                            undo.push([path.join('/'), null]);
+                        }
+                    }
+                    else if ('object' === typeof data) {
+                        if (null == newData) ;
+                        else if ('object' === typeof newData) ;
+                        else {
+                            redo.length = 0;
+                            redo.push([path.join('/'), newData]);
+                            // (nested)
+                        }
+                    }
+                    else {
+                        // value
+                        if (null == newData) {
+                            redo.length = 0;
+                            redo.push([path.join('/'), null]);
+                            undo.length = 0;
+                            undo.push([path.join('/'), data]);
+                        }
+                        else if ('object' === typeof newData) {
+                            // (nested)
+                            undo.length = 0;
+                            undo.push([path.join('/'), data]);
+                        }
+                        else {
+                            redo.length = 0;
+                            redo.push([path.join('/'), null]);
+                            undo.length = 0;
+                            undo.push([path.join('/'), data]);
+                        }
+                    }
+                }
+                for (const watcherTree of watcherTrees) {
+                    for (const watcher of watcherTree[WatchersKey] || []) {
+                        (watcher)(path, data, newData);
+                    }
+                }
+                return { data: newData, undo, redo };
+            }
+            return { data, undo, redo };
+        }
+        /// Given a list WATCHER_TREES get the next level down of watcher trees, corresponding to KEY.
+        static _nextWatcherTrees(key, watcherTrees) {
+            const nextTrees = [];
+            for (const watcherTree of watcherTrees) {
+                watcherTree['*'] && nextTrees.push(watcherTree['*']);
+                watcherTree[key] && nextTrees.push(watcherTree[key]);
+            }
+            return nextTrees;
+        }
+    }
+
+    const boardState = window.boardState = new StateManager();
+    const globalConstraints = writable([]);
+    const CONSTRAINT_COMPONENTS = {
+        ['diagonal']: Diagonal,
+        ['knight']: Knight,
+        ['king']: King,
+        ['disjointGroups']: DisjointGroups,
+        ['consecutive']: Nonconsecutive,
+    };
+    boardState.update({
+        grid: {
+            width: 9,
+            height: 9,
+        },
+        constraints: {
+            '10800': {
+                type: 'diagonal',
+                value: {
+                    positive: true,
+                    negative: false,
+                },
+                meta: {
+                    order: 0,
+                },
+            },
+            '10090': {
+                type: 'knight',
+                value: false,
+                meta: {
+                    order: 1,
+                },
+            },
+            '10100': {
+                type: 'king',
+                value: false,
+                meta: {
+                    order: 2,
+                },
+            },
+            '10110': {
+                type: 'disjointGroups',
+                value: false,
+                meta: {
+                    order: 3,
+                },
+            },
+            '10120': {
+                type: 'consecutive',
+                value: false,
+                meta: {
+                    order: 4,
+                },
+            },
+        },
+    });
+    boardState.watch(([_constraints, constraintId], oldVal, newVal) => {
+        if (null == oldVal) {
+            const component = CONSTRAINT_COMPONENTS[newVal.type];
+            globalConstraints.update(arr => {
+                arr.push({
+                    id: constraintId,
+                    value: newVal.value,
+                    component
+                });
+                return arr;
+            });
+        }
+    }, true, 'constraints/*');
+
+    /* src\svelte\edit\EditPanel.svelte generated by Svelte v3.38.3 */
+    const file$2 = "src\\svelte\\edit\\EditPanel.svelte";
+
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[1] = list[i].id;
+    	child_ctx[2] = list[i].value;
+    	child_ctx[3] = list[i].component;
+    	return child_ctx;
+    }
+
+    // (10:8) <EditSection title="Solver Panel">
+    function create_default_slot_4(ctx) {
     	let t;
 
     	const block = {
@@ -1659,17 +2568,198 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1.name,
+    		id: create_default_slot_4.name,
     		type: "slot",
-    		source: "(9:8) <EditSection title=\\\"Solver Panel\\\">",
+    		source: "(10:8) <EditSection title=\\\"Solver Panel\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (14:8) <EditSection title="Global Constraints">
-    function create_default_slot(ctx) {
+    // (16:12) {#each globalConstraintsList as { id: _, value, component }}
+    function create_each_block(ctx) {
+    	let switch_instance;
+    	let switch_instance_anchor;
+    	let current;
+    	var switch_value = /*component*/ ctx[3];
+
+    	function switch_props(ctx) {
+    		return {
+    			props: { value: /*value*/ ctx[2] },
+    			$$inline: true
+    		};
+    	}
+
+    	if (switch_value) {
+    		switch_instance = new switch_value(switch_props(ctx));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			if (switch_instance) create_component(switch_instance.$$.fragment);
+    			switch_instance_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if (switch_instance) {
+    				mount_component(switch_instance, target, anchor);
+    			}
+
+    			insert_dev(target, switch_instance_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const switch_instance_changes = {};
+    			if (dirty & /*globalConstraintsList*/ 1) switch_instance_changes.value = /*value*/ ctx[2];
+
+    			if (switch_value !== (switch_value = /*component*/ ctx[3])) {
+    				if (switch_instance) {
+    					group_outros();
+    					const old_component = switch_instance;
+
+    					transition_out(old_component.$$.fragment, 1, 0, () => {
+    						destroy_component(old_component, 1);
+    					});
+
+    					check_outros();
+    				}
+
+    				if (switch_value) {
+    					switch_instance = new switch_value(switch_props(ctx));
+    					create_component(switch_instance.$$.fragment);
+    					transition_in(switch_instance.$$.fragment, 1);
+    					mount_component(switch_instance, switch_instance_anchor.parentNode, switch_instance_anchor);
+    				} else {
+    					switch_instance = null;
+    				}
+    			} else if (switch_value) {
+    				switch_instance.$set(switch_instance_changes);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			if (switch_instance) transition_in(switch_instance.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (switch_instance) transition_out(switch_instance.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(switch_instance_anchor);
+    			if (switch_instance) destroy_component(switch_instance, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(16:12) {#each globalConstraintsList as { id: _, value, component }}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (15:8) <EditSection title="Global Constraints">
+    function create_default_slot_3(ctx) {
+    	let each_1_anchor;
+    	let current;
+    	let each_value = /*globalConstraintsList*/ ctx[0];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*globalConstraintsList*/ 1) {
+    				each_value = /*globalConstraintsList*/ ctx[0];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_3.name,
+    		type: "slot",
+    		source: "(15:8) <EditSection title=\\\"Global Constraints\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (22:8) <EditSection title="Global Constraints">
+    function create_default_slot_2(ctx) {
     	let constraintlist;
     	let current;
     	constraintlist = new ConstraintList({ $$inline: true });
@@ -1698,9 +2788,154 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
+    		id: create_default_slot_2.name,
+    		type: "slot",
+    		source: "(22:8) <EditSection title=\\\"Global Constraints\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (27:8) <EditSection title="Local Constraints">
+    function create_default_slot_1(ctx) {
+    	let ul;
+    	let li0;
+    	let input0;
+    	let t0;
+    	let label0;
+    	let t2;
+    	let li1;
+    	let input1;
+    	let t3;
+    	let label1;
+    	let t5;
+    	let li2;
+    	let input2;
+    	let t6;
+    	let label2;
+    	let t8;
+    	let li3;
+    	let input3;
+    	let t9;
+    	let label3;
+
+    	const block = {
+    		c: function create() {
+    			ul = element("ul");
+    			li0 = element("li");
+    			input0 = element("input");
+    			t0 = space();
+    			label0 = element("label");
+    			label0.textContent = "Digit";
+    			t2 = space();
+    			li1 = element("li");
+    			input1 = element("input");
+    			t3 = space();
+    			label1 = element("label");
+    			label1.textContent = "Thermo";
+    			t5 = space();
+    			li2 = element("li");
+    			input2 = element("input");
+    			t6 = space();
+    			label2 = element("label");
+    			label2.textContent = "Arrow";
+    			t8 = space();
+    			li3 = element("li");
+    			input3 = element("input");
+    			t9 = space();
+    			label3 = element("label");
+    			label3.textContent = "Sandwich";
+    			attr_dev(input0, "type", "radio");
+    			attr_dev(input0, "id", "digitTool");
+    			attr_dev(input0, "name", "localConstraints");
+    			input0.checked = true;
+    			add_location(input0, file$2, 29, 20, 905);
+    			attr_dev(label0, "for", "digitTool");
+    			add_location(label0, file$2, 35, 20, 1111);
+    			add_location(li0, file$2, 28, 16, 880);
+    			attr_dev(input1, "type", "radio");
+    			attr_dev(input1, "id", "thermoTool");
+    			attr_dev(input1, "name", "localConstraints");
+    			add_location(input1, file$2, 38, 20, 1213);
+    			attr_dev(label1, "for", "thermoTool");
+    			add_location(label1, file$2, 43, 20, 1388);
+    			add_location(li1, file$2, 37, 16, 1188);
+    			attr_dev(input2, "type", "radio");
+    			attr_dev(input2, "id", "arrowTool");
+    			attr_dev(input2, "name", "localConstraints");
+    			add_location(input2, file$2, 46, 20, 1492);
+    			attr_dev(label2, "for", "arrowTool");
+    			add_location(label2, file$2, 51, 20, 1666);
+    			add_location(li2, file$2, 45, 16, 1467);
+    			attr_dev(input3, "type", "radio");
+    			attr_dev(input3, "id", "sandwichTool");
+    			attr_dev(input3, "name", "localConstraints");
+    			add_location(input3, file$2, 54, 20, 1768);
+    			attr_dev(label3, "for", "sandwichTool");
+    			add_location(label3, file$2, 59, 20, 1945);
+    			add_location(li3, file$2, 53, 16, 1743);
+    			add_location(ul, file$2, 27, 12, 859);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, ul, anchor);
+    			append_dev(ul, li0);
+    			append_dev(li0, input0);
+    			append_dev(li0, t0);
+    			append_dev(li0, label0);
+    			append_dev(ul, t2);
+    			append_dev(ul, li1);
+    			append_dev(li1, input1);
+    			append_dev(li1, t3);
+    			append_dev(li1, label1);
+    			append_dev(ul, t5);
+    			append_dev(ul, li2);
+    			append_dev(li2, input2);
+    			append_dev(li2, t6);
+    			append_dev(li2, label2);
+    			append_dev(ul, t8);
+    			append_dev(ul, li3);
+    			append_dev(li3, input3);
+    			append_dev(li3, t9);
+    			append_dev(li3, label3);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(ul);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_1.name,
+    		type: "slot",
+    		source: "(27:8) <EditSection title=\\\"Local Constraints\\\">",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (66:8) <EditSection title="Cosmetic Tools">
+    function create_default_slot(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Nothing Here!");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(14:8) <EditSection title=\\\"Global Constraints\\\">",
+    		source: "(66:8) <EditSection title=\\\"Cosmetic Tools\\\">",
     		ctx
     	});
 
@@ -1708,49 +2943,27 @@ var app = (function () {
     }
 
     function create_fragment$2(ctx) {
-    	let ul1;
+    	let ul;
     	let li0;
     	let editsection0;
     	let t0;
     	let li1;
     	let editsection1;
     	let t1;
-    	let li6;
-    	let h40;
-    	let icon0;
-    	let t2;
-    	let t3;
-    	let ul0;
     	let li2;
-    	let input0;
-    	let t4;
-    	let label0;
-    	let t6;
+    	let editsection2;
+    	let t2;
     	let li3;
-    	let input1;
-    	let t7;
-    	let label1;
-    	let t9;
+    	let editsection3;
+    	let t3;
     	let li4;
-    	let input2;
-    	let t10;
-    	let label2;
-    	let t12;
-    	let li5;
-    	let input3;
-    	let t13;
-    	let label3;
-    	let t15;
-    	let li7;
-    	let h41;
-    	let icon1;
-    	let t16;
+    	let editsection4;
     	let current;
 
     	editsection0 = new EditSection({
     			props: {
     				title: "Solver Panel",
-    				$$slots: { default: [create_default_slot_1] },
+    				$$slots: { default: [create_default_slot_4] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -1759,186 +2972,146 @@ var app = (function () {
     	editsection1 = new EditSection({
     			props: {
     				title: "Global Constraints",
+    				$$slots: { default: [create_default_slot_3] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	editsection2 = new EditSection({
+    			props: {
+    				title: "Global Constraints",
+    				$$slots: { default: [create_default_slot_2] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	editsection3 = new EditSection({
+    			props: {
+    				title: "Local Constraints",
+    				$$slots: { default: [create_default_slot_1] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	editsection4 = new EditSection({
+    			props: {
+    				title: "Cosmetic Tools",
     				$$slots: { default: [create_default_slot] },
     				$$scope: { ctx }
     			},
     			$$inline: true
     		});
 
-    	icon0 = new Icon({
-    			props: { icon: "tree-menu-shown" },
-    			$$inline: true
-    		});
-
-    	icon1 = new Icon({
-    			props: { icon: "tree-menu-hidden" },
-    			$$inline: true
-    		});
-
     	const block = {
     		c: function create() {
-    			ul1 = element("ul");
+    			ul = element("ul");
     			li0 = element("li");
     			create_component(editsection0.$$.fragment);
     			t0 = space();
     			li1 = element("li");
     			create_component(editsection1.$$.fragment);
     			t1 = space();
-    			li6 = element("li");
-    			h40 = element("h4");
-    			create_component(icon0.$$.fragment);
-    			t2 = text("\n            Local Constraints");
-    			t3 = space();
-    			ul0 = element("ul");
     			li2 = element("li");
-    			input0 = element("input");
-    			t4 = space();
-    			label0 = element("label");
-    			label0.textContent = "Digit";
-    			t6 = space();
+    			create_component(editsection2.$$.fragment);
+    			t2 = space();
     			li3 = element("li");
-    			input1 = element("input");
-    			t7 = space();
-    			label1 = element("label");
-    			label1.textContent = "Thermo";
-    			t9 = space();
+    			create_component(editsection3.$$.fragment);
+    			t3 = space();
     			li4 = element("li");
-    			input2 = element("input");
-    			t10 = space();
-    			label2 = element("label");
-    			label2.textContent = "Arrow";
-    			t12 = space();
-    			li5 = element("li");
-    			input3 = element("input");
-    			t13 = space();
-    			label3 = element("label");
-    			label3.textContent = "Sandwich";
-    			t15 = space();
-    			li7 = element("li");
-    			h41 = element("h4");
-    			create_component(icon1.$$.fragment);
-    			t16 = text("\n            Cosmetic Tools");
-    			add_location(li0, file$2, 7, 4, 180);
-    			add_location(li1, file$2, 12, 4, 291);
-    			attr_dev(h40, "class", "section-title");
-    			add_location(h40, file$2, 18, 8, 426);
-    			attr_dev(input0, "type", "radio");
-    			attr_dev(input0, "id", "digitTool");
-    			attr_dev(input0, "name", "localConstraints");
-    			input0.checked = true;
-    			add_location(input0, file$2, 24, 16, 587);
-    			attr_dev(label0, "for", "digitTool");
-    			add_location(label0, file$2, 30, 16, 769);
-    			add_location(li2, file$2, 23, 12, 566);
-    			attr_dev(input1, "type", "radio");
-    			attr_dev(input1, "id", "thermoTool");
-    			attr_dev(input1, "name", "localConstraints");
-    			add_location(input1, file$2, 33, 16, 859);
-    			attr_dev(label1, "for", "thermoTool");
-    			add_location(label1, file$2, 38, 16, 1014);
-    			add_location(li3, file$2, 32, 12, 838);
-    			attr_dev(input2, "type", "radio");
-    			attr_dev(input2, "id", "arrowTool");
-    			attr_dev(input2, "name", "localConstraints");
-    			add_location(input2, file$2, 41, 16, 1106);
-    			attr_dev(label2, "for", "arrowTool");
-    			add_location(label2, file$2, 46, 16, 1260);
-    			add_location(li4, file$2, 40, 12, 1085);
-    			attr_dev(input3, "type", "radio");
-    			attr_dev(input3, "id", "sandwichTool");
-    			attr_dev(input3, "name", "localConstraints");
-    			add_location(input3, file$2, 49, 16, 1350);
-    			attr_dev(label3, "for", "sandwichTool");
-    			add_location(label3, file$2, 54, 16, 1507);
-    			add_location(li5, file$2, 48, 12, 1329);
-    			add_location(ul0, file$2, 22, 8, 549);
-    			add_location(li6, file$2, 17, 4, 413);
-    			attr_dev(h41, "class", "section-title");
-    			add_location(h41, file$2, 59, 8, 1611);
-    			add_location(li7, file$2, 58, 4, 1598);
-    			attr_dev(ul1, "class", "nolist");
-    			add_location(ul1, file$2, 6, 0, 156);
+    			create_component(editsection4.$$.fragment);
+    			add_location(li0, file$2, 8, 4, 315);
+    			add_location(li1, file$2, 13, 4, 426);
+    			add_location(li2, file$2, 20, 4, 672);
+    			add_location(li3, file$2, 25, 4, 794);
+    			add_location(li4, file$2, 64, 4, 2067);
+    			attr_dev(ul, "class", "nolist");
+    			add_location(ul, file$2, 7, 0, 291);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, ul1, anchor);
-    			append_dev(ul1, li0);
+    			insert_dev(target, ul, anchor);
+    			append_dev(ul, li0);
     			mount_component(editsection0, li0, null);
-    			append_dev(ul1, t0);
-    			append_dev(ul1, li1);
+    			append_dev(ul, t0);
+    			append_dev(ul, li1);
     			mount_component(editsection1, li1, null);
-    			append_dev(ul1, t1);
-    			append_dev(ul1, li6);
-    			append_dev(li6, h40);
-    			mount_component(icon0, h40, null);
-    			append_dev(h40, t2);
-    			append_dev(li6, t3);
-    			append_dev(li6, ul0);
-    			append_dev(ul0, li2);
-    			append_dev(li2, input0);
-    			append_dev(li2, t4);
-    			append_dev(li2, label0);
-    			append_dev(ul0, t6);
-    			append_dev(ul0, li3);
-    			append_dev(li3, input1);
-    			append_dev(li3, t7);
-    			append_dev(li3, label1);
-    			append_dev(ul0, t9);
-    			append_dev(ul0, li4);
-    			append_dev(li4, input2);
-    			append_dev(li4, t10);
-    			append_dev(li4, label2);
-    			append_dev(ul0, t12);
-    			append_dev(ul0, li5);
-    			append_dev(li5, input3);
-    			append_dev(li5, t13);
-    			append_dev(li5, label3);
-    			append_dev(ul1, t15);
-    			append_dev(ul1, li7);
-    			append_dev(li7, h41);
-    			mount_component(icon1, h41, null);
-    			append_dev(h41, t16);
+    			append_dev(ul, t1);
+    			append_dev(ul, li2);
+    			mount_component(editsection2, li2, null);
+    			append_dev(ul, t2);
+    			append_dev(ul, li3);
+    			mount_component(editsection3, li3, null);
+    			append_dev(ul, t3);
+    			append_dev(ul, li4);
+    			mount_component(editsection4, li4, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
     			const editsection0_changes = {};
 
-    			if (dirty & /*$$scope*/ 1) {
+    			if (dirty & /*$$scope*/ 64) {
     				editsection0_changes.$$scope = { dirty, ctx };
     			}
 
     			editsection0.$set(editsection0_changes);
     			const editsection1_changes = {};
 
-    			if (dirty & /*$$scope*/ 1) {
+    			if (dirty & /*$$scope, globalConstraintsList*/ 65) {
     				editsection1_changes.$$scope = { dirty, ctx };
     			}
 
     			editsection1.$set(editsection1_changes);
+    			const editsection2_changes = {};
+
+    			if (dirty & /*$$scope*/ 64) {
+    				editsection2_changes.$$scope = { dirty, ctx };
+    			}
+
+    			editsection2.$set(editsection2_changes);
+    			const editsection3_changes = {};
+
+    			if (dirty & /*$$scope*/ 64) {
+    				editsection3_changes.$$scope = { dirty, ctx };
+    			}
+
+    			editsection3.$set(editsection3_changes);
+    			const editsection4_changes = {};
+
+    			if (dirty & /*$$scope*/ 64) {
+    				editsection4_changes.$$scope = { dirty, ctx };
+    			}
+
+    			editsection4.$set(editsection4_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(editsection0.$$.fragment, local);
     			transition_in(editsection1.$$.fragment, local);
-    			transition_in(icon0.$$.fragment, local);
-    			transition_in(icon1.$$.fragment, local);
+    			transition_in(editsection2.$$.fragment, local);
+    			transition_in(editsection3.$$.fragment, local);
+    			transition_in(editsection4.$$.fragment, local);
     			current = true;
     		},
     		o: function outro(local) {
     			transition_out(editsection0.$$.fragment, local);
     			transition_out(editsection1.$$.fragment, local);
-    			transition_out(icon0.$$.fragment, local);
-    			transition_out(icon1.$$.fragment, local);
+    			transition_out(editsection2.$$.fragment, local);
+    			transition_out(editsection3.$$.fragment, local);
+    			transition_out(editsection4.$$.fragment, local);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(ul1);
+    			if (detaching) detach_dev(ul);
     			destroy_component(editsection0);
     			destroy_component(editsection1);
-    			destroy_component(icon0);
-    			destroy_component(icon1);
+    			destroy_component(editsection2);
+    			destroy_component(editsection3);
+    			destroy_component(editsection4);
     		}
     	};
 
@@ -1956,14 +3129,31 @@ var app = (function () {
     function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("EditPanel", slots, []);
+    	
+    	let globalConstraintsList = [];
+    	globalConstraints.subscribe(value => $$invalidate(0, globalConstraintsList = value));
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<EditPanel> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ ConstraintList, EditSection, Icon });
-    	return [];
+    	$$self.$capture_state = () => ({
+    		ConstraintList,
+    		EditSection,
+    		globalConstraints,
+    		globalConstraintsList
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ("globalConstraintsList" in $$props) $$invalidate(0, globalConstraintsList = $$props.globalConstraintsList);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [globalConstraintsList];
     }
 
     class EditPanel extends SvelteComponentDev {
@@ -2179,28 +3369,28 @@ var app = (function () {
     			footer = element("footer");
     			footer.textContent = "SudokuStudio";
     			attr_dev(div0, "class", "content-row");
-    			add_location(div0, file, 6, 8, 170);
+    			add_location(div0, file, 6, 8, 175);
     			attr_dev(div1, "class", "content");
-    			add_location(div1, file, 5, 4, 140);
+    			add_location(div1, file, 5, 4, 145);
     			attr_dev(header1, "class", "svelte-q96pc2");
-    			add_location(header1, file, 4, 0, 127);
+    			add_location(header1, file, 4, 0, 132);
     			attr_dev(div2, "class", "left-panel svelte-q96pc2");
-    			add_location(div2, file, 14, 12, 334);
+    			add_location(div2, file, 14, 12, 339);
     			if (img.src !== (img_src_value = "svg/example-grid.svg")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "Sudoku Grid");
-    			add_location(img, file, 18, 16, 463);
+    			add_location(img, file, 18, 16, 468);
     			attr_dev(div3, "class", "center-panel svelte-q96pc2");
-    			add_location(div3, file, 17, 12, 420);
+    			add_location(div3, file, 17, 12, 425);
     			attr_dev(div4, "class", "right-panel svelte-q96pc2");
-    			add_location(div4, file, 20, 12, 547);
+    			add_location(div4, file, 20, 12, 552);
     			attr_dev(div5, "class", "content-row svelte-q96pc2");
-    			add_location(div5, file, 13, 8, 296);
+    			add_location(div5, file, 13, 8, 301);
     			attr_dev(div6, "class", "content svelte-q96pc2");
-    			add_location(div6, file, 12, 4, 266);
+    			add_location(div6, file, 12, 4, 271);
     			attr_dev(main, "class", "svelte-q96pc2");
-    			add_location(main, file, 11, 0, 255);
+    			add_location(main, file, 11, 0, 260);
     			attr_dev(footer, "class", "svelte-q96pc2");
-    			add_location(footer, file, 24, 0, 624);
+    			add_location(footer, file, 24, 0, 629);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");

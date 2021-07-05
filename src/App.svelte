@@ -1,5 +1,5 @@
 <script lang="ts">
-import EditPanel from "./svelte/EditPanel.svelte";
+import EditPanel from "./svelte/edit/EditPanel.svelte";
 import Header from "./svelte/Header.svelte";
 
 </script>

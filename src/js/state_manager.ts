@@ -4,13 +4,15 @@ export type Data = null | undefined | string | number | boolean | object;
 export type Update = Record<string, Data>;
 export type Diff = { redo: Update, undo: Update };
 
-export interface Watcher {
-    (path: string[], oldVal: Data, newVal: Data): void;
+export interface Watcher<T extends Data> {
+    (path: string[], oldVal: NonNullable<T>, newVal: null): void;
+    (path: string[], oldVal: null, newVal: NonNullable<T>): void;
+    (path: string[], oldVal: NonNullable<T>, newVal: NonNullable<T>): void;
 }
 
 const WatchersKey = Symbol('watchers key');
 type WatcherTree = {
-    [WatchersKey]?: Set<Watcher>,
+    [WatchersKey]?: Set<Watcher<any>>,
     [K: string]: WatcherTree,
 }
 
@@ -37,21 +39,21 @@ export class StateManager {
     private _data: Data;
 
     /// Map from each watcher to the paths it's watching.
-    private readonly _watchers: Map<Watcher, Set<string>> = new Map();
+    private readonly _watchers: Map<Watcher<any>, Set<string>> = new Map();
     private readonly _watcherTreeRoot: WatcherTree = Object.create(null);
 
     constructor() {
         this._data = undefined;
     }
 
-    get<T>(...path: string[]): T | undefined {
+    get<T extends Data>(...path: string[]): T | undefined {
         if (path.includes('/')) throw Error('Path cannot contain "/", split into varargs.');
         let target = this._data;
         while (target && path.length) target = (target as any)[path.shift()!];
         return target as unknown as T;
     }
 
-    watch(watcher: Watcher, triggerNow: boolean, ...patterns: [ string, ...string[] ]): void {
+    watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean, ...patterns: [ string, ...string[] ]): void {
         let patternSet = this._watchers.get(watcher);
         if (null == patternSet) {
             patternSet = new Set();
@@ -92,7 +94,7 @@ export class StateManager {
         return null;
     }
 
-    private _watchPattern(watcher: Watcher, triggerNow: boolean, pattern: string): void {
+    private _watchPattern(watcher: Watcher<any>, triggerNow: boolean, pattern: string): void {
         if (!pattern || 0 >= pattern.length) {
             throw Error(`Pattern cannot be empty: ${pattern}.`);
         }
@@ -112,7 +114,7 @@ export class StateManager {
     }
 
     /// Triggers a newly added watcher.
-    private static _triggerNow(data: Data, segs: string[], path: string[], watcher: Watcher): void {
+    private static _triggerNow(data: Data, segs: string[], path: string[], watcher: Watcher<any>): void {
         if (null == data) return;
         if (0 >= segs.length) {
             // Base case - call watcher.

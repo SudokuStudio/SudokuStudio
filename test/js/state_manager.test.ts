@@ -7,7 +7,7 @@ type WatchEvent = {
 };
 type Log = WatchEvent[];
 
-function loggingWatcher(log: Log): Watcher {
+function loggingWatcher(log: Log): Watcher<any> {
     return (path, oldVal, newVal) => log.push({ path, oldVal, newVal });
 }
 
