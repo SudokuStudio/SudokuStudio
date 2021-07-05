@@ -1,0 +1,307 @@
+import { objectFromEntries } from './util';
+
+export type Data = null | undefined | string | number | boolean | object;
+export type Update = Record<string, Data>;
+export type Diff = { redo: Update, undo: Update };
+
+export interface Watcher {
+    (path: string[], oldVal: Data, newVal: Data): void;
+}
+
+const WatchersKey = Symbol('watchers key');
+type WatcherTree = {
+    [WatchersKey]?: Set<Watcher>,
+    [K: string]: WatcherTree,
+}
+
+type UpdateInternal = {
+    data: Data,
+    redo: [ string, Data ][],
+    undo: [ string, Data ][],
+};
+
+/// Same as Object.is except that null and undefined are considered equal.
+function isEq(a: unknown, b: unknown): boolean {
+    return (null == a && null == b) || Object.is(a, b);
+}
+
+/// StateManager provides an interface for updating and reacting to changes in data.
+/// Each instance stores a single JS object. Watchers can be assigned to react to changes
+/// in specified paths of the object. When updates are given to the StateManager, it will
+/// apply the changes and ensure all relevant watchers are called, and it will return a
+/// undo/redo diff to the caller.
+///
+/// This is where the magic happens.
+export class StateManager {
+    /// The data contained in and managed by this StateManager.
+    private _data: Data;
+
+    /// Map from each watcher to the paths it's watching.
+    private readonly _watchers: Map<Watcher, Set<string>> = new Map();
+    private readonly _watcherTreeRoot: WatcherTree = Object.create(null);
+
+    constructor() {
+        this._data = undefined;
+    }
+
+    get<T>(...path: string[]): T | undefined {
+        if (path.includes('/')) throw Error('Path cannot contain "/", split into varargs.');
+        let target = this._data;
+        while (target && path.length) target = (target as any)[path.shift()!];
+        return target as unknown as T;
+    }
+
+    watch(watcher: Watcher, triggerNow: boolean, ...patterns: [ string, ...string[] ]): void {
+        let patternSet = this._watchers.get(watcher);
+        if (null == patternSet) {
+            patternSet = new Set();
+            this._watchers.set(watcher, patternSet);
+        }
+
+        for (const pattern of patterns) {
+            this._watchPattern(watcher, triggerNow, pattern);
+        }
+    }
+
+    update(update: Update): null | Diff {
+        if ('object' !== typeof update) throw Error(`Invalid update object: ${update}`);
+
+        let changed = false;
+        const redo: [ string, Data ][] = [];
+        const undo: [ string, Data ][] = [];
+        for (const [ key, data ] of Object.entries(update)) {
+            if (0 >= key.length) throw Error(`Update key cannot be empty.`);
+            const segs = key.split('/');
+            const { data: newData, redo: newRedo, undo: newUndo } =
+                StateManager._updateInternal(this._data, data, segs, [], [ this._watcherTreeRoot ]);
+
+            if (!isEq(this._data, newData)) {
+                changed = true;
+
+                this._data = newData;
+                redo.push(...newRedo);
+                undo.push(...newUndo);
+            }
+        }
+        if (changed) {
+            return {
+                redo: objectFromEntries(redo) as Update,
+                undo: objectFromEntries(undo) as Update,
+            }
+        }
+        return null;
+    }
+
+    private _watchPattern(watcher: Watcher, triggerNow: boolean, pattern: string): void {
+        if (!pattern || 0 >= pattern.length) {
+            throw Error(`Pattern cannot be empty: ${pattern}.`);
+        }
+        const segs = pattern.split('/');
+        let watcherTree = this._watcherTreeRoot;
+        for (const seg of segs) {
+            if (!Object.prototype.hasOwnProperty.call(watcherTree, seg)) {
+                watcherTree[seg] = Object.create(null);
+            }
+            watcherTree = watcherTree[seg];
+        }
+        (watcherTree[WatchersKey] || (watcherTree[WatchersKey] = new Set())).add(watcher);
+
+        if (triggerNow) {
+            StateManager._triggerNow(this._data, segs, [], watcher);
+        }
+    }
+
+    /// Triggers a newly added watcher.
+    private static _triggerNow(data: Data, segs: string[], path: string[], watcher: Watcher): void {
+        if (null == data) return;
+        if (0 >= segs.length) {
+            // Base case - call watcher.
+            (watcher)(path, null, data);
+            return;
+        }
+        if ('object' !== typeof data) return; // If segs is not empty we can ignore primitives.
+
+        // Recurse.
+        const [ seg, ...restSegs ] = segs;
+        if ('*' === seg) {
+            for (const [ k, v ] of Object.entries(data)) {
+                this._triggerNow(v, restSegs, [ ...path, k ], watcher);
+            }
+        }
+        else if (Object.prototype.hasOwnProperty.call(data, seg)) {
+            this._triggerNow((data as any)[seg], restSegs, [ ...path, seg ], watcher);
+        }
+    }
+
+    /// DATA - Current data we're looking at, traversed recursively. This will NOT be modified.
+    /// UPDATE - New data used to update DATA. I.e. when SEGS is empty we return UPDATE. Portions of
+    ///     this object (if it is an object) may/will be incorporated into the returned object so be
+    ///     careful of side-effects (TODO?).
+    /// SEGS - Remaining target segments for the update.
+    /// PATH - Path of DATA relative to the root.
+    /// WATCHER_TREES - WatcherTrees encountered at the current level, containing watchers for this DATA.
+    /// DIFF - A Diff object in which the changes this update makes are written into. This will contain
+    ///     pieces of DATA and UPDATE so be careful of side effects (TODO?).
+    /// Returns - The replacement value for DATA, or DATA itself if no updates occured.
+    ///
+    /// Diff logic:
+    /// 3 cases we care about:
+    /// - Delete: First depth where data gets replaced with null.
+    /// - Create: First depth where null gets replaced with update.
+    /// - Replace: First depth where data gets replaced with update.
+    /// Only trigger this at update-point level.
+    private static _updateInternal(data: Data, update: Data, segs: string[], path: string[], watcherTrees: WatcherTree[]): UpdateInternal {
+        const atUpdateDepth = 0 >= segs.length;
+
+        // These will be an object or null, so primtives are coerced to null.
+        // This prevents trying to e.g. iterate strings as character array objects.
+        const dataObj = 'object' === typeof data ? data : null;
+        const updateObj = 'object' === typeof update ? update : null;
+
+        const { data: newData, redo, undo } = ((): UpdateInternal => {
+            if (atUpdateDepth) {
+                // At an update point!
+                if (null == dataObj && null == updateObj) {
+                    // We've reached a pair of primitives, this is the base case.
+                    return { data: update, undo: [], redo: [] }; // May be the same as data, or maybe not.
+                }
+                // Trigger update on every child key, not just one SEG.
+                const allKeys = new Set([
+                    ...Object.keys(dataObj || {}),
+                    ...Object.keys(updateObj || {}),
+                ]);
+                // Stores the changes (if any).
+                let dataUpdated = false;
+                const dataObjNew: Record<string, Data> = Object.create(null);
+                const redo = [];
+                const undo = [];
+                // For child keys.
+                for (const key of allKeys) {
+                    const innerData = dataObj && (dataObj as any)[key] || null;
+                    const innerUpdate = updateObj && (updateObj as any)[key] || null;
+                    const nextWatcherTrees = StateManager._nextWatcherTrees(key, watcherTrees);
+                    // Recurse.
+                    const { data: newInnerData, redo: innerRedo, undo: innerUndo } =
+                        StateManager._updateInternal(innerData, innerUpdate, [], [ ...path, key ], nextWatcherTrees);
+
+                    if (!isEq(innerData, newInnerData)) {
+                        dataUpdated = true;
+                        redo.push(...innerRedo);
+                        undo.push(...innerUndo);
+                        if (updateObj != null && Object.prototype.hasOwnProperty.call(updateObj, key)) {
+                            // Only take the update if it came from UPDATE and therefore wasn't a delete.
+                            dataObjNew[key] = newInnerData;
+                        }
+                    }
+                }
+                if (!dataUpdated) {
+                    // No changes.
+                    return { data, redo, undo };
+                }
+                // Yes changes.
+                if (0 >= Object.keys(dataObjNew).length) {
+                    // If dataObjNew is empty then take the update itself.
+                    return { data: update, redo, undo };
+                }
+                else {
+                    // Otherwise create the object.
+                    return {
+                        data: Object.assign(Object.create(null), dataObj, dataObjNew),
+                        redo, undo,
+                    };
+                }
+            }
+            // Not at an update point, just traversing the SEGS.
+            const [ key, ...segsRest ] = segs;
+            const innerData = dataObj && (dataObj as any)[key] || null;
+            // Do not change UPDATE... we are not at the updating depth yet.
+            const nextWatcherTrees = StateManager._nextWatcherTrees(key, watcherTrees);
+            // Recurse.
+            const { data: newInnerData, redo, undo } = StateManager._updateInternal(innerData, update, segsRest, [ ...path, key ], nextWatcherTrees);
+            if (isEq(innerData, newInnerData)) {
+                // No changes.
+                return { data, redo, undo };
+            }
+            // Yes changes.
+            return {
+                data: Object.assign(Object.create(null), dataObj, { [key]: newInnerData }),
+                redo, undo,
+            };
+        })();
+
+        if (!isEq(data, newData)) {
+            // if (0 < path.length) {
+            //     if (redo && atUpdateDepth) redo[path.join('/')] = newData;
+            //     if (undo) undo[path.join('/')] = data;
+            // }
+            {
+                if (null == data) {
+                    if (null == newData) {
+                        throw "N/A";
+                    }
+                    if ('object' === typeof newData) {
+                        // nested.
+                    }
+                    else {
+                        redo.length = 0;
+                        redo.push([ path.join('/'), newData ]);
+                        undo.length = 0;
+                        undo.push([ path.join('/'), null ]);
+                    }
+                }
+                else if ('object' === typeof data) {
+                    if (null == newData) {
+                        // redo.length = 0;
+                        // redo.push([ path.join('/'), null ]);
+                        // (nested)
+                    }
+                    else if ('object' === typeof newData) {
+                        // (both nested)
+                    }
+                    else {
+                        redo.length = 0;
+                        redo.push([ path.join('/'), newData ]);
+                        // (nested)
+                    }
+                }
+                else {
+                    // value
+                    if (null == newData) {
+                        redo.length = 0;
+                        redo.push([ path.join('/'), null ]);
+                        undo.length = 0;
+                        undo.push([ path.join('/'), data ]);
+                    }
+                    else if ('object' === typeof newData) {
+                        // (nested)
+                        undo.length = 0;
+                        undo.push([ path.join('/'), data ]);
+                    }
+                    else {
+                        redo.length = 0;
+                        redo.push([ path.join('/'), null ]);
+                        undo.length = 0;
+                        undo.push([ path.join('/'), data ]);
+                    }
+                }
+            }
+            for (const watcherTree of watcherTrees) {
+                for (const watcher of watcherTree[WatchersKey] || []) {
+                    (watcher)(path, data, newData);
+                }
+            }
+            return { data: newData, undo, redo };
+        }
+        return { data, undo, redo };
+    }
+
+    /// Given a list WATCHER_TREES get the next level down of watcher trees, corresponding to KEY.
+    private static _nextWatcherTrees(key: string, watcherTrees: WatcherTree[]): WatcherTree[] {
+        const nextTrees: WatcherTree[] = [];
+        for (const watcherTree of watcherTrees) {
+            watcherTree['*'] && nextTrees.push(watcherTree['*']);
+            watcherTree[key] && nextTrees.push(watcherTree[key]);
+        }
+        return nextTrees;
+    }
+}

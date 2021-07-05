@@ -1,6 +1,6 @@
 <script lang="ts">
-import EditPanel from "./components/EditPanel.svelte";
-import Header from "./components/Header.svelte";
+import EditPanel from "./svelte/EditPanel.svelte";
+import Header from "./svelte/Header.svelte";
 
 </script>
 
@@ -27,7 +27,7 @@ import Header from "./components/Header.svelte";
 <footer>SudokuStudio</footer>
 
 <style lang="scss">
-    @use './styles/vars' as vars;
+    @use './css/vars' as vars;
 
     header {
         flex: 0 0 auto;

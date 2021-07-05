@@ -18,7 +18,7 @@
 </div>
 
 <style lang="scss">
-    @use '../styles/vars';
+    @use '../css/vars';
 
     .header-left {
         flex: 1 1 100%;
@@ -77,9 +77,7 @@
             justify-content: flex-end;
         }
 
-        li {
-
-        }
-
+        // li {
+        // }
     }
 </style>

@@ -13,7 +13,7 @@
 </div>
 
 <style lang="scss">
-    @use '../styles/vars';
+    @use '../css/vars';
     .section-title {
         margin: 0.5em 0;
         font-weight: vars.$font-weight-heavy;

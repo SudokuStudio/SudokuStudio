@@ -1,50 +1,26 @@
-<script>
-import Icon from "./Icon.svelte";
+<script lang="ts">
+    import ConstraintRow from "./ConstraintRow.svelte";
+    import type { Item } from "./ConstraintRow.svelte";
+    import Icon from "./Icon.svelte";
 
+    const diagToggles: Item[] = [
+        {
+            id: '10080',
+            name: 'Positive Diagonal',
+            icon: 'positive-diagonal',
+        },
+        {
+            id: '10090',
+            name: 'Negative Diagonal',
+            icon: 'negative-diagonal',
+        }
+    ]
 </script>
+
 <ul class="nolist">
     <!-- diagonals -->
     <li>
-        <div class="constraint-row">
-            <div class="constraint-row-left">
-                <Icon icon="trash" />
-                Diagonals
-            </div>
-            <div class="constraint-row-right">
-                <div class="constraint-iconbutton">
-                    <label
-                        for="constraint-diagonal-positive"
-                    >
-                        <Icon icon="positive-diagonal" />
-                        <span class="sr-only"
-                            >Positive Diagonal
-                            Constraint</span
-                        >
-                    </label>
-                    <input
-                        id="constraint-diagonal-positive"
-                        type="checkbox"
-                        name="constraint-diagonal-positive"
-                    />
-                </div>
-                <div class="constraint-iconbutton">
-                    <label
-                        for="constraint-diagonal-negative"
-                    >
-                        <Icon icon="negative-diagonal" />
-                        <span class="sr-only"
-                            >Negative Diagonal
-                            Constraint</span
-                        >
-                    </label>
-                    <input
-                        id="constraint-diagonal-negative"
-                        type="checkbox"
-                        name="constraint-diagonal-negative"
-                    />
-                </div>
-            </div>
-        </div>
+        <ConstraintRow name="Diagonals" items={diagToggles} />
     </li>
     <!-- antiknight -->
     <li>
@@ -157,8 +133,8 @@ import Icon from "./Icon.svelte";
 </ul>
 
 <style lang="scss">
-    @use '../styles/vars';
-    @use '../styles/clearfix';
+    @use '../css/vars';
+    @use '../css/clearfix';
 
     .constraint-row {
         @include clearfix.clearfix;
