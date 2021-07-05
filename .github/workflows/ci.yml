@@ -18,8 +18,10 @@ jobs:
     - name: Install packages
       run: npm ci
 
-    - name: Build parcel
-      run: npm run build
+    - name: Clean & Build
+      run: |
+        npm run clean
+        npm run build
 
     - name: Deploy to gh-pages
       shell: bash

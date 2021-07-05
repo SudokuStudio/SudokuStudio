@@ -8,7 +8,8 @@
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "sourceMap": true,
   },
   "typeRoots": ["src/global.d.ts"]
 }
