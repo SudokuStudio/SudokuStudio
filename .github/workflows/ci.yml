@@ -1,0 +1,41 @@
+on: [push]
+name: CI
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout sources
+      uses: actions/checkout@v2
+
+    - name: Setup node
+      uses: actions/setup-node@v2
+
+    - name: Install packages
+      run: npm ci
+
+    - name: Build parcel
+      run: npm run build
+
+    - name: Deploy to gh-pages
+      shell: bash
+      run: |
+        git -C dist init -q
+        git -C dist remote add origin "$(git remote get-url origin)"
+        git -C dist fetch origin gh-pages:gh-pages
+        git -C dist config credential.helper "$(git config credential.helper)"
+        git -C dist config 'http.https://github.com/.extraheader' "$(git config 'http.https://github.com/.extraheader')"
+        git -C dist config core.autocrlf input
+        git -C dist config core.safecrlf false
+        git -C dist symbolic-ref HEAD refs/heads/gh-pages
+        git -C dist reset
+        git -C dist add -A
+        if git -C dist -c 'user.name=github-actions[bot]' -c 'user.email=41898282+github-actions[bot]@users.noreply.github.com' \
+          commit -m "Deploy $(date -I) $(git rev-parse HEAD)";
+        then
+          git -C dist push -u origin gh-pages --quiet
+        else
+          echo 'No changes to commit'
+        fi
