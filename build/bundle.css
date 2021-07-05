@@ -581,11 +581,6 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   white-space: nowrap;
 }
 
-.constraint-toggle.svelte-h67gfh {
-  margin-left: 0.5em;
-  display: inline-block;
-}
-
 .constraint-row.svelte-1kmaedl.svelte-1kmaedl {
   white-space: nowrap;
 }
@@ -606,4 +601,9 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
 .constraint-row.svelte-1kmaedl .constraint-row-right.svelte-1kmaedl {
   margin-left: 0.5em;
   float: right;
+}
+
+.constraint-toggle.svelte-h67gfh {
+  margin-left: 0.5em;
+  display: inline-block;
 }
