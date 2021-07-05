@@ -1,0 +1,15 @@
+$header-height: 6rem;
+$footer-height: 1.5rem;
+
+$content-margin: 3rem;
+
+$sudoku-size-big: min(calc(70vw - 20em), calc(100vh - #{$header-height + $footer-height}));
+$sudoku-size-small: min(calc(100vw - #{2 * $content-margin}), 50vh);
+
+$font-weight-normal: 500;
+$font-weight-heavy: 800;
+
+$max-aspect-ratio: 1.8;
+
+$color-clickable: #5f7694;
+$color-warning: #916363;

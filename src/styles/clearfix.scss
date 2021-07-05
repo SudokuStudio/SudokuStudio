@@ -1,0 +1,11 @@
+//https://stackoverflow.com/a/16028620/2398020
+@mixin clearfix {
+    &:before,
+    &:after {
+        content: " "; /* 1 */
+        display: table; /* 2 */
+    }
+    &:after {
+        clear: both;
+    }
+}

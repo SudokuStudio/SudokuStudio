@@ -5,7 +5,10 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
-import css from 'rollup-plugin-css-only';
+// import css from 'rollup-plugin-css-only';
+import scss from 'rollup-plugin-scss';
+
+import inlineSvg from './inlineSvg';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -30,6 +33,8 @@ function serve() {
     };
 }
 
+
+
 export default {
     input: 'src/main.ts',
     output: {
@@ -41,14 +46,19 @@ export default {
     plugins: [
         svelte({
             preprocess: sveltePreprocess({ sourceMap: !production }),
-			compilerOptions: {
+            compilerOptions: {
                 // enable run-time checks when not in production
-                dev: !production
-            }
+                dev: !production,
+            },
         }),
-        // we'll extract any component CSS out into
-        // a separate file - better for performance
-        css({ output: 'bundle.css' }),
+        scss({
+            functions: {
+                'inline-svg($filename)': inlineSvg
+            },
+        }),
+        // // we'll extract any component CSS out into
+        // // a separate file - better for performance
+        // css({ output: 'bundle.css' }),
 
         // If you have external dependencies installed from
         // npm, you'll most likely need these plugins. In
@@ -60,10 +70,10 @@ export default {
             dedupe: ['svelte']
         }),
         commonjs(),
-		typescript({
-			sourceMap: !production,
-			inlineSources: !production
-		}),
+        typescript({
+            sourceMap: !production,
+            inlineSources: !production
+        }),
 
         // In dev mode, call `npm run start` once
         // the bundle has been generated

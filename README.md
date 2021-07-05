@@ -18,5 +18,5 @@ npm ci
 
 For a live-reloading development server run:
 ```
-npm run start
+npm run dev
 ```
