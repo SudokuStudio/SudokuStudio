@@ -6,5 +6,5 @@
 </script>
 
 <ConstraintRow name="Antiknight">
-    <ConstraintToggle name="Toggle Anitknight Constraint" icon="knight" checked={value} />
+    <ConstraintToggle name="Toggle Anitknight Constraint" icon="knight" checked={value} on:input />
 </ConstraintRow>

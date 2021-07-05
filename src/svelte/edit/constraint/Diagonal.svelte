@@ -9,6 +9,6 @@
 </script>
 
 <ConstraintRow name="Diagonals">
-    <ConstraintToggle name="Toggle Positive Diagonal" icon="positive-diagonal" checked={value.positive} />
-    <ConstraintToggle name="Toggle Negative Diagonal" icon="negative-diagonal" checked={value.negative} />
+    <ConstraintToggle name="Toggle Positive Diagonal" icon="positive-diagonal" checked={value.positive} on:input />
+    <ConstraintToggle name="Toggle Negative Diagonal" icon="negative-diagonal" checked={value.negative} on:input />
 </ConstraintRow>

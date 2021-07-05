@@ -6,5 +6,5 @@
 </script>
 
 <ConstraintRow name="Nonconsecutive">
-    <ConstraintToggle name="Toggle Nonconsecutive Constraint" icon="nonconsecutive" checked={value} />
+    <ConstraintToggle name="Toggle Nonconsecutive Constraint" icon="nonconsecutive" checked={value} on:input />
 </ConstraintRow>

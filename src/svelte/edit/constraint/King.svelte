@@ -6,5 +6,5 @@
 </script>
 
 <ConstraintRow name="Antiking">
-    <ConstraintToggle name="Toggle Antiking Constraint" icon="king" checked={value} />
+    <ConstraintToggle name="Toggle Antiking Constraint" icon="king" checked={value} on:input />
 </ConstraintRow>

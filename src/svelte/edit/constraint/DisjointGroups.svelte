@@ -6,5 +6,5 @@
 </script>
 
 <ConstraintRow name="Disjoint Groups">
-    <ConstraintToggle name="Toggle Disjoint Groups Constraint" icon="disjoint" checked={value} />
+    <ConstraintToggle name="Toggle Disjoint Groups Constraint" icon="disjoint" checked={value} on:input />
 </ConstraintRow>
