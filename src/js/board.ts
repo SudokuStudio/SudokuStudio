@@ -74,21 +74,27 @@ boardState.update({
 });
 
 boardState.watch<schema.Constraint>(([ _constraints, constraintId ], oldVal, newVal) => {
-    if (null == oldVal) {
-        const component = CONSTRAINT_COMPONENTS[newVal!.type];
-        globalConstraints.update(arr => {
-            arr.push({
-                id: constraintId,
-                value: newVal!.value,
-                component
-            });
-            return arr;
-        });
+    if (null == newVal) {
+        // Delete.
+        globalConstraints.update(arr => arr.filter(({ id }) => constraintId !== id));
+        return;
     }
-    else if (null == newVal) {
-        // Remove
-    }
-    else {
-        // Change
-    }
+    // Add or update.
+    const item = {
+        id: constraintId,
+        value: newVal!.value,
+        component: CONSTRAINT_COMPONENTS[newVal!.type],
+    };
+
+    globalConstraints.update(arr => {
+        if (null == oldVal) { // Add.
+            arr.push(item);
+        }
+        else { // Update.
+            const i = arr.findIndex(({ id }) => constraintId === id);
+            if (0 > i) throw Error(`Failed to find constraint with id ${constraintId} in list.`);
+            arr[i] = item;
+        }
+        return arr;
+    });
 }, true, 'constraints/*');

@@ -59,6 +59,52 @@ describe('class StateManager', () => {
             expect(log[log.length - 1].newVal).toBeNull();
         });
 
+        it('basic ref', () => {
+            const stateMgr = new StateManager();
+
+            const log: Log = [];
+            stateMgr.ref('name').watch(loggingWatcher(log), true);
+
+            stateMgr.update({
+                foo: 'bar',
+            });
+            expect(log.length).toEqual(0);
+
+            stateMgr.update({
+                name: 'jake',
+            });
+            expect(log.length).toEqual(1);
+            expect(log[log.length - 1].path).toEqual([ 'name' ]);
+            expect(log[log.length - 1].oldVal).toBeNull();
+            expect(log[log.length - 1].newVal).toEqual('jake');
+
+            stateMgr.update({
+                name: {
+                    jake: 5,
+                },
+            });
+            expect(log.length).toEqual(2);
+            expect(log[log.length - 1].path).toEqual([ 'name' ]);
+            expect(log[log.length - 1].oldVal).toEqual('jake');
+            expect(log[log.length - 1].newVal).toEqual({ jake: 5 });
+
+            stateMgr.update({
+                'name/jake': 2,
+            });
+            expect(log.length).toEqual(3);
+            expect(log[log.length - 1].path).toEqual([ 'name' ]);
+            expect(log[log.length - 1].oldVal).toEqual({ jake: 5 });
+            expect(log[log.length - 1].newVal).toEqual({ jake: 2 });
+
+            stateMgr.update({
+                name: null,
+            });
+            expect(log.length).toEqual(4);
+            expect(log[log.length - 1].path).toEqual([ 'name' ]);
+            expect(log[log.length - 1].oldVal).toEqual({ jake: 2 });
+            expect(log[log.length - 1].newVal).toBeNull();
+        });
+
         it('deeply-bubbling-up update', () => {
             const stateMgr = new StateManager();
 

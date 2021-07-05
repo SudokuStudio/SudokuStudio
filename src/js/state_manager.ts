@@ -27,6 +27,28 @@ function isEq(a: unknown, b: unknown): boolean {
     return (null == a && null == b) || Object.is(a, b);
 }
 
+export class StateRef {
+    private readonly _stateManager: StateManager;
+    private readonly _path: string[] = [];
+
+    constructor(stateManager: StateManager, path: string[]) {
+        this._stateManager = stateManager;
+        for (const seg of path) {
+            if ('..' === seg) this._path.pop();
+            else if ('.' === seg) {}
+            else this._path.push(seg);
+        }
+    }
+
+    ref(...path: string[]): StateRef {
+        return new StateRef(this._stateManager, [ ...this._path, ...path ]);
+    }
+
+    watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean) {
+        this._stateManager.watch(watcher, triggerNow, this._path.join('/'));
+    }
+}
+
 /// StateManager provides an interface for updating and reacting to changes in data.
 /// Each instance stores a single JS object. Watchers can be assigned to react to changes
 /// in specified paths of the object. When updates are given to the StateManager, it will
@@ -44,6 +66,10 @@ export class StateManager {
 
     constructor() {
         this._data = undefined;
+    }
+
+    ref(...path: string[]): StateRef {
+        return new StateRef(this, path);
     }
 
     get<T extends Data>(...path: string[]): T | undefined {
