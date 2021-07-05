@@ -21,4 +21,7 @@ For a live-reloading development server run:
 npm run dev
 ```
 
-If you are using VSCode (recommended) you should install the "Svelte for VS Code" extension and turn on `svelte.enable-ts-plugin`;
+If you are using VSCode (recommended):
+* Install "Svelte for VS Code" extension.
+* Click the gear and go to "Extension Settings" and turn on `svelte.enable-ts-plugin`.
+* Restart VSCode.
