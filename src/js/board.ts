@@ -1,5 +1,3 @@
-import { writable } from 'svelte/store';
-
 import { StateManager } from './state_manager';
 
 import Diagonal from '../svelte/edit/constraint/Diagonal.svelte';
@@ -15,10 +13,9 @@ export type ConstraintDataAndComponent = {
 };
 
 export const boardState = (window as any).boardState = new StateManager();
-export const globalConstraints = writable<ConstraintDataAndComponent[]>([]);
 
 export type ConstraintComponent = typeof CONSTRAINT_COMPONENTS[keyof typeof CONSTRAINT_COMPONENTS];
-const CONSTRAINT_COMPONENTS = {
+export const CONSTRAINT_COMPONENTS = {
     ['diagonal']: Diagonal,
     ['knight']: Knight,
     ['king']: King,
@@ -72,29 +69,3 @@ boardState.update({
         },
     },
 });
-
-boardState.watch<schema.Constraint>(([ _constraints, constraintId ], oldVal, newVal) => {
-    if (null == newVal) {
-        // Delete.
-        globalConstraints.update(arr => arr.filter(({ id }) => constraintId !== id));
-        return;
-    }
-    // Add or update.
-    const item = {
-        id: constraintId,
-        value: newVal!.value,
-        component: CONSTRAINT_COMPONENTS[newVal!.type],
-    };
-
-    globalConstraints.update(arr => {
-        if (null == oldVal) { // Add.
-            arr.push(item);
-        }
-        else { // Update.
-            const i = arr.findIndex(({ id }) => constraintId === id);
-            if (0 > i) throw Error(`Failed to find constraint with id ${constraintId} in list.`);
-            arr[i] = item;
-        }
-        return arr;
-    });
-}, true, 'constraints/*');

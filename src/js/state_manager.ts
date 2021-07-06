@@ -26,6 +26,11 @@ type UpdateInternal = {
 function isEq(a: unknown, b: unknown): boolean {
     return (null == a && null == b) || Object.is(a, b);
 }
+/// Converts undefined to null, otherwise identity.
+function undefToNull<T>(val: T): null | NonNullable<T> | null {
+    if (null == val) return null;
+    return val!;
+}
 
 export class StateRef {
     private readonly _stateManager: StateManager;
@@ -44,8 +49,19 @@ export class StateRef {
         return new StateRef(this._stateManager, [ ...this._path, ...path ]);
     }
 
-    watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean) {
+    watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean): Watcher<T> {
         this._stateManager.watch(watcher, triggerNow, this._path.join('/'));
+        return watcher;
+    }
+
+    unwatch<T extends Data>(watcher: Watcher<T>) {
+        this._stateManager.unwatch(watcher);
+    }
+
+    replace(newData: Data): null | Diff {
+        return this._stateManager.update({
+            [this._path.join('/')]: newData,
+        });
     }
 }
 
@@ -58,15 +74,13 @@ export class StateRef {
 /// This is where the magic happens.
 export class StateManager {
     /// The data contained in and managed by this StateManager.
-    private _data: Data;
+    private _data: Data = null;
 
     /// Map from each watcher to the paths it's watching.
     private readonly _watchers: Map<Watcher<any>, Set<string>> = new Map();
     private readonly _watcherTreeRoot: WatcherTree = Object.create(null);
 
-    constructor() {
-        this._data = undefined;
-    }
+    constructor() {}
 
     ref(...path: string[]): StateRef {
         return new StateRef(this, path);
@@ -79,7 +93,7 @@ export class StateManager {
         return target as unknown as T;
     }
 
-    watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean, ...patterns: [ string, ...string[] ]): void {
+    watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean, ...patterns: [ string, ...string[] ]): Watcher<T> {
         let patternSet = this._watchers.get(watcher);
         if (null == patternSet) {
             patternSet = new Set();
@@ -88,6 +102,19 @@ export class StateManager {
 
         for (const pattern of patterns) {
             this._watchPattern(watcher, triggerNow, pattern);
+        }
+        return watcher;
+    }
+
+    unwatch<T extends Data>(watcher: Watcher<T>): void {
+        if (!this._watchers.has(watcher)) throw Error('Cannot find watcher.');
+
+        const patterns = this._watchers.get(watcher)!;
+        this._watchers.delete(watcher);
+
+        for (const pattern of patterns) {
+            if (!StateManager._unwatchPattern(watcher, this._watcherTreeRoot, pattern.split('/')))
+                throw Error(`Failed to remove watcher from pattern: ${pattern}.`);
         }
     }
 
@@ -137,6 +164,30 @@ export class StateManager {
         if (triggerNow) {
             StateManager._triggerNow(this._data, segs, [], watcher);
         }
+    }
+
+    private static _unwatchPattern(watcher: Watcher<any>, watcherTree: WatcherTree, segs: string[]): boolean {
+        if (0 === segs.length) {
+            const watchers = watcherTree[WatchersKey];
+            if (null == watchers)
+                return false;
+            if (!watchers.delete(watcher))
+                return false;
+
+            if (0 >= watchers.size)
+                delete watcherTree[WatchersKey];
+            return true;
+        }
+
+        const [ seg, ...restSegs ] = segs;
+        if (!Object.prototype.hasOwnProperty.call(watcherTree, seg))
+            return false;
+        if (!this._unwatchPattern(watcher, watcherTree[seg], restSegs))
+            return false;
+
+        if (0 >= Object.keys(watcherTree[seg]).length && (null == watcherTree[WatchersKey]))
+            delete watcherTree[seg];
+        return true;
     }
 
     /// Triggers a newly added watcher.
@@ -205,8 +256,8 @@ export class StateManager {
                 const undo = [];
                 // For child keys.
                 for (const key of allKeys) {
-                    const innerData = dataObj && (dataObj as any)[key] || null;
-                    const innerUpdate = updateObj && (updateObj as any)[key] || null;
+                    const innerData = dataObj ? undefToNull((dataObj as any)[key]) : null;
+                    const innerUpdate = updateObj ? undefToNull((updateObj as any)[key]) : null;
                     const nextWatcherTrees = StateManager._nextWatcherTrees(key, watcherTrees);
                     // Recurse.
                     const { data: newInnerData, redo: innerRedo, undo: innerUndo } =
@@ -216,9 +267,10 @@ export class StateManager {
                         dataUpdated = true;
                         redo.push(...innerRedo);
                         undo.push(...innerUndo);
-                        if (updateObj != null && Object.prototype.hasOwnProperty.call(updateObj, key)) {
+                        if (null != updateObj && Object.prototype.hasOwnProperty.call(updateObj, key)) {
                             // Only take the update if it came from UPDATE and therefore wasn't a delete.
-                            dataObjNew[key] = newInnerData;
+                            if (null != newInnerData) // Do not include deletes as nulls.
+                                dataObjNew[key] = newInnerData;
                         }
                     }
                 }
@@ -241,7 +293,7 @@ export class StateManager {
             }
             // Not at an update point, just traversing the SEGS.
             const [ key, ...segsRest ] = segs;
-            const innerData = dataObj && (dataObj as any)[key] || null;
+            const innerData = dataObj ? undefToNull((dataObj as any)[key]) : null;
             // Do not change UPDATE... we are not at the updating depth yet.
             const nextWatcherTrees = StateManager._nextWatcherTrees(key, watcherTrees);
             // Recurse.
@@ -251,10 +303,12 @@ export class StateManager {
                 return { data, redo, undo };
             }
             // Yes changes.
-            return {
-                data: Object.assign(Object.create(null), dataObj, { [key]: newInnerData }),
-                redo, undo,
-            };
+            const newData = Object.assign(Object.create(null), dataObj, { [key]: newInnerData });
+            if (Object.values(newData).every(val => null == val)) {
+                // All vals null, return null.
+                return { data: null, redo, undo };
+            }
+            return { data: newData, redo, undo };
         })();
 
         if (!isEq(data, newData)) {

@@ -1,12 +1,38 @@
 <script lang="ts">
-    import ConstraintList from "./ConstraintList.svelte";
     import EditSection from "./EditSection.svelte";
 
-    import { globalConstraints } from "../../js/board";
-    import type { ConstraintDataAndComponent } from "../../js/board";
+    import type { StateRef } from "../../js/state_manager";
+    import { boardState, CONSTRAINT_COMPONENTS } from "../../js/board";
+    import type { ConstraintComponent } from "../../js/board";
 
-    let globalConstraintsList: ConstraintDataAndComponent[] = [];
-    globalConstraints.subscribe(value => globalConstraintsList = value)
+    const constraintsGlobal: { id: string, ref: StateRef, component: ConstraintComponent }[] = [];
+
+    boardState.ref('constraints/*').watch<schema.Constraint>(([ constraints, constraintId ], oldVal, newVal) => {
+        if (null == newVal) {
+            // Deleted.
+            const i = constraintsGlobal.findIndex(({ id }) => constraintId === id);
+            if (0 > i) throw Error(`Failed to find constraint with id ${constraintId}.`);
+            delete constraintsGlobal[i];
+        }
+        else {
+            const component = CONSTRAINT_COMPONENTS[newVal.type];
+            if (null == component) throw Error(`Unknown constraint type: ${newVal.type}.`);
+
+            if (null == oldVal) {
+                constraintsGlobal.push({
+                    id: constraintId,
+                    ref: boardState.ref(constraints, constraintId, 'value'),
+                    component,
+                });
+            }
+            else {
+                if (oldVal.type !== newVal.type)
+                    console.error('Cannot change type of constraint!');
+                // TODO: handle metadata?
+            }
+        }
+    }, true);
+
 </script>
 <ul class="nolist">
     <li>
@@ -16,14 +42,9 @@
     </li>
     <li>
         <EditSection title="Global Constraints">
-            {#each globalConstraintsList as { id: _, value, component }}
-                <svelte:component this={component} {value} />
+            {#each constraintsGlobal as { id, ref, component } (id)}
+                <svelte:component this={component} {ref} />
             {/each}
-        </EditSection>
-    </li>
-    <li>
-        <EditSection title="Global Constraints">
-            <ConstraintList />
         </EditSection>
     </li>
     <li>

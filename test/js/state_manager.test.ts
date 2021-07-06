@@ -328,6 +328,68 @@ describe('class StateManager', () => {
     });
 
     describe('edge cases', () => {
+        it('handles false basic', () => {
+            const stateMgr = new StateManager();
+
+            const log: Log = [];
+            stateMgr.watch(loggingWatcher(log), true, 'foo');
+
+            stateMgr.update({
+                foo: false,
+            });
+            expect(stateMgr.get()).toEqual({
+                foo: false,
+            });
+
+            expect(log.length).toEqual(1);
+            expect(log[log.length - 1].path).toEqual([ 'foo' ]);
+            expect(log[log.length - 1].oldVal).toBeNull();
+            expect(log[log.length - 1].newVal).toEqual(false);
+
+            stateMgr.update({
+                foo: null,
+            });
+            expect(stateMgr.get()).toEqual(null);
+
+            expect(log.length).toEqual(2);
+            expect(log[log.length - 1].path).toEqual([ 'foo' ]);
+            expect(log[log.length - 1].oldVal).toEqual(false);
+            expect(log[log.length - 1].newVal).toBeNull();
+        });
+
+        it('handles false nested', () => {
+            const stateMgr = new StateManager();
+
+            const log: Log = [];
+            stateMgr.watch(loggingWatcher(log), true, 'foo');
+
+            stateMgr.update({
+                foo: {
+                    bar: false,
+                },
+            });
+            expect(stateMgr.get()).toEqual({
+                foo: {
+                    bar: false
+                },
+            });
+
+            expect(log.length).toEqual(1);
+            expect(log[log.length - 1].path).toEqual([ 'foo' ]);
+            expect(log[log.length - 1].oldVal).toBeNull();
+            expect(log[log.length - 1].newVal).toEqual({ bar: false });
+
+            stateMgr.update({
+                foo: null,
+            });
+            expect(stateMgr.get()).toEqual(null);
+
+            expect(log.length).toEqual(2);
+            expect(log[log.length - 1].path).toEqual([ 'foo' ]);
+            expect(log[log.length - 1].oldVal).toEqual({ bar: false });
+            expect(log[log.length - 1].newVal).toBeNull();
+        });
+
         it('overwrite primitive', () => {
             const stateMgr = new StateManager();
 
