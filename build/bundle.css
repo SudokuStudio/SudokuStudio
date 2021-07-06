@@ -72,7 +72,6 @@ footer.svelte-q96pc2.svelte-q96pc2 {
   width: 1em;
   height: 1em;
   line-height: 1;
-  position: relative;
   vertical-align: baseline;
   background-repeat: no-repeat;
   background-position: center;
@@ -119,12 +118,54 @@ footer.svelte-q96pc2.svelte-q96pc2 {
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M11.93,0H4.07A4.07,4.07,0,0,0,0,4.07v7.86A4.07,4.07,0,0,0,4.07,16h7.86A4.07,4.07,0,0,0,16,11.93V4.07A4.07,4.07,0,0,0,11.93,0ZM14.5,11.93a2.57,2.57,0,0,1-2.57,2.57H4.07A2.57,2.57,0,0,1,1.5,11.93V4.07A2.57,2.57,0,0,1,4.07,1.5h7.86A2.57,2.57,0,0,1,14.5,4.07Z'/%3E%3Crect class='cls-1' x='4.16' y='7.43' width='6.91' height='1.5'/%3E%3Cpolygon class='cls-1' points='8.15 12.54 7.09 11.48 10.39 8.18 7.09 4.88 8.15 3.82 12.51 8.18 8.15 12.54'/%3E%3C/svg%3E");
 }
 
+.icon-c-text {
+  background-color: black;
+}
+
 .icon-c-clickable {
-  background-color: #5f7694;
+  background-color: #637691;
 }
 
 .icon-c-warning {
   background-color: #916363;
+}
+
+input[type=checkbox] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  line-height: 0.925em;
+  vertical-align: baseline;
+  position: relative;
+  border: 0.125em solid #637691;
+  border-radius: 0.2em;
+  cursor: pointer;
+}
+input[type=checkbox]::before {
+  content: "";
+  display: inline-block;
+}
+input[type=checkbox]:checked {
+  background-color: #637691;
+}
+input[type=checkbox]:checked::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0.099em;
+  right: 0.609em;
+  width: 0.297em;
+  height: 0.6919em;
+  border-bottom: 0.11em solid #fff;
+  border-right: 0.11em solid #fff;
+  transform-origin: bottom right;
+  transform: rotate(52.6deg) skewX(8deg);
+}
+input[type=checkbox]:disabled {
+  border-color: #7a7a7a;
 }
 
 html {
@@ -555,55 +596,70 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   justify-content: flex-end;
 }
 
-.section-title.svelte-6zcc.svelte-6zcc {
-  margin: 0.5em 0;
+button.section-title.svelte-w9m75g.svelte-w9m75g {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.section-title.svelte-w9m75g.svelte-w9m75g {
+  padding: 0.5em 0;
   font-weight: 800;
+  display: inline-block;
   font-size: 1em;
   font-family: inherit;
   border: 0;
-  padding: 0;
+  margin: 0;
   background: none;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.tree-menu.svelte-6zcc.svelte-6zcc {
+.tree-menu.svelte-w9m75g.svelte-w9m75g {
   transition: transform 0.1s ease-in-out;
 }
 
-.closed.svelte-6zcc .tree-menu.svelte-6zcc {
+.closed.svelte-w9m75g .tree-menu.svelte-w9m75g {
   transform: rotate(-90deg);
 }
 
-.closed.svelte-6zcc .panel.svelte-6zcc {
+.closed.svelte-w9m75g .panel.svelte-w9m75g {
   overflow: hidden;
   height: 0;
 }
 
-.constraint-toggle.svelte-h67gfh {
+.container.svelte-w9m75g.svelte-w9m75g {
+  margin-bottom: 0.5em;
+}
+
+.clickable.svelte-1c2ijzz {
+  cursor: pointer;
+}
+
+.constraint-toggle.svelte-1c2ijzz {
   margin-left: 0.5em;
   display: inline-block;
 }
 
-.constraint-row.svelte-1avhcpo.svelte-1avhcpo {
-  margin: 0.75em 0;
+.constraint-row.svelte-13864p9.svelte-13864p9 {
+  padding: 0.4em 0;
   white-space: nowrap;
 }
 
-.constraint-row.svelte-1avhcpo.svelte-1avhcpo:before, .constraint-row.svelte-1avhcpo.svelte-1avhcpo:after {
+.constraint-row.svelte-13864p9.svelte-13864p9:before, .constraint-row.svelte-13864p9.svelte-13864p9:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-1avhcpo.svelte-1avhcpo:after {
+.constraint-row.svelte-13864p9.svelte-13864p9:after {
   clear: both;
 }
 
-.constraint-row.svelte-1avhcpo .constraint-row-left.svelte-1avhcpo {
+.constraint-row.svelte-13864p9 .constraint-row-left.svelte-13864p9 {
   float: left;
 }
 
-.constraint-row.svelte-1avhcpo .constraint-row-right.svelte-1avhcpo {
+.constraint-row.svelte-13864p9 .constraint-row-right.svelte-13864p9 {
   margin-left: 0.5em;
   float: right;
 }
