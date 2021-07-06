@@ -600,13 +600,17 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   justify-content: flex-end;
 }
 
-button.section-title.svelte-w9m75g.svelte-w9m75g {
+button.section-title.svelte-154y5rg.svelte-154y5rg {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
-.section-title.svelte-w9m75g.svelte-w9m75g {
+.section-title.svelte-154y5rg.svelte-154y5rg {
   padding: 0.5em 0;
   font-weight: 800;
   display: inline-block;
@@ -619,20 +623,20 @@ button.section-title.svelte-w9m75g.svelte-w9m75g {
   white-space: nowrap;
 }
 
-.tree-menu.svelte-w9m75g.svelte-w9m75g {
+.tree-menu.svelte-154y5rg.svelte-154y5rg {
   transition: transform 0.1s ease-in-out;
 }
 
-.closed.svelte-w9m75g .tree-menu.svelte-w9m75g {
+.closed.svelte-154y5rg .tree-menu.svelte-154y5rg {
   transform: rotate(-90deg);
 }
 
-.closed.svelte-w9m75g .panel.svelte-w9m75g {
+.closed.svelte-154y5rg .panel.svelte-154y5rg {
   overflow: hidden;
   height: 0;
 }
 
-.container.svelte-w9m75g.svelte-w9m75g {
+.container.svelte-154y5rg.svelte-154y5rg {
   margin-bottom: 0.5em;
 }
 
