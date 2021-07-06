@@ -1,10 +1,11 @@
 <script lang="ts">
+    import type { StateRef } from "../../../js/state_manager";
     import ConstraintRow from "../ConstraintRow.svelte";
     import ConstraintToggle from "../ConstraintToggle.svelte";
 
-    export let value: boolean;
+    export let ref: StateRef;
 </script>
 
 <ConstraintRow name="Nonconsecutive">
-    <ConstraintToggle name="Toggle Nonconsecutive Constraint" icon="nonconsecutive" checked={value} on:input />
+    <ConstraintToggle name="Toggle Nonconsecutive Constraint" icon="nonconsecutive" {ref} />
 </ConstraintRow>
