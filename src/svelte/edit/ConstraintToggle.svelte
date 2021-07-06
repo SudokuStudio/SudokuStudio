@@ -23,14 +23,17 @@
 </script>
 
 <div class="constraint-toggle">
-    <label for="toggle-{++counter}" title={name}>
-        <Icon {icon} />
+    <label for="toggle-{++counter}" title={name} class='clickable'>
+        <Icon {icon} color="text" />
         <span class="sr-only">{name}</span>
     </label>
     <input id="toggle-{counter}" type="checkbox" checked={checked} on:input={onInput} />
 </div>
 
 <style lang="scss">
+    .clickable {
+        cursor: pointer;
+    }
     .constraint-toggle {
         margin-left: 0.5em;
         display: inline-block;

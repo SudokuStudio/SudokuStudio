@@ -1,6 +1,7 @@
 // @import "./debug.scss";
 @import "./vars.scss";
 @import "./icons.scss";
+@import "./checkbox.scss";
 
 html {
     font-size: max(16px, calc(12px + min(0.5vw, #{0.5vh * $max-aspect-ratio})));

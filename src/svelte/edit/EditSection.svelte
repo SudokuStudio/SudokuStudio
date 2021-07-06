@@ -8,7 +8,7 @@
     }
 </script>
 
-<div class:closed={closed}>
+<div class="container" class:closed={closed}>
     <button class="section-title" on:click={onClick}>
         <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu" />
         {title}
@@ -21,14 +21,20 @@
 <style lang="scss">
     @use 'src/css/vars';
 
+    button.section-title {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
     .section-title {
-        margin: 0.5em 0;
+        padding: 0.5em 0;
         font-weight: vars.$font-weight-heavy;
 
+        display: inline-block;
         font-size: 1em;
         font-family: inherit;
         border: 0;
-        padding: 0;
+        margin: 0;
         background: none;
         cursor: pointer;
 
@@ -47,5 +53,9 @@
     .closed .panel {
         overflow: hidden;
         height: 0;
+    }
+
+    .container {
+        margin-bottom: 0.5em;
     }
 </style>

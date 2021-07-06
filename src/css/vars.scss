@@ -11,5 +11,7 @@ $font-weight-heavy: 800;
 
 $max-aspect-ratio: 1.8;
 
-$color-clickable: #5f7694;
+$color-clickable: #637691;
+$color-disabled: adjust-color($color-clickable, $saturation: -100%);
+
 $color-warning: #916363;

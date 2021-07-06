@@ -6,7 +6,7 @@
 
 <div class="constraint-row">
     <div class="constraint-row-left">
-        <Icon icon="trash" />
+        <Icon icon="trash" color="clickable" />
         {name}
     </div>
     <div class="constraint-row-right">
@@ -21,7 +21,7 @@
     .constraint-row {
         @include clearfix.clearfix;
 
-        margin: 0.75em 0;
+        padding: 0.4em 0;
         white-space: nowrap;
 
         .constraint-row-left {

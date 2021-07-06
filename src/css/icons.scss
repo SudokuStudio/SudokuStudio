@@ -24,7 +24,6 @@
         height: 1em;
         line-height: 1;
 
-        position: relative;
         vertical-align: baseline;
 
         background-repeat: no-repeat;
@@ -58,6 +57,9 @@
     }
 }
 
+.icon-c-text {
+    background-color: black;
+};
 .icon-c-clickable {
     background-color: $color-clickable;
 }
