@@ -1,13 +1,14 @@
 <script type="ts">
-    import Icon from "../Icon.svelte";
+    import Icon from "../../Icon.svelte";
 
     export let name: string;
+    export let unused: boolean;
 </script>
 
-<div class="constraint-row">
+<div class="constraint-row" class:unused={unused}>
     <div class="constraint-row-left">
-        <Icon icon="trash" />
-        {name}
+        <Icon icon="trash" color="clickable" />
+        <span class="text">{name}</span>
     </div>
     <div class="constraint-row-right">
         <slot></slot>
@@ -18,9 +19,14 @@
     @use 'src/css/vars';
     @use 'src/css/clearfix';
 
+    .unused .text {
+        opacity: 0.5;
+    }
+
     .constraint-row {
         @include clearfix.clearfix;
 
+        padding: 0.4em 0;
         white-space: nowrap;
 
         .constraint-row-left {
