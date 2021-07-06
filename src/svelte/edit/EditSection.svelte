@@ -32,14 +32,14 @@
         user-select: text;
     }
     .section-title {
-        padding: 0.5em 0;
+        margin: 0.8em 0;
         font-weight: vars.$font-weight-heavy;
 
         display: inline-block;
         font-size: 1em;
         font-family: inherit;
         border: 0;
-        margin: 0;
+        padding: 0;
         background: none;
         cursor: pointer;
 

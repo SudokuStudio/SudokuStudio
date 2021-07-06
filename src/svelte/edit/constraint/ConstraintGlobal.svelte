@@ -26,7 +26,7 @@
     .constraint-row {
         @include clearfix.clearfix;
 
-        padding: 0.4em 0;
+        margin: 0 0 0.8em 0;
         white-space: nowrap;
 
         .constraint-row-left {
