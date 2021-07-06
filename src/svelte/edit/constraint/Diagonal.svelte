@@ -1,15 +1,24 @@
 <script lang="ts">
     import type { StateRef } from "../../../js/state_manager";
-    import ConstraintGlobal from "./ConstraintGlobal.svelte";
+    import ConstraintRow from "./ConstraintRow.svelte";
     import Checkbox from "./Checkbox.svelte";
 
+    export let id: string;
     export let ref: StateRef;
 
     const positive = ref.ref('positive');
     const negative = ref.ref('negative');
+
+    function onClick() {
+        const val = !$positive || !$negative;
+        $ref = {
+            positive: val,
+            negative: val,
+        };
+    }
 </script>
 
-<ConstraintGlobal name="Diagonals" unused={!$positive && !$negative} >
+<ConstraintRow {id} name="Diagonals" unused={!$positive && !$negative} onClick={onClick} >
     <Checkbox name="Toggle Positive Diagonal" icon="positive-diagonal" checked={positive} />
     <Checkbox name="Toggle Negative Diagonal" icon="negative-diagonal" checked={negative} />
-</ConstraintGlobal>
+</ConstraintRow>

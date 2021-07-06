@@ -47,6 +47,11 @@
         "king": "svg/16px/global-constraints/king-constraint.svg",
         "disjoint": "svg/16px/global-constraints/disjoint-constraint.svg",
         "nonconsecutive": "svg/16px/global-constraints/consec-constraint.svg",
+
+        "given": "svg/16px/local-constraints/digit-constraint.svg",
+        "thermo": "svg/16px/local-constraints/thermo-constraint.svg",
+        "arrow": "svg/16px/local-constraints/arrow-constraint.svg",
+        "sandwich": "svg/16px/local-constraints/sandwich-constraint.svg",
     );
 
     @each $name, $path in $icons {

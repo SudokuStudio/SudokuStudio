@@ -16,11 +16,6 @@ body {
     height: 100vh;
 }
 
-.nolist {
-    padding: 0;
-    list-style-type: none;
-}
-
 // Flexbox shared between header and main.
 .content {
     max-width: $max-aspect-ratio * 100vh;
@@ -43,4 +38,34 @@ body {
 
 .hide {
     display: none;
+}
+
+.nolist {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.nobutton {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+
+    display: inline-block;
+    font-size: 1em;
+    font-family: inherit;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
 }

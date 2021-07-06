@@ -10,8 +10,8 @@
     export let checked: StateRef;
 </script>
 
-<div class="constraint-checkbox">
-    <label for="checkbox-{++counter}" title={name} class='clickable'>
+<div class="constraint-checkbox" on:click|stopPropagation>
+    <label for="checkbox-{++counter}" title={name} class="clickable">
         <Icon {icon} color="text" />
         <span class="sr-only">{name}</span>
     </label>
@@ -19,9 +19,6 @@
 </div>
 
 <style lang="scss">
-    .clickable {
-        cursor: pointer;
-    }
     .constraint-checkbox {
         margin-left: 0.5em;
         display: inline-block;

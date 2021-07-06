@@ -4,6 +4,8 @@
     import type { StateRef } from "../../js/state_manager";
     import { boardState, CONSTRAINT_COMPONENTS } from "../../js/board";
     import type { ConstraintComponent } from "../../js/board";
+    import ConstraintRow from "./constraint/ConstraintRow.svelte";
+import Icon from "../Icon.svelte";
 
     const constraintsGlobal: { id: string, ref: StateRef, component: ConstraintComponent }[] = [];
 
@@ -42,46 +44,37 @@
     </li>
     <li>
         <EditSection title="Global Constraints">
-            {#each constraintsGlobal as { id, ref, component } (id)}
-                <svelte:component this={component} {ref} />
-            {/each}
+            <ul class="nolist">
+                {#each constraintsGlobal as { id, ref, component } (id)}
+                    <li>
+                        <svelte:component this={component} {id} {ref}  />
+                    </li>
+                {/each}
+            </ul>
         </EditSection>
     </li>
     <li>
         <EditSection title="Local Constraints">
-            <ul>
+            <ul class="nolist">
                 <li>
-                    <input
-                        type="radio"
-                        id="digitTool"
-                        name="localConstraints"
-                        checked
-                    />
-                    <label for="digitTool"> Digit </label>
+                    <ConstraintRow id="10101" name="Digit" unused={false} isLocal={true}>
+                        <Icon icon="given" color="text" />
+                    </ConstraintRow>
                 </li>
                 <li>
-                    <input
-                        type="radio"
-                        id="thermoTool"
-                        name="localConstraints"
-                    />
-                    <label for="thermoTool"> Thermo </label>
+                    <ConstraintRow id="13212" name="Thermo" unused={false} isLocal={true}>
+                        <Icon icon="thermo" color="text" />
+                    </ConstraintRow>
                 </li>
                 <li>
-                    <input
-                        type="radio"
-                        id="arrowTool"
-                        name="localConstraints"
-                    />
-                    <label for="arrowTool"> Arrow </label>
+                    <ConstraintRow id="567567" name="Arrow" unused={false} isLocal={true}>
+                        <Icon icon="arrow" color="text" />
+                    </ConstraintRow>
                 </li>
                 <li>
-                    <input
-                        type="radio"
-                        id="sandwichTool"
-                        name="localConstraints"
-                    />
-                    <label for="sandwichTool"> Sandwich </label>
+                    <ConstraintRow id="348445" name="Sandwich" unused={false} isLocal={true}>
+                        <Icon icon="sandwich" color="text" />
+                    </ConstraintRow>
                 </li>
             </ul>
         </EditSection>
