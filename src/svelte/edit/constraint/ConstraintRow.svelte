@@ -5,13 +5,10 @@
     export let unused: boolean;
 </script>
 
-<div class="constraint-row">
+<div class="constraint-row" class:unused={unused}>
     <div class="constraint-row-left">
         <Icon icon="trash" color="clickable" />
-        {name}
-        <span class:hide={!unused}>
-            <Icon icon="warning" color="warning" />
-        </span>
+        <span class="text">{name}</span>
     </div>
     <div class="constraint-row-right">
         <slot></slot>
@@ -21,6 +18,10 @@
 <style lang="scss">
     @use 'src/css/vars';
     @use 'src/css/clearfix';
+
+    .unused .text {
+        opacity: 0.5;
+    }
 
     .constraint-row {
         @include clearfix.clearfix;
