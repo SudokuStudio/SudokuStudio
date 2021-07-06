@@ -585,24 +585,25 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   display: inline-block;
 }
 
-.constraint-row.svelte-1kmaedl.svelte-1kmaedl {
+.constraint-row.svelte-1avhcpo.svelte-1avhcpo {
+  margin: 0.75em 0;
   white-space: nowrap;
 }
 
-.constraint-row.svelte-1kmaedl.svelte-1kmaedl:before, .constraint-row.svelte-1kmaedl.svelte-1kmaedl:after {
+.constraint-row.svelte-1avhcpo.svelte-1avhcpo:before, .constraint-row.svelte-1avhcpo.svelte-1avhcpo:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-1kmaedl.svelte-1kmaedl:after {
+.constraint-row.svelte-1avhcpo.svelte-1avhcpo:after {
   clear: both;
 }
 
-.constraint-row.svelte-1kmaedl .constraint-row-left.svelte-1kmaedl {
+.constraint-row.svelte-1avhcpo .constraint-row-left.svelte-1avhcpo {
   float: left;
 }
 
-.constraint-row.svelte-1kmaedl .constraint-row-right.svelte-1kmaedl {
+.constraint-row.svelte-1avhcpo .constraint-row-right.svelte-1avhcpo {
   margin-left: 0.5em;
   float: right;
 }
