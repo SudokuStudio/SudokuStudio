@@ -7,5 +7,5 @@
 </script>
 
 <ConstraintGlobal name="Antiknight" unused={!$ref}>
-    <Checkbox name="Toggle Anitknight Constraint" icon="knight" checked={ref} />
+    <Checkbox name="Toggle Antiknight Constraint" icon="knight" checked={ref} />
 </ConstraintGlobal>
