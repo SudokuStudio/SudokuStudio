@@ -20,7 +20,7 @@ function encodeSvg(data) {
 }
 
 export default function inlineSvg(svgPath) {
-    svgPath = path.resolve('public', svgPath.getValue());
+    svgPath = path.resolve('src', svgPath.getValue());
     if (!fs.statSync(svgPath).isFile()) throw Error(`Could not find file ${svgPath}.`);
     const encodedSvg = encodeSvg(fs.readFileSync(svgPath, 'utf8'));
     return new types.String(`url("data:image/svg+xml,${encodedSvg}")`);
