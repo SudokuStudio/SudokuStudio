@@ -1,0 +1,34 @@
+A model of what a sudoku is, with variant constraints as minimal constraint properties which can combine to make several popular variants.
+
+- sudoku
+	- properties
+		- size
+			- a square with a whole number side length, likely minimum 3 and maximum 25
+	- objects
+		- lines
+			- a line is a series of points
+			- can host several types of constraints, including thermos, no-repeats, sums
+		- areas
+			- an area is a set of cells
+			- can host several types of constraints, including no-repeats, sums
+		- symbols
+			- symbols sit within a cell, on a cell edge, or on a cell corner
+			- can host several types of constraints
+		- digits
+			- contained in a cell
+			- is constrained, has no constraints of its own
+	- constraints
+		- cells can only contain digits from this set
+		- cells must sum to this number
+		- cells can't repeat digits
+		- cells must be monotonic
+			- cells must be increasing
+			- cells must be decreasing
+		- cells must form a palindrome
+		- cells must form a german whisper
+		- cells between the x and y must [insert another constraint]
+		- the maximum value is overtaken x times over this series (skyscraper)
+		- the minimum value is undertaken x times over this series
+		- cells must have a specified mathematical relationship
+		- here's all the possibilities for this set of cells
+		- two or more areas' digits must match or be subsets
