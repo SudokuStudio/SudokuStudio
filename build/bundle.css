@@ -649,25 +649,29 @@ button.section-title.svelte-154y5rg.svelte-154y5rg {
   display: inline-block;
 }
 
-.constraint-row.svelte-13864p9.svelte-13864p9 {
+.unused.svelte-j51np5 .text.svelte-j51np5 {
+  opacity: 0.5;
+}
+
+.constraint-row.svelte-j51np5.svelte-j51np5 {
   padding: 0.4em 0;
   white-space: nowrap;
 }
 
-.constraint-row.svelte-13864p9.svelte-13864p9:before, .constraint-row.svelte-13864p9.svelte-13864p9:after {
+.constraint-row.svelte-j51np5.svelte-j51np5:before, .constraint-row.svelte-j51np5.svelte-j51np5:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-13864p9.svelte-13864p9:after {
+.constraint-row.svelte-j51np5.svelte-j51np5:after {
   clear: both;
 }
 
-.constraint-row.svelte-13864p9 .constraint-row-left.svelte-13864p9 {
+.constraint-row.svelte-j51np5 .constraint-row-left.svelte-j51np5 {
   float: left;
 }
 
-.constraint-row.svelte-13864p9 .constraint-row-right.svelte-13864p9 {
+.constraint-row.svelte-j51np5 .constraint-row-right.svelte-j51np5 {
   margin-left: 0.5em;
   float: right;
 }
