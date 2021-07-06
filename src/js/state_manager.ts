@@ -63,6 +63,15 @@ export class StateRef {
             [this._path.join('/')]: newData,
         });
     }
+
+    // https://svelte.dev/docs#Store_contract
+    subscribe(subscription: (value: any) => void): () => void {
+        const watch = this.watch((_path, _oldData, newData) => (subscription)(newData), true);
+        return () => this.unwatch(watch);
+    }
+    set(value: any) {
+        this.replace(value);
+    }
 }
 
 /// StateManager provides an interface for updating and reacting to changes in data.
@@ -86,11 +95,14 @@ export class StateManager {
         return new StateRef(this, path);
     }
 
-    get<T extends Data>(...path: string[]): T | undefined {
-        if (path.includes('/')) throw Error('Path cannot contain "/", split into varargs.');
+    get<T extends Data>(...path: string[]): T | null {
         let target = this._data;
-        while (target && path.length) target = (target as any)[path.shift()!];
-        return target as unknown as T;
+        for (const seg of path) {
+            if (null == target) break;
+            if (seg.includes('/')) throw Error('Path cannot contain "/", split into varargs.');
+            target = (target as any)[seg];
+        }
+        return undefToNull(target) as unknown as T | null;
     }
 
     watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean, ...patterns: [ string, ...string[] ]): Watcher<T> {

@@ -2,12 +2,16 @@
     import Icon from "../Icon.svelte";
 
     export let name: string;
+    export let unused: boolean;
 </script>
 
 <div class="constraint-row">
     <div class="constraint-row-left">
         <Icon icon="trash" color="clickable" />
         {name}
+        <span class:hide={!unused}>
+            <Icon icon="warning" color="warning" />
+        </span>
     </div>
     <div class="constraint-row-right">
         <slot></slot>

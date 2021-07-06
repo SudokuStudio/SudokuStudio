@@ -6,6 +6,6 @@
     export let ref: StateRef;
 </script>
 
-<ConstraintRow name="Nonconsecutive">
-    <ConstraintToggle name="Toggle Nonconsecutive Constraint" icon="nonconsecutive" {ref} />
+<ConstraintRow name="Nonconsecutive" unused={!$ref}>
+    <ConstraintToggle name="Toggle Nonconsecutive Constraint" icon="nonconsecutive" checked={ref} />
 </ConstraintRow>

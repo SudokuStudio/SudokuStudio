@@ -6,6 +6,6 @@
     export let ref: StateRef;
 </script>
 
-<ConstraintRow name="Disjoint Groups">
-    <ConstraintToggle name="Toggle Disjoint Groups Constraint" icon="disjoint" {ref} />
+<ConstraintRow name="Disjoint Groups" unused={!$ref}>
+    <ConstraintToggle name="Toggle Disjoint Groups Constraint" icon="disjoint" checked={ref} />
 </ConstraintRow>

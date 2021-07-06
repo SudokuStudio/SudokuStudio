@@ -6,6 +6,6 @@
     export let ref: StateRef;
 </script>
 
-<ConstraintRow name="Antiknight">
-    <ConstraintToggle name="Toggle Anitknight Constraint" icon="knight" {ref} />
+<ConstraintRow name="Antiknight" unused={!$ref}>
+    <ConstraintToggle name="Toggle Anitknight Constraint" icon="knight" checked={ref} />
 </ConstraintRow>

@@ -328,7 +328,7 @@ describe('class StateManager', () => {
     });
 
     describe('edge cases', () => {
-        it('handles false basic', () => {
+        it('handle false basic', () => {
             const stateMgr = new StateManager();
 
             const log: Log = [];
@@ -357,7 +357,7 @@ describe('class StateManager', () => {
             expect(log[log.length - 1].newVal).toBeNull();
         });
 
-        it('handles false nested', () => {
+        it('handle false nested', () => {
             const stateMgr = new StateManager();
 
             const log: Log = [];
@@ -388,6 +388,58 @@ describe('class StateManager', () => {
             expect(log[log.length - 1].path).toEqual([ 'foo' ]);
             expect(log[log.length - 1].oldVal).toEqual({ bar: false });
             expect(log[log.length - 1].newVal).toBeNull();
+        });
+
+        it('handle bool object', () => {
+            const stateMgr = new StateManager();
+
+            const log: Log = [];
+            stateMgr.watch(loggingWatcher(log), true, 'foo');
+
+            stateMgr.update({
+                foo: {
+                    positive: true,
+                    negative: false,
+                },
+            });
+            expect(stateMgr.get()).toEqual({
+                foo: {
+                    positive: true,
+                    negative: false,
+                },
+            });
+
+            expect(log.length).toEqual(1);
+            expect(log[log.length - 1].path).toEqual([ 'foo' ]);
+            expect(log[log.length - 1].oldVal).toBeNull();
+            expect(log[log.length - 1].newVal).toEqual({
+                positive: true,
+                negative: false,
+            });
+
+            stateMgr.update({
+                foo: {
+                    positive: true,
+                    negative: true,
+                },
+            });
+            expect(stateMgr.get()).toEqual({
+                foo: {
+                    positive: true,
+                    negative: true,
+                },
+            });
+
+            expect(log.length).toEqual(2);
+            expect(log[log.length - 1].path).toEqual([ 'foo' ]);
+            expect(log[log.length - 1].oldVal).toEqual({
+                positive: true,
+                negative: false,
+            });
+            expect(log[log.length - 1].newVal).toEqual({
+                positive: true,
+                negative: true,
+            });
         });
 
         it('overwrite primitive', () => {
