@@ -2,8 +2,8 @@
     let counter = 0;
 </script>
 <script lang="ts">
-    import type { StateRef } from '../../js/state_manager';
-    import Icon from '../Icon.svelte';
+    import type { StateRef } from '../../../js/state_manager';
+    import Icon from '../../Icon.svelte';
 
     export let name: string;
     export let icon: string;
