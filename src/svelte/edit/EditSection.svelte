@@ -25,6 +25,11 @@
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
+
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
     }
     .section-title {
         padding: 0.5em 0;
