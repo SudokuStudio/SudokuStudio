@@ -72,7 +72,11 @@
 
         z-index: 0;
     }
-    .constraint-row:hover, .constraint-row:focus-visible, .radio-select-button:checked ~ .constraint-row {
+    .constraint-row:hover, .constraint-row:focus-visible {
+        @include vars.hoverborder-hover();
+    }
+    .radio-select-button:checked ~ .constraint-row {
+        background-color: vars.$color-selected;
         @include vars.hoverborder-hover();
     }
 
