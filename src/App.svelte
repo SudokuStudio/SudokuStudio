@@ -42,17 +42,17 @@ import Header from "./svelte/Header.svelte";
     }
 
     main {
-        flex: 1 0 auto;
+        flex: 1 1 auto;
 
         display: flex;
         > .content {
             flex: 1;
         }
 
-        .left-panel {
+        .left-panel, .right-panel {
             flex: 1 1 100%;
-            overflow-y: scroll;
-            height: calc(100vh - 7.5rem);
+            overflow: hidden auto;
+            height: calc(100vh - #{vars.$header-height + vars.$footer-height});
         }
 
         .center-panel {
@@ -60,10 +60,6 @@ import Header from "./svelte/Header.svelte";
 
             /* maintain square aspect ratio */
             width: vars.$sudoku-size-big; height: vars.$sudoku-size-big;
-        }
-
-        .right-panel {
-            flex: 1 1 100%;
         }
     }
 

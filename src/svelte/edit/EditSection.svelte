@@ -34,7 +34,6 @@
         font-family: inherit;
         border: 0;
         margin: 0;
-        padding-left: -1em;
         background: none;
         cursor: pointer;
         width: 100%;
