@@ -1,4 +1,4 @@
-header.svelte-16kqg7u.svelte-16kqg7u {
+header.svelte-vsuzms.svelte-vsuzms {
   font-size: 0.8rem;
   flex: 0 0 auto;
   flex-direction: column;
@@ -7,43 +7,49 @@ header.svelte-16kqg7u.svelte-16kqg7u {
   height: 2.5rem;
 }
 
-main.svelte-16kqg7u.svelte-16kqg7u {
+main.svelte-vsuzms.svelte-vsuzms {
   flex: 1 1 auto;
   display: flex;
 }
 
-main.svelte-16kqg7u > .content.svelte-16kqg7u {
+main.svelte-vsuzms > .content.svelte-vsuzms {
   flex: 1;
 }
 
-main.svelte-16kqg7u .left-panel.svelte-16kqg7u, main.svelte-16kqg7u .right-panel.svelte-16kqg7u {
+main.svelte-vsuzms .left-panel.svelte-vsuzms {
   flex: 1 1 100%;
   overflow: hidden auto;
   height: calc(100vh - 4rem);
 }
 
-main.svelte-16kqg7u .center-panel.svelte-16kqg7u {
+main.svelte-vsuzms .center-panel.svelte-vsuzms {
   flex: 0 0 auto;
   width: min(calc(70vw - 20em), calc(100vh - 4rem));
   height: min(calc(70vw - 20em), calc(100vh - 4rem));
 }
 
+main.svelte-vsuzms .right-panel.svelte-vsuzms {
+  flex: 1 1 100%;
+  overflow: hidden auto;
+  height: min(calc(70vw - 20em), calc(100vh - 4rem));
+}
+
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  main.svelte-16kqg7u .content-row.svelte-16kqg7u {
+  main.svelte-vsuzms .content-row.svelte-vsuzms {
     flex-direction: column;
   }
 
-  main.svelte-16kqg7u .center-panel.svelte-16kqg7u {
+  main.svelte-vsuzms .center-panel.svelte-vsuzms {
     width: min(calc(100vw - 6rem), 50vh);
     height: min(calc(100vw - 6rem), 50vh);
     align-self: center;
   }
 
-  main.svelte-16kqg7u .left-panel.svelte-16kqg7u {
+  main.svelte-vsuzms .left-panel.svelte-vsuzms {
     display: none;
   }
 }
-footer.svelte-16kqg7u.svelte-16kqg7u {
+footer.svelte-vsuzms.svelte-vsuzms {
   flex: 0 0 auto;
   height: 1.5rem;
   line-height: 1.5rem;
