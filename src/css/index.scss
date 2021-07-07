@@ -35,6 +35,11 @@ body {
     justify-content: space-between;
 
     @include gap($content-gap);
+    @include breakpoint-mobile {
+        > * {
+            margin: 0;
+        }
+    }
 }
 
 .hide {

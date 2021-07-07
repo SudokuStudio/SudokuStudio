@@ -49,7 +49,7 @@ import Header from "./svelte/Header.svelte";
             flex: 1;
         }
 
-        .left-panel {
+        .left-panel, .right-panel {
             flex: 1 1 100%;
             overflow: visible auto;
             height: calc(100vh - #{vars.$header-height + vars.$footer-height});
@@ -60,12 +60,6 @@ import Header from "./svelte/Header.svelte";
 
             /* maintain square aspect ratio */
             width: vars.$sudoku-size-big;
-            height: vars.$sudoku-size-big;
-        }
-
-        .right-panel {
-            flex: 1 1 100%;
-            overflow: visible auto;
             height: vars.$sudoku-size-big;
         }
     }

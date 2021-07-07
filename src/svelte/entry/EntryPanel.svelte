@@ -17,8 +17,6 @@ import { onDestroy } from "svelte";
 </script>
 
 <div class="entry-column">
-	<h1 class="title">Killer</h1>
-	<div class="setter">Setter unknown</div>
 	<div class="entry-pad" bind:this={entryPadEl}>
         <div class="mode-pad-container">
             <div class="mode-pad">
@@ -63,7 +61,11 @@ import { onDestroy } from "svelte";
             </div>
         </div>
     </div>
-    <textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal killer sudoku rules apply: digits in cages sum to the number in the cage's top left, and do not repeat.</textarea>
+    <div class="entry-info">
+        <h1 class="title">Killer</h1>
+        <div class="setter">Setter unknown</div>
+        <textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal killer sudoku rules apply: digits in cages sum to the number in the cage's top left, and do not repeat.</textarea>
+    </div>
 </div>
 
 <style lang="scss">
@@ -136,7 +138,7 @@ import { onDestroy } from "svelte";
         display: flex;
         flex-direction: column;
         width: 100%;
-        height: 100%;
+        height: vars.$sudoku-size-big; // To stick numpad to bottom of sudoku grid.
 
         .entry-pad {
             display: flex;
@@ -204,20 +206,30 @@ import { onDestroy } from "svelte";
             }
         }
 
-        textarea.rules-text {
+        .entry-info {
             flex: 1 1 20vh;
-            font-size: 0.7rem;
+            min-height: 8em;
+            margin: 0 0 1em 0;
 
-            resize: none;
-            margin: 1em 0 2em 0;
-            padding: 0.5em;
-            min-height: 5em;
+            display: flex;
+            flex-direction: column;
 
-            outline: none;
-            @include vars.hoverborder();
-            &:hover, &:focus {
+            textarea.rules-text {
+                flex: 1 1 20vh;
+                font-size: 0.7rem;
+
+                resize: none;
+                margin-top: 1em;
+                padding: 0.5em;
+                min-height: 5em;
+
                 outline: none;
-                @include vars.hoverborder-hover();
+                @include vars.hoverborder();
+                &:hover, &:focus {
+                    outline: none;
+                    @include vars.hoverborder-hover();
+                }
+
             }
 
             // Reorder so entry-pad is before rules.
@@ -225,6 +237,7 @@ import { onDestroy } from "svelte";
             @include vars.breakpoint-mobile {
                 // Except when collapsing breakpoint is hit.
                 order: 0;
+                margin: 1em 0 0 0;
             }
         }
     }
