@@ -1,11 +1,43 @@
+<script lang="ts">
+    let mode: string = 'digits';
+</script>
+
 <div class="container">
     <div class="mode-pad-container">
         <div class="mode-pad">
             <!-- TOOD switch to INPUT RADIOs. -->
-            <button class="padbutton">1</button>
-            <button class="padbutton" style="font-size: 50%;">123</button>
-            <button class="padbutton">m</button>
-            <button class="padbutton">c</button>
+            <div>
+                <input class="radio-mode-button" type="radio" name="mode" id="mode-radio-digits" value="digits" bind:group={mode} />
+                <label class="padbutton padbutton-mode" role="button" for="mode-radio-digits">
+                    <span aria-hidden="true">1</span>
+                    <span class="sr-only">Digits</span>
+                </label>
+            </div>
+            <div>
+                <input class="radio-mode-button" type="radio" name="mode" id="mode-radio-corner" value="corner" bind:group={mode} />
+                <label class="padbutton padbutton-mode" role="button" for="mode-radio-corner">
+                    <span aria-hidden="true" style="font-size: 50%;">
+                        <span style="position: absolute; top:    12%; left:  20%;">1</span>
+                        <span style="position: absolute; top:    12%; right: 20%;">2</span>
+                        <span style="position: absolute; bottom: 12%; left:  20%;">3</span>
+                    </span>
+                    <span class="sr-only">Corner Marks</span>
+                </label>
+            </div>
+            <div>
+                <input class="radio-mode-button" type="radio" name="mode" id="mode-radio-center" value="center" bind:group={mode} />
+                <label class="padbutton padbutton-mode" role="button" for="mode-radio-center">
+                    <span aria-hidden="true" style="font-size: 50%;">123</span>
+                    <span class="sr-only">Center Marks</span>
+                </label>
+            </div>
+            <div>
+                <input class="radio-mode-button" type="radio" name="mode" id="mode-radio-colors" value="colors" bind:group={mode} />
+                <label class="padbutton padbutton-mode" role="button" for="mode-radio-colors">
+                    <span class="icon icon-inline icon-c-textinv icon-colors" />
+                    <span class="sr-only">Colors</span>
+                </label>
+            </div>
         </div>
     </div>
     <div class="right-container">
@@ -24,7 +56,7 @@
                 <button class="padbutton" style="grid-area: 3 / 3 / 4 / 4">9</button>
 
                 <button class="padbutton" style="grid-area: 4 / 1 / 5 / 2">0</button>
-                <button class="padbutton" style="grid-area: 4 / 2 / 5 / 4; border-radius: 7.5% / 15%" title="Delete" aria-label="Delete">
+                <button class="padbutton" style="grid-area: 4 / 2 / 5 / 4" title="Delete" aria-label="Delete">
                     <span class="icon icon-inline icon-c-textinv icon-delete" />
                 </button>
             </div>
@@ -61,6 +93,8 @@
         height: 100%;
     }
 
+    $padbutton-border-radius: 0.2em;
+
     .padbutton {
         display: block;
         box-sizing: border-box;
@@ -78,15 +112,48 @@
         background: none;
         cursor: pointer;
 
+        font-size: 1em;
         font-weight: vars.$font-weight-heavy;
-        background-color: vars.$color-clickable;
         color: #fff;
 
-        border-radius: 15%;
-        font-size: 1em;
+        border-radius: $padbutton-border-radius;
+        border: 0.06em solid vars.$color-clickable;
+        background-color: vars.$color-clickable;
 
         @include vars.breakpoint-mobile {
             font-size: 5vw;
+        }
+    }
+
+    .mode-pad > * {
+        position: relative;
+        height: 0;
+        padding-bottom: 100%;
+
+        .radio-mode-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+
+            border-radius: $padbutton-border-radius;
+        }
+        .radio-mode-button, .padbutton.padbutton-mode {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    .radio-mode-button:checked ~ .padbutton-mode {
+        color: vars.$color-clickable;
+        background-color: #fff;
+        .icon {
+            background-color: vars.$color-clickable;
         }
     }
 
@@ -99,13 +166,11 @@
             .mode-pad {
                 @include aspect-ratio-child();
 
+                font-size: 108%;
+
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-
-                .padbutton {
-                    height: math.div(3 * 100%, 14);
-                }
             }
         }
 
@@ -129,7 +194,7 @@
                     grid-template-rows: 1fr 1fr 1fr 1fr;
                     row-gap: 3.703703703%;
 
-                    > .padbutton {
+                    > * {
                         line-height: 100%;
                     }
                 }
@@ -137,10 +202,12 @@
                 .ctrl-pad {
                     height: 15.2%;
 
+                    font-size: 80%;
+
                     display: flex;
                     @include vars.gap(3.5%);
 
-                    .padbutton {
+                    > * {
                         width: 24.444%;
                     }
                 }

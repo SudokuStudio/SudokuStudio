@@ -2,7 +2,7 @@
     let counter = 0;
 </script>
 <script type="ts">
-    import { selectedTool, selectedToolName } from "../../../js/input";
+    import { selectedTool, SELECTED_TOOL_NAME } from "../../../js/input";
 
     export let id: string;
     export let name: string;
@@ -17,7 +17,7 @@
 
 <div class="constraint-row-container">
     {#if isLocal}
-        <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={selectedToolName} bind:group={$selectedTool} />
+        <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={SELECTED_TOOL_NAME} bind:group={$selectedTool} />
     {/if}
     <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
         <div class="constraint-row-left">

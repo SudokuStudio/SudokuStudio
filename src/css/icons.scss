@@ -55,6 +55,8 @@
         "screenshot": "svg/large/screenshot.svg",
         "delete": "svg/16px/symbols/x.svg",
 
+        "colors": "svg/large/colors.svg",
+
         "positive-diagonal": "svg/16px/global-constraints/diagonal-up-constraint.svg",
         "negative-diagonal": "svg/16px/global-constraints/diagonal-down-constraint.svg",
         "knight": "svg/16px/global-constraints/knight-constraint.svg",
@@ -75,7 +77,7 @@
         }
     }
 
-    .icon-undo.redo {
+    &.icon-undo.redo {
         transform: scaleX(-1);
     }
 }
