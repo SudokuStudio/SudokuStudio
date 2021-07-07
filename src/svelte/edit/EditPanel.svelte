@@ -4,8 +4,6 @@
     import type { StateRef } from "../../js/state_manager";
     import { boardState, CONSTRAINT_GLOBALS, CONSTRAINT_COMPONENTS } from "../../js/board";
     import type { ConstraintComponent } from "../../js/board";
-    import ConstraintRow from "./constraint/ConstraintRow.svelte";
-import Icon from "../Icon.svelte";
 
     const constraintsGlobal: { id: string, ref: StateRef, component: ConstraintComponent }[] = [];
     const constraintsLocal: { id: string, ref: StateRef, component: ConstraintComponent }[] = [];
@@ -78,6 +76,3 @@ import Icon from "../Icon.svelte";
         </EditSection>
     </li>
 </ul>
-
-<style lang="scss">
-</style>
