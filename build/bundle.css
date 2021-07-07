@@ -867,11 +867,11 @@ h1.svelte-hp3e90.svelte-hp3e90.svelte-hp3e90 {
   display: inline-block;
 }
 
-.unused.svelte-1mfx768.svelte-1mfx768 {
+.unused.svelte-ah3uuq.svelte-ah3uuq {
   opacity: 0.5;
 }
 
-.constraint-row.svelte-1mfx768.svelte-1mfx768 {
+.constraint-row.svelte-ah3uuq.svelte-ah3uuq {
   margin: 0.25em 0 0.5em 0.75em;
   padding: 0.25em 0.25em;
   position: relative;
@@ -887,37 +887,37 @@ h1.svelte-hp3e90.svelte-hp3e90.svelte-hp3e90 {
   z-index: 0;
 }
 
-.constraint-row.svelte-1mfx768.svelte-1mfx768:before, .constraint-row.svelte-1mfx768.svelte-1mfx768:after {
+.constraint-row.svelte-ah3uuq.svelte-ah3uuq:before, .constraint-row.svelte-ah3uuq.svelte-ah3uuq:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-1mfx768.svelte-1mfx768:after {
+.constraint-row.svelte-ah3uuq.svelte-ah3uuq:after {
   clear: both;
 }
 
-.constraint-row.global.svelte-1mfx768.svelte-1mfx768:hover {
+.constraint-row.global.svelte-ah3uuq.svelte-ah3uuq:hover {
   border-color: #637691;
 }
 
-.constraint-row.svelte-1mfx768 .constraint-row-left.svelte-1mfx768 {
+.constraint-row.svelte-ah3uuq .constraint-row-left.svelte-ah3uuq {
   float: left;
 }
 
-.constraint-row.svelte-1mfx768 .constraint-row-right.svelte-1mfx768 {
+.constraint-row.svelte-ah3uuq .constraint-row-right.svelte-ah3uuq {
   margin-left: 0.5em;
   float: right;
 }
 
-.radio-select-button.svelte-1mfx768.svelte-1mfx768 {
+.radio-select-button.svelte-ah3uuq.svelte-ah3uuq {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   position: absolute;
   top: -0.1rem;
   left: -0.1rem;
-  bottom: -0.1rem;
-  right: -0.1rem;
+  width: calc(100% + 0.2rem);
+  height: calc(100% + 0.2rem);
   pointer-events: none;
   border-color: transparent;
   z-index: -1;
@@ -929,11 +929,11 @@ h1.svelte-hp3e90.svelte-hp3e90.svelte-hp3e90 {
   transition: border-color 0.1s linear;
 }
 
-.radio-select-button.svelte-1mfx768.svelte-1mfx768:checked {
+.radio-select-button.svelte-ah3uuq.svelte-ah3uuq:checked {
   border-color: #637691;
   background-color: #f5f5fe;
 }
 
-.constraint-row.svelte-1mfx768:hover .radio-select-button.svelte-1mfx768 {
+.constraint-row.svelte-ah3uuq:hover .radio-select-button.svelte-ah3uuq {
   border-color: #637691;
 }
