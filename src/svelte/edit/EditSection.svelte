@@ -8,13 +8,17 @@
     }
 </script>
 
-<div class="container" class:closed={closed}>
+<div class="container" class:closed>
     <button class="section-title nobutton" on:click={onClick}>
-        <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu" />
+        <span
+            class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu"
+        />
         {title}
     </button>
-    <div class="panel">
-        <slot></slot>
+    <div class="panel-wrapper">
+        <div class="panel">
+            <slot />
+        </div>
     </div>
 </div>
 
@@ -32,22 +36,50 @@
         margin: 0;
         background: none;
         cursor: pointer;
+        width: 100%;
+        text-align: left;
 
         white-space: nowrap;
     }
+    .section-title:hover {
+        box-shadow: 2px 2px 0.25em rgba(0, 0, 0, 0.2);
+        border-radius: 0.3em;
+        transition: box-shadow vars.$transition-time linear 0s;
+    }
 
     .tree-menu {
-        transition: transform 0.1s ease-in-out;
+        transition: transform vars.$transition-time ease-in-out;
     }
     .closed .tree-menu {
         transform: rotate(-90deg);
     }
 
-    // .panel {
-    // }
-    .closed .panel {
+    .panel-wrapper {
+        display: flex;
         overflow: hidden;
+    }
+    .panel-wrapper:after {
+        content: "";
+        height: 10px;
+        transition: height vars.$transition-time linear, max-height 0s vars.$transition-time linear;
+        max-height: 0px;
+    }
+    .panel {
+        transition: margin-bottom vars.$transition-time cubic-bezier(0, 0, 0, 1);
+        margin-bottom: 0;
+        max-height: 1000000px;
+    }
+    .closed .panel-wrapper > .panel {
+        margin-bottom: -2000px;
+        transition: margin-bottom vars.$transition-time cubic-bezier(1, 0, 1, 1),
+            visibility 0s vars.$transition-time, max-height 0s vars.$transition-time;
+        visibility: hidden;
+        max-height: 0;
+    }
+    .closed .panel-wrapper:after {
         height: 0;
+        transition: height vars.$transition-time linear;
+        max-height: 10px;
     }
 
     .container {
