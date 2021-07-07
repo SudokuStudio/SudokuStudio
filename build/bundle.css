@@ -894,16 +894,16 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   display: inline-block;
 }
 
-.unused.svelte-mk6ris.svelte-mk6ris {
+.unused.svelte-e94sqd.svelte-e94sqd {
   opacity: 0.5;
 }
 
-.constraint-row-container.svelte-mk6ris.svelte-mk6ris {
+.constraint-row-container.svelte-e94sqd.svelte-e94sqd {
   margin: 0.25em 0 0.5em 0.75em;
   position: relative;
 }
 
-.constraint-row.svelte-mk6ris.svelte-mk6ris {
+.constraint-row.svelte-e94sqd.svelte-e94sqd {
   padding: 0.25em 0.25em;
   cursor: pointer;
   -webkit-user-select: none;
@@ -916,29 +916,34 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   z-index: 0;
 }
 
-.constraint-row.svelte-mk6ris.svelte-mk6ris:before, .constraint-row.svelte-mk6ris.svelte-mk6ris:after {
+.constraint-row.svelte-e94sqd.svelte-e94sqd:before, .constraint-row.svelte-e94sqd.svelte-e94sqd:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-mk6ris.svelte-mk6ris:after {
+.constraint-row.svelte-e94sqd.svelte-e94sqd:after {
   clear: both;
 }
 
-.constraint-row.svelte-mk6ris .constraint-row-left.svelte-mk6ris {
+.constraint-row.svelte-e94sqd .constraint-row-left.svelte-e94sqd {
   float: left;
 }
 
-.constraint-row.svelte-mk6ris .constraint-row-right.svelte-mk6ris {
+.constraint-row.svelte-e94sqd .constraint-row-right.svelte-e94sqd {
   margin-left: 0.5em;
   float: right;
 }
 
-.constraint-row.svelte-mk6ris.svelte-mk6ris:hover, .constraint-row.svelte-mk6ris.svelte-mk6ris:focus-visible, .radio-select-button.svelte-mk6ris:checked ~ .constraint-row.svelte-mk6ris {
+.constraint-row.svelte-e94sqd.svelte-e94sqd:hover, .constraint-row.svelte-e94sqd.svelte-e94sqd:focus-visible {
   border-color: #637691;
 }
 
-.radio-select-button.svelte-mk6ris.svelte-mk6ris {
+.radio-select-button.svelte-e94sqd:checked ~ .constraint-row.svelte-e94sqd {
+  background-color: #f5f5fe;
+  border-color: #637691;
+}
+
+.radio-select-button.svelte-e94sqd.svelte-e94sqd {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
