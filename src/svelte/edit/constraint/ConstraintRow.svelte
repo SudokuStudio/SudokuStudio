@@ -19,7 +19,7 @@
     {#if isLocal}
         <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={selectedToolName} bind:group={$selectedTool} />
     {/if}
-    <div class="constraint-row" class:global={!isLocal} role="button" on:click|stopPropagation={onClick}>
+    <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
         <div class="constraint-row-left">
             <button class="nobutton" on:click|stopPropagation={onTrash}>
                 <span class="icon icon-inline icon-c-clickable icon-trash" />
