@@ -662,6 +662,11 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   margin-bottom: 0.5em;
 }
 
+.constraint-checkbox.svelte-1ns67sk {
+  margin-left: 0.5em;
+  display: inline-block;
+}
+
 .unused.svelte-1bbsdib.svelte-1bbsdib {
   opacity: 0.5;
 }
@@ -707,9 +712,4 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
 .radio-select-button.svelte-1bbsdib.svelte-1bbsdib:checked {
   border: 0.1em solid #637691;
   border-radius: 0.3em;
-}
-
-.constraint-checkbox.svelte-1ns67sk {
-  margin-left: 0.5em;
-  display: inline-block;
 }
