@@ -22,8 +22,8 @@ import ButtonPad from "./ButtonPad.svelte";
         <ButtonPad />
     </div>
     <div class="entry-info">
-        <h1 class="title">Killer</h1>
-        <div class="setter">Setter unknown</div>
+        <input class="info-input title" type="text" placeholder="Untitled" value="Killer" />
+        <input class="info-input setter" type="text" placeholder="Anonymous" />
         <textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal killer sudoku rules apply: digits in cages sum to the number in the cage's top left, and do not repeat.</textarea>
     </div>
 </div>
@@ -32,7 +32,26 @@ import ButtonPad from "./ButtonPad.svelte";
     @use "sass:math";
     @use '../../css/vars' as vars;
 
-    h1 {
+    .info-input {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        margin: 0;
+        padding: 0;
+        border: 0;
+        outline: none;
+
+        text-align: center;
+
+        @include vars.hoverborder();
+        &:hover, &:focus {
+            outline: none;
+            @include vars.hoverborder-hover();
+        }
+    }
+
+    .title {
         font-size: 1.4rem;
         font-weight: vars.$font-weight-heavy;
         white-space: nowrap;
@@ -44,8 +63,12 @@ import ButtonPad from "./ButtonPad.svelte";
     .setter {
         white-space: nowrap;
         font-size: 0.7rem;
-        color: gray;
         text-align: center;
+    }
+
+    textarea.rules-text {
+        resize: none;
+        padding: 0.5em;
     }
 
     .entry-column {
@@ -75,9 +98,7 @@ import ButtonPad from "./ButtonPad.svelte";
                 flex: 1 1 20vh;
                 font-size: 0.7rem;
 
-                resize: none;
                 margin-top: 1em;
-                padding: 0.5em;
                 min-height: 5em;
 
                 outline: none;
