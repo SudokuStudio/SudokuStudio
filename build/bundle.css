@@ -641,7 +641,7 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
+h1.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   font-size: 1.4rem;
   font-weight: 800;
   white-space: nowrap;
@@ -650,18 +650,18 @@ h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
   text-align: center;
 }
 
-.setter.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
+.setter.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   white-space: nowrap;
   font-size: 0.7rem;
   color: gray;
   text-align: center;
 }
 
-.icon-undo.redo.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
+.icon-undo.redo.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   transform: scaleX(-1);
 }
 
-.padbutton.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
+.padbutton.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   display: block;
   box-sizing: border-box;
   -webkit-appearance: none;
@@ -683,31 +683,31 @@ h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
+  .padbutton.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
     font-size: 5vw;
   }
 }
-.entry-column.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad.svelte-16ylhn4.svelte-16ylhn4 {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .mode-pad-container.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .mode-pad-container.svelte-16ylhn4.svelte-16ylhn4 {
   width: 22.2222222222%;
   height: 0;
   padding-bottom: 103.7037037037%;
   position: relative;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .mode-pad-container .mode-pad.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .mode-pad-container .mode-pad.svelte-16ylhn4.svelte-16ylhn4 {
   position: absolute;
   top: 0;
   left: 0;
@@ -718,18 +718,18 @@ h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
   justify-content: space-between;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-16ylhn4.svelte-16ylhn4 {
   height: 21.4285714286%;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .right-container.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .right-container.svelte-16ylhn4.svelte-16ylhn4 {
   width: 66.6666666667%;
   height: 0;
   padding-bottom: 106.6666666667%;
   position: relative;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .right-container .right.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .right-container .right.svelte-16ylhn4.svelte-16ylhn4 {
   position: absolute;
   top: 0;
   left: 0;
@@ -740,7 +740,7 @@ h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
   justify-content: space-between;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .right-container .right .num-pad.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .right-container .right .num-pad.svelte-16ylhn4.svelte-16ylhn4 {
   width: 100%;
   height: 82%;
   display: grid;
@@ -750,44 +750,45 @@ h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
   row-gap: 3.703703703%;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .right-container .right .num-pad.svelte-rr3rjb > .padbutton.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .right-container .right .num-pad.svelte-16ylhn4 > .padbutton.svelte-16ylhn4 {
   line-height: 100%;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .right-container .right .ctrl-pad.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .right-container .right .ctrl-pad.svelte-16ylhn4.svelte-16ylhn4 {
   height: 15.2%;
   display: flex;
   gap: 3.5%;
 }
 
-.entry-column.svelte-rr3rjb .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-16ylhn4.svelte-16ylhn4 {
   width: 24.444%;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-rr3rjb .entry-pad.svelte-rr3rjb.svelte-rr3rjb {
+  .entry-column.svelte-16ylhn4 .entry-pad.svelte-16ylhn4.svelte-16ylhn4 {
     width: 50%;
     margin: 0 auto;
   }
 }
-.entry-column.svelte-rr3rjb .rules-text.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 .rules-text.svelte-16ylhn4.svelte-16ylhn4 {
   flex: 1 1 20vh;
   font-size: 0.7rem;
 }
 
-.entry-column.svelte-rr3rjb textarea.rules-text.svelte-rr3rjb.svelte-rr3rjb {
+.entry-column.svelte-16ylhn4 textarea.rules-text.svelte-16ylhn4.svelte-16ylhn4 {
   resize: none;
-  border: none;
   margin: 1em 0 2em 0;
   padding: 0.5em;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
 }
 
-.entry-column.svelte-rr3rjb textarea.svelte-rr3rjb.svelte-rr3rjb:focus {
-  outline: 0.15em solid #637691;
-  border-radius: 0.3em;
+.entry-column.svelte-16ylhn4 textarea.rules-text.svelte-16ylhn4.svelte-16ylhn4:hover {
+  border-color: #637691;
 }
 
-.section-title.svelte-1awzzxi.svelte-1awzzxi.svelte-1awzzxi {
+.section-title.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
   padding: 0.5em 0.5em;
   font-weight: 800;
   display: inline-block;
@@ -800,57 +801,59 @@ h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
   width: 100%;
   text-align: left;
   white-space: nowrap;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
 }
 
-.section-title.svelte-1awzzxi.svelte-1awzzxi.svelte-1awzzxi:hover {
-  box-shadow: 0 0 0 1px #637691;
-  border-radius: 0.3em;
-  transition: box-shadow 0.2s linear 0s;
+.section-title.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x:hover {
+  border-color: #637691;
 }
 
-.tree-menu.svelte-1awzzxi.svelte-1awzzxi.svelte-1awzzxi {
+.tree-menu.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
   transition: transform 0.2s ease-in-out;
   transform: rotate(180deg);
   transform-origin: 50% 66%;
   float: right;
 }
 
-.closed.svelte-1awzzxi .tree-menu.svelte-1awzzxi.svelte-1awzzxi {
+.closed.svelte-1o0wb7x .tree-menu.svelte-1o0wb7x.svelte-1o0wb7x {
   transform: rotate(0deg);
 }
 
-.panel-wrapper.svelte-1awzzxi.svelte-1awzzxi.svelte-1awzzxi {
+.panel-wrapper.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
   display: flex;
   overflow: hidden;
 }
 
-.panel-wrapper.svelte-1awzzxi.svelte-1awzzxi.svelte-1awzzxi:after {
+.panel-wrapper.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x:after {
   content: "";
   height: 10px;
   transition: height 0.2s linear, max-height 0s 0.2s linear;
   max-height: 0px;
 }
 
-.panel.svelte-1awzzxi.svelte-1awzzxi.svelte-1awzzxi {
+.panel.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
+  width: 100%;
   transition: margin-bottom 0.2s cubic-bezier(0, 0, 0, 1);
   margin-bottom: 0;
   max-height: 1000000px;
 }
 
-.closed.svelte-1awzzxi .panel-wrapper.svelte-1awzzxi > .panel.svelte-1awzzxi {
+.closed.svelte-1o0wb7x .panel-wrapper.svelte-1o0wb7x > .panel.svelte-1o0wb7x {
   margin-bottom: -2000px;
   transition: margin-bottom 0.2s cubic-bezier(1, 0, 1, 1), visibility 0s 0.2s, max-height 0s 0.2s;
   visibility: hidden;
   max-height: 0;
 }
 
-.closed.svelte-1awzzxi .panel-wrapper.svelte-1awzzxi.svelte-1awzzxi:after {
+.closed.svelte-1o0wb7x .panel-wrapper.svelte-1o0wb7x.svelte-1o0wb7x:after {
   height: 0;
   transition: height 0.2s linear;
   max-height: 10px;
 }
 
-.container.svelte-1awzzxi.svelte-1awzzxi.svelte-1awzzxi {
+.container.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
   margin-bottom: 0.5em;
 }
 
@@ -859,11 +862,11 @@ h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
   display: inline-block;
 }
 
-.unused.svelte-1lpgl2i.svelte-1lpgl2i {
+.unused.svelte-1mfx768.svelte-1mfx768 {
   opacity: 0.5;
 }
 
-.constraint-row.svelte-1lpgl2i.svelte-1lpgl2i {
+.constraint-row.svelte-1mfx768.svelte-1mfx768 {
   margin: 0.25em 0 0.5em 0.75em;
   padding: 0.25em 0.25em;
   position: relative;
@@ -873,49 +876,59 @@ h1.svelte-rr3rjb.svelte-rr3rjb.svelte-rr3rjb {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
+  z-index: 0;
 }
 
-.constraint-row.svelte-1lpgl2i.svelte-1lpgl2i:before, .constraint-row.svelte-1lpgl2i.svelte-1lpgl2i:after {
+.constraint-row.svelte-1mfx768.svelte-1mfx768:before, .constraint-row.svelte-1mfx768.svelte-1mfx768:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-1lpgl2i.svelte-1lpgl2i:after {
+.constraint-row.svelte-1mfx768.svelte-1mfx768:after {
   clear: both;
 }
 
-.constraint-row.svelte-1lpgl2i .constraint-row-left.svelte-1lpgl2i {
+.constraint-row.global.svelte-1mfx768.svelte-1mfx768:hover {
+  border-color: #637691;
+}
+
+.constraint-row.svelte-1mfx768 .constraint-row-left.svelte-1mfx768 {
   float: left;
 }
 
-.constraint-row.svelte-1lpgl2i .constraint-row-right.svelte-1lpgl2i {
+.constraint-row.svelte-1mfx768 .constraint-row-right.svelte-1mfx768 {
   margin-left: 0.5em;
   float: right;
 }
 
-.constraint-row.svelte-1lpgl2i.svelte-1lpgl2i:hover {
-  box-shadow: 0 0 0 1px #637691;
-  border-radius: 0.3em;
-  transition: background-color 0.2s linear 0s, box-shadow 0.2s linear 0s;
-}
-
-.radio-select-button.svelte-1lpgl2i.svelte-1lpgl2i {
+.radio-select-button.svelte-1mfx768.svelte-1mfx768 {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -0.1rem;
+  left: -0.1rem;
+  bottom: -0.1rem;
+  right: -0.1rem;
   pointer-events: none;
   border-color: transparent;
   z-index: -1;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
 }
 
-.radio-select-button.svelte-1lpgl2i.svelte-1lpgl2i:checked {
-  border: 0.1em solid #637691;
-  border-radius: 0.3em;
+.radio-select-button.svelte-1mfx768.svelte-1mfx768:checked {
+  border-color: #637691;
   background-color: #f5f5fe;
-  transition: border-color 0.2s linear 0s, background-color 0.2s linear 0s;
+}
+
+.constraint-row.svelte-1mfx768:hover .radio-select-button.svelte-1mfx768 {
+  border-color: #637691;
 }
