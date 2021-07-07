@@ -56,7 +56,6 @@ import ButtonPad from "./ButtonPad.svelte";
         font-weight: vars.$font-weight-heavy;
         white-space: nowrap;
         margin-top: 0;
-        margin-bottom: 0.25rem;
         text-align: center;
     }
 
