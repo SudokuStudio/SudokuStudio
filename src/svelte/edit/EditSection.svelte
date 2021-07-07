@@ -42,7 +42,7 @@
         white-space: nowrap;
 
         @include vars.hoverborder();
-        &:hover {
+        &:hover, &:focus-visible {
             @include vars.hoverborder-hover();
         }
     }

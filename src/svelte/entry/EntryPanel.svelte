@@ -19,8 +19,7 @@ import { onDestroy } from "svelte";
 <div class="entry-column">
 	<h1 class="title">Killer</h1>
 	<div class="setter">Setter unknown</div>
-	<textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal killer sudoku rules apply: digits in cages sum to the number in the cage's top left, and do not repeat.</textarea>
-    <div class="entry-pad" bind:this={entryPadEl}>
+	<div class="entry-pad" bind:this={entryPadEl}>
         <div class="mode-pad-container">
             <div class="mode-pad">
                 <!-- TOOD switch to INPUT RADIOs. -->
@@ -64,6 +63,7 @@ import { onDestroy } from "svelte";
             </div>
         </div>
     </div>
+    <textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal killer sudoku rules apply: digits in cages sum to the number in the cage's top left, and do not repeat.</textarea>
 </div>
 
 <style lang="scss">
@@ -144,11 +144,6 @@ import { onDestroy } from "svelte";
 
             width: 100%;
 
-            @include vars.breakpoint-mobile {
-                // Reorder so entry-pad is before rules.
-                order: -1;
-            }
-
             .mode-pad-container {
                 @include aspect-ratio-container(math.div(42, 9), math.div(2 * 100%, 9));
 
@@ -216,12 +211,20 @@ import { onDestroy } from "svelte";
             resize: none;
             margin: 1em 0 2em 0;
             padding: 0.5em;
+            min-height: 5em;
 
             outline: none;
             @include vars.hoverborder();
             &:hover, &:focus {
                 outline: none;
                 @include vars.hoverborder-hover();
+            }
+
+            // Reorder so entry-pad is before rules.
+            order: -1;
+            @include vars.breakpoint-mobile {
+                // Except when collapsing breakpoint is hit.
+                order: 0;
             }
         }
     }
