@@ -662,11 +662,13 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   justify-content: flex-end;
 }
 
-.icon-undo.redo.svelte-om34vg.svelte-om34vg.svelte-om34vg {
+.icon-undo.redo.svelte-n6htjt.svelte-n6htjt.svelte-n6htjt {
   transform: scaleX(-1);
 }
 
-.padbutton.svelte-om34vg.svelte-om34vg.svelte-om34vg {
+.padbutton.svelte-n6htjt.svelte-n6htjt.svelte-n6htjt {
+  display: block;
+  box-sizing: border-box;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -675,6 +677,7 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   margin: 0;
   padding: 0;
   border: 0;
+  text-align: center;
   background: none;
   cursor: pointer;
   font-weight: 800;
@@ -685,31 +688,31 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-om34vg.svelte-om34vg.svelte-om34vg {
+  .padbutton.svelte-n6htjt.svelte-n6htjt.svelte-n6htjt {
     font-size: 5vw;
   }
 }
-.entry-column.svelte-om34vg.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt.svelte-n6htjt.svelte-n6htjt {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
 }
 
-.entry-column.svelte-om34vg .entry-pad.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad.svelte-n6htjt.svelte-n6htjt {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
-.entry-column.svelte-om34vg .entry-pad .mode-pad-container.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .mode-pad-container.svelte-n6htjt.svelte-n6htjt {
   width: 22.2222222222%;
   height: 0;
   padding-bottom: 103.7037037037%;
   position: relative;
 }
 
-.entry-column.svelte-om34vg .entry-pad .mode-pad-container .mode-pad.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .mode-pad-container .mode-pad.svelte-n6htjt.svelte-n6htjt {
   position: absolute;
   top: 0;
   left: 0;
@@ -720,18 +723,18 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   justify-content: space-between;
 }
 
-.entry-column.svelte-om34vg .entry-pad .mode-pad-container .mode-pad button.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-n6htjt.svelte-n6htjt {
   height: 21.4285714286%;
 }
 
-.entry-column.svelte-om34vg .entry-pad .right-container.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .right-container.svelte-n6htjt.svelte-n6htjt {
   width: 66.6666666667%;
   height: 0;
   padding-bottom: 106.6666666667%;
   position: relative;
 }
 
-.entry-column.svelte-om34vg .entry-pad .right-container .right.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .right-container .right.svelte-n6htjt.svelte-n6htjt {
   position: absolute;
   top: 0;
   left: 0;
@@ -742,7 +745,7 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   justify-content: space-between;
 }
 
-.entry-column.svelte-om34vg .entry-pad .right-container .right .num-pad.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .right-container .right .num-pad.svelte-n6htjt.svelte-n6htjt {
   width: 100%;
   height: 82%;
   display: grid;
@@ -752,43 +755,38 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   row-gap: 3.703703703%;
 }
 
-.entry-column.svelte-om34vg .entry-pad .right-container .right .num-pad.svelte-om34vg > button.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .right-container .right .num-pad.svelte-n6htjt > .padbutton.svelte-n6htjt {
   line-height: 100%;
 }
 
-.entry-column.svelte-om34vg .entry-pad .right-container .right .ctrl-pad.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .right-container .right .ctrl-pad.svelte-n6htjt.svelte-n6htjt {
   height: 15.2%;
   display: flex;
   gap: 3.5%;
 }
 
-.entry-column.svelte-om34vg .entry-pad .right-container .right .ctrl-pad button.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-n6htjt.svelte-n6htjt {
   width: 24.444%;
 }
 
-.entry-column.svelte-om34vg .entry-pad button.svelte-om34vg.svelte-om34vg {
-  display: block;
-  box-sizing: border-box;
-}
-
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-om34vg .entry-pad.svelte-om34vg.svelte-om34vg {
+  .entry-column.svelte-n6htjt .entry-pad.svelte-n6htjt.svelte-n6htjt {
     width: 50%;
     margin: 0 auto;
   }
 }
-.entry-column.svelte-om34vg .rules.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .rules.svelte-n6htjt.svelte-n6htjt {
   text-align: center;
   margin: 1em 0 0.5em 0;
 }
 
-.entry-column.svelte-om34vg .rules-text.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt .rules-text.svelte-n6htjt.svelte-n6htjt {
   flex: 1 1 20vh;
   width: 100%;
   font-size: 0.7rem;
 }
 
-.entry-column.svelte-om34vg textarea.rules-text.svelte-om34vg.svelte-om34vg {
+.entry-column.svelte-n6htjt textarea.rules-text.svelte-n6htjt.svelte-n6htjt {
   resize: none;
   border: none;
 }
