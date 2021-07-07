@@ -654,7 +654,7 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-.info-input.svelte-otp5q1.svelte-otp5q1 {
+.info-input.svelte-1c4es21.svelte-1c4es21 {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -668,49 +668,48 @@ ul.header-buttons.right.svelte-1gtf4ed {
   transition: border-color 0.1s linear;
 }
 
-.info-input.svelte-otp5q1.svelte-otp5q1:hover, .info-input.svelte-otp5q1.svelte-otp5q1:focus {
+.info-input.svelte-1c4es21.svelte-1c4es21:hover, .info-input.svelte-1c4es21.svelte-1c4es21:focus {
   outline: none;
   border-color: #637691;
 }
 
-.title.svelte-otp5q1.svelte-otp5q1 {
+.title.svelte-1c4es21.svelte-1c4es21 {
   font-size: 1.4rem;
   font-weight: 800;
   white-space: nowrap;
   margin-top: 0;
-  margin-bottom: 0.25rem;
   text-align: center;
 }
 
-.setter.svelte-otp5q1.svelte-otp5q1 {
+.setter.svelte-1c4es21.svelte-1c4es21 {
   white-space: nowrap;
   font-size: 0.7rem;
   text-align: center;
 }
 
-textarea.rules-text.svelte-otp5q1.svelte-otp5q1 {
+textarea.rules-text.svelte-1c4es21.svelte-1c4es21 {
   resize: none;
   padding: 0.5em;
 }
 
-.entry-column.svelte-otp5q1.svelte-otp5q1 {
+.entry-column.svelte-1c4es21.svelte-1c4es21 {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: min(calc(70vw - 20em), calc(100vh - 4rem));
 }
 
-.entry-column.svelte-otp5q1 .entry-pad.svelte-otp5q1 {
+.entry-column.svelte-1c4es21 .entry-pad.svelte-1c4es21 {
   width: 100%;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-otp5q1 .entry-pad.svelte-otp5q1 {
+  .entry-column.svelte-1c4es21 .entry-pad.svelte-1c4es21 {
     width: 50%;
     margin: 0 auto;
   }
 }
-.entry-column.svelte-otp5q1 .entry-info.svelte-otp5q1 {
+.entry-column.svelte-1c4es21 .entry-info.svelte-1c4es21 {
   flex: 1 1 20vh;
   min-height: 8em;
   margin: 0 0 1em 0;
@@ -719,7 +718,7 @@ textarea.rules-text.svelte-otp5q1.svelte-otp5q1 {
   order: -1;
 }
 
-.entry-column.svelte-otp5q1 .entry-info textarea.rules-text.svelte-otp5q1 {
+.entry-column.svelte-1c4es21 .entry-info textarea.rules-text.svelte-1c4es21 {
   flex: 1 1 20vh;
   font-size: 0.7rem;
   margin-top: 1em;
@@ -730,13 +729,13 @@ textarea.rules-text.svelte-otp5q1.svelte-otp5q1 {
   transition: border-color 0.1s linear;
 }
 
-.entry-column.svelte-otp5q1 .entry-info textarea.rules-text.svelte-otp5q1:hover, .entry-column.svelte-otp5q1 .entry-info textarea.rules-text.svelte-otp5q1:focus {
+.entry-column.svelte-1c4es21 .entry-info textarea.rules-text.svelte-1c4es21:hover, .entry-column.svelte-1c4es21 .entry-info textarea.rules-text.svelte-1c4es21:focus {
   outline: none;
   border-color: #637691;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-otp5q1 .entry-info.svelte-otp5q1 {
+  .entry-column.svelte-1c4es21 .entry-info.svelte-1c4es21 {
     order: 0;
     margin: 1em 0 0 0;
   }
