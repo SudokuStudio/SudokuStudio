@@ -26,6 +26,7 @@
         font-weight: vars.$font-weight-heavy;
 
         white-space: nowrap;
+        user-select: none;
     }
 
     .tree-menu {
@@ -44,6 +45,5 @@
 
     .container {
         margin-bottom: 0.5em;
-				user-select: none;
     }
 </style>
