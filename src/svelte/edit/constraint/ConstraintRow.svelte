@@ -51,6 +51,10 @@
         white-space: nowrap;
 
         cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
 
         .constraint-row-left {
             float: left;

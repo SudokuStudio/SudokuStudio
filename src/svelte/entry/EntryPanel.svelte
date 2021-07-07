@@ -80,6 +80,9 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
     }
 
     .padbutton {
+        display: block;
+        box-sizing: border-box;
+
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
@@ -89,6 +92,7 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
         margin: 0;
         padding: 0;
         border: 0;
+        text-align: center;
         background: none;
         cursor: pointer;
 
@@ -140,7 +144,7 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
                     flex-direction: column;
                     justify-content: space-between;
 
-                    button {
+                    .padbutton {
                         height: math.div(3 * 100%, 14);
                     }
                 }
@@ -166,7 +170,7 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
                         grid-template-rows: 1fr 1fr 1fr 1fr;
                         row-gap: 3.703703703%;
 
-                        > button {
+                        > .padbutton {
                             line-height: 100%;
                         }
                     }
@@ -177,16 +181,11 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
                         display: flex;
                         gap: 3.5%;
 
-                        button {
+                        .padbutton {
                             width: 24.444%;
                         }
                     }
                 }
-            }
-
-            button {
-                display: block;
-                box-sizing: border-box;
             }
 
             @include vars.breakpoint-mobile {
