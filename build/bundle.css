@@ -154,9 +154,8 @@ footer.svelte-1o5emik.svelte-1o5emik {
   mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M12.56,0H3.44A3.44,3.44,0,0,0,0,3.44v9.12A3.44,3.44,0,0,0,3.44,16h9.12A3.44,3.44,0,0,0,16,12.56V3.44A3.44,3.44,0,0,0,12.56,0ZM9.77,12.57a2.18,2.18,0,0,1-.8,1,2.27,2.27,0,0,1-1.24.33,3.24,3.24,0,0,1-1-.15,2.08,2.08,0,0,1-.81-.42l.44-1a2.87,2.87,0,0,0,.7.38,1.86,1.86,0,0,0,.58.1.81.81,0,0,0,.75-.42,1.89,1.89,0,0,0,.23-.89.69.69,0,0,1-.11.13,1.33,1.33,0,0,1-.44.28,1.42,1.42,0,0,1-.55.1,1.5,1.5,0,0,1-.82-.22,1.62,1.62,0,0,1-.57-.62,1.87,1.87,0,0,1-.21-.9,1.84,1.84,0,0,1,.91-1.61,2,2,0,0,1,1-.23,2,2,0,0,1,1.65.69,3,3,0,0,1,.58,2A3.62,3.62,0,0,1,9.77,12.57ZM10.15,7H6.44V5.87H7.59V3.18l-1.07.61V2.58l1.65-.94H9V5.87h1.16ZM8.23,9.56a.63.63,0,0,0-.33-.09.58.58,0,0,0-.47.19.77.77,0,0,0-.17.51.76.76,0,0,0,.17.52.58.58,0,0,0,.47.19.58.58,0,0,0,.56-.33.89.89,0,0,0,.08-.38.8.8,0,0,0-.08-.36A.62.62,0,0,0,8.23,9.56Z'/%3E%3C/svg%3E");
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M12.56,0H3.44A3.44,3.44,0,0,0,0,3.44v9.12A3.44,3.44,0,0,0,3.44,16h9.12A3.44,3.44,0,0,0,16,12.56V3.44A3.44,3.44,0,0,0,12.56,0ZM9.77,12.57a2.18,2.18,0,0,1-.8,1,2.27,2.27,0,0,1-1.24.33,3.24,3.24,0,0,1-1-.15,2.08,2.08,0,0,1-.81-.42l.44-1a2.87,2.87,0,0,0,.7.38,1.86,1.86,0,0,0,.58.1.81.81,0,0,0,.75-.42,1.89,1.89,0,0,0,.23-.89.69.69,0,0,1-.11.13,1.33,1.33,0,0,1-.44.28,1.42,1.42,0,0,1-.55.1,1.5,1.5,0,0,1-.82-.22,1.62,1.62,0,0,1-.57-.62,1.87,1.87,0,0,1-.21-.9,1.84,1.84,0,0,1,.91-1.61,2,2,0,0,1,1-.23,2,2,0,0,1,1.65.69,3,3,0,0,1,.58,2A3.62,3.62,0,0,1,9.77,12.57ZM10.15,7H6.44V5.87H7.59V3.18l-1.07.61V2.58l1.65-.94H9V5.87h1.16ZM8.23,9.56a.63.63,0,0,0-.33-.09.58.58,0,0,0-.47.19.77.77,0,0,0-.17.51.76.76,0,0,0,.17.52.58.58,0,0,0,.47.19.58.58,0,0,0,.56-.33.89.89,0,0,0,.08-.38.8.8,0,0,0-.08-.36A.62.62,0,0,0,8.23,9.56Z'/%3E%3C/svg%3E");
 }
-.icon .icon-1 {
-  mask-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 18'%3E%3Ctext x='0' y='15'%3EFit Me%3C/text%3E%3C/svg%3E");
-  -webkit-mask-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 18'%3E%3Ctext x='0' y='15'%3EFit Me%3C/text%3E%3C/svg%3E");
+.icon .icon-undo.redo {
+  transform: scaleX(-1);
 }
 
 .icon-c-text {
@@ -651,7 +650,7 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
+h1.svelte-1rvtlsa.svelte-1rvtlsa {
   font-size: 1.4rem;
   font-weight: 800;
   white-space: nowrap;
@@ -660,134 +659,31 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   text-align: center;
 }
 
-.setter.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
+.setter.svelte-1rvtlsa.svelte-1rvtlsa {
   white-space: nowrap;
   font-size: 0.7rem;
   color: gray;
   text-align: center;
 }
 
-.icon-undo.redo.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
-  transform: scaleX(-1);
-}
-
-.padbutton.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
-  display: block;
-  box-sizing: border-box;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  display: block;
-  font-family: inherit;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  text-align: center;
-  background: none;
-  cursor: pointer;
-  font-weight: 800;
-  background-color: #637691;
-  color: #fff;
-  border-radius: 15%;
-  font-size: 1em;
-}
-
-@media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
-    font-size: 5vw;
-  }
-}
-.entry-column.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
+.entry-column.svelte-1rvtlsa.svelte-1rvtlsa {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: min(calc(70vw - 20em), calc(100vh - 4rem));
 }
 
-.entry-column.svelte-jgpbuv .entry-pad.svelte-jgpbuv.svelte-jgpbuv {
-  display: flex;
-  justify-content: space-between;
+.entry-column.svelte-1rvtlsa .entry-pad.svelte-1rvtlsa {
   width: 100%;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .mode-pad-container.svelte-jgpbuv.svelte-jgpbuv {
-  width: 22.2222222222%;
-  height: 0;
-  padding-bottom: 103.7037037037%;
-  position: relative;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .mode-pad-container .mode-pad.svelte-jgpbuv.svelte-jgpbuv {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-jgpbuv.svelte-jgpbuv {
-  height: 21.4285714286%;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .right-container.svelte-jgpbuv.svelte-jgpbuv {
-  width: 66.6666666667%;
-  height: 0;
-  padding-bottom: 106.6666666667%;
-  position: relative;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .right-container .right.svelte-jgpbuv.svelte-jgpbuv {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .right-container .right .num-pad.svelte-jgpbuv.svelte-jgpbuv {
-  width: 100%;
-  height: 82%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  column-gap: 5%;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
-  row-gap: 3.703703703%;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .right-container .right .num-pad.svelte-jgpbuv > .padbutton.svelte-jgpbuv {
-  line-height: 100%;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .right-container .right .ctrl-pad.svelte-jgpbuv.svelte-jgpbuv {
-  height: 15.2%;
-  display: flex;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .right-container .right .ctrl-pad.svelte-jgpbuv > .svelte-jgpbuv {
-  margin-right: 3.5%;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .right-container .right .ctrl-pad.svelte-jgpbuv > .svelte-jgpbuv:last-child {
-  margin-right: 0;
-}
-
-.entry-column.svelte-jgpbuv .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-jgpbuv.svelte-jgpbuv {
-  width: 24.444%;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-jgpbuv .entry-pad.svelte-jgpbuv.svelte-jgpbuv {
+  .entry-column.svelte-1rvtlsa .entry-pad.svelte-1rvtlsa {
     width: 50%;
     margin: 0 auto;
   }
 }
-.entry-column.svelte-jgpbuv .entry-info.svelte-jgpbuv.svelte-jgpbuv {
+.entry-column.svelte-1rvtlsa .entry-info.svelte-1rvtlsa {
   flex: 1 1 20vh;
   min-height: 8em;
   margin: 0 0 1em 0;
@@ -796,7 +692,7 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   order: -1;
 }
 
-.entry-column.svelte-jgpbuv .entry-info textarea.rules-text.svelte-jgpbuv.svelte-jgpbuv {
+.entry-column.svelte-1rvtlsa .entry-info textarea.rules-text.svelte-1rvtlsa {
   flex: 1 1 20vh;
   font-size: 0.7rem;
   resize: none;
@@ -809,13 +705,13 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   transition: border-color 0.1s linear;
 }
 
-.entry-column.svelte-jgpbuv .entry-info textarea.rules-text.svelte-jgpbuv.svelte-jgpbuv:hover, .entry-column.svelte-jgpbuv .entry-info textarea.rules-text.svelte-jgpbuv.svelte-jgpbuv:focus {
+.entry-column.svelte-1rvtlsa .entry-info textarea.rules-text.svelte-1rvtlsa:hover, .entry-column.svelte-1rvtlsa .entry-info textarea.rules-text.svelte-1rvtlsa:focus {
   outline: none;
   border-color: #637691;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-jgpbuv .entry-info.svelte-jgpbuv.svelte-jgpbuv {
+  .entry-column.svelte-1rvtlsa .entry-info.svelte-1rvtlsa {
     order: 0;
     margin: 1em 0 0 0;
   }
@@ -887,6 +783,108 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
 
 .container.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12 {
   margin-bottom: 0.5em;
+}
+
+.padbutton.svelte-5jajtl.svelte-5jajtl.svelte-5jajtl {
+  display: block;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: block;
+  font-family: inherit;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: center;
+  background: none;
+  cursor: pointer;
+  font-weight: 800;
+  background-color: #637691;
+  color: #fff;
+  border-radius: 15%;
+  font-size: 1em;
+}
+
+@media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
+  .padbutton.svelte-5jajtl.svelte-5jajtl.svelte-5jajtl {
+    font-size: 5vw;
+  }
+}
+.container.svelte-5jajtl.svelte-5jajtl.svelte-5jajtl {
+  display: flex;
+  justify-content: space-between;
+}
+
+.container.svelte-5jajtl .mode-pad-container.svelte-5jajtl.svelte-5jajtl {
+  width: 22.2222222222%;
+  height: 0;
+  padding-bottom: 103.7037037037%;
+  position: relative;
+}
+
+.container.svelte-5jajtl .mode-pad-container .mode-pad.svelte-5jajtl.svelte-5jajtl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.container.svelte-5jajtl .mode-pad-container .mode-pad .padbutton.svelte-5jajtl.svelte-5jajtl {
+  height: 21.4285714286%;
+}
+
+.container.svelte-5jajtl .right-container.svelte-5jajtl.svelte-5jajtl {
+  width: 66.6666666667%;
+  height: 0;
+  padding-bottom: 106.6666666667%;
+  position: relative;
+}
+
+.container.svelte-5jajtl .right-container .right.svelte-5jajtl.svelte-5jajtl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.container.svelte-5jajtl .right-container .right .num-pad.svelte-5jajtl.svelte-5jajtl {
+  width: 100%;
+  height: 82%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 5%;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  row-gap: 3.703703703%;
+}
+
+.container.svelte-5jajtl .right-container .right .num-pad.svelte-5jajtl > .padbutton.svelte-5jajtl {
+  line-height: 100%;
+}
+
+.container.svelte-5jajtl .right-container .right .ctrl-pad.svelte-5jajtl.svelte-5jajtl {
+  height: 15.2%;
+  display: flex;
+}
+
+.container.svelte-5jajtl .right-container .right .ctrl-pad.svelte-5jajtl > .svelte-5jajtl {
+  margin-right: 3.5%;
+}
+
+.container.svelte-5jajtl .right-container .right .ctrl-pad.svelte-5jajtl > .svelte-5jajtl:last-child {
+  margin-right: 0;
+}
+
+.container.svelte-5jajtl .right-container .right .ctrl-pad .padbutton.svelte-5jajtl.svelte-5jajtl {
+  width: 24.444%;
 }
 
 .constraint-checkbox.svelte-1ns67sk {
