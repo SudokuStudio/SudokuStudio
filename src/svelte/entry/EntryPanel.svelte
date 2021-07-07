@@ -189,7 +189,7 @@ import { onDestroy } from "svelte";
                         height: 15.2%;
 
                         display: flex;
-                        gap: 3.5%;
+                        @include vars.gap(3.5%);
 
                         .padbutton {
                             width: 24.444%;

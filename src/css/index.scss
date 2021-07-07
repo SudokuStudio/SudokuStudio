@@ -33,7 +33,8 @@ body {
     align-items: stretch;
     flex-direction: row;
     justify-content: space-between;
-    gap: $content-gap;
+
+    @include gap($content-gap);
 }
 
 .hide {

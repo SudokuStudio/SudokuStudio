@@ -41,3 +41,12 @@ $hoverborder-transition-time: 0.1s;
 @mixin hoverborder-hover {
     border-color: $color-clickable;
 }
+
+@mixin gap($size) {
+    > * {
+        margin-right: $size;
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
