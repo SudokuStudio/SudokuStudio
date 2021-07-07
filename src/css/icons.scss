@@ -13,6 +13,16 @@
 
 .icon {
     display: block;
+    margin: 0 auto;
+
+    width: 60%;
+    height: 60%;
+
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-position: center;
+
     &::before {
         display: block;
         width: 100%;
@@ -41,6 +51,10 @@
 
         "tree-menu": "svg/16px/symbols/tree-menu-shown.svg",
 
+        "undo": "svg/16px/symbols/undo.svg",
+        "screenshot": "svg/large/screenshot.svg",
+        "delete": "svg/16px/symbols/x.svg",
+
         "positive-diagonal": "svg/16px/global-constraints/diagonal-up-constraint.svg",
         "negative-diagonal": "svg/16px/global-constraints/diagonal-down-constraint.svg",
         "knight": "svg/16px/global-constraints/knight-constraint.svg",
@@ -60,10 +74,18 @@
             -webkit-mask-image: inline-svg($path);
         }
     }
+
+    .icon-1 {
+        mask-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 18'%3E%3Ctext x='0' y='15'%3EFit Me%3C/text%3E%3C/svg%3E");
+        -webkit-mask-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 18'%3E%3Ctext x='0' y='15'%3EFit Me%3C/text%3E%3C/svg%3E");
+    }
 }
 
 .icon-c-text {
-    background-color: black;
+    background-color: #000;
+}
+.icon-c-textinv {
+    background-color: #fff;
 };
 .icon-c-clickable {
     background-color: $color-clickable;

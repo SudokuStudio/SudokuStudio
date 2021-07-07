@@ -61,9 +61,7 @@ import Header from "./svelte/Header.svelte";
         }
     }
 
-    @media (max-width: 800px) and (max-aspect-ratio: 5/4),
-            (max-width: 600px)
-    {
+    @include vars.breakpoint-mobile {
         main {
             .content-row {
                 flex-direction: column;

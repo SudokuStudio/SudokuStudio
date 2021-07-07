@@ -1,17 +1,28 @@
 $header-height: 6rem;
 $footer-height: 1.5rem;
 
+$content-gap: 3rem;
 $content-margin: 3rem;
 
 $sudoku-size-big: min(calc(70vw - 20em), calc(100vh - #{$header-height + $footer-height}));
 $sudoku-size-small: min(calc(100vw - #{2 * $content-margin}), 50vh);
 
+$max-aspect-ratio: 1.8;
+$font-size: max(16px, calc(12px + min(0.5vw, #{0.5vh * $max-aspect-ratio})));
+
 $font-weight-normal: 500;
 $font-weight-heavy: 800;
 
-$max-aspect-ratio: 1.8;
 
 $color-clickable: #637691;
 $color-disabled: adjust-color($color-clickable, $saturation: -100%);
 
 $color-warning: #916363;
+
+@mixin breakpoint-mobile {
+    @media (max-width: 800px) and (max-aspect-ratio: 5/4),
+        (max-width: 600px)
+    {
+        @content;
+    }
+}

@@ -3,7 +3,6 @@
 </script>
 <script type="ts">
     import { selectedTool, selectedToolName } from "../../../js/input";
-    import Icon from "../../Icon.svelte";
 
     export let id: string;
     export let name: string;
@@ -22,7 +21,7 @@
     {/if}
     <div class="constraint-row-left">
         <button class="nobutton" on:click|stopPropagation={onTrash}>
-            <Icon icon="trash" color="clickable" />
+            <span class="icon icon-inline icon-c-clickable icon-trash" />
         </button>
         {#if isLocal}
             <label class:unused={unused} class="name clickable" for="local-radio-{counter}">{name}</label>

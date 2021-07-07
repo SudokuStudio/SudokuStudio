@@ -50,9 +50,7 @@
         text-align: right;
     }
 
-    @media (max-width: 800px) and (max-aspect-ratio: 5/4),
-            (max-width: 600px)
-    {
+    @include vars.breakpoint-mobile {
         .header-center {
             flex: 1 1 auto;
 

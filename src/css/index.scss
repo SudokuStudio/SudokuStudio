@@ -4,7 +4,7 @@
 @import "./checkbox.scss";
 
 html {
-    font-size: max(16px, calc(12px + min(0.5vw, #{0.5vh * $max-aspect-ratio})));
+    font-size: $font-size;
     font-family: 'Mulish', 'Muli', sans-serif;
     font-weight: $font-weight-normal;
 }
@@ -33,7 +33,7 @@ body {
     align-items: stretch;
     flex-direction: row;
     justify-content: space-between;
-    gap: 3rem;
+    gap: $content-gap;
 }
 
 .hide {
