@@ -17,15 +17,9 @@ import { onDestroy } from "svelte";
 </script>
 
 <div class="entry-column">
-	<h1 class="title">Double Agent</h1>
-	<div class="setter">by echoes and TauCeti Deichmann</div>
-	<textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal sudoku rules do not apply. In each row, column, and box, place eight of the nine digits from 1-9, and repeat one of them; one digit in each set must be missing.
-
-No two rows, no two columns, and no two boxes may share the same repeated or missing digit.
-
-The clues (sandwich sums) outside the grid indicate the sum of the digits between any 1 and any 9 in the appropriate row or column: at least one set must sum correctly. Such a row or column must have at least one 1 and at least one 9.
-
-The sum of the cells on an arrow is the digit placed in its circle; digits may repeat along an arrow if allowed by the other rules.</textarea>
+	<h1 class="title">Killer</h1>
+	<div class="setter">Setter unknown</div>
+	<textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal killer sudoku rules apply: digits in cages sum to the number in the cage's top left, and do not repeat.</textarea>
     <div class="entry-pad" bind:this={entryPadEl}>
         <div class="mode-pad-container">
             <div class="mode-pad">
