@@ -44,5 +44,6 @@
 
     .container {
         margin-bottom: 0.5em;
+				user-select: none;
     }
 </style>
