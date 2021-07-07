@@ -115,7 +115,7 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
 
         .rules {
             text-align: center;
-            margin: 0.8em 0;
+            margin: 1em 0 0.5em 0;
         }
         .rules-text {
             flex: 1 1 20vh;

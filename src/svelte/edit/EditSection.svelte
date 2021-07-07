@@ -9,7 +9,7 @@
 </script>
 
 <div class="container" class:closed={closed}>
-    <button class="section-title" on:click={onClick}>
+    <button class="section-title nobutton" on:click={onClick}>
         <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu" />
         {title}
     </button>
@@ -21,16 +21,6 @@
 <style lang="scss">
     @use 'src/css/vars';
 
-    button.section-title {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
     .section-title {
         padding: 0.5em 0;
         font-weight: vars.$font-weight-heavy;
