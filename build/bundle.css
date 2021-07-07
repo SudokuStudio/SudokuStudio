@@ -641,7 +641,7 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-h1.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
+h1.svelte-w066oh.svelte-w066oh.svelte-w066oh {
   font-size: 1.4rem;
   font-weight: 800;
   white-space: nowrap;
@@ -650,18 +650,18 @@ h1.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   text-align: center;
 }
 
-.setter.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
+.setter.svelte-w066oh.svelte-w066oh.svelte-w066oh {
   white-space: nowrap;
   font-size: 0.7rem;
   color: gray;
   text-align: center;
 }
 
-.icon-undo.redo.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
+.icon-undo.redo.svelte-w066oh.svelte-w066oh.svelte-w066oh {
   transform: scaleX(-1);
 }
 
-.padbutton.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
+.padbutton.svelte-w066oh.svelte-w066oh.svelte-w066oh {
   display: block;
   box-sizing: border-box;
   -webkit-appearance: none;
@@ -683,31 +683,31 @@ h1.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
+  .padbutton.svelte-w066oh.svelte-w066oh.svelte-w066oh {
     font-size: 5vw;
   }
 }
-.entry-column.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh.svelte-w066oh.svelte-w066oh {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad.svelte-w066oh.svelte-w066oh {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .mode-pad-container.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .mode-pad-container.svelte-w066oh.svelte-w066oh {
   width: 22.2222222222%;
   height: 0;
   padding-bottom: 103.7037037037%;
   position: relative;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .mode-pad-container .mode-pad.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .mode-pad-container .mode-pad.svelte-w066oh.svelte-w066oh {
   position: absolute;
   top: 0;
   left: 0;
@@ -718,18 +718,18 @@ h1.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   justify-content: space-between;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-w066oh.svelte-w066oh {
   height: 21.4285714286%;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .right-container.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .right-container.svelte-w066oh.svelte-w066oh {
   width: 66.6666666667%;
   height: 0;
   padding-bottom: 106.6666666667%;
   position: relative;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .right-container .right.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .right-container .right.svelte-w066oh.svelte-w066oh {
   position: absolute;
   top: 0;
   left: 0;
@@ -740,7 +740,7 @@ h1.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   justify-content: space-between;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .right-container .right .num-pad.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .right-container .right .num-pad.svelte-w066oh.svelte-w066oh {
   width: 100%;
   height: 82%;
   display: grid;
@@ -750,27 +750,27 @@ h1.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   row-gap: 3.703703703%;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .right-container .right .num-pad.svelte-1nyhxac > .padbutton.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .right-container .right .num-pad.svelte-w066oh > .padbutton.svelte-w066oh {
   line-height: 100%;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .right-container .right .ctrl-pad.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .right-container .right .ctrl-pad.svelte-w066oh.svelte-w066oh {
   height: 15.2%;
   display: flex;
   gap: 3.5%;
 }
 
-.entry-column.svelte-1nyhxac .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-w066oh.svelte-w066oh {
   width: 24.444%;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-1nyhxac .entry-pad.svelte-1nyhxac.svelte-1nyhxac {
+  .entry-column.svelte-w066oh .entry-pad.svelte-w066oh.svelte-w066oh {
     width: 50%;
     margin: 0 auto;
   }
 }
-.entry-column.svelte-1nyhxac textarea.rules-text.svelte-1nyhxac.svelte-1nyhxac {
+.entry-column.svelte-w066oh textarea.rules-text.svelte-w066oh.svelte-w066oh {
   flex: 1 1 20vh;
   font-size: 0.7rem;
   resize: none;
@@ -782,7 +782,7 @@ h1.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   transition: border-color 0.1s linear;
 }
 
-.entry-column.svelte-1nyhxac textarea.rules-text.svelte-1nyhxac.svelte-1nyhxac:hover {
+.entry-column.svelte-w066oh textarea.rules-text.svelte-w066oh.svelte-w066oh:hover, .entry-column.svelte-w066oh textarea.rules-text.svelte-w066oh.svelte-w066oh:checked {
   outline: none;
   border-color: #637691;
 }
