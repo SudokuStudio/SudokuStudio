@@ -50,10 +50,12 @@
 
     .tree-menu {
         transition: transform vars.$transition-time ease-in-out;
+        transform: rotate(180deg);
+        transform-origin: 50% 66%;
         float: right;
     }
     .closed .tree-menu {
-        transform: rotate(-90deg);
+        transform: rotate(0deg);
     }
 
     .panel-wrapper {

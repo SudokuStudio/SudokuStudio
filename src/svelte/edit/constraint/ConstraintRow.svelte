@@ -65,7 +65,7 @@
         }
     }
     .constraint-row:hover {
-        box-shadow: 2px 2px 0.25em rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 0 1px vars.$color-clickable;
         border-radius: 0.3em;
         transition: background-color vars.$transition-time linear 0s, box-shadow vars.$transition-time linear 0s;
     }
