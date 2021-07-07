@@ -706,27 +706,28 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   border: none;
 }
 
-.section-title.svelte-1ragcel.svelte-1ragcel {
+.section-title.svelte-ldsps2.svelte-ldsps2 {
   margin: 0.8em 0;
   font-weight: 800;
   white-space: nowrap;
 }
 
-.tree-menu.svelte-1ragcel.svelte-1ragcel {
+.tree-menu.svelte-ldsps2.svelte-ldsps2 {
   transition: transform 0.1s ease-in-out;
 }
 
-.closed.svelte-1ragcel .tree-menu.svelte-1ragcel {
+.closed.svelte-ldsps2 .tree-menu.svelte-ldsps2 {
   transform: rotate(-90deg);
 }
 
-.closed.svelte-1ragcel .panel.svelte-1ragcel {
+.closed.svelte-ldsps2 .panel.svelte-ldsps2 {
   overflow: hidden;
   height: 0;
 }
 
-.container.svelte-1ragcel.svelte-1ragcel {
+.container.svelte-ldsps2.svelte-ldsps2 {
   margin-bottom: 0.5em;
+  user-select: none;
 }
 
 .constraint-checkbox.svelte-1ns67sk {
