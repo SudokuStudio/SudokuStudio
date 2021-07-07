@@ -706,27 +706,43 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   border: none;
 }
 
-.section-title.svelte-1f4eltm.svelte-1f4eltm {
-  margin: 0.8em 0;
-  font-weight: 800;
-  white-space: nowrap;
+button.section-title.svelte-9izcdy.svelte-9izcdy {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
-.tree-menu.svelte-1f4eltm.svelte-1f4eltm {
+.section-title.svelte-9izcdy.svelte-9izcdy {
+  padding: 0.5em 0;
+  font-weight: 800;
+  display: inline-block;
+  font-size: 1em;
+  font-family: inherit;
+  border: 0;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tree-menu.svelte-9izcdy.svelte-9izcdy {
   transition: transform 0.1s ease-in-out;
 }
 
-.closed.svelte-1f4eltm .tree-menu.svelte-1f4eltm {
+.closed.svelte-9izcdy .tree-menu.svelte-9izcdy {
   transform: rotate(-90deg);
 }
 
-.closed.svelte-1f4eltm .panel.svelte-1f4eltm {
+.closed.svelte-9izcdy .panel.svelte-9izcdy {
   overflow: hidden;
   height: 0;
 }
 
-.container.svelte-1f4eltm.svelte-1f4eltm {
+.container.svelte-9izcdy.svelte-9izcdy {
   margin-bottom: 0.5em;
 }
 
