@@ -80,8 +80,8 @@
         position: absolute;
         top: -1 * vars.$hoverborder-size;
         left: -1 * vars.$hoverborder-size;
-        bottom: -1 * vars.$hoverborder-size;
-        right: -1 * vars.$hoverborder-size;
+        width: calc(100% + #{2 * vars.$hoverborder-size});
+        height: calc(100% + #{2 * vars.$hoverborder-size});
 
         pointer-events: none;
 
