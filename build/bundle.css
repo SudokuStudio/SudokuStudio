@@ -792,33 +792,71 @@ h1.svelte-1brmmsy.svelte-1brmmsy.svelte-1brmmsy {
   border-radius: 0.3em;
 }
 
-.section-title.svelte-13ydmi1.svelte-13ydmi1 {
-  padding: 0.5em 0;
+.section-title.svelte-f0e0uw.svelte-f0e0uw.svelte-f0e0uw {
+  padding: 0.5em 0.5em;
   font-weight: 800;
   display: inline-block;
   font-size: 1em;
   font-family: inherit;
   border: 0;
   margin: 0;
+  padding-left: -1em;
   background: none;
   cursor: pointer;
+  width: 100%;
+  text-align: left;
   white-space: nowrap;
 }
 
-.tree-menu.svelte-13ydmi1.svelte-13ydmi1 {
-  transition: transform 0.1s ease-in-out;
+.section-title.svelte-f0e0uw.svelte-f0e0uw.svelte-f0e0uw:hover {
+  box-shadow: 0 0 0 1px #637691;
+  border-radius: 0.3em;
+  transition: box-shadow 0.2s linear 0s;
 }
 
-.closed.svelte-13ydmi1 .tree-menu.svelte-13ydmi1 {
-  transform: rotate(-90deg);
+.tree-menu.svelte-f0e0uw.svelte-f0e0uw.svelte-f0e0uw {
+  transition: transform 0.2s ease-in-out;
+  transform: rotate(180deg);
+  transform-origin: 50% 66%;
+  float: right;
 }
 
-.closed.svelte-13ydmi1 .panel.svelte-13ydmi1 {
+.closed.svelte-f0e0uw .tree-menu.svelte-f0e0uw.svelte-f0e0uw {
+  transform: rotate(0deg);
+}
+
+.panel-wrapper.svelte-f0e0uw.svelte-f0e0uw.svelte-f0e0uw {
+  display: flex;
   overflow: hidden;
-  height: 0;
 }
 
-.container.svelte-13ydmi1.svelte-13ydmi1 {
+.panel-wrapper.svelte-f0e0uw.svelte-f0e0uw.svelte-f0e0uw:after {
+  content: "";
+  height: 10px;
+  transition: height 0.2s linear, max-height 0s 0.2s linear;
+  max-height: 0px;
+}
+
+.panel.svelte-f0e0uw.svelte-f0e0uw.svelte-f0e0uw {
+  transition: margin-bottom 0.2s cubic-bezier(0, 0, 0, 1);
+  margin-bottom: 0;
+  max-height: 1000000px;
+}
+
+.closed.svelte-f0e0uw .panel-wrapper.svelte-f0e0uw > .panel.svelte-f0e0uw {
+  margin-bottom: -2000px;
+  transition: margin-bottom 0.2s cubic-bezier(1, 0, 1, 1), visibility 0s 0.2s, max-height 0s 0.2s;
+  visibility: hidden;
+  max-height: 0;
+}
+
+.closed.svelte-f0e0uw .panel-wrapper.svelte-f0e0uw.svelte-f0e0uw:after {
+  height: 0;
+  transition: height 0.2s linear;
+  max-height: 10px;
+}
+
+.container.svelte-f0e0uw.svelte-f0e0uw.svelte-f0e0uw {
   margin-bottom: 0.5em;
 }
 
