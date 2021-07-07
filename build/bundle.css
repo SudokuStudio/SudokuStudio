@@ -826,11 +826,11 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   display: inline-block;
 }
 
-.unused.svelte-erye1b.svelte-erye1b {
+.unused.svelte-1ep61uz.svelte-1ep61uz {
   opacity: 0.5;
 }
 
-.constraint-row.svelte-erye1b.svelte-erye1b {
+.constraint-row.svelte-1ep61uz.svelte-1ep61uz {
   margin: 0 0 0.5em 0;
   padding: 0.25em 0.5em;
   position: relative;
@@ -842,25 +842,31 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   user-select: none;
 }
 
-.constraint-row.svelte-erye1b.svelte-erye1b:before, .constraint-row.svelte-erye1b.svelte-erye1b:after {
+.constraint-row.svelte-1ep61uz.svelte-1ep61uz:before, .constraint-row.svelte-1ep61uz.svelte-1ep61uz:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-erye1b.svelte-erye1b:after {
+.constraint-row.svelte-1ep61uz.svelte-1ep61uz:after {
   clear: both;
 }
 
-.constraint-row.svelte-erye1b .constraint-row-left.svelte-erye1b {
+.constraint-row.svelte-1ep61uz .constraint-row-left.svelte-1ep61uz {
   float: left;
 }
 
-.constraint-row.svelte-erye1b .constraint-row-right.svelte-erye1b {
+.constraint-row.svelte-1ep61uz .constraint-row-right.svelte-1ep61uz {
   margin-left: 0.5em;
   float: right;
 }
 
-.radio-select-button.svelte-erye1b.svelte-erye1b {
+.constraint-row.svelte-1ep61uz.svelte-1ep61uz:hover {
+  box-shadow: 2px 2px 0.25em rgba(0, 0, 0, 0.2);
+  border-radius: 0.3em;
+  transition: background-color 0.2s linear 0s, box-shadow 0.2s linear 0s;
+}
+
+.radio-select-button.svelte-1ep61uz.svelte-1ep61uz {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -870,9 +876,13 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  border-color: transparent;
+  z-index: -1;
 }
 
-.radio-select-button.svelte-erye1b.svelte-erye1b:checked {
+.radio-select-button.svelte-1ep61uz.svelte-1ep61uz:checked {
   border: 0.1em solid #637691;
   border-radius: 0.3em;
+  background-color: #f5f5fe;
+  transition: border-color 0.2s linear 0s, background-color 0.2s linear 0s;
 }
