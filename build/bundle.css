@@ -894,16 +894,16 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   display: inline-block;
 }
 
-.unused.svelte-x0svv2.svelte-x0svv2 {
+.unused.svelte-1xnmwrx.svelte-1xnmwrx {
   opacity: 0.5;
 }
 
-.constraint-row-container.svelte-x0svv2.svelte-x0svv2 {
+.constraint-row-container.svelte-1xnmwrx.svelte-1xnmwrx {
   margin: 0.25em 0 0.5em 0.75em;
   position: relative;
 }
 
-.constraint-row.svelte-x0svv2.svelte-x0svv2 {
+.constraint-row.svelte-1xnmwrx.svelte-1xnmwrx {
   padding: 0.25em 0.25em;
   cursor: pointer;
   -webkit-user-select: none;
@@ -916,39 +916,38 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   z-index: 0;
 }
 
-.constraint-row.svelte-x0svv2.svelte-x0svv2:before, .constraint-row.svelte-x0svv2.svelte-x0svv2:after {
+.constraint-row.svelte-1xnmwrx.svelte-1xnmwrx:before, .constraint-row.svelte-1xnmwrx.svelte-1xnmwrx:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-x0svv2.svelte-x0svv2:after {
+.constraint-row.svelte-1xnmwrx.svelte-1xnmwrx:after {
   clear: both;
 }
 
-.constraint-row.svelte-x0svv2 .constraint-row-left.svelte-x0svv2 {
+.constraint-row.svelte-1xnmwrx .constraint-row-left.svelte-1xnmwrx {
   float: left;
 }
 
-.constraint-row.svelte-x0svv2 .constraint-row-right.svelte-x0svv2 {
+.constraint-row.svelte-1xnmwrx .constraint-row-right.svelte-1xnmwrx {
   margin-left: 0.5em;
   float: right;
 }
 
-.radio-select-button.svelte-x0svv2.svelte-x0svv2:focus-visible {
-  outline-width: 0.1em;
+.radio-select-button.svelte-1xnmwrx.svelte-1xnmwrx:focus-visible {
   outline-offset: -0.1em;
 }
 
-.constraint-row.svelte-x0svv2.svelte-x0svv2:hover, .radio-select-button.svelte-x0svv2:focus-visible ~ .constraint-row.svelte-x0svv2 {
+.constraint-row.svelte-1xnmwrx.svelte-1xnmwrx:hover, .radio-select-button.svelte-1xnmwrx:focus-visible ~ .constraint-row.svelte-1xnmwrx {
   border-color: #637691;
 }
 
-.radio-select-button.svelte-x0svv2:checked ~ .constraint-row.svelte-x0svv2 {
+.radio-select-button.svelte-1xnmwrx:checked ~ .constraint-row.svelte-1xnmwrx {
   background-color: #f5f5fe;
   border-color: #637691;
 }
 
-.radio-select-button.svelte-x0svv2.svelte-x0svv2 {
+.radio-select-button.svelte-1xnmwrx.svelte-1xnmwrx {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
