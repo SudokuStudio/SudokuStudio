@@ -11,5 +11,5 @@
 </script>
 
 <ConstraintRow id={id} name="Sandwich" unused={false} isLocal={true}>
-    <Icon icon="sandwich" color="text" />
+    <Icon icon="sandwich" color="clickable" />
 </ConstraintRow>

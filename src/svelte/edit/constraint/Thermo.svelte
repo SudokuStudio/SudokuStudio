@@ -11,5 +11,5 @@
 </script>
 
 <ConstraintRow id={id} name="Thermos" unused={false} isLocal={true}>
-    <Icon icon="thermo" color="text" />
+    <Icon icon="thermo" color="clickable" />
 </ConstraintRow>

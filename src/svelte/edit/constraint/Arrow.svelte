@@ -11,5 +11,5 @@
 </script>
 
 <ConstraintRow id={id} name="Arrows" unused={false} isLocal={true}>
-    <Icon icon="arrow" color="text" />
+    <Icon icon="arrow" color="clickable" />
 </ConstraintRow>

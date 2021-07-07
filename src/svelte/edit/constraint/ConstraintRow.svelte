@@ -2,7 +2,7 @@
     let counter = 0;
 </script>
 <script type="ts">
-    import { selectedTool } from "../../../js/input";
+    import { selectedTool, selectedToolName } from "../../../js/input";
     import Icon from "../../Icon.svelte";
 
     export let id: string;
@@ -18,16 +18,16 @@
 
 <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
     {#if isLocal}
-        <input class="radio-select-button" type="radio" id="local-radio-{++counter}" name="selectedTool" value={id} bind:group={$selectedTool} />
+        <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={selectedToolName} bind:group={$selectedTool} />
     {/if}
     <div class="constraint-row-left">
         <button class="nobutton" on:click|stopPropagation={onTrash}>
             <Icon icon="trash" color="clickable" />
         </button>
         {#if isLocal}
-            <label class:unused={unused} class="clickable" for="local-radio-{counter}">{name}</label>
+            <label class:unused={unused} class="name clickable" for="local-radio-{counter}">{name}</label>
         {:else}
-            <span class:unused={unused}>{name}</span>
+            <span class:unused={unused} class="name">{name}</span>
         {/if}
     </div>
     <div class="constraint-row-right">
