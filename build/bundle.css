@@ -894,16 +894,16 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   display: inline-block;
 }
 
-.unused.svelte-e94sqd.svelte-e94sqd {
+.unused.svelte-x0svv2.svelte-x0svv2 {
   opacity: 0.5;
 }
 
-.constraint-row-container.svelte-e94sqd.svelte-e94sqd {
+.constraint-row-container.svelte-x0svv2.svelte-x0svv2 {
   margin: 0.25em 0 0.5em 0.75em;
   position: relative;
 }
 
-.constraint-row.svelte-e94sqd.svelte-e94sqd {
+.constraint-row.svelte-x0svv2.svelte-x0svv2 {
   padding: 0.25em 0.25em;
   cursor: pointer;
   -webkit-user-select: none;
@@ -916,34 +916,39 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   z-index: 0;
 }
 
-.constraint-row.svelte-e94sqd.svelte-e94sqd:before, .constraint-row.svelte-e94sqd.svelte-e94sqd:after {
+.constraint-row.svelte-x0svv2.svelte-x0svv2:before, .constraint-row.svelte-x0svv2.svelte-x0svv2:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-e94sqd.svelte-e94sqd:after {
+.constraint-row.svelte-x0svv2.svelte-x0svv2:after {
   clear: both;
 }
 
-.constraint-row.svelte-e94sqd .constraint-row-left.svelte-e94sqd {
+.constraint-row.svelte-x0svv2 .constraint-row-left.svelte-x0svv2 {
   float: left;
 }
 
-.constraint-row.svelte-e94sqd .constraint-row-right.svelte-e94sqd {
+.constraint-row.svelte-x0svv2 .constraint-row-right.svelte-x0svv2 {
   margin-left: 0.5em;
   float: right;
 }
 
-.constraint-row.svelte-e94sqd.svelte-e94sqd:hover, .constraint-row.svelte-e94sqd.svelte-e94sqd:focus-visible {
+.radio-select-button.svelte-x0svv2.svelte-x0svv2:focus-visible {
+  outline-width: 0.1em;
+  outline-offset: -0.1em;
+}
+
+.constraint-row.svelte-x0svv2.svelte-x0svv2:hover, .radio-select-button.svelte-x0svv2:focus-visible ~ .constraint-row.svelte-x0svv2 {
   border-color: #637691;
 }
 
-.radio-select-button.svelte-e94sqd:checked ~ .constraint-row.svelte-e94sqd {
+.radio-select-button.svelte-x0svv2:checked ~ .constraint-row.svelte-x0svv2 {
   background-color: #f5f5fe;
   border-color: #637691;
 }
 
-.radio-select-button.svelte-e94sqd.svelte-e94sqd {
+.radio-select-button.svelte-x0svv2.svelte-x0svv2 {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
