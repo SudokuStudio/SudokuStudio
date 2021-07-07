@@ -706,28 +706,28 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   border: none;
 }
 
-.section-title.svelte-ldsps2.svelte-ldsps2 {
+.section-title.svelte-1f4eltm.svelte-1f4eltm {
   margin: 0.8em 0;
   font-weight: 800;
   white-space: nowrap;
+  user-select: none;
 }
 
-.tree-menu.svelte-ldsps2.svelte-ldsps2 {
+.tree-menu.svelte-1f4eltm.svelte-1f4eltm {
   transition: transform 0.1s ease-in-out;
 }
 
-.closed.svelte-ldsps2 .tree-menu.svelte-ldsps2 {
+.closed.svelte-1f4eltm .tree-menu.svelte-1f4eltm {
   transform: rotate(-90deg);
 }
 
-.closed.svelte-ldsps2 .panel.svelte-ldsps2 {
+.closed.svelte-1f4eltm .panel.svelte-1f4eltm {
   overflow: hidden;
   height: 0;
 }
 
-.container.svelte-ldsps2.svelte-ldsps2 {
+.container.svelte-1f4eltm.svelte-1f4eltm {
   margin-bottom: 0.5em;
-  user-select: none;
 }
 
 .constraint-checkbox.svelte-1ns67sk {
