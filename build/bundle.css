@@ -114,6 +114,10 @@ footer.svelte-1o5emik.svelte-1o5emik {
   mask-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 16 16' style='enable-background:new 0 0 16 16;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:%23FFFFFF;%7D%0A%3C/style%3E%3Cpolygon class='st0' points='11,8 16,13 13,16 8,11 3,16 0,13 5,8 0,3 3,0 8,5.1 13,0 16,3'/%3E%3C/svg%3E%0A");
   -webkit-mask-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 16 16' style='enable-background:new 0 0 16 16;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:%23FFFFFF;%7D%0A%3C/style%3E%3Cpolygon class='st0' points='11,8 16,13 13,16 8,11 3,16 0,13 5,8 0,3 3,0 8,5.1 13,0 16,3'/%3E%3C/svg%3E%0A");
 }
+.icon.icon-colors {
+  mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M23.89,6.69C21.47,1.71,15.27-1,9.49.4A12.45,12.45,0,0,0,12.26,25a3,3,0,0,0,1.82-.77,2,2,0,0,0,.05-2.68,2,2,0,0,1-.39-2.25,2.12,2.12,0,0,1,2.15-1.14c.78,0,1.57,0,2.35,0A6.61,6.61,0,0,0,23.78,15C25.54,12.31,25.23,9.45,23.89,6.69Zm-19,6A2.17,2.17,0,1,1,7.08,10.5,2.17,2.17,0,0,1,4.91,12.67ZM9.05,7.14A2.17,2.17,0,1,1,11.22,5,2.17,2.17,0,0,1,9.05,7.14Zm6.88,0A2.17,2.17,0,1,1,18.1,5,2.17,2.17,0,0,1,15.93,7.14Zm4.12,5.53a2.17,2.17,0,1,1,2.17-2.17A2.17,2.17,0,0,1,20.05,12.67Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M23.89,6.69C21.47,1.71,15.27-1,9.49.4A12.45,12.45,0,0,0,12.26,25a3,3,0,0,0,1.82-.77,2,2,0,0,0,.05-2.68,2,2,0,0,1-.39-2.25,2.12,2.12,0,0,1,2.15-1.14c.78,0,1.57,0,2.35,0A6.61,6.61,0,0,0,23.78,15C25.54,12.31,25.23,9.45,23.89,6.69Zm-19,6A2.17,2.17,0,1,1,7.08,10.5,2.17,2.17,0,0,1,4.91,12.67ZM9.05,7.14A2.17,2.17,0,1,1,11.22,5,2.17,2.17,0,0,1,9.05,7.14Zm6.88,0A2.17,2.17,0,1,1,18.1,5,2.17,2.17,0,0,1,15.93,7.14Zm4.12,5.53a2.17,2.17,0,1,1,2.17-2.17A2.17,2.17,0,0,1,20.05,12.67Z'/%3E%3C/svg%3E");
+}
 .icon.icon-positive-diagonal {
   mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M12.56,1.5A1.94,1.94,0,0,1,14.5,3.44v9.12a1.94,1.94,0,0,1-1.94,1.94H3.44A1.94,1.94,0,0,1,1.5,12.56V3.44A1.94,1.94,0,0,1,3.44,1.5h9.12m0-1.5H3.44A3.44,3.44,0,0,0,0,3.44v9.12A3.44,3.44,0,0,0,3.44,16h9.12A3.44,3.44,0,0,0,16,12.56V3.44A3.44,3.44,0,0,0,12.56,0Z'/%3E%3Crect class='cls-1' x='-1.49' y='7.25' width='19.14' height='1.5' transform='translate(-3.29 8.06) rotate(-45)'/%3E%3C/svg%3E");
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M12.56,1.5A1.94,1.94,0,0,1,14.5,3.44v9.12a1.94,1.94,0,0,1-1.94,1.94H3.44A1.94,1.94,0,0,1,1.5,12.56V3.44A1.94,1.94,0,0,1,3.44,1.5h9.12m0-1.5H3.44A3.44,3.44,0,0,0,0,3.44v9.12A3.44,3.44,0,0,0,3.44,16h9.12A3.44,3.44,0,0,0,16,12.56V3.44A3.44,3.44,0,0,0,12.56,0Z'/%3E%3Crect class='cls-1' x='-1.49' y='7.25' width='19.14' height='1.5' transform='translate(-3.29 8.06) rotate(-45)'/%3E%3C/svg%3E");
@@ -154,7 +158,7 @@ footer.svelte-1o5emik.svelte-1o5emik {
   mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M12.56,0H3.44A3.44,3.44,0,0,0,0,3.44v9.12A3.44,3.44,0,0,0,3.44,16h9.12A3.44,3.44,0,0,0,16,12.56V3.44A3.44,3.44,0,0,0,12.56,0ZM9.77,12.57a2.18,2.18,0,0,1-.8,1,2.27,2.27,0,0,1-1.24.33,3.24,3.24,0,0,1-1-.15,2.08,2.08,0,0,1-.81-.42l.44-1a2.87,2.87,0,0,0,.7.38,1.86,1.86,0,0,0,.58.1.81.81,0,0,0,.75-.42,1.89,1.89,0,0,0,.23-.89.69.69,0,0,1-.11.13,1.33,1.33,0,0,1-.44.28,1.42,1.42,0,0,1-.55.1,1.5,1.5,0,0,1-.82-.22,1.62,1.62,0,0,1-.57-.62,1.87,1.87,0,0,1-.21-.9,1.84,1.84,0,0,1,.91-1.61,2,2,0,0,1,1-.23,2,2,0,0,1,1.65.69,3,3,0,0,1,.58,2A3.62,3.62,0,0,1,9.77,12.57ZM10.15,7H6.44V5.87H7.59V3.18l-1.07.61V2.58l1.65-.94H9V5.87h1.16ZM8.23,9.56a.63.63,0,0,0-.33-.09.58.58,0,0,0-.47.19.77.77,0,0,0-.17.51.76.76,0,0,0,.17.52.58.58,0,0,0,.47.19.58.58,0,0,0,.56-.33.89.89,0,0,0,.08-.38.8.8,0,0,0-.08-.36A.62.62,0,0,0,8.23,9.56Z'/%3E%3C/svg%3E");
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M12.56,0H3.44A3.44,3.44,0,0,0,0,3.44v9.12A3.44,3.44,0,0,0,3.44,16h9.12A3.44,3.44,0,0,0,16,12.56V3.44A3.44,3.44,0,0,0,12.56,0ZM9.77,12.57a2.18,2.18,0,0,1-.8,1,2.27,2.27,0,0,1-1.24.33,3.24,3.24,0,0,1-1-.15,2.08,2.08,0,0,1-.81-.42l.44-1a2.87,2.87,0,0,0,.7.38,1.86,1.86,0,0,0,.58.1.81.81,0,0,0,.75-.42,1.89,1.89,0,0,0,.23-.89.69.69,0,0,1-.11.13,1.33,1.33,0,0,1-.44.28,1.42,1.42,0,0,1-.55.1,1.5,1.5,0,0,1-.82-.22,1.62,1.62,0,0,1-.57-.62,1.87,1.87,0,0,1-.21-.9,1.84,1.84,0,0,1,.91-1.61,2,2,0,0,1,1-.23,2,2,0,0,1,1.65.69,3,3,0,0,1,.58,2A3.62,3.62,0,0,1,9.77,12.57ZM10.15,7H6.44V5.87H7.59V3.18l-1.07.61V2.58l1.65-.94H9V5.87h1.16ZM8.23,9.56a.63.63,0,0,0-.33-.09.58.58,0,0,0-.47.19.77.77,0,0,0-.17.51.76.76,0,0,0,.17.52.58.58,0,0,0,.47.19.58.58,0,0,0,.56-.33.89.89,0,0,0,.08-.38.8.8,0,0,0-.08-.36A.62.62,0,0,0,8.23,9.56Z'/%3E%3C/svg%3E");
 }
-.icon .icon-undo.redo {
+.icon.icon-undo.redo {
   transform: scaleX(-1);
 }
 
@@ -785,7 +789,7 @@ h1.svelte-1rvtlsa.svelte-1rvtlsa {
   margin-bottom: 0.5em;
 }
 
-.padbutton.svelte-5jajtl.svelte-5jajtl.svelte-5jajtl {
+.padbutton.svelte-1b0o9g8.svelte-1b0o9g8.svelte-1b0o9g8 {
   display: block;
   box-sizing: border-box;
   -webkit-appearance: none;
@@ -799,53 +803,84 @@ h1.svelte-1rvtlsa.svelte-1rvtlsa {
   text-align: center;
   background: none;
   cursor: pointer;
-  font-weight: 800;
-  background-color: #637691;
-  color: #fff;
-  border-radius: 15%;
   font-size: 1em;
+  font-weight: 800;
+  color: #fff;
+  border-radius: 0.2em;
+  border: 0.06em solid #637691;
+  background-color: #637691;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-5jajtl.svelte-5jajtl.svelte-5jajtl {
+  .padbutton.svelte-1b0o9g8.svelte-1b0o9g8.svelte-1b0o9g8 {
     font-size: 5vw;
   }
 }
-.container.svelte-5jajtl.svelte-5jajtl.svelte-5jajtl {
+.mode-pad.svelte-1b0o9g8 > .svelte-1b0o9g8.svelte-1b0o9g8 {
+  position: relative;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+.mode-pad.svelte-1b0o9g8 > * .radio-mode-button.svelte-1b0o9g8.svelte-1b0o9g8 {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.2em;
+}
+
+.mode-pad.svelte-1b0o9g8 > * .radio-mode-button.svelte-1b0o9g8.svelte-1b0o9g8, .mode-pad.svelte-1b0o9g8 > * .padbutton.padbutton-mode.svelte-1b0o9g8.svelte-1b0o9g8 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.radio-mode-button.svelte-1b0o9g8:checked ~ .padbutton-mode.svelte-1b0o9g8.svelte-1b0o9g8 {
+  color: #637691;
+  background-color: #fff;
+}
+
+.radio-mode-button:checked ~ .padbutton-mode.svelte-1b0o9g8 .icon.svelte-1b0o9g8.svelte-1b0o9g8 {
+  background-color: #637691;
+}
+
+.container.svelte-1b0o9g8.svelte-1b0o9g8.svelte-1b0o9g8 {
   display: flex;
   justify-content: space-between;
 }
 
-.container.svelte-5jajtl .mode-pad-container.svelte-5jajtl.svelte-5jajtl {
+.container.svelte-1b0o9g8 .mode-pad-container.svelte-1b0o9g8.svelte-1b0o9g8 {
   width: 22.2222222222%;
   height: 0;
   padding-bottom: 103.7037037037%;
   position: relative;
 }
 
-.container.svelte-5jajtl .mode-pad-container .mode-pad.svelte-5jajtl.svelte-5jajtl {
+.container.svelte-1b0o9g8 .mode-pad-container .mode-pad.svelte-1b0o9g8.svelte-1b0o9g8 {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  font-size: 108%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.container.svelte-5jajtl .mode-pad-container .mode-pad .padbutton.svelte-5jajtl.svelte-5jajtl {
-  height: 21.4285714286%;
-}
-
-.container.svelte-5jajtl .right-container.svelte-5jajtl.svelte-5jajtl {
+.container.svelte-1b0o9g8 .right-container.svelte-1b0o9g8.svelte-1b0o9g8 {
   width: 66.6666666667%;
   height: 0;
   padding-bottom: 106.6666666667%;
   position: relative;
 }
 
-.container.svelte-5jajtl .right-container .right.svelte-5jajtl.svelte-5jajtl {
+.container.svelte-1b0o9g8 .right-container .right.svelte-1b0o9g8.svelte-1b0o9g8 {
   position: absolute;
   top: 0;
   left: 0;
@@ -856,7 +891,7 @@ h1.svelte-1rvtlsa.svelte-1rvtlsa {
   justify-content: space-between;
 }
 
-.container.svelte-5jajtl .right-container .right .num-pad.svelte-5jajtl.svelte-5jajtl {
+.container.svelte-1b0o9g8 .right-container .right .num-pad.svelte-1b0o9g8.svelte-1b0o9g8 {
   width: 100%;
   height: 82%;
   display: grid;
@@ -866,24 +901,25 @@ h1.svelte-1rvtlsa.svelte-1rvtlsa {
   row-gap: 3.703703703%;
 }
 
-.container.svelte-5jajtl .right-container .right .num-pad.svelte-5jajtl > .padbutton.svelte-5jajtl {
+.container.svelte-1b0o9g8 .right-container .right .num-pad.svelte-1b0o9g8 > .svelte-1b0o9g8 {
   line-height: 100%;
 }
 
-.container.svelte-5jajtl .right-container .right .ctrl-pad.svelte-5jajtl.svelte-5jajtl {
+.container.svelte-1b0o9g8 .right-container .right .ctrl-pad.svelte-1b0o9g8.svelte-1b0o9g8 {
   height: 15.2%;
+  font-size: 80%;
   display: flex;
 }
 
-.container.svelte-5jajtl .right-container .right .ctrl-pad.svelte-5jajtl > .svelte-5jajtl {
+.container.svelte-1b0o9g8 .right-container .right .ctrl-pad.svelte-1b0o9g8 > .svelte-1b0o9g8 {
   margin-right: 3.5%;
 }
 
-.container.svelte-5jajtl .right-container .right .ctrl-pad.svelte-5jajtl > .svelte-5jajtl:last-child {
+.container.svelte-1b0o9g8 .right-container .right .ctrl-pad.svelte-1b0o9g8 > .svelte-1b0o9g8:last-child {
   margin-right: 0;
 }
 
-.container.svelte-5jajtl .right-container .right .ctrl-pad .padbutton.svelte-5jajtl.svelte-5jajtl {
+.container.svelte-1b0o9g8 .right-container .right .ctrl-pad.svelte-1b0o9g8 > .svelte-1b0o9g8 {
   width: 24.444%;
 }
 
