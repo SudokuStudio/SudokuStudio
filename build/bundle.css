@@ -791,14 +791,15 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   border: none;
 }
 
-.section-title.svelte-v88l25.svelte-v88l25.svelte-v88l25 {
-  padding: 0.5em 0;
+.section-title.svelte-13853vf.svelte-13853vf.svelte-13853vf {
+  padding: 0.5em 0.5em;
   font-weight: 800;
   display: inline-block;
   font-size: 1em;
   font-family: inherit;
   border: 0;
   margin: 0;
+  padding-left: -1em;
   background: none;
   cursor: pointer;
   width: 100%;
@@ -806,52 +807,53 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   white-space: nowrap;
 }
 
-.section-title.svelte-v88l25.svelte-v88l25.svelte-v88l25:hover {
-  box-shadow: 2px 2px 0.25em rgba(0, 0, 0, 0.2);
+.section-title.svelte-13853vf.svelte-13853vf.svelte-13853vf:hover {
+  box-shadow: 0 0 0 1px #637691;
   border-radius: 0.3em;
   transition: box-shadow 0.2s linear 0s;
 }
 
-.tree-menu.svelte-v88l25.svelte-v88l25.svelte-v88l25 {
+.tree-menu.svelte-13853vf.svelte-13853vf.svelte-13853vf {
   transition: transform 0.2s ease-in-out;
+  float: right;
 }
 
-.closed.svelte-v88l25 .tree-menu.svelte-v88l25.svelte-v88l25 {
+.closed.svelte-13853vf .tree-menu.svelte-13853vf.svelte-13853vf {
   transform: rotate(-90deg);
 }
 
-.panel-wrapper.svelte-v88l25.svelte-v88l25.svelte-v88l25 {
+.panel-wrapper.svelte-13853vf.svelte-13853vf.svelte-13853vf {
   display: flex;
   overflow: hidden;
 }
 
-.panel-wrapper.svelte-v88l25.svelte-v88l25.svelte-v88l25:after {
+.panel-wrapper.svelte-13853vf.svelte-13853vf.svelte-13853vf:after {
   content: "";
   height: 10px;
   transition: height 0.2s linear, max-height 0s 0.2s linear;
   max-height: 0px;
 }
 
-.panel.svelte-v88l25.svelte-v88l25.svelte-v88l25 {
+.panel.svelte-13853vf.svelte-13853vf.svelte-13853vf {
   transition: margin-bottom 0.2s cubic-bezier(0, 0, 0, 1);
   margin-bottom: 0;
   max-height: 1000000px;
 }
 
-.closed.svelte-v88l25 .panel-wrapper.svelte-v88l25 > .panel.svelte-v88l25 {
+.closed.svelte-13853vf .panel-wrapper.svelte-13853vf > .panel.svelte-13853vf {
   margin-bottom: -2000px;
   transition: margin-bottom 0.2s cubic-bezier(1, 0, 1, 1), visibility 0s 0.2s, max-height 0s 0.2s;
   visibility: hidden;
   max-height: 0;
 }
 
-.closed.svelte-v88l25 .panel-wrapper.svelte-v88l25.svelte-v88l25:after {
+.closed.svelte-13853vf .panel-wrapper.svelte-13853vf.svelte-13853vf:after {
   height: 0;
   transition: height 0.2s linear;
   max-height: 10px;
 }
 
-.container.svelte-v88l25.svelte-v88l25.svelte-v88l25 {
+.container.svelte-13853vf.svelte-13853vf.svelte-13853vf {
   margin-bottom: 0.5em;
 }
 
@@ -860,13 +862,13 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   display: inline-block;
 }
 
-.unused.svelte-1ep61uz.svelte-1ep61uz {
+.unused.svelte-ee1bla.svelte-ee1bla {
   opacity: 0.5;
 }
 
-.constraint-row.svelte-1ep61uz.svelte-1ep61uz {
-  margin: 0 0 0.5em 0;
-  padding: 0.25em 0.5em;
+.constraint-row.svelte-ee1bla.svelte-ee1bla {
+  margin: 0.25em 0 0.5em 0.75em;
+  padding: 0.25em 0.25em;
   position: relative;
   white-space: nowrap;
   cursor: pointer;
@@ -876,31 +878,31 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   user-select: none;
 }
 
-.constraint-row.svelte-1ep61uz.svelte-1ep61uz:before, .constraint-row.svelte-1ep61uz.svelte-1ep61uz:after {
+.constraint-row.svelte-ee1bla.svelte-ee1bla:before, .constraint-row.svelte-ee1bla.svelte-ee1bla:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-1ep61uz.svelte-1ep61uz:after {
+.constraint-row.svelte-ee1bla.svelte-ee1bla:after {
   clear: both;
 }
 
-.constraint-row.svelte-1ep61uz .constraint-row-left.svelte-1ep61uz {
+.constraint-row.svelte-ee1bla .constraint-row-left.svelte-ee1bla {
   float: left;
 }
 
-.constraint-row.svelte-1ep61uz .constraint-row-right.svelte-1ep61uz {
+.constraint-row.svelte-ee1bla .constraint-row-right.svelte-ee1bla {
   margin-left: 0.5em;
   float: right;
 }
 
-.constraint-row.svelte-1ep61uz.svelte-1ep61uz:hover {
+.constraint-row.svelte-ee1bla.svelte-ee1bla:hover {
   box-shadow: 2px 2px 0.25em rgba(0, 0, 0, 0.2);
   border-radius: 0.3em;
   transition: background-color 0.2s linear 0s, box-shadow 0.2s linear 0s;
 }
 
-.radio-select-button.svelte-1ep61uz.svelte-1ep61uz {
+.radio-select-button.svelte-ee1bla.svelte-ee1bla {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -914,7 +916,7 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   z-index: -1;
 }
 
-.radio-select-button.svelte-1ep61uz.svelte-1ep61uz:checked {
+.radio-select-button.svelte-ee1bla.svelte-ee1bla:checked {
   border: 0.1em solid #637691;
   border-radius: 0.3em;
   background-color: #f5f5fe;
