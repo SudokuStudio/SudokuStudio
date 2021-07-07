@@ -2,26 +2,34 @@
     import EditSection from "./EditSection.svelte";
 
     import type { StateRef } from "../../js/state_manager";
-    import { boardState, CONSTRAINT_COMPONENTS } from "../../js/board";
+    import { boardState, CONSTRAINT_GLOBALS, CONSTRAINT_COMPONENTS } from "../../js/board";
     import type { ConstraintComponent } from "../../js/board";
     import ConstraintRow from "./constraint/ConstraintRow.svelte";
 import Icon from "../Icon.svelte";
 
     const constraintsGlobal: { id: string, ref: StateRef, component: ConstraintComponent }[] = [];
+    const constraintsLocal: { id: string, ref: StateRef, component: ConstraintComponent }[] = [];
 
     boardState.ref('constraints/*').watch<schema.Constraint>(([ constraints, constraintId ], oldVal, newVal) => {
         if (null == newVal) {
             // Deleted.
-            const i = constraintsGlobal.findIndex(({ id }) => constraintId === id);
+            const list = CONSTRAINT_GLOBALS[oldVal!.type] ? constraintsGlobal : constraintsLocal;
+
+            const i = list.findIndex(({ id }) => constraintId === id);
             if (0 > i) throw Error(`Failed to find constraint with id ${constraintId}.`);
-            delete constraintsGlobal[i];
+            delete list[i];
         }
         else {
+            const list = CONSTRAINT_GLOBALS[newVal.type] ? constraintsGlobal : constraintsLocal;
+
             const component = CONSTRAINT_COMPONENTS[newVal.type];
-            if (null == component) throw Error(`Unknown constraint type: ${newVal.type}.`);
+            if (null == component) {
+                console.error(`Unknown constraint type: ${newVal.type}.`);
+                return;
+            }
 
             if (null == oldVal) {
-                constraintsGlobal.push({
+                list.push({
                     id: constraintId,
                     ref: boardState.ref(constraints, constraintId, 'value'),
                     component,
@@ -56,26 +64,11 @@ import Icon from "../Icon.svelte";
     <li>
         <EditSection title="Local Constraints">
             <ul class="nolist">
-                <li>
-                    <ConstraintRow id="10101" name="Digit" unused={false} isLocal={true}>
-                        <Icon icon="given" color="text" />
-                    </ConstraintRow>
-                </li>
-                <li>
-                    <ConstraintRow id="13212" name="Thermo" unused={false} isLocal={true}>
-                        <Icon icon="thermo" color="text" />
-                    </ConstraintRow>
-                </li>
-                <li>
-                    <ConstraintRow id="567567" name="Arrow" unused={false} isLocal={true}>
-                        <Icon icon="arrow" color="text" />
-                    </ConstraintRow>
-                </li>
-                <li>
-                    <ConstraintRow id="348445" name="Sandwich" unused={false} isLocal={true}>
-                        <Icon icon="sandwich" color="text" />
-                    </ConstraintRow>
-                </li>
+                {#each constraintsLocal as { id, ref, component } (id)}
+                    <li>
+                        <svelte:component this={component} {id} {ref}  />
+                    </li>
+                {/each}
             </ul>
         </EditSection>
     </li>

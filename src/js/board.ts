@@ -5,6 +5,10 @@ import Knight from '../svelte/edit/constraint/Knight.svelte';
 import King from '../svelte/edit/constraint/King.svelte';
 import DisjointGroups from '../svelte/edit/constraint/DisjointGroups.svelte';
 import Nonconsecutive from '../svelte/edit/constraint/Nonconsecutive.svelte';
+import Given from '../svelte/edit/constraint/Given.svelte';
+import Thermo from '../svelte/edit/constraint/Thermo.svelte';
+import Arrow from '../svelte/edit/constraint/Arrow.svelte';
+import Sandwich from '../svelte/edit/constraint/Sandwich.svelte';
 
 export type ConstraintDataAndComponent = {
     id: string,
@@ -15,12 +19,31 @@ export type ConstraintDataAndComponent = {
 export const boardState = (window as any).boardState = new StateManager();
 
 export type ConstraintComponent = typeof CONSTRAINT_COMPONENTS[keyof typeof CONSTRAINT_COMPONENTS];
+
+export const CONSTRAINT_GLOBALS = {
+    ['diagonal']: true,
+    ['knight']: true,
+    ['king']: true,
+    ['disjointGroups']: true,
+    ['consecutive']: true,
+
+    ['given']: false,
+    ['thermo']: false,
+    ['arrow']: false,
+    ['sandwich']: false,
+} as const;
+
 export const CONSTRAINT_COMPONENTS = {
     ['diagonal']: Diagonal,
     ['knight']: Knight,
     ['king']: King,
     ['disjointGroups']: DisjointGroups,
     ['consecutive']: Nonconsecutive,
+
+    ['given']: Given,
+    ['thermo']: Thermo,
+    ['arrow']: Arrow,
+    ['sandwich']: Sandwich,
 } as const;
 
 boardState.update({
@@ -67,15 +90,46 @@ boardState.update({
                 order: 4,
             },
         },
-        // '10130': {
-        //     type: 'givens',
-        //     value: {
-        //         "12": 3,
-        //         "13": 4,
-        //         "39": 4,
-        //         "40": 1,
-        //         "64": 3,
-        //     }
-        // },
+
+        // LOCALS
+        '10130': {
+            type: 'given',
+            value: {
+                "12": 3,
+                "13": 4,
+                "39": 4,
+                "40": 1,
+                "64": 3,
+            },
+        },
+        '10140': {
+            type: 'thermo',
+            value: {
+                "110": {
+                    "0": "3",
+                    "1": "13",
+                    "2": "23",
+                },
+                "120": {
+                    "0": "29",
+                    "1": "20",
+                    "2": "21",
+                },
+            },
+        },
+        '10150': {
+            type: 'arrow',
+            value: {
+                "110": {
+                    "head": {
+                        "0": "27",
+                    },
+                    "body": {
+                        "0": "28",
+                        "1": "29",
+                    },
+                },
+            },
+        },
     },
 });
