@@ -641,7 +641,7 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-h1.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
+h1.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   font-size: 1.4rem;
   font-weight: 800;
   white-space: nowrap;
@@ -650,18 +650,18 @@ h1.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   text-align: center;
 }
 
-.setter.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
+.setter.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   white-space: nowrap;
   font-size: 0.7rem;
   color: gray;
   text-align: center;
 }
 
-.icon-undo.redo.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
+.icon-undo.redo.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   transform: scaleX(-1);
 }
 
-.padbutton.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
+.padbutton.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   display: block;
   box-sizing: border-box;
   -webkit-appearance: none;
@@ -683,31 +683,31 @@ h1.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
+  .padbutton.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
     font-size: 5vw;
   }
 }
-.entry-column.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac.svelte-1nyhxac.svelte-1nyhxac {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad.svelte-1nyhxac.svelte-1nyhxac {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .mode-pad-container.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .mode-pad-container.svelte-1nyhxac.svelte-1nyhxac {
   width: 22.2222222222%;
   height: 0;
   padding-bottom: 103.7037037037%;
   position: relative;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .mode-pad-container .mode-pad.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .mode-pad-container .mode-pad.svelte-1nyhxac.svelte-1nyhxac {
   position: absolute;
   top: 0;
   left: 0;
@@ -718,18 +718,18 @@ h1.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   justify-content: space-between;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-1nyhxac.svelte-1nyhxac {
   height: 21.4285714286%;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .right-container.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .right-container.svelte-1nyhxac.svelte-1nyhxac {
   width: 66.6666666667%;
   height: 0;
   padding-bottom: 106.6666666667%;
   position: relative;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .right-container .right.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .right-container .right.svelte-1nyhxac.svelte-1nyhxac {
   position: absolute;
   top: 0;
   left: 0;
@@ -740,7 +740,7 @@ h1.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   justify-content: space-between;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .right-container .right .num-pad.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .right-container .right .num-pad.svelte-1nyhxac.svelte-1nyhxac {
   width: 100%;
   height: 82%;
   display: grid;
@@ -750,41 +750,40 @@ h1.svelte-16ylhn4.svelte-16ylhn4.svelte-16ylhn4 {
   row-gap: 3.703703703%;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .right-container .right .num-pad.svelte-16ylhn4 > .padbutton.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .right-container .right .num-pad.svelte-1nyhxac > .padbutton.svelte-1nyhxac {
   line-height: 100%;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .right-container .right .ctrl-pad.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .right-container .right .ctrl-pad.svelte-1nyhxac.svelte-1nyhxac {
   height: 15.2%;
   display: flex;
   gap: 3.5%;
 }
 
-.entry-column.svelte-16ylhn4 .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-1nyhxac.svelte-1nyhxac {
   width: 24.444%;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-16ylhn4 .entry-pad.svelte-16ylhn4.svelte-16ylhn4 {
+  .entry-column.svelte-1nyhxac .entry-pad.svelte-1nyhxac.svelte-1nyhxac {
     width: 50%;
     margin: 0 auto;
   }
 }
-.entry-column.svelte-16ylhn4 .rules-text.svelte-16ylhn4.svelte-16ylhn4 {
+.entry-column.svelte-1nyhxac textarea.rules-text.svelte-1nyhxac.svelte-1nyhxac {
   flex: 1 1 20vh;
   font-size: 0.7rem;
-}
-
-.entry-column.svelte-16ylhn4 textarea.rules-text.svelte-16ylhn4.svelte-16ylhn4 {
   resize: none;
   margin: 1em 0 2em 0;
   padding: 0.5em;
+  outline: none;
   border-radius: 0.3rem;
   border: 0.1rem solid transparent;
   transition: border-color 0.1s linear;
 }
 
-.entry-column.svelte-16ylhn4 textarea.rules-text.svelte-16ylhn4.svelte-16ylhn4:hover {
+.entry-column.svelte-1nyhxac textarea.rules-text.svelte-1nyhxac.svelte-1nyhxac:hover {
+  outline: none;
   border-color: #637691;
 }
 
