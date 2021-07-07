@@ -17,6 +17,15 @@ import { onDestroy } from "svelte";
 </script>
 
 <div class="entry-column">
+	<h1 class="title">Double Agent</h1>
+	<div class="setter">by echoes and TauCeti Deichmann</div>
+	<textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal sudoku rules do not apply. In each row, column, and box, place eight of the nine digits from 1-9, and repeat one of them; one digit in each set must be missing.
+
+No two rows, no two columns, and no two boxes may share the same repeated or missing digit.
+
+The clues (sandwich sums) outside the grid indicate the sum of the digits between any 1 and any 9 in the appropriate row or column: at least one set must sum correctly. Such a row or column must have at least one 1 and at least one 9.
+
+The sum of the cells on an arrow is the digit placed in its circle; digits may repeat along an arrow if allowed by the other rules.</textarea>
     <div class="entry-pad" bind:this={entryPadEl}>
         <div class="mode-pad-container">
             <div class="mode-pad">
@@ -61,20 +70,27 @@ import { onDestroy } from "svelte";
             </div>
         </div>
     </div>
-    <h4 class="rules">Rules</h4>
-    <textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal sudoku rules do not apply. In each row, column, and box, place eight of the nine digits from 1-9, and repeat one of them; one digit in each set must be missing.
-
-No two rows, no two columns, and no two boxes may share the same repeated or missing digit.
-
-The clues (sandwich sums) outside the grid indicate the sum of the digits between any 1 and any 9 in the appropriate row or column: at least one set must sum correctly. Such a row or column must have at least one 1 and at least one 9.
-
-The sum of the cells on an arrow is the digit placed in its circle; digits may repeat along an arrow if allowed by the other rules.</textarea>
 </div>
 
 <style lang="scss">
     @use "sass:math";
     @use '../../css/vars' as vars;
 
+    h1 {
+        font-size: 1.4rem;
+        font-weight: vars.$font-weight-heavy;
+        white-space: nowrap;
+        margin-top: 0;
+        margin-bottom: 0.25rem;
+        text-align: center;
+    }
+
+    .setter {
+        white-space: nowrap;
+        font-size: 0.7rem;
+        color: gray;
+        text-align: center;
+    }
     .icon-undo.redo {
         transform: scaleX(-1);
     }
@@ -194,10 +210,6 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
             }
         }
 
-        .rules {
-            text-align: center;
-            margin: 1em 0 0.5em 0;
-        }
         .rules-text {
             flex: 1 1 20vh;
             width: 100%;
@@ -207,6 +219,12 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
         textarea.rules-text {
             resize: none;
             border: none;
+            margin: 1em 0 2em 0;
+            padding: 0.5em;
+        }
+        textarea:focus {
+          outline: 0.15em solid #637691;
+          border-radius: 0.3em;
         }
     }
 </style>

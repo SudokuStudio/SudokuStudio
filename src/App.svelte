@@ -47,6 +47,8 @@ import Header from "./svelte/Header.svelte";
 
         .left-panel {
             flex: 1 1 100%;
+            overflow-y: scroll;
+            height: calc(100vh - 7.5rem);
         }
 
         .center-panel {

@@ -5,10 +5,6 @@
         <li>Export</li>
     </ul>
 </div>
-<div class="header-center">
-    <h1>Double Agent</h1>
-    <div class="setter">by echoes and TauCeti Deichmann</div>
-</div>
 <div class="header-right">
     <ul class="header-buttons right">
         <li>Light/dark</li>
@@ -30,18 +26,6 @@
         text-align: center;
 
         max-width: vars.$sudoku-size-big;
-
-        h1 {
-            font-size: 2rem;
-            font-weight: vars.$font-weight-heavy;
-            white-space: nowrap;
-            margin-bottom: 0.5rem;
-        }
-
-        .setter {
-            white-space: nowrap;
-            /* Maybe this needs a different font size. Not sure. */
-        }
     }
     .header-right {
         flex: 1 1 100%;
