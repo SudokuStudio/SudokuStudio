@@ -1,5 +1,6 @@
 <script lang="ts">
 import EditPanel from "./svelte/edit/EditPanel.svelte";
+import EntryPanel from "./svelte/entry/EntryPanel.svelte";
 import Header from "./svelte/Header.svelte";
 
 </script>
@@ -20,7 +21,9 @@ import Header from "./svelte/Header.svelte";
             <div class="center-panel">
                 <img src="svg/example-grid.svg" alt="Sudoku Grid" />
             </div>
-            <div class="right-panel">RIGHT PANEL</div>
+            <div class="right-panel">
+                <EntryPanel />
+            </div>
         </div>
     </div>
 </main>
