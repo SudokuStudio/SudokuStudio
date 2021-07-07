@@ -894,16 +894,16 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   display: inline-block;
 }
 
-.unused.svelte-e94sqd.svelte-e94sqd {
+.unused.svelte-5ct4xn.svelte-5ct4xn {
   opacity: 0.5;
 }
 
-.constraint-row-container.svelte-e94sqd.svelte-e94sqd {
+.constraint-row-container.svelte-5ct4xn.svelte-5ct4xn {
   margin: 0.25em 0 0.5em 0.75em;
   position: relative;
 }
 
-.constraint-row.svelte-e94sqd.svelte-e94sqd {
+.constraint-row.svelte-5ct4xn.svelte-5ct4xn {
   padding: 0.25em 0.25em;
   cursor: pointer;
   -webkit-user-select: none;
@@ -916,34 +916,38 @@ h1.svelte-jgpbuv.svelte-jgpbuv.svelte-jgpbuv {
   z-index: 0;
 }
 
-.constraint-row.svelte-e94sqd.svelte-e94sqd:before, .constraint-row.svelte-e94sqd.svelte-e94sqd:after {
+.constraint-row.svelte-5ct4xn.svelte-5ct4xn:before, .constraint-row.svelte-5ct4xn.svelte-5ct4xn:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-e94sqd.svelte-e94sqd:after {
+.constraint-row.svelte-5ct4xn.svelte-5ct4xn:after {
   clear: both;
 }
 
-.constraint-row.svelte-e94sqd .constraint-row-left.svelte-e94sqd {
+.constraint-row.svelte-5ct4xn .constraint-row-left.svelte-5ct4xn {
   float: left;
 }
 
-.constraint-row.svelte-e94sqd .constraint-row-right.svelte-e94sqd {
+.constraint-row.svelte-5ct4xn .constraint-row-right.svelte-5ct4xn {
   margin-left: 0.5em;
   float: right;
 }
 
-.constraint-row.svelte-e94sqd.svelte-e94sqd:hover, .constraint-row.svelte-e94sqd.svelte-e94sqd:focus-visible {
+.radio-select-button.svelte-5ct4xn.svelte-5ct4xn:focus-visible {
+  outline: none;
+}
+
+.constraint-row.svelte-5ct4xn.svelte-5ct4xn:hover, .radio-select-button.svelte-5ct4xn:focus-visible ~ .constraint-row.svelte-5ct4xn {
   border-color: #637691;
 }
 
-.radio-select-button.svelte-e94sqd:checked ~ .constraint-row.svelte-e94sqd {
+.radio-select-button.svelte-5ct4xn:checked ~ .constraint-row.svelte-5ct4xn {
   background-color: #f5f5fe;
   border-color: #637691;
 }
 
-.radio-select-button.svelte-e94sqd.svelte-e94sqd {
+.radio-select-button.svelte-5ct4xn.svelte-5ct4xn {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
