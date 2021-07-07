@@ -64,6 +64,11 @@
             float: right;
         }
     }
+    .constraint-row:hover {
+        box-shadow: 2px 2px 0.25em rgba(0, 0, 0, 0.2);
+        border-radius: 0.3em;
+        transition: background-color vars.$transition-time linear 0s, box-shadow vars.$transition-time linear 0s;
+    }
 
     .radio-select-button {
         -webkit-appearance: none;
@@ -77,9 +82,14 @@
         height: 100%;
 
         pointer-events: none;
+
+        border-color: transparent;
+        z-index: -1;
     }
     .radio-select-button:checked {
         border: 0.1em solid vars.$color-clickable;
         border-radius: 0.3em;
+        background-color: vars.$color-selected;
+        transition: border-color vars.$transition-time linear 0s, background-color vars.$transition-time linear 0s;
     }
 </style>
