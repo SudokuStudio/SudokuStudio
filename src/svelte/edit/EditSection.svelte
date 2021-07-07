@@ -40,11 +40,11 @@
         text-align: left;
 
         white-space: nowrap;
-    }
-    .section-title:hover {
-        box-shadow: 0 0 0 1px vars.$color-clickable;
-        border-radius: 0.3em;
-        transition: box-shadow vars.$transition-time linear 0s;
+
+        @include vars.hoverborder();
+        &:hover {
+            @include vars.hoverborder-hover();
+        }
     }
 
     .tree-menu {
@@ -69,6 +69,7 @@
         max-height: 0px;
     }
     .panel {
+        width: 100%;
         transition: margin-bottom vars.$transition-time cubic-bezier(0, 0, 0, 1);
         margin-bottom: 0;
         max-height: 1000000px;

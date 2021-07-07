@@ -28,3 +28,16 @@ $color-warning: #916363;
         @content;
     }
 }
+
+
+$hoverborder-size: 0.1rem;
+$hoverborder-transition-time: 0.1s;
+
+@mixin hoverborder {
+    border-radius: 0.3rem;
+    border: $hoverborder-size solid transparent;
+    transition: border-color $hoverborder-transition-time linear;
+}
+@mixin hoverborder-hover {
+    border-color: $color-clickable;
+}

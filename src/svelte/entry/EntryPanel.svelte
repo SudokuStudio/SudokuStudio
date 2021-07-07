@@ -204,20 +204,20 @@ import { onDestroy } from "svelte";
             }
         }
 
-        .rules-text {
+        textarea.rules-text {
             flex: 1 1 20vh;
             font-size: 0.7rem;
 
-        }
-        textarea.rules-text {
             resize: none;
-            border: none;
             margin: 1em 0 2em 0;
             padding: 0.5em;
-        }
-        textarea:focus {
-          outline: 0.15em solid #637691;
-          border-radius: 0.3em;
+
+            outline: none;
+            @include vars.hoverborder();
+            &:hover, &:focus {
+                outline: none;
+                @include vars.hoverborder-hover();
+            }
         }
     }
 </style>

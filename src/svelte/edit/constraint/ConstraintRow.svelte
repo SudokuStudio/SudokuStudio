@@ -15,7 +15,7 @@
     export let onTrash: svelte.JSX.MouseEventHandler<HTMLButtonElement> | undefined = undefined;
 </script>
 
-<div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
+<div class="constraint-row" class:global={!isLocal} role="button" on:click|stopPropagation={onClick}>
     {#if isLocal}
         <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={selectedToolName} bind:group={$selectedTool} />
     {/if}
@@ -56,6 +56,11 @@
         -ms-user-select: none;
         user-select: none;
 
+        @include vars.hoverborder();
+        &.global:hover {
+            @include vars.hoverborder-hover();
+        }
+
         .constraint-row-left {
             float: left;
         }
@@ -63,11 +68,8 @@
             margin-left: 0.5em;
             float: right;
         }
-    }
-    .constraint-row:hover {
-        box-shadow: 0 0 0 1px vars.$color-clickable;
-        border-radius: 0.3em;
-        transition: background-color vars.$transition-time linear 0s, box-shadow vars.$transition-time linear 0s;
+
+        z-index: 0;
     }
 
     .radio-select-button {
@@ -76,20 +78,26 @@
         appearance: none;
 
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        top: -1 * vars.$hoverborder-size;
+        left: -1 * vars.$hoverborder-size;
+        bottom: -1 * vars.$hoverborder-size;
+        right: -1 * vars.$hoverborder-size;
 
         pointer-events: none;
 
         border-color: transparent;
         z-index: -1;
+
+        @include vars.hoverborder;
+
+        &:checked {
+            @include vars.hoverborder-hover();
+            background-color: vars.$color-selected;
+        }
+
+        @include vars.hoverborder();
     }
-    .radio-select-button:checked {
-        border: 0.1em solid vars.$color-clickable;
-        border-radius: 0.3em;
-        background-color: vars.$color-selected;
-        transition: border-color vars.$transition-time linear 0s, background-color vars.$transition-time linear 0s;
+    .constraint-row:hover .radio-select-button {
+        @include vars.hoverborder-hover();
     }
 </style>
