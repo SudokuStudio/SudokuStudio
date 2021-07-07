@@ -828,37 +828,41 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   display: inline-block;
 }
 
-.unused.svelte-1bbsdib.svelte-1bbsdib {
+.unused.svelte-erye1b.svelte-erye1b {
   opacity: 0.5;
 }
 
-.constraint-row.svelte-1bbsdib.svelte-1bbsdib {
+.constraint-row.svelte-erye1b.svelte-erye1b {
   margin: 0 0 0.5em 0;
   padding: 0.25em 0.5em;
   position: relative;
   white-space: nowrap;
   cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-.constraint-row.svelte-1bbsdib.svelte-1bbsdib:before, .constraint-row.svelte-1bbsdib.svelte-1bbsdib:after {
+.constraint-row.svelte-erye1b.svelte-erye1b:before, .constraint-row.svelte-erye1b.svelte-erye1b:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-1bbsdib.svelte-1bbsdib:after {
+.constraint-row.svelte-erye1b.svelte-erye1b:after {
   clear: both;
 }
 
-.constraint-row.svelte-1bbsdib .constraint-row-left.svelte-1bbsdib {
+.constraint-row.svelte-erye1b .constraint-row-left.svelte-erye1b {
   float: left;
 }
 
-.constraint-row.svelte-1bbsdib .constraint-row-right.svelte-1bbsdib {
+.constraint-row.svelte-erye1b .constraint-row-right.svelte-erye1b {
   margin-left: 0.5em;
   float: right;
 }
 
-.radio-select-button.svelte-1bbsdib.svelte-1bbsdib {
+.radio-select-button.svelte-erye1b.svelte-erye1b {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -870,7 +874,7 @@ ul.header-buttons.right.svelte-tt0eff.svelte-tt0eff {
   pointer-events: none;
 }
 
-.radio-select-button.svelte-1bbsdib.svelte-1bbsdib:checked {
+.radio-select-button.svelte-erye1b.svelte-erye1b:checked {
   border: 0.1em solid #637691;
   border-radius: 0.3em;
 }
