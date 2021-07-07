@@ -51,7 +51,7 @@ import Header from "./svelte/Header.svelte";
 
         .left-panel {
             flex: 1 1 100%;
-            overflow: hidden auto;
+            overflow: visible auto;
             height: calc(100vh - #{vars.$header-height + vars.$footer-height});
         }
 
@@ -65,7 +65,7 @@ import Header from "./svelte/Header.svelte";
 
         .right-panel {
             flex: 1 1 100%;
-            overflow: hidden auto;
+            overflow: visible auto;
             height: vars.$sudoku-size-big;
         }
     }

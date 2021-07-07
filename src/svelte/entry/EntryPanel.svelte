@@ -144,6 +144,11 @@ import { onDestroy } from "svelte";
 
             width: 100%;
 
+            @include vars.breakpoint-mobile {
+                // Reorder so entry-pad is before rules.
+                order: -1;
+            }
+
             .mode-pad-container {
                 @include aspect-ratio-container(math.div(42, 9), math.div(2 * 100%, 9));
 
