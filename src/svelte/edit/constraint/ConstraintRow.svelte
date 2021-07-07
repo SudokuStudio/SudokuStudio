@@ -15,22 +15,24 @@
     export let onTrash: svelte.JSX.MouseEventHandler<HTMLButtonElement> | undefined = undefined;
 </script>
 
-<div class="constraint-row" class:global={!isLocal} role="button" on:click|stopPropagation={onClick}>
+<div class="constraint-row-container">
     {#if isLocal}
         <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={selectedToolName} bind:group={$selectedTool} />
     {/if}
-    <div class="constraint-row-left">
-        <button class="nobutton" on:click|stopPropagation={onTrash}>
-            <span class="icon icon-inline icon-c-clickable icon-trash" />
-        </button>
-        {#if isLocal}
-            <label class:unused={unused} class="name clickable" for="local-radio-{counter}">{name}</label>
-        {:else}
-            <span class:unused={unused} class="name">{name}</span>
-        {/if}
-    </div>
-    <div class="constraint-row-right">
-        <slot></slot>
+    <div class="constraint-row" class:global={!isLocal} role="button" on:click|stopPropagation={onClick}>
+        <div class="constraint-row-left">
+            <button class="nobutton" on:click|stopPropagation={onTrash}>
+                <span class="icon icon-inline icon-c-clickable icon-trash" />
+            </button>
+            {#if isLocal}
+                <label class:unused={unused} class="name clickable" for="local-radio-{counter}">{name}</label>
+            {:else}
+                <span class:unused={unused} class="name">{name}</span>
+            {/if}
+        </div>
+        <div class="constraint-row-right">
+            <slot></slot>
+        </div>
     </div>
 </div>
 
@@ -42,13 +44,15 @@
         opacity: 0.5;
     }
 
+    .constraint-row-container {
+        margin: 0.25em 0 0.5em .75em;
+        position: relative;
+    }
+
     .constraint-row {
         @include clearfix.clearfix;
 
-        margin: 0.25em 0 0.5em .75em;
         padding: 0.25em 0.25em;
-        position: relative;
-        white-space: nowrap;
 
         cursor: pointer;
         -webkit-user-select: none;
@@ -57,9 +61,6 @@
         user-select: none;
 
         @include vars.hoverborder();
-        &.global:hover {
-            @include vars.hoverborder-hover();
-        }
 
         .constraint-row-left {
             float: left;
@@ -71,6 +72,9 @@
 
         z-index: 0;
     }
+    .constraint-row:hover, .radio-select-button:checked ~ .constraint-row {
+        @include vars.hoverborder-hover();
+    }
 
     .radio-select-button {
         -webkit-appearance: none;
@@ -78,26 +82,12 @@
         appearance: none;
 
         position: absolute;
-        top: -1 * vars.$hoverborder-size;
-        left: -1 * vars.$hoverborder-size;
-        width: calc(100% + #{2 * vars.$hoverborder-size});
-        height: calc(100% + #{2 * vars.$hoverborder-size});
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
 
         pointer-events: none;
-
-        border-color: transparent;
-        z-index: -1;
-
-        @include vars.hoverborder;
-
-        &:checked {
-            @include vars.hoverborder-hover();
-            background-color: vars.$color-selected;
-        }
-
-        @include vars.hoverborder();
-    }
-    .constraint-row:hover .radio-select-button {
-        @include vars.hoverborder-hover();
+        border-radius: vars.$hoverborder-radius;
     }
 </style>

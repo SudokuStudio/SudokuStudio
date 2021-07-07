@@ -32,9 +32,9 @@ $color-warning: #916363;
 
 $hoverborder-size: 0.1rem;
 $hoverborder-transition-time: 0.1s;
-
+$hoverborder-radius: 0.3rem;
 @mixin hoverborder {
-    border-radius: 0.3rem;
+    border-radius: $hoverborder-radius;
     border: $hoverborder-size solid transparent;
     transition: border-color $hoverborder-transition-time linear;
 }
