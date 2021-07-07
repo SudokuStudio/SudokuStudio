@@ -652,7 +652,7 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
+h1.svelte-13u2yt3.svelte-13u2yt3.svelte-13u2yt3 {
   font-size: 1.4rem;
   font-weight: 800;
   white-space: nowrap;
@@ -661,18 +661,18 @@ h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
   text-align: center;
 }
 
-.setter.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
+.setter.svelte-13u2yt3.svelte-13u2yt3.svelte-13u2yt3 {
   white-space: nowrap;
   font-size: 0.7rem;
   color: gray;
   text-align: center;
 }
 
-.icon-undo.redo.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
+.icon-undo.redo.svelte-13u2yt3.svelte-13u2yt3.svelte-13u2yt3 {
   transform: scaleX(-1);
 }
 
-.padbutton.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
+.padbutton.svelte-13u2yt3.svelte-13u2yt3.svelte-13u2yt3 {
   display: block;
   box-sizing: border-box;
   -webkit-appearance: none;
@@ -694,36 +694,31 @@ h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
+  .padbutton.svelte-13u2yt3.svelte-13u2yt3.svelte-13u2yt3 {
     font-size: 5vw;
   }
 }
-.entry-column.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3.svelte-13u2yt3.svelte-13u2yt3 {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad.svelte-13u2yt3.svelte-13u2yt3 {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
-@media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-1n7n9g5 .entry-pad.svelte-1n7n9g5.svelte-1n7n9g5 {
-    order: -1;
-  }
-}
-.entry-column.svelte-1n7n9g5 .entry-pad .mode-pad-container.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .mode-pad-container.svelte-13u2yt3.svelte-13u2yt3 {
   width: 22.2222222222%;
   height: 0;
   padding-bottom: 103.7037037037%;
   position: relative;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .mode-pad-container .mode-pad.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .mode-pad-container .mode-pad.svelte-13u2yt3.svelte-13u2yt3 {
   position: absolute;
   top: 0;
   left: 0;
@@ -734,18 +729,18 @@ h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
   justify-content: space-between;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .mode-pad-container .mode-pad .padbutton.svelte-13u2yt3.svelte-13u2yt3 {
   height: 21.4285714286%;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .right-container.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .right-container.svelte-13u2yt3.svelte-13u2yt3 {
   width: 66.6666666667%;
   height: 0;
   padding-bottom: 106.6666666667%;
   position: relative;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .right-container .right.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .right-container .right.svelte-13u2yt3.svelte-13u2yt3 {
   position: absolute;
   top: 0;
   left: 0;
@@ -756,7 +751,7 @@ h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
   justify-content: space-between;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .right-container .right .num-pad.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .right-container .right .num-pad.svelte-13u2yt3.svelte-13u2yt3 {
   width: 100%;
   height: 82%;
   display: grid;
@@ -766,51 +761,58 @@ h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
   row-gap: 3.703703703%;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .right-container .right .num-pad.svelte-1n7n9g5 > .padbutton.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .right-container .right .num-pad.svelte-13u2yt3 > .padbutton.svelte-13u2yt3 {
   line-height: 100%;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .right-container .right .ctrl-pad.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .right-container .right .ctrl-pad.svelte-13u2yt3.svelte-13u2yt3 {
   height: 15.2%;
   display: flex;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .right-container .right .ctrl-pad.svelte-1n7n9g5 > .svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .right-container .right .ctrl-pad.svelte-13u2yt3 > .svelte-13u2yt3 {
   margin-right: 3.5%;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .right-container .right .ctrl-pad.svelte-1n7n9g5 > .svelte-1n7n9g5:last-child {
+.entry-column.svelte-13u2yt3 .entry-pad .right-container .right .ctrl-pad.svelte-13u2yt3 > .svelte-13u2yt3:last-child {
   margin-right: 0;
 }
 
-.entry-column.svelte-1n7n9g5 .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 .entry-pad .right-container .right .ctrl-pad .padbutton.svelte-13u2yt3.svelte-13u2yt3 {
   width: 24.444%;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .entry-column.svelte-1n7n9g5 .entry-pad.svelte-1n7n9g5.svelte-1n7n9g5 {
+  .entry-column.svelte-13u2yt3 .entry-pad.svelte-13u2yt3.svelte-13u2yt3 {
     width: 50%;
     margin: 0 auto;
   }
 }
-.entry-column.svelte-1n7n9g5 textarea.rules-text.svelte-1n7n9g5.svelte-1n7n9g5 {
+.entry-column.svelte-13u2yt3 textarea.rules-text.svelte-13u2yt3.svelte-13u2yt3 {
   flex: 1 1 20vh;
   font-size: 0.7rem;
   resize: none;
   margin: 1em 0 2em 0;
   padding: 0.5em;
+  min-height: 5em;
   outline: none;
   border-radius: 0.3rem;
   border: 0.1rem solid transparent;
   transition: border-color 0.1s linear;
+  order: -1;
 }
 
-.entry-column.svelte-1n7n9g5 textarea.rules-text.svelte-1n7n9g5.svelte-1n7n9g5:hover, .entry-column.svelte-1n7n9g5 textarea.rules-text.svelte-1n7n9g5.svelte-1n7n9g5:focus {
+.entry-column.svelte-13u2yt3 textarea.rules-text.svelte-13u2yt3.svelte-13u2yt3:hover, .entry-column.svelte-13u2yt3 textarea.rules-text.svelte-13u2yt3.svelte-13u2yt3:focus {
   outline: none;
   border-color: #637691;
 }
 
-.section-title.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
+@media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
+  .entry-column.svelte-13u2yt3 textarea.rules-text.svelte-13u2yt3.svelte-13u2yt3 {
+    order: 0;
+  }
+}
+.section-title.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12 {
   padding: 0.5em 0.5em;
   font-weight: 800;
   display: inline-block;
@@ -828,54 +830,54 @@ h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
   transition: border-color 0.1s linear;
 }
 
-.section-title.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x:hover {
+.section-title.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12:hover, .section-title.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12:focus-visible {
   border-color: #637691;
 }
 
-.tree-menu.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
+.tree-menu.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12 {
   transition: transform 0.2s ease-in-out;
   transform: rotate(180deg);
   transform-origin: 50% 66%;
   float: right;
 }
 
-.closed.svelte-1o0wb7x .tree-menu.svelte-1o0wb7x.svelte-1o0wb7x {
+.closed.svelte-1o8sn12 .tree-menu.svelte-1o8sn12.svelte-1o8sn12 {
   transform: rotate(0deg);
 }
 
-.panel-wrapper.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
+.panel-wrapper.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12 {
   display: flex;
   overflow: hidden;
 }
 
-.panel-wrapper.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x:after {
+.panel-wrapper.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12:after {
   content: "";
   height: 10px;
   transition: height 0.2s linear, max-height 0s 0.2s linear;
   max-height: 0px;
 }
 
-.panel.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
+.panel.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12 {
   width: 100%;
   transition: margin-bottom 0.2s cubic-bezier(0, 0, 0, 1);
   margin-bottom: 0;
   max-height: 1000000px;
 }
 
-.closed.svelte-1o0wb7x .panel-wrapper.svelte-1o0wb7x > .panel.svelte-1o0wb7x {
+.closed.svelte-1o8sn12 .panel-wrapper.svelte-1o8sn12 > .panel.svelte-1o8sn12 {
   margin-bottom: -2000px;
   transition: margin-bottom 0.2s cubic-bezier(1, 0, 1, 1), visibility 0s 0.2s, max-height 0s 0.2s;
   visibility: hidden;
   max-height: 0;
 }
 
-.closed.svelte-1o0wb7x .panel-wrapper.svelte-1o0wb7x.svelte-1o0wb7x:after {
+.closed.svelte-1o8sn12 .panel-wrapper.svelte-1o8sn12.svelte-1o8sn12:after {
   height: 0;
   transition: height 0.2s linear;
   max-height: 10px;
 }
 
-.container.svelte-1o0wb7x.svelte-1o0wb7x.svelte-1o0wb7x {
+.container.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12 {
   margin-bottom: 0.5em;
 }
 
@@ -884,16 +886,16 @@ h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
   display: inline-block;
 }
 
-.unused.svelte-1ak08y1.svelte-1ak08y1 {
+.unused.svelte-mk6ris.svelte-mk6ris {
   opacity: 0.5;
 }
 
-.constraint-row-container.svelte-1ak08y1.svelte-1ak08y1 {
+.constraint-row-container.svelte-mk6ris.svelte-mk6ris {
   margin: 0.25em 0 0.5em 0.75em;
   position: relative;
 }
 
-.constraint-row.svelte-1ak08y1.svelte-1ak08y1 {
+.constraint-row.svelte-mk6ris.svelte-mk6ris {
   padding: 0.25em 0.25em;
   cursor: pointer;
   -webkit-user-select: none;
@@ -906,29 +908,29 @@ h1.svelte-1n7n9g5.svelte-1n7n9g5.svelte-1n7n9g5 {
   z-index: 0;
 }
 
-.constraint-row.svelte-1ak08y1.svelte-1ak08y1:before, .constraint-row.svelte-1ak08y1.svelte-1ak08y1:after {
+.constraint-row.svelte-mk6ris.svelte-mk6ris:before, .constraint-row.svelte-mk6ris.svelte-mk6ris:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-1ak08y1.svelte-1ak08y1:after {
+.constraint-row.svelte-mk6ris.svelte-mk6ris:after {
   clear: both;
 }
 
-.constraint-row.svelte-1ak08y1 .constraint-row-left.svelte-1ak08y1 {
+.constraint-row.svelte-mk6ris .constraint-row-left.svelte-mk6ris {
   float: left;
 }
 
-.constraint-row.svelte-1ak08y1 .constraint-row-right.svelte-1ak08y1 {
+.constraint-row.svelte-mk6ris .constraint-row-right.svelte-mk6ris {
   margin-left: 0.5em;
   float: right;
 }
 
-.constraint-row.svelte-1ak08y1.svelte-1ak08y1:hover, .radio-select-button.svelte-1ak08y1:checked ~ .constraint-row.svelte-1ak08y1 {
+.constraint-row.svelte-mk6ris.svelte-mk6ris:hover, .constraint-row.svelte-mk6ris.svelte-mk6ris:focus-visible, .radio-select-button.svelte-mk6ris:checked ~ .constraint-row.svelte-mk6ris {
   border-color: #637691;
 }
 
-.radio-select-button.svelte-1ak08y1.svelte-1ak08y1 {
+.radio-select-button.svelte-mk6ris.svelte-mk6ris {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
