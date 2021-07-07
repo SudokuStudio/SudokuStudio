@@ -72,7 +72,11 @@
 
         z-index: 0;
     }
-    .constraint-row:hover, .constraint-row:focus-visible {
+    .radio-select-button:focus-visible {
+        // TODO: pick our own color for keyboard accessibility.
+        outline-offset: -0.1em;
+    }
+    .constraint-row:hover, .radio-select-button:focus-visible ~ .constraint-row  {
         @include vars.hoverborder-hover();
     }
     .radio-select-button:checked ~ .constraint-row {
