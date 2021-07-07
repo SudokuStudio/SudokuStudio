@@ -1,9 +1,12 @@
 <script lang="ts">
 import { onDestroy } from "svelte";
+    // Hide spellcheck squiggles when the user is not editing the rules.
     function setSpellcheck(event: FocusEvent & { currentTarget: EventTarget & HTMLTextAreaElement}): void {
         event.currentTarget.setAttribute('spellcheck', `${document.activeElement === event.currentTarget}`);
     }
 
+    // Unfortunately there is no way to size the text to based on the parent (in this case button) size in native CSS.
+    // So we have to use a bit of javascript to set the font size when the page resizes.
     let entryPadEl: HTMLDivElement;
     function onResize() {
         entryPadEl.style.fontSize = `${0.12 * entryPadEl.clientWidth}px`;
@@ -122,10 +125,6 @@ The sum of the cells on an arrow is the digit placed in its circle; digits may r
         height: 100%;
 
         .entry-pad {
-            // $button-size-med: 3em;
-            // $button-size-large: 1.08 * $button-size-med;
-            // $button-size-small: 0.80 * $button-size-med;
-
             display: flex;
             justify-content: space-between;
 
