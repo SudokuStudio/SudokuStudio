@@ -45,8 +45,8 @@
     .constraint-row {
         @include clearfix.clearfix;
 
-        margin: 0 0 0.5em 0;
-        padding: 0.25em 0.5em;
+        margin: 0.25em 0 0.5em .75em;
+        padding: 0.25em 0.25em;
         position: relative;
         white-space: nowrap;
 

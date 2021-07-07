@@ -10,10 +10,10 @@
 
 <div class="container" class:closed>
     <button class="section-title nobutton" on:click={onClick}>
+        {title}
         <span
             class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu"
         />
-        {title}
     </button>
     <div class="panel-wrapper">
         <div class="panel">
@@ -26,7 +26,7 @@
     @use 'src/css/vars';
 
     .section-title {
-        padding: 0.5em 0;
+        padding: 0.5em 0.5em;
         font-weight: vars.$font-weight-heavy;
 
         display: inline-block;
@@ -34,6 +34,7 @@
         font-family: inherit;
         border: 0;
         margin: 0;
+        padding-left: -1em;
         background: none;
         cursor: pointer;
         width: 100%;
@@ -42,13 +43,14 @@
         white-space: nowrap;
     }
     .section-title:hover {
-        box-shadow: 2px 2px 0.25em rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 0 1px vars.$color-clickable;
         border-radius: 0.3em;
         transition: box-shadow vars.$transition-time linear 0s;
     }
 
     .tree-menu {
         transition: transform vars.$transition-time ease-in-out;
+        float: right;
     }
     .closed .tree-menu {
         transform: rotate(-90deg);
@@ -61,7 +63,8 @@
     .panel-wrapper:after {
         content: "";
         height: 10px;
-        transition: height vars.$transition-time linear, max-height 0s vars.$transition-time linear;
+        transition: height vars.$transition-time linear,
+            max-height 0s vars.$transition-time linear;
         max-height: 0px;
     }
     .panel {
@@ -72,7 +75,8 @@
     .closed .panel-wrapper > .panel {
         margin-bottom: -2000px;
         transition: margin-bottom vars.$transition-time cubic-bezier(1, 0, 1, 1),
-            visibility 0s vars.$transition-time, max-height 0s vars.$transition-time;
+            visibility 0s vars.$transition-time,
+            max-height 0s vars.$transition-time;
         visibility: hidden;
         max-height: 0;
     }

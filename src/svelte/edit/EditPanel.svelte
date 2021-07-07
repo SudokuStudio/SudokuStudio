@@ -45,7 +45,7 @@
 <ul class="nolist">
     <li>
         <EditSection title="Solver Panel">
-            Nothing Here!
+            <p style="margin: 0; padding: 0.25em 1em;">Nothing Here!</p>
         </EditSection>
     </li>
     <li>
@@ -72,7 +72,7 @@
     </li>
     <li>
         <EditSection title="Cosmetic Tools">
-            Nothing Here!
+            <p style="margin: 0; padding: 0.25em 1em;">Nothing Here!</p>
         </EditSection>
     </li>
 </ul>
