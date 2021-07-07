@@ -33,7 +33,11 @@ import Header from "./svelte/Header.svelte";
     @use './css/vars' as vars;
 
     header {
+        font-size: 0.8rem;
         flex: 0 0 auto;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         height: vars.$header-height;
     }
 
