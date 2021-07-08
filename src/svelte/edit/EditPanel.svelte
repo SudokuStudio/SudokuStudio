@@ -2,24 +2,31 @@
     import EditSection from "./EditSection.svelte";
 
     import type { StateRef } from "../../js/state_manager";
-    import { boardState, CONSTRAINT_GLOBALS, CONSTRAINT_COMPONENTS } from "../../js/board";
+    import { boardState, ConstraintMenuType, CONSTRAINT_MENU_TYPES, CONSTRAINT_COMPONENTS } from "../../js/board";
     import type { ConstraintComponent } from "../../js/board";
 
-    const constraintsGlobal: { id: string, ref: StateRef, component: ConstraintComponent }[] = [];
-    const constraintsLocal: { id: string, ref: StateRef, component: ConstraintComponent }[] = [];
+    type ConstraintList = { id: string, ref: StateRef, component: ConstraintComponent }[];
+    const constraintsGlobal: ConstraintList = [];
+    const constraintsLocal: ConstraintList = [];
+
+    function getList(type: keyof typeof CONSTRAINT_MENU_TYPES): ConstraintList | null {
+        const menuType = CONSTRAINT_MENU_TYPES[type];
+        if (ConstraintMenuType.GLOBAL === menuType) return constraintsGlobal;
+        if (ConstraintMenuType.LOCAL === menuType) return constraintsLocal;
+        return null;
+    }
 
     boardState.ref('constraints/*').watch<schema.Constraint>(([ constraints, constraintId ], oldVal, newVal) => {
+        const list = getList(oldVal?.type || newVal!.type);
+        if (null == list) return;
+
         if (null == newVal) {
             // Deleted.
-            const list = CONSTRAINT_GLOBALS[oldVal!.type] ? constraintsGlobal : constraintsLocal;
-
             const i = list.findIndex(({ id }) => constraintId === id);
             if (0 > i) throw Error(`Failed to find constraint with id ${constraintId}.`);
             delete list[i];
         }
         else {
-            const list = CONSTRAINT_GLOBALS[newVal.type] ? constraintsGlobal : constraintsLocal;
-
             const component = CONSTRAINT_COMPONENTS[newVal.type];
             if (null == component) {
                 console.error(`Unknown constraint type: ${newVal.type}.`);

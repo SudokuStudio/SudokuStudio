@@ -20,17 +20,24 @@ export const boardState = (window as any).boardState = new StateManager();
 
 export type ConstraintComponent = typeof CONSTRAINT_COMPONENTS[keyof typeof CONSTRAINT_COMPONENTS];
 
-export const CONSTRAINT_GLOBALS = {
-    ['diagonal']: true,
-    ['knight']: true,
-    ['king']: true,
-    ['disjointGroups']: true,
-    ['consecutive']: true,
+export enum ConstraintMenuType {
+    GLOBAL,
+    LOCAL,
+    HIDDEN,
+}
+export const CONSTRAINT_MENU_TYPES = {
+    ['diagonal']: ConstraintMenuType.GLOBAL,
+    ['knight']: ConstraintMenuType.GLOBAL,
+    ['king']: ConstraintMenuType.GLOBAL,
+    ['disjointGroups']: ConstraintMenuType.GLOBAL,
+    ['consecutive']: ConstraintMenuType.GLOBAL,
 
-    ['given']: false,
-    ['thermo']: false,
-    ['arrow']: false,
-    ['sandwich']: false,
+    ['given']: ConstraintMenuType.LOCAL,
+    ['thermo']: ConstraintMenuType.LOCAL,
+    ['arrow']: ConstraintMenuType.LOCAL,
+    ['sandwich']: ConstraintMenuType.LOCAL,
+
+    ['box']: ConstraintMenuType.HIDDEN,
 } as const;
 
 export const CONSTRAINT_COMPONENTS = {
@@ -52,6 +59,13 @@ boardState.update({
         height: 9,
     },
     constraints: {
+        '0': {
+            type: 'box',
+            value: {
+                r: 2,
+                c: 3,
+            },
+        },
         '10800': {
             type: 'diagonal',
             value: {
