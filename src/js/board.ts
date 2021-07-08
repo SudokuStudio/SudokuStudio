@@ -12,6 +12,7 @@ import Sandwich from '../svelte/edit/constraint/Sandwich.svelte';
 
 import BoxRender from '../svelte/board/constraint/BoxRender.svelte';
 import GivenRender from '../svelte/board/constraint/GivenRender.svelte';
+import ThermoRender from '../svelte/board/constraint/ThermoRender.svelte';
 
 export type ConstraintDataAndComponent = {
     id: string,
@@ -64,7 +65,7 @@ export const CONSTRAINT_RENDERERS = {
     ['box']: BoxRender,
 
     ['given']: GivenRender,
-    ['thermo']: null,
+    ['thermo']: ThermoRender,
     ['arrow']: null,
     ['sandwich']: null,
 
