@@ -7,7 +7,7 @@
     export let grid: { width: number, height: number };
 </script>
 
-<pattern id="{id}-box" width={$ref.width} height={$ref.height} patternUnits="userSpaceOnUse">
+<pattern id="box-{id}" width={$ref.width} height={$ref.height} patternUnits="userSpaceOnUse">
     <rect width={$ref.width} height={$ref.height} stroke="#000" fill="none" stroke-width={BOX_THICKNESS} />
 </pattern>
 <rect {id}
@@ -15,4 +15,4 @@
     y={-BOX_THICKNESS_HALF}
     width={grid.width + BOX_THICKNESS_HALF}
     height={grid.height + BOX_THICKNESS_HALF}
-    fill="url(#{id}-box)" stroke="none" />
+    fill="url(#box-{id})" stroke="none" />

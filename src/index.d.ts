@@ -1,7 +1,7 @@
 declare namespace schema {
     export interface Board {
         grid: Grid,
-        constraints: Record<string, Constraint>,
+        constraints: Record<string, Element>,
     }
 
     export interface Grid {
@@ -9,7 +9,7 @@ declare namespace schema {
         height: number,
     }
 
-    export type ConstraintTypeIds = {
+    export type ElementTypeIds = {
         // TODO (UNUSED).
           1: 'box',
         100: 'diagonal',
@@ -18,31 +18,35 @@ declare namespace schema {
         200: 'disjointGroups',
         300: 'consecutive',
     };
-    export type ConstraintType = ConstraintTypeIds[keyof ConstraintTypeIds];
+    export type ElementType = ElementTypeIds[keyof ElementTypeIds];
 
-    export type Constraint = BoxConstraint | BooleanConstraint | DigonalConstraint;
+    export type Element = GridElement | BoxElement | BooleanElement | DigonalElement;
 
-    interface AbstractConstraint {
-        type: ConstraintType,
+    interface AbstractElement {
+        type: ElementType,
         order: number,
         value: unknown,
     }
 
-    export interface BoxConstraint extends AbstractConstraint {
+    export interface GridElement extends AbstractElement {
+        type: 'grid',
+        value: null, // TODO?
+    }
+    export interface BoxElement extends AbstractElement {
         type: 'box',
         value: {
             width: boolean,
             height: boolean,
         },
     }
-    export interface BooleanConstraint extends AbstractConstraint {
+    export interface BooleanElement extends AbstractElement {
         type: 'knight' | 'king' | 'disjointGroups' | 'consecutive',
         value: {
             positive: boolean,
             negative: boolean,
         },
     }
-    export interface DigonalConstraint extends AbstractConstraint {
+    export interface DigonalElement extends AbstractElement {
         type: 'diagonal',
         value: {
             positive: boolean,

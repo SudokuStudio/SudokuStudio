@@ -10,6 +10,7 @@ import Thermo from '../svelte/edit/constraint/Thermo.svelte';
 import Arrow from '../svelte/edit/constraint/Arrow.svelte';
 import Sandwich from '../svelte/edit/constraint/Sandwich.svelte';
 
+import GridRender from '../svelte/board/element/GridRender.svelte';
 import BoxRender from '../svelte/board/element/BoxRender.svelte';
 import GivenRender from '../svelte/board/element/GivenRender.svelte';
 import ThermoRender from '../svelte/board/element/ThermoRender.svelte';
@@ -31,6 +32,7 @@ export enum ConstraintMenuType {
 }
 
 export const CONSTRAINT_MENU_TYPES = {
+    ['grid']: ConstraintMenuType.HIDDEN,
     ['box']: ConstraintMenuType.HIDDEN,
 
     ['given']: ConstraintMenuType.LOCAL,
@@ -47,6 +49,7 @@ export const CONSTRAINT_MENU_TYPES = {
 
 export type ConstraintComponent = NonNullable<typeof CONSTRAINT_COMPONENTS[keyof typeof CONSTRAINT_COMPONENTS]>;
 export const CONSTRAINT_COMPONENTS = {
+    ['grid']: null,
     ['box']: null,
 
     ['given']: Given,
@@ -63,6 +66,7 @@ export const CONSTRAINT_COMPONENTS = {
 
 export type ConstraintRenderer = NonNullable<typeof CONSTRAINT_RENDERERS[keyof typeof CONSTRAINT_RENDERERS]>;
 export const CONSTRAINT_RENDERERS = {
+    ['grid']: GridRender,
     ['box']: BoxRender,
 
     ['given']: GivenRender,
@@ -83,13 +87,18 @@ boardState.update({
         height: 9,
     },
     elements: {
-        '0': {
+        '10': {
             type: 'box',
             order: 10,
             value: {
                 width: 3,
                 height: 3,
             },
+        },
+        '11': {
+            type: 'grid',
+            order: 10,
+            value: null,
         },
         '10800': {
             type: 'diagonal',

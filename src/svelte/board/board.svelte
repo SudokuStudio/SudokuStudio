@@ -11,7 +11,7 @@
     type ConstraintList = { id: string, order: number, ref: StateRef, component: ConstraintRenderer }[];
     const list: ConstraintList = [];
 
-    boardState.ref('elements/*').watch<schema.Constraint>(([ _elements, constraintId ], oldVal, newVal) => {
+    boardState.ref('elements/*').watch<schema.Element>(([ _elements, constraintId ], oldVal, newVal) => {
         let i = -1;
         if (null != oldVal) {
             i = list.findIndex(({ id }) => constraintId === id);
@@ -54,14 +54,10 @@
 
 <svg id="sudoku" viewBox="{-GRID_THICKNESS_HALF} {-GRID_THICKNESS_HALF} {$grid.width + GRID_THICKNESS} {$grid.height + GRID_THICKNESS}" xmlns="http://www.w3.org/2000/svg">
     <defs>
-        <pattern id="grid" width="1" height="1" patternUnits="userSpaceOnUse">
-            <rect width="1" height="1" stroke="#000" fill="none" stroke-width={GRID_THICKNESS} />
-        </pattern>
         {#each list as { id, ref, component } (id)}
             <svelte:component this={component} {id} {ref} grid={$grid} />
         {/each}
     </defs>
-    <rect x={-GRID_THICKNESS_HALF} y={-GRID_THICKNESS_HALF} width={$grid.width + GRID_THICKNESS_HALF} height={$grid.height + GRID_THICKNESS_HALF} fill="url(#grid)" stroke="none" />
     {#each list as { id } (id)}
         <use href="#{id}" />
     {/each}
