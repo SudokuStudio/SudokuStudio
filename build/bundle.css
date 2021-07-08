@@ -1157,11 +1157,6 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   width: 24.444%;
 }
 
-.constraint-checkbox.svelte-1ns67sk {
-  margin-left: 0.5em;
-  display: inline-block;
-}
-
 .unused.svelte-1xnmwrx.svelte-1xnmwrx {
   opacity: 0.5;
 }
@@ -1226,4 +1221,9 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   height: 100%;
   pointer-events: none;
   border-radius: 0.3rem;
+}
+
+.constraint-checkbox.svelte-1ns67sk {
+  margin-left: 0.5em;
+  display: inline-block;
 }
