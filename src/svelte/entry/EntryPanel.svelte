@@ -42,6 +42,10 @@ import ButtonPad from "./ButtonPad.svelte";
         border: 0;
         outline: none;
 
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+
         text-align: center;
 
         @include vars.hoverborder();
@@ -54,15 +58,11 @@ import ButtonPad from "./ButtonPad.svelte";
     .title {
         font-size: 1.4rem;
         font-weight: vars.$font-weight-heavy;
-        white-space: nowrap;
-        margin-top: 0;
-        text-align: center;
+        margin-bottom: 0.25rem;
     }
 
     .setter {
-        white-space: nowrap;
         font-size: 0.7rem;
-        text-align: center;
     }
 
     textarea.rules-text {
