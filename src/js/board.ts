@@ -1,5 +1,4 @@
 import { StateManager } from './state_manager';
-import { GRID_SCALE } from './consts';
 
 import Diagonal from '../svelte/edit/constraint/Diagonal.svelte';
 import Knight from '../svelte/edit/constraint/Knight.svelte';
@@ -76,15 +75,10 @@ export const CONSTRAINT_RENDERERS = {
     ['consecutive']: null,
 } as const;
 
-export function idx2rc(idx: number, { width }: { width: number }): { r: number, c: number } {
-    const r = Math.floor(idx / width);
-    const c = idx % width;
-    return { r, c };
-}
-
-export function idx2xy(idx: number, grid: { width: number }): { x: number, y: number } {
-    const { r, c } = idx2rc(idx, grid);
-    return { x: GRID_SCALE * c, y: GRID_SCALE * r };
+export function idx2xy(idx: number, { width }: { width: number }): { x: number, y: number } {
+    const x = idx % width;
+    const y = Math.floor(idx / width);
+    return { x, y };
 }
 
 boardState.update({

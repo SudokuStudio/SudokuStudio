@@ -1,5 +1,4 @@
-export const GRID_SCALE = 100;
-export const GRID_THICKNESS = 0.01 * GRID_SCALE;
+export const GRID_THICKNESS = 0.01;
 export const GRID_THICKNESS_HALF = 0.5 * GRID_THICKNESS;
 
 export const BOX_THICKNESS = 4 * GRID_THICKNESS;
