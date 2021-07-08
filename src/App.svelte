@@ -29,7 +29,11 @@
         </div>
     </div>
 </main>
-<footer>SudokuStudio</footer>
+<footer>
+    <a href="https://github.com/SudokuStudio/SudokuStudio">
+        Sudoku Studio on GitHub
+    </a>
+</footer>
 
 <style lang="scss">
     @use './css/vars' as vars;

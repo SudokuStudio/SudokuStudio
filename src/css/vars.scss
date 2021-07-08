@@ -15,6 +15,7 @@ $font-weight-heavy: 800;
 
 
 $color-clickable: #637691;
+$color-clickable-light: #778dad;
 $color-disabled: adjust-color($color-clickable, $saturation: -100%);
 $color-selected: #f5f5fe;
 $transition-time: 0.2s;

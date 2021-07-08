@@ -16,6 +16,14 @@ body {
     height: 100vh;
 }
 
+a, a:visited {
+    color: $color-clickable;
+    text-decoration: underline;
+}
+a:hover {
+    color: $color-clickable-light;
+}
+
 // Flexbox shared between header and main.
 .content {
     max-width: $max-aspect-ratio * 100vh;
