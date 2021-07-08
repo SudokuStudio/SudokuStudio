@@ -1,15 +1,15 @@
-given/pencil mark
-sandwich/little killer/skyscraper/x-sums
-kropki/XV
-killer
-quadruple
-grid lines
-arrow
-renban
-whisper
-palindrome
-between line
-even/odd
-thermo
-max/min
 clone
+max/min
+thermo
+even/odd
+between line
+palindrome
+whisper
+renban
+arrow
+grid lines
+quadruple
+killer
+kropki/XV
+sandwich/little killer/skyscraper/x-sums
+given/pencil mark
