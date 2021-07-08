@@ -16,7 +16,7 @@
         return null;
     }
 
-    boardState.ref('constraints/*').watch<schema.Constraint>(([ constraints, constraintId ], oldVal, newVal) => {
+    boardState.ref('elements/*').watch<schema.Constraint>(([ _elements, constraintId ], oldVal, newVal) => {
         const list = getList(oldVal?.type || newVal!.type);
         if (null == list) return;
 
@@ -42,7 +42,7 @@
 
             const item = {
                 id: constraintId,
-                ref: boardState.ref(constraints, constraintId, 'value'),
+                ref: boardState.ref(_elements, constraintId, 'value'),
                 component,
             };
 

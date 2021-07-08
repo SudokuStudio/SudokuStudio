@@ -11,7 +11,7 @@
     type ConstraintList = { id: string, order: number, ref: StateRef, component: ConstraintRenderer }[];
     const list: ConstraintList = [];
 
-    boardState.ref('constraints/*').watch<schema.Constraint>(([ constraints, constraintId ], oldVal, newVal) => {
+    boardState.ref('elements/*').watch<schema.Constraint>(([ _elements, constraintId ], oldVal, newVal) => {
         let i = -1;
         if (null != oldVal) {
             i = list.findIndex(({ id }) => constraintId === id);
@@ -35,7 +35,7 @@
             const item = {
                 id: constraintId,
                 order: newVal.order,
-                ref: boardState.ref(constraints, constraintId, 'value'),
+                ref: boardState.ref(_elements, constraintId, 'value'),
                 component,
             };
 

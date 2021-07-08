@@ -82,7 +82,7 @@ boardState.update({
         width: 9,
         height: 9,
     },
-    constraints: {
+    elements: {
         '0': {
             type: 'box',
             order: 10,
