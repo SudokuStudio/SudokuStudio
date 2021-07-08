@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1.00001"
+   height="1.00001"
+   viewBox="0 0 1.00001 1.0000101"
+   version="1.1"
+   id="svg1312"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="max.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1314"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     scale-x="0.012700027"
+     width="1px"
+     inkscape:zoom="256"
+     inkscape:cx="2.0332031"
+     inkscape:cy="0.45898438"
+     inkscape:window-width="2560"
+     inkscape:window-height="1361"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1309" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect30"
+       style="fill:#f2ebeb;stroke-width:0.0127002"
+       class="cls-3"
+       d="M 0.00024 0.00043 L 1.00025 0.00043 L 1.00025 1.00044 L 0.00024 1.00044 Z" />
+    <path
+       id="polyline32"
+       style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-width:0.0254004"
+       class="cls-2"
+       d="M 0.38 0.12 L 0.50 0.08 L 0.62 0.12" />
+    <path
+       id="polyline34"
+       style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-width:0.0254004"
+       class="cls-2"
+       d="M 0.88798 0.37813 L 0.92098 0.50043 L 0.88798 0.62261" />
+    <path
+       id="polyline36"
+       style="fill:none;stroke:#000000;stroke-miterlimit:10;stroke-width:0.0254004"
+       class="cls-2"
+       d="M 0.11238 0.62261 L 0.07938 0.50043 L 0.11238 0.37813" />
+  </g>
+</svg>

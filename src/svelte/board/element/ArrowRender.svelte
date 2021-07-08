@@ -18,11 +18,11 @@
 </marker>
 <g {id}>
     {#each Object.entries($ref) as [ arrowId, headBody ] (arrowId)}
-        <mask id="mask-{id}-{arrowId}" maskUnits="userSpaceOnUse">
+        <mask id="arrow-{id}-mask-{arrowId}" maskUnits="userSpaceOnUse">
             <rect width={grid.width} height={grid.height} fill="#fff" />
             <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.75" stroke-linejoin="round" stroke-linecap="round" />
         </mask>
-        <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.8"   mask="url(#mask-{id}-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
-        <path d={makePath(any(headBody).body, grid)} fill="none" stroke="#000" stroke-width="0.025" mask="url(#mask-{id}-{arrowId})" stroke-linejoin="bevel" marker-end="url(#arrow-head-{id})" />
+        <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.8"   mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
+        <path d={makePath(any(headBody).body, grid)} fill="none" stroke="#000" stroke-width="0.025" mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-head-{id})" />
     {/each}
 </g>

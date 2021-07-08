@@ -15,6 +15,7 @@ import BoxRender from '../svelte/board/element/BoxRender.svelte';
 import GivenRender from '../svelte/board/element/GivenRender.svelte';
 import ThermoRender from '../svelte/board/element/ThermoRender.svelte';
 import ArrowRender from '../svelte/board/element/ArrowRender.svelte';
+import MaxRender from '../svelte/board/element/MaxRender.svelte';
 
 export type ConstraintDataAndComponent = {
     id: string,
@@ -39,6 +40,7 @@ export const CONSTRAINT_MENU_TYPES = {
     ['thermo']: ConstraintMenuType.LOCAL,
     ['arrow']: ConstraintMenuType.LOCAL,
     ['sandwich']: ConstraintMenuType.LOCAL,
+    ['max']: ConstraintMenuType.LOCAL,
 
     ['diagonal']: ConstraintMenuType.GLOBAL,
     ['knight']: ConstraintMenuType.GLOBAL,
@@ -56,6 +58,7 @@ export const CONSTRAINT_COMPONENTS = {
     ['thermo']: Thermo,
     ['arrow']: Arrow,
     ['sandwich']: Sandwich,
+    ['max']: null, // TODO
 
     ['diagonal']: Diagonal,
     ['knight']: Knight,
@@ -73,6 +76,7 @@ export const CONSTRAINT_RENDERERS = {
     ['thermo']: ThermoRender,
     ['arrow']: ArrowRender,
     ['sandwich']: null,
+    ['max']: MaxRender,
 
     ['diagonal']: null,
     ['knight']: null,
@@ -179,6 +183,16 @@ boardState.update({
                         "4": "57",
                     },
                 },
+            },
+        },
+        '10160': {
+            type: 'max',
+            order: 2,
+            value: {
+                "58": true,
+                "67": true,
+                "68": true,
+                "77": true,
             },
         },
     },
