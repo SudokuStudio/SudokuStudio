@@ -22,7 +22,7 @@
             <rect width={grid.width} height={grid.height} fill="#fff" />
             <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.75" stroke-linejoin="round" stroke-linecap="round" />
         </mask>
-        <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.8"   stroke-linejoin="round" stroke-linecap="round" mask="url(#mask-{id}-{arrowId})" />
-        <path d={makePath(any(headBody).body, grid)} fill="none" stroke="#000" stroke-width="0.025" stroke-linejoin="round" stroke-linecap="round" mask="url(#mask-{id}-{arrowId})" marker-end="url(#arrow-head-{id})" />
+        <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.8"   mask="url(#mask-{id}-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
+        <path d={makePath(any(headBody).body, grid)} fill="none" stroke="#000" stroke-width="0.025" mask="url(#mask-{id}-{arrowId})" marker-end="url(#arrow-head-{id})" />
     {/each}
 </g>
