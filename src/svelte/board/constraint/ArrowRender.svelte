@@ -1,37 +1,28 @@
 <script lang="ts">
-    import { idx2xy } from "../../../js/boardUtils";
+    import { makePath, any } from "../../../js/boardUtils";
     import type { StateRef } from "../../../js/state_manager";
 
     export let id: string;
     export let ref: StateRef;
     export let grid: { width: number, height: number };
-
-    // TODO: This should probably be a utility function.
-    function makePath(idxArr: any): string {
-        const points: string[] = [];
-
-        let i = 0;
-        let idx;
-        while (null != (idx = idxArr[i])) {
-            const { x, y } = idx2xy(idx, grid);
-            points.push(`${x + 0.5},${y + 0.5}`);
-            i++;
-        }
-        return `M ${points.join(' L ')}`;
-    }
 </script>
 
 
-<marker id="thermo-bulb-{id}"
+<marker id="arrow-head-{id}"
     viewBox="0 0 1 1" refX="0.5" refY="0.5"
     markerUnits="userSpaceOnUse"
     markerWidth="1" markerHeight="1"
     orient="auto"
 >
-    <circle cx="0.5" cy="0.5" r="0.4" fill="#ddd" />
+    <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke="#000" stroke-width="0.025" />
 </marker>
 <g {id}>
-    {#each Object.entries($ref) as [ thermoId, idxArr ] (thermoId)}
-        <path d={makePath(idxArr)} fill="none" stroke="#ddd" stroke-width="0.2" marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
+    {#each Object.entries($ref) as [ arrowId, headBody ] (arrowId)}
+        <mask id="mask-{id}-{arrowId}" maskUnits="userSpaceOnUse">
+            <rect width={grid.width} height={grid.height} fill="#fff" />
+            <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.75" stroke-linejoin="round" stroke-linecap="round" />
+        </mask>
+        <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.8"   stroke-linejoin="round" stroke-linecap="round" mask="url(#mask-{id}-{arrowId})" />
+        <path d={makePath(any(headBody).body, grid)} fill="none" stroke="#000" stroke-width="0.025" stroke-linejoin="round" stroke-linecap="round" mask="url(#mask-{id}-{arrowId})" marker-end="url(#arrow-head-{id})" />
     {/each}
 </g>

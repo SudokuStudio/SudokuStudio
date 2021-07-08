@@ -13,6 +13,7 @@ import Sandwich from '../svelte/edit/constraint/Sandwich.svelte';
 import BoxRender from '../svelte/board/constraint/BoxRender.svelte';
 import GivenRender from '../svelte/board/constraint/GivenRender.svelte';
 import ThermoRender from '../svelte/board/constraint/ThermoRender.svelte';
+import ArrowRender from '../svelte/board/constraint/ArrowRender.svelte';
 
 export type ConstraintDataAndComponent = {
     id: string,
@@ -66,7 +67,7 @@ export const CONSTRAINT_RENDERERS = {
 
     ['given']: GivenRender,
     ['thermo']: ThermoRender,
-    ['arrow']: null,
+    ['arrow']: ArrowRender,
     ['sandwich']: null,
 
     ['diagonal']: null,
@@ -151,8 +152,22 @@ boardState.update({
                         "0": "27",
                     },
                     "body": {
-                        "0": "28",
-                        "1": "29",
+                        "0": "27",
+                        "1": "28",
+                        "2": "29",
+                    },
+                },
+                "120": {
+                    "head": {
+                        "0": "45",
+                        "1": "46",
+                    },
+                    "body": {
+                        "0": "46",
+                        "1": "47",
+                        "2": "56",
+                        "3": "66",
+                        "4": "57",
                     },
                 },
             },

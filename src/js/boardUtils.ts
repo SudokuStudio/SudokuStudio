@@ -4,6 +4,7 @@ export const GRID_THICKNESS_HALF = 0.5 * GRID_THICKNESS;
 export const BOX_THICKNESS = 4 * GRID_THICKNESS;
 export const BOX_THICKNESS_HALF = 0.5 * BOX_THICKNESS;
 
+// Annoying that Svelte doesn't support TS inside the element templates.
 export function any(x: any): any {
     return x;
 }
@@ -24,5 +25,6 @@ export function makePath(idxArr: Record<string, number>, grid: { width: number }
         points.push(`${x + 0.5},${y + 0.5}`);
         i++;
     }
+    if (1 === points.length) points.push(points[0]); // Double up.
     return `M ${points.join(' L ')}`;
 }
