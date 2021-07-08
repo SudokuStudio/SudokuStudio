@@ -20,11 +20,15 @@
         const list = getList(oldVal?.type || newVal!.type);
         if (null == list) return;
 
+        let i = -1;
+        if (null != oldVal) {
+            i = list.findIndex(({ id }) => constraintId === id);
+            if (0 > i) throw Error(`Failed to find constraint with id ${constraintId}.`);
+        }
+
         if (null == newVal) {
             // Deleted.
-            const i = list.findIndex(({ id }) => constraintId === id);
-            if (0 > i) throw Error(`Failed to find constraint with id ${constraintId}.`);
-            delete list[i];
+            delete list[i!];
         }
         else {
             const component = CONSTRAINT_COMPONENTS[newVal.type];
@@ -33,17 +37,19 @@
                 return;
             }
 
+            const item = {
+                id: constraintId,
+                ref: boardState.ref(constraints, constraintId, 'value'),
+                component,
+            };
+
             if (null == oldVal) {
-                list.push({
-                    id: constraintId,
-                    ref: boardState.ref(constraints, constraintId, 'value'),
-                    component,
-                });
+                list.push(item);
             }
             else {
                 if (oldVal.type !== newVal.type)
                     console.error('Cannot change type of constraint!');
-                // TODO: handle metadata?
+                list[i] = item;
             }
         }
     }, true);

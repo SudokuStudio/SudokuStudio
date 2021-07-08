@@ -84,6 +84,7 @@ boardState.update({
     constraints: {
         '0': {
             type: 'box',
+            order: 10,
             value: {
                 width: 3,
                 height: 3,
@@ -95,42 +96,28 @@ boardState.update({
                 positive: true,
                 negative: false,
             },
-            meta: {
-                order: 0,
-            },
         },
         '10090': {
             type: 'knight',
             value: false,
-            meta: {
-                order: 1,
-            },
         },
         '10100': {
             type: 'king',
             value: false,
-            meta: {
-                order: 2,
-            },
         },
         '10110': {
             type: 'disjointGroups',
             value: false,
-            meta: {
-                order: 3,
-            },
         },
         '10120': {
             type: 'consecutive',
             value: false,
-            meta: {
-                order: 4,
-            },
         },
 
         // LOCALS
         '10130': {
             type: 'given',
+            order: 15,
             value: {
                 "12": 3,
                 "13": 4,
@@ -141,6 +128,7 @@ boardState.update({
         },
         '10140': {
             type: 'thermo',
+            order: 3,
             value: {
                 "110": {
                     "0": "3",
@@ -156,6 +144,7 @@ boardState.update({
         },
         '10150': {
             type: 'arrow',
+            order: 9,
             value: {
                 "110": {
                     "head": {

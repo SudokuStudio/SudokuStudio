@@ -24,6 +24,7 @@ declare namespace schema {
 
     interface AbstractConstraint {
         type: ConstraintType,
+        order: number,
         value: unknown,
     }
 

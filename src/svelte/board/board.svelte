@@ -8,14 +8,18 @@
 
     const grid = boardState.ref('grid');
 
-    type ConstraintList = { id: string, ref: StateRef, component: ConstraintRenderer }[];
+    type ConstraintList = { id: string, order: number, ref: StateRef, component: ConstraintRenderer }[];
     const list: ConstraintList = [];
 
     boardState.ref('constraints/*').watch<schema.Constraint>(([ constraints, constraintId ], oldVal, newVal) => {
+        let i = -1;
+        if (null != oldVal) {
+            i = list.findIndex(({ id }) => constraintId === id);
+            if (0 > i) throw Error(`Failed to find constraint with id ${constraintId}.`);
+        }
+
         if (null == newVal) {
             // Deleted.
-            const i = list.findIndex(({ id }) => constraintId === id);
-            if (0 > i) throw Error(`Failed to find constraint with id ${constraintId}.`);
             delete list[i];
         }
         else {
@@ -25,19 +29,23 @@
                 return;
             }
 
+            const item = {
+                id: constraintId,
+                order: newVal.order,
+                ref: boardState.ref(constraints, constraintId, 'value'),
+                component,
+            };
+
             if (null == oldVal) {
-                list.push({
-                    id: constraintId,
-                    ref: boardState.ref(constraints, constraintId, 'value'),
-                    component,
-                });
+                list.push(item);
             }
             else {
                 if (oldVal.type !== newVal.type)
                     console.error('Cannot change type of constraint!');
-                // TODO: handle metadata?
+                list[i] = item;
             }
         }
+        list.sort((a, b) => a.order - b.order);
     }, true);
 </script>
 
