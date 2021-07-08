@@ -11,6 +11,7 @@ declare namespace schema {
 
     export type ConstraintTypeIds = {
         // TODO (UNUSED).
+          1: 'box',
         100: 'diagonal',
         120: 'knight',
         125: 'king',
@@ -19,13 +20,20 @@ declare namespace schema {
     };
     export type ConstraintType = ConstraintTypeIds[keyof ConstraintTypeIds];
 
-    export type Constraint = BooleanConstraint | DigonalConstraint;
+    export type Constraint = BoxConstraint | BooleanConstraint | DigonalConstraint;
 
     interface AbstractConstraint {
         type: ConstraintType,
         value: unknown,
     }
 
+    export interface BoxConstraint extends AbstractConstraint {
+        type: 'box',
+        value: {
+            width: boolean,
+            height: boolean,
+        },
+    }
     export interface BooleanConstraint extends AbstractConstraint {
         type: 'knight' | 'king' | 'disjointGroups' | 'consecutive',
         value: {

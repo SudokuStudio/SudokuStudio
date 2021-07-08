@@ -29,7 +29,7 @@
         else {
             const component = CONSTRAINT_COMPONENTS[newVal.type];
             if (null == component) {
-                console.error(`Unknown constraint type: ${newVal.type}.`);
+                console.error(`Cannot show edit menu for unknown constraint type: ${newVal.type}.`);
                 return;
             }
 

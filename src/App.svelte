@@ -1,9 +1,10 @@
 <script lang="ts">
-import Board from "./svelte/board/aboard.svelte";
-
+    import Board from "./svelte/board/board.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
     import Header from "./svelte/Header.svelte";
+
+    import { boardState } from "./js/board";
 </script>
 
 <header>
@@ -20,7 +21,7 @@ import Board from "./svelte/board/aboard.svelte";
                 <EditPanel />
             </div>
             <div class="center-panel">
-                <Board />
+                <Board {boardState} />
             </div>
             <div class="right-panel">
                 <EntryPanel />

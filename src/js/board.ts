@@ -10,6 +10,8 @@ import Thermo from '../svelte/edit/constraint/Thermo.svelte';
 import Arrow from '../svelte/edit/constraint/Arrow.svelte';
 import Sandwich from '../svelte/edit/constraint/Sandwich.svelte';
 
+import BoxRender from '../svelte/board/constraint/BoxRender.svelte';
+
 export type ConstraintDataAndComponent = {
     id: string,
     value: unknown,
@@ -18,14 +20,16 @@ export type ConstraintDataAndComponent = {
 
 export const boardState = (window as any).boardState = new StateManager();
 
-export type ConstraintComponent = typeof CONSTRAINT_COMPONENTS[keyof typeof CONSTRAINT_COMPONENTS];
 
 export enum ConstraintMenuType {
     GLOBAL,
     LOCAL,
     HIDDEN,
 }
+
 export const CONSTRAINT_MENU_TYPES = {
+    ['box']: ConstraintMenuType.HIDDEN,
+
     ['diagonal']: ConstraintMenuType.GLOBAL,
     ['knight']: ConstraintMenuType.GLOBAL,
     ['king']: ConstraintMenuType.GLOBAL,
@@ -36,11 +40,12 @@ export const CONSTRAINT_MENU_TYPES = {
     ['thermo']: ConstraintMenuType.LOCAL,
     ['arrow']: ConstraintMenuType.LOCAL,
     ['sandwich']: ConstraintMenuType.LOCAL,
-
-    ['box']: ConstraintMenuType.HIDDEN,
 } as const;
 
+export type ConstraintComponent = NonNullable<typeof CONSTRAINT_COMPONENTS[keyof typeof CONSTRAINT_COMPONENTS]>;
 export const CONSTRAINT_COMPONENTS = {
+    ['box']: null,
+
     ['diagonal']: Diagonal,
     ['knight']: Knight,
     ['king']: King,
@@ -53,6 +58,22 @@ export const CONSTRAINT_COMPONENTS = {
     ['sandwich']: Sandwich,
 } as const;
 
+export type ConstraintRenderer = NonNullable<typeof CONSTRAINT_RENDERERS[keyof typeof CONSTRAINT_RENDERERS]>;
+export const CONSTRAINT_RENDERERS = {
+    ['box']: BoxRender,
+
+    ['diagonal']: null,
+    ['knight']: null,
+    ['king']: null,
+    ['disjointGroups']: null,
+    ['consecutive']: null,
+
+    ['given']: null,
+    ['thermo']: null,
+    ['arrow']: null,
+    ['sandwich']: null,
+} as const;
+
 boardState.update({
     grid: {
         width: 9,
@@ -62,8 +83,8 @@ boardState.update({
         '0': {
             type: 'box',
             value: {
-                r: 2,
-                c: 3,
+                width: 3,
+                height: 3,
             },
         },
         '10800': {
