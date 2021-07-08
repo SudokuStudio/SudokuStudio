@@ -2,7 +2,7 @@
     import type { StateManager, StateRef } from "../../js/state_manager";
     import { CONSTRAINT_RENDERERS } from "../../js/board";
     import type { ConstraintRenderer } from "../../js/board";
-    import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "../../js/consts";
+    import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "../../js/boardUtils";
 
     export let boardState: StateManager;
 

@@ -75,12 +75,6 @@ export const CONSTRAINT_RENDERERS = {
     ['consecutive']: null,
 } as const;
 
-export function idx2xy(idx: number, { width }: { width: number }): { x: number, y: number } {
-    const x = idx % width;
-    const y = Math.floor(idx / width);
-    return { x, y };
-}
-
 boardState.update({
     grid: {
         width: 9,
