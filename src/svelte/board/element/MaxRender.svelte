@@ -11,7 +11,7 @@
     fill="none" stroke="#000" stroke-width="0.025" stroke-miterlimit="1.5" />
 <path id="max-{id}-maskitem" d="M -0.5,0.5 L 0.5,-0.5 L 1.5,0.5 L 0.5,1.5 M 0,0 L 0,1 L 1,1 L 1,0" fill="#000" />
 <mask id="max-{id}-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
-    <rect width={grid.width} height={grid.height} fill="#fff" />
+    <rect x="0.25" y="0.25" width={grid.width - 0.5} height={grid.height - 0.5} fill="#fff" />
     {#each Object.entries($ref) as [ idx, _true ] (idx)}
         <use href="#max-{id}-maskitem" transform="translate({idx2xy(+idx, grid).x},{idx2xy(+idx, grid).y})" fill="#000" />
     {/each}
