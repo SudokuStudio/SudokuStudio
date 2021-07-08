@@ -15,6 +15,7 @@ import BoxRender from '../svelte/board/element/BoxRender.svelte';
 import GivenRender from '../svelte/board/element/GivenRender.svelte';
 import ThermoRender from '../svelte/board/element/ThermoRender.svelte';
 import ArrowRender from '../svelte/board/element/ArrowRender.svelte';
+import MinRender from '../svelte/board/element/MinRender.svelte';
 import MaxRender from '../svelte/board/element/MaxRender.svelte';
 
 export type ConstraintDataAndComponent = {
@@ -40,6 +41,7 @@ export const CONSTRAINT_MENU_TYPES = {
     ['thermo']: ConstraintMenuType.LOCAL,
     ['arrow']: ConstraintMenuType.LOCAL,
     ['sandwich']: ConstraintMenuType.LOCAL,
+    ['min']: ConstraintMenuType.LOCAL,
     ['max']: ConstraintMenuType.LOCAL,
 
     ['diagonal']: ConstraintMenuType.GLOBAL,
@@ -58,6 +60,7 @@ export const CONSTRAINT_COMPONENTS = {
     ['thermo']: Thermo,
     ['arrow']: Arrow,
     ['sandwich']: Sandwich,
+    ['min']: null, // TODO
     ['max']: null, // TODO
 
     ['diagonal']: Diagonal,
@@ -76,6 +79,7 @@ export const CONSTRAINT_RENDERERS = {
     ['thermo']: ThermoRender,
     ['arrow']: ArrowRender,
     ['sandwich']: null,
+    ['min']: MinRender,
     ['max']: MaxRender,
 
     ['diagonal']: null,
@@ -165,18 +169,18 @@ boardState.update({
                         "0": "27",
                     },
                     "body": {
-                        "0": "27",
+                        "0": "27", // TODO REMOVE ?
                         "1": "28",
                         "2": "29",
                     },
                 },
                 "120": {
                     "head": {
-                        "0": "45",
+                        "0": "45", // TODO REMOVE ?
                         "1": "46",
                     },
                     "body": {
-                        "0": "46",
+                        "0": "46", // TODO REMOVE ?
                         "1": "47",
                         "2": "56",
                         "3": "66",
@@ -186,6 +190,17 @@ boardState.update({
             },
         },
         '10160': {
+            type: 'min',
+            order: 2,
+            value: {
+                "56": true,
+                "57": true,
+                "63": true,
+                "64": true,
+                "65": true,
+            },
+        },
+        '10170': {
             type: 'max',
             order: 2,
             value: {
