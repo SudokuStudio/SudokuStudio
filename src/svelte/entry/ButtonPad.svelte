@@ -149,7 +149,7 @@
             align-items: center;
         }
     }
-    .radio-mode-button:checked ~ .padbutton-mode {
+    .padbutton-mode:not(.radio-mode-button:checked ~ *) {
         color: vars.$color-clickable;
         background-color: #fff;
         .icon {
