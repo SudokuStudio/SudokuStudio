@@ -1,8 +1,7 @@
 <script lang="ts">
-import EditPanel from "./svelte/edit/EditPanel.svelte";
-import EntryPanel from "./svelte/entry/EntryPanel.svelte";
-import Header from "./svelte/Header.svelte";
-
+    import EditPanel from "./svelte/edit/EditPanel.svelte";
+    import EntryPanel from "./svelte/entry/EntryPanel.svelte";
+    import Header from "./svelte/Header.svelte";
 </script>
 
 <header>

@@ -37,6 +37,7 @@
 </div>
 
 <style lang="scss">
+    @use "@material/ripple";
     @use 'src/css/vars';
     @use 'src/css/clearfix';
 

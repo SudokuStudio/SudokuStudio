@@ -1,5 +1,10 @@
 <script lang="ts">
     let mode: string = 'digits';
+
+    // Ripples.
+    import { MDCRipple } from "@material/ripple";
+    import { onMount } from "svelte";
+    onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
 </script>
 
 <div class="container">
@@ -8,14 +13,14 @@
             <!-- TOOD switch to INPUT RADIOs. -->
             <div>
                 <input class="radio-mode-button" type="radio" name="mode" id="mode-radio-digits" value="digits" bind:group={mode} />
-                <label class="padbutton padbutton-mode" role="button" for="mode-radio-digits">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits">
                     <span aria-hidden="true">1</span>
                     <span class="sr-only">Digits</span>
                 </label>
             </div>
             <div>
                 <input class="radio-mode-button" type="radio" name="mode" id="mode-radio-corner" value="corner" bind:group={mode} />
-                <label class="padbutton padbutton-mode" role="button" for="mode-radio-corner">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-corner">
                     <span aria-hidden="true" style="font-size: 50%;">
                         <span style="position: absolute; top:    12%; left:  20%;">1</span>
                         <span style="position: absolute; top:    12%; right: 20%;">2</span>
@@ -26,14 +31,14 @@
             </div>
             <div>
                 <input class="radio-mode-button" type="radio" name="mode" id="mode-radio-center" value="center" bind:group={mode} />
-                <label class="padbutton padbutton-mode" role="button" for="mode-radio-center">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-center">
                     <span aria-hidden="true" style="font-size: 50%;">123</span>
                     <span class="sr-only">Center Marks</span>
                 </label>
             </div>
             <div>
                 <input class="radio-mode-button" type="radio" name="mode" id="mode-radio-colors" value="colors" bind:group={mode} />
-                <label class="padbutton padbutton-mode" role="button" for="mode-radio-colors">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-colors">
                     <span class="icon icon-inline icon-c-textinv icon-colors" />
                     <span class="sr-only">Colors</span>
                 </label>
@@ -43,31 +48,31 @@
     <div class="right-container">
         <div class="right">
             <div class="num-pad">
-                <button class="padbutton" style="grid-area: 1 / 1 / 2 / 2">1</button>
-                <button class="padbutton" style="grid-area: 1 / 2 / 2 / 3">2</button>
-                <button class="padbutton" style="grid-area: 1 / 3 / 2 / 4">3</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 1 / 2 / 2">1</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 2 / 2 / 3">2</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 3 / 2 / 4">3</button>
 
-                <button class="padbutton" style="grid-area: 2 / 1 / 3 / 2">4</button>
-                <button class="padbutton" style="grid-area: 2 / 2 / 3 / 3">5</button>
-                <button class="padbutton" style="grid-area: 2 / 3 / 3 / 4">6</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 1 / 3 / 2">4</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 2 / 3 / 3">5</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 3 / 3 / 4">6</button>
 
-                <button class="padbutton" style="grid-area: 3 / 1 / 4 / 2">7</button>
-                <button class="padbutton" style="grid-area: 3 / 2 / 4 / 3">8</button>
-                <button class="padbutton" style="grid-area: 3 / 3 / 4 / 4">9</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 1 / 4 / 2">7</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 2 / 4 / 3">8</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 3 / 4 / 4">9</button>
 
-                <button class="padbutton" style="grid-area: 4 / 1 / 5 / 2">0</button>
-                <button class="padbutton" style="grid-area: 4 / 2 / 5 / 4" title="Delete" aria-label="Delete">
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 1 / 5 / 2">0</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 2 / 5 / 4" title="Delete" aria-label="Delete">
                     <span class="icon icon-inline icon-c-textinv icon-delete" />
                 </button>
             </div>
             <div class="ctrl-pad">
-                <button class="padbutton" title="Undo" aria-label="Undo">
+                <button class="mdc-ripple-surface padbutton" title="Undo" aria-label="Undo">
                     <span class="icon icon-inline icon-c-textinv icon-undo" />
                 </button>
-                <button class="padbutton" title="Redo" aria-label="Redo">
+                <button class="mdc-ripple-surface padbutton" title="Redo" aria-label="Redo">
                     <span class="icon icon-inline icon-c-textinv icon-undo redo" />
                 </button>
-                <button class="padbutton" title="Take Screenshot" aria-label="Take Screenshot">
+                <button class="mdc-ripple-surface padbutton" title="Take Screenshot" aria-label="Take Screenshot">
                     <span class="icon icon-inline icon-c-textinv icon-screenshot" />
                 </button>
             </div>
@@ -77,6 +82,7 @@
 
 <style lang="scss">
     @use "sass:math";
+    @use "@material/ripple";
     @use '../../css/vars' as vars;
 
     @mixin aspect-ratio-container($aspect-ratio-inv, $width) {
@@ -96,12 +102,19 @@
     $padbutton-border-radius: 0.2em;
 
     .padbutton {
-        display: block;
-        box-sizing: border-box;
+        @include ripple.states-base-color(#fff);
 
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        display: block;
+        box-sizing: border-box;
 
         display: block;
         font-family: inherit;
@@ -150,6 +163,8 @@
         }
     }
     .padbutton-mode:not(.radio-mode-button:checked ~ *) {
+        @include ripple.states-base-color(#000);
+
         color: vars.$color-clickable;
         background-color: #fff;
         .icon {
