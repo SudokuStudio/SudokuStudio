@@ -46,10 +46,13 @@ export default {
     },
     plugins: [
         replace({
+            preventAssignment: true,
             // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
-            process: JSON.stringify({
-                env: process.env,
-            }),
+            values: {
+                process: JSON.stringify({
+                    env: process.env,
+                }),
+            },
         }),
         svelte({
             preprocess: sveltePreprocess({ sourceMap: !production }),
