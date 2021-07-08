@@ -31,7 +31,7 @@
 </main>
 <footer>
     <a href="https://github.com/SudokuStudio/SudokuStudio">
-        Sudoku Studio on GitHub
+        Sudoku Studio version {process.env.SUDOKU_STUDIO_VERSION || 'DEV'}
     </a>
 </footer>
 

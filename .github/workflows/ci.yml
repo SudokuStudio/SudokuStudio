@@ -19,7 +19,7 @@ jobs:
       run: npm ci
 
     - name: Build
-      run: npm run build
+      run: SUDOKU_STUDIO_VERSION="${GITHUB_SHA:0:7}" npm run build
 
     - name: Deploy to gh-pages
       shell: bash

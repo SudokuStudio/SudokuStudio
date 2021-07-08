@@ -7,6 +7,7 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 // import css from 'rollup-plugin-css-only';
 import scss from 'rollup-plugin-scss';
+import replace from '@rollup/plugin-replace';
 
 import inlineSvg from './inlineSvg';
 
@@ -44,6 +45,12 @@ export default {
         file: 'public/build/bundle.js'
     },
     plugins: [
+        replace({
+            // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
+            process: JSON.stringify({
+                env: process.env,
+            }),
+        }),
         svelte({
             preprocess: sveltePreprocess({ sourceMap: !production }),
             compilerOptions: {
