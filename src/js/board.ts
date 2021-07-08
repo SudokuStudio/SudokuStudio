@@ -10,10 +10,10 @@ import Thermo from '../svelte/edit/constraint/Thermo.svelte';
 import Arrow from '../svelte/edit/constraint/Arrow.svelte';
 import Sandwich from '../svelte/edit/constraint/Sandwich.svelte';
 
-import BoxRender from '../svelte/board/constraint/BoxRender.svelte';
-import GivenRender from '../svelte/board/constraint/GivenRender.svelte';
-import ThermoRender from '../svelte/board/constraint/ThermoRender.svelte';
-import ArrowRender from '../svelte/board/constraint/ArrowRender.svelte';
+import BoxRender from '../svelte/board/element/BoxRender.svelte';
+import GivenRender from '../svelte/board/element/GivenRender.svelte';
+import ThermoRender from '../svelte/board/element/ThermoRender.svelte';
+import ArrowRender from '../svelte/board/element/ArrowRender.svelte';
 
 export type ConstraintDataAndComponent = {
     id: string,
