@@ -207,7 +207,12 @@ export class StateManager {
         if (null == data) return;
         if (0 >= segs.length) {
             // Base case - call watcher.
-            (watcher)(path, null, data);
+            try {
+                (watcher)(path, null, data);
+            }
+            catch (e) {
+                console.error('Watcher threw:', e, watcher);
+            }
             return;
         }
         if ('object' !== typeof data) return; // If segs is not empty we can ignore primitives.
@@ -381,7 +386,12 @@ export class StateManager {
             }
             for (const watcherTree of watcherTrees) {
                 for (const watcher of watcherTree[WatchersKey] || []) {
-                    (watcher)(path, data, newData);
+                    try {
+                        (watcher)(path, data, newData);
+                    }
+                    catch (e) {
+                        console.error('Watcher threw:', e, watcher);
+                    }
                 }
             }
             return { data: newData, undo, redo };

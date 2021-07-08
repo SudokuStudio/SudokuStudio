@@ -15,7 +15,10 @@
         let i = -1;
         if (null != oldVal) {
             i = list.findIndex(({ id }) => constraintId === id);
-            if (0 > i) throw Error(`Failed to find constraint with id ${constraintId}.`);
+            if (0 > i) {
+                console.error(`Failed to find renderer for constraint with id ${constraintId}.`);
+                return;
+            }
         }
 
         if (null == newVal) {
