@@ -68,6 +68,8 @@
         "thermo": "svg/16px/local-constraints/thermo-constraint.svg",
         "arrow": "svg/16px/local-constraints/arrow-constraint.svg",
         "sandwich": "svg/16px/local-constraints/sandwich-constraint.svg",
+        "min": "svg/16px/local-constraints/min-constraint.svg",
+        "max": "svg/16px/local-constraints/max-constraint.svg",
     );
 
     @each $name, $path in $icons {

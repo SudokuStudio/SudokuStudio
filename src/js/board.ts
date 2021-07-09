@@ -9,6 +9,8 @@ import Given from '../svelte/edit/constraint/Given.svelte';
 import Thermo from '../svelte/edit/constraint/Thermo.svelte';
 import Arrow from '../svelte/edit/constraint/Arrow.svelte';
 import Sandwich from '../svelte/edit/constraint/Sandwich.svelte';
+import Min from '../svelte/edit/constraint/Min.svelte';
+import Max from '../svelte/edit/constraint/Max.svelte';
 
 import GridRender from '../svelte/board/element/GridRender.svelte';
 import BoxRender from '../svelte/board/element/BoxRender.svelte';
@@ -60,8 +62,8 @@ export const CONSTRAINT_COMPONENTS = {
     ['thermo']: Thermo,
     ['arrow']: Arrow,
     ['sandwich']: Sandwich,
-    ['min']: null, // TODO
-    ['max']: null, // TODO
+    ['min']: Min,
+    ['max']: Max,
 
     ['diagonal']: Diagonal,
     ['knight']: Knight,
