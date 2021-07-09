@@ -1,13 +1,10 @@
 <script lang="ts">
-    import type { StateManager, StateRef } from "../../js/state_manager";
-    import { CONSTRAINT_RENDERERS } from "../../js/board";
+    import type { StateRef } from "../../js/state_manager";
+    import { boardState, CONSTRAINT_RENDERERS } from "../../js/board";
     import type { ConstraintRenderer } from "../../js/board";
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "../../js/boardUtils";
     import SelectRender from "./element/SelectRender.svelte";
-
-    export let boardState: StateManager;
-    export let userState: StateManager;
-    export let boardOnClick: (event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: { width: number, height: number }) => void;
+    import { userState, mouseHandlers } from "../../js/user";
 
     const grid = boardState.ref('grid');
 
@@ -57,8 +54,11 @@
     }, true);
 </script>
 
-<svg id="sudoku" viewBox="{-GRID_THICKNESS_HALF} {-GRID_THICKNESS_HALF} {$grid.width + GRID_THICKNESS} {$grid.height + GRID_THICKNESS}"
-    xmlns="http://www.w3.org/2000/svg" on:click={e => boardOnClick(e, $grid)}
+<svg id="sudoku" viewBox="{-GRID_THICKNESS_HALF} {-GRID_THICKNESS_HALF} {$grid.width + GRID_THICKNESS} {$grid.height + GRID_THICKNESS}" xmlns="http://www.w3.org/2000/svg"
+    on:mousedown={e => mouseHandlers.down(e, $grid)}
+    on:mousemove={e => mouseHandlers.move(e, $grid)}
+    on:mouseup={e => mouseHandlers.up(e, $grid)}
+    on:mouseleave={e => mouseHandlers.up(e, $grid)}
 >
     <defs>
         {#each list as { id, ref, component } (id)}

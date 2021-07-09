@@ -3,9 +3,6 @@
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
     import Header from "./svelte/Header.svelte";
-
-    import { boardState } from "./js/board";
-    import { userState, boardOnClick } from "./js/user";
 </script>
 
 <header>
@@ -22,7 +19,7 @@
                 <EditPanel />
             </div>
             <div class="center-panel">
-                <Board {boardState} {userState} {boardOnClick} />
+                <Board />
             </div>
             <div class="right-panel">
                 <EntryPanel />

@@ -7,9 +7,27 @@ userState.update({
     },
 });
 
-export function boardOnClick(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: { width: number, height: number }) {
+
+
+function select(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: { width: number, height: number }, reset: boolean) {
     const { x, y } = svg2pixel(event, event.currentTarget);
     const idx = xy2idx({ x: Math.floor(x), y: Math.floor(y) }, grid);
-    const ref = userState.ref('select', `${idx}`);
-    ref.replace(!ref.get());
+    if (reset) userState.ref('select').replace(null);
+    userState.ref('select', `${idx}`).replace(true);
 }
+let isSelecting = false;
+
+export const mouseHandlers = {
+    down(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: { width: number, height: number }) {
+        isSelecting = true;
+        select(event, grid, !event.shiftKey && !event.ctrlKey);
+    },
+    move(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: { width: number, height: number }) {
+        if (isSelecting)
+            select(event, grid, false);
+    },
+    // Mouse up is on window to handle dragging mouse out of grid.
+    up(_event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, _grid: { width: number, height: number }) {
+        isSelecting = false;
+    },
+};
