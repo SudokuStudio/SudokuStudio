@@ -155,11 +155,13 @@ boardState.update({
             order: 3,
             value: {
                 "110": {
+                    length: 4,
                     "0": "3",
                     "1": "13",
                     "2": "23",
                 },
                 "120": {
+                    length: 4,
                     "0": "29",
                     "1": "20",
                     "2": "21",
@@ -172,9 +174,11 @@ boardState.update({
             value: {
                 "110": {
                     "head": {
+                        length: 1,
                         "0": "27",
                     },
                     "body": {
+                        length: 3,
                         "0": "27", // TODO REMOVE ?
                         "1": "28",
                         "2": "29",
@@ -182,10 +186,12 @@ boardState.update({
                 },
                 "120": {
                     "head": {
+                        length: 2,
                         "0": "45", // TODO REMOVE ?
                         "1": "46",
                     },
                     "body": {
+                        length: 5,
                         "0": "46", // TODO REMOVE ?
                         "1": "47",
                         "2": "56",
