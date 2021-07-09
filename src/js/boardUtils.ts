@@ -60,7 +60,7 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
         // D <-- C
         // For each cell.
         // Consider each each clockwise edge A->B
-        // If the inverse edge B->A already exists, delete it.
+        // If the inverse edge B->A already exists, delete that.
         // Otherwise create the edge A->B.
 
         function add(A: number, B: number): void {
@@ -97,10 +97,11 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
 
     if (0 >= adjList.size) return null;
 
+    // Traverse each loop.
     const loops: string[] = [];
     while (1) {
-        // Get a starting vertex that is not on "touching corner".
-        // Do not delete the edge, we need to hit it again to complete the loop.
+        // Get a starting vertex that is not on a "touching corner".
+        // (Do not delete this first edge, we need to hit it again to complete the loop for the triples.)
         if (0 >= adjList.size) break;
         const [ firstVertId, firstAdj ] = Array.from(adjList.entries()).find(([ _vertId, adj ]) => 1 === adj.size)!;
         let vertId = Array.from(firstAdj)[0];
@@ -111,13 +112,13 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
 
         const points: string[] = [];
         while (adjList.has(vertId)) {
+            // Find all the next edges.
             const adj = adjList.get(vertId)!;
 
+            // Pick the most-clockwise edge to traverse.
             let crossProd = Number.NEGATIVE_INFINITY;
             let nextVertId = -1;
             let c = null;
-
-            // Find the clockwise-most edge to take.
             for (const aVertId of adj) {
                 const aC = vertId2xy(aVertId, grid);
                 const aCrossProd = (b.x - a.x) * (aC.y - b.y) - (b.y - a.y) * (aC.x - b.x);
