@@ -27,7 +27,7 @@ export const mouseHandlers = {
             select(event, grid, false);
     },
     // Mouse up is on window to handle dragging mouse out of grid.
-    up(_event: MouseEvent, _grid: { width: number, height: number }) {
+    up(_event: MouseEvent & { currentTarget: EventTarget & Window }, _grid: { width: number, height: number }) {
         isSelecting = false;
     },
 };
