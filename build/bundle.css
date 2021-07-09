@@ -872,6 +872,12 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
+svg.svelte-h68ot3 {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
 .info-input.svelte-fcgi7u.svelte-fcgi7u {
   -webkit-appearance: none;
   -moz-appearance: none;
