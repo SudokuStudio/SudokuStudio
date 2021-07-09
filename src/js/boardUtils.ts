@@ -116,9 +116,7 @@ export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0)
 
     // Traverse each region (may be multiple disconnected regions).
     const loops: string[] = [];
-    for (let zzz = 0; zzz < 1e3; zzz++) {
-        // debugger;
-
+    while (1) {
         // Get a starting vertex that is not on or in front of a "touching corner".
         // (Do not delete this first edge, we need to hit it again to complete the loop for the triples.)
         if (0 >= adjList.size) break;
