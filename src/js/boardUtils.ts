@@ -41,7 +41,7 @@ export function vertId2xy(vertId: number, { width }: { width: number }): { x: nu
     return { x, y };
 }
 
-export function getFirstCell(idxBitset: Record<string, true>, grid: { width: number, height: number }): null | { x: number, y: number } {
+export function getFirstCell(idxBitset: Record<string, boolean>, grid: { width: number, height: number }): null | { x: number, y: number } {
     const len = grid.width * grid.height;
     for (let idx = 0; idx < len; idx++) {
         if (idxBitset[idx])
@@ -50,7 +50,7 @@ export function getFirstCell(idxBitset: Record<string, true>, grid: { width: num
     return null;
 }
 
-export function bitsetToList(bitset: null | undefined | Record<string, true>): number[] {
+export function bitsetToList(bitset: null | undefined | Record<string, boolean>): number[] {
     if (null == bitset) return [];
     return Object.keys(bitset).filter(k => !!bitset[k]).map(Number);
 }

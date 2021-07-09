@@ -58,7 +58,7 @@ declare namespace schema {
         value: {
             [K: string]: {
                 sum: number,
-                cells: Record<string, true>,
+                cells: Record<string, boolean>,
             },
         },
     }
