@@ -113,21 +113,25 @@ export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0)
 
     if (0 >= adjList.size) return null;
 
-    // Traverse each loop.
+
+    // Traverse each region (may be multiple disconnected regions).
     const loops: string[] = [];
-    while (1) {
-        // Get a starting vertex that is not on a "touching corner".
+    for (let zzz = 0; zzz < 1e3; zzz++) {
+        // debugger;
+
+        // Get a starting vertex that is not on or in front of a "touching corner".
         // (Do not delete this first edge, we need to hit it again to complete the loop for the triples.)
         if (0 >= adjList.size) break;
         const [ firstVertId, firstAdj ] = Array.from(adjList.entries()).find(([ _vertId, adj ]) => 1 === adj.size)!;
-        let vertId = Array.from(firstAdj)[0];
+        const secondVertId = Array.from(firstAdj)[0];
 
         // Iterate in triples (a, b, c).
         let a = vertId2xy(firstVertId, grid);
-        let b = vertId2xy(vertId, grid);
+        let b = vertId2xy(secondVertId, grid);
+        let vertId = secondVertId;
 
         const points: string[] = [];
-        while (adjList.has(vertId)) {
+        do {
             // Find all the next edges.
             const adj = adjList.get(vertId)!;
 
@@ -160,7 +164,8 @@ export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0)
             a = b;
             b = c;
             vertId = nextVertId;
-        }
+        } while (secondVertId !== vertId);
+
         loops.push('M' + points.join('L') + 'Z');
     }
     return loops.join('');
