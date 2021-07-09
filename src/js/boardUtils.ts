@@ -88,14 +88,15 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
 
     if (0 >= adjList.size) return null;
 
+    // debugger;
+
     const components: number[][] = [];
     while (1) {
         // Get a first vertex.
         let vertId = -1;
         for (vertId of adjList.keys()) break;
         // Exit if no more components.
-        if (-1 === vertId)
-            break;
+        if (-1 === vertId) break;
 
         // Traverse the component.
         let verts = [ vertId ];
@@ -113,8 +114,8 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
             const start = verts.indexOf(nextVertId);
             // If we ever hit an existing vertex, splice that off as a separate component.
             if (0 <= start) components.push(verts.splice(start));
-            // Otherwise keep extending this componenet.
-            else verts.push(nextVertId);
+            // And keep extending this componenet.
+            verts.push(nextVertId);
 
             vertId = nextVertId;
         }

@@ -20,6 +20,6 @@
 
 <g {id}>
     {#each each($ref) as { cageId, sum: _, d } (cageId)}
-        <path {d} fill="none" stroke="#f0f" stroke-width="0.05" />
+        <path {d} fill="rgba(255,0,255,0.1)" stroke="#f0f" stroke-width="0.05" />
     {/each}
 </g>
