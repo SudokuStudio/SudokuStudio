@@ -221,25 +221,9 @@ boardState.update({
             order: 12,
             value: {
                 "150": {
-                    sum: 20,
+                    sum: 43,
                     cells: {
-                        "4": true,
-                        "20": true,
-                        "24": true,
-                        "40": true,
-
-                        // "19": true,
                         "28": true,
-
-                        "12": true,
-                        "13": true,
-                        "14": true,
-                        "21": true,
-                        "22": true,
-                        "23": true,
-                        "30": true,
-                        "31": true,
-                        "32": true,
                         "36": true,
                         "37": true,
                         "38": true,
@@ -247,10 +231,19 @@ boardState.update({
                         "47": true,
                         "54": true,
                         "55": true,
-
+                    },
+                },
+                "160": {
+                    sum: 18,
+                    cells: {
                         "60": true,
                         "61": true,
                         "69": true,
+                    },
+                },
+                "170": {
+                    sum: 16,
+                    cells: {
                         "71": true,
                         "79": true,
                         "80": true,

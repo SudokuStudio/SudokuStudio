@@ -41,6 +41,15 @@ export function vertId2xy(vertId: number, { width }: { width: number }): { x: nu
     return { x, y };
 }
 
+export function getFirstCell(idxBitset: Record<string, true>, grid: { width: number, height: number }): null | { x: number, y: number } {
+    const len = grid.width * grid.height;
+    for (let idx = 0; idx < len; idx++) {
+        if (idxBitset[idx])
+            return idx2xy(idx, grid);
+    }
+    return null;
+}
+
 export function getEdges(idxBitset: Record<string, true>, grid: { width: number, height: number }, inset: number): string | null {
     const adjList = new Map<number, Set<number>>();
 
@@ -50,9 +59,9 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
         // |     V
         // D <-- C
         // For each cell.
-        // For each each clockwise edge A->B
+        // Consider each each clockwise edge A->B
         // If the inverse edge B->A already exists, delete it.
-        // Otherwise add the edge A->B.
+        // Otherwise create the edge A->B.
 
         function add(A: number, B: number): void {
             const adjBack = adjList.get(B);
@@ -72,7 +81,7 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
 
         const len = grid.width * grid.height;
         for (let idx = 0; idx < len; idx++) {
-            if (true === idxBitset[idx]) {
+            if (idxBitset[idx]) {
                 const { x, y } = idx2xy(idx, grid);
                 const A = xy2vertId(    x,     y, grid);
                 const B = xy2vertId(1 + x,     y, grid);
@@ -88,79 +97,54 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
 
     if (0 >= adjList.size) return null;
 
-    // debugger;
-
-    const components: number[][] = [];
+    const loops: string[] = [];
     while (1) {
-        // Get a first vertex.
-        let vertId = -1;
+        // Get a starting vertex that is not on "touching corner".
+        // Do not delete the edge, we need to hit it again to complete the loop.
         if (0 >= adjList.size) break;
-        {
-            const arr = Array.from(adjList.keys());
-            console.log('a', arr.length);
-            vertId = arr[Math.floor(arr.length * Math.random())];
-        }
-        // for (vertId of adjList.keys()) break;
-        // Exit if no more components.
-        if (-1 === vertId) break;
+        const [ firstVertId, firstAdj ] = Array.from(adjList.entries()).find(([ _vertId, adj ]) => 1 === adj.size)!;
+        let vertId = Array.from(firstAdj)[0];
 
-        // Traverse the component.
-        let verts = [ vertId ];
-        while (1) {
+        // Iterate in triples (a, b, c).
+        let a = vertId2xy(firstVertId, grid);
+        let b = vertId2xy(vertId, grid);
+
+        const points: string[] = [];
+        while (adjList.has(vertId)) {
             const adj = adjList.get(vertId)!;
-            if (null == adj) {
-                components.push(verts.slice(1));
-                break;
-            }
 
-            // Pick any edge to traverse and delete it from the graph.
+            let crossProd = Number.NEGATIVE_INFINITY;
             let nextVertId = -1;
-            if (0 >= adj.size) break;
-            {
-                const arr = Array.from(adj);
-                console.log('b', arr.length);
-                nextVertId = arr[Math.floor(arr.length * Math.random())];
+            let c = null;
+
+            // Find the clockwise-most edge to take.
+            for (const aVertId of adj) {
+                const aC = vertId2xy(aVertId, grid);
+                const aCrossProd = (b.x - a.x) * (aC.y - b.y) - (b.y - a.y) * (aC.x - b.x);
+                if (crossProd < aCrossProd) {
+                    crossProd = aCrossProd;
+                    nextVertId = aVertId;
+                    c = aC;
+                }
             }
-
-            // for (nextVertId of adj) break;
-            if (-1 === nextVertId) break;
-
+            if (null == c) throw "UNREACHABLE";
             adj.delete(nextVertId);
             if (0 >= adj.size) adjList.delete(vertId);
 
-            const start = verts.indexOf(nextVertId);
-            // // If we ever hit an existing vertex, splice that off as a separate component.
-            // if (0 <= start) components.push(verts.splice(start));
-            // And keep extending this componenet.
-            verts.push(nextVertId);
+            // Calculate insets, push to list.
+            if (0 !== crossProd) {
+                let { x, y } = b;
+                y += inset * (b.x - a.x) + crossProd * inset * (a.y - b.y);
+                x += inset * (b.y - c.y) + crossProd * inset * (c.x - b.x);
+                points.push(`${x},${y}`);
+            }
 
+            // Rotate vars.
+            a = b;
+            b = c;
             vertId = nextVertId;
         }
+        loops.push('M' + points.join('L') + 'Z');
     }
-
-    return components
-        .map(component => {
-            // Iterate in a, b, c triples.
-            let a = vertId2xy(component[component.length - 2], grid);
-            let b = vertId2xy(component[component.length - 1], grid);
-            return component
-                .map(cVertId => {
-                    const c = vertId2xy(cVertId, grid);
-
-                    const crossProd = (b.x - a.x) * (c.y - b.y) + (b.y - a.y) * (c.x - b.x);
-                    let { x, y } = b;
-                    y += inset * (b.x - a.x) + crossProd * inset * (b.y - a.y);
-                    x += inset * (b.y - c.y) + crossProd * inset * (b.x - c.x);
-
-                    a = b; // Rotate vars.
-                    b = c;
-
-                    if (Math.abs(crossProd) < 1e-6) return null;
-                    return `${x},${y}`;
-                })
-                .filter(s => s)
-                .join('L');
-        })
-        .map(d => `M${d}Z`) // Each segment.
-        .join('');
+    return loops.join('');
 }
