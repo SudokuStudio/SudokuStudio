@@ -224,6 +224,7 @@ boardState.update({
                     sum: 20,
                     cells: {
                         "45": true,
+                        "47": true,
                         "54": true,
                         "55": true,
                     },

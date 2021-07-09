@@ -45,35 +45,43 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
     const adjList = new Map<number, Set<number>>();
 
     {
-        function getAdj(vertId: number): Set<number> {
-            let adj = adjList.get(vertId);
-            if (null == adj) {
-                adj = new Set();
-                adjList.set(vertId, adj);
+        // A --> B
+        // ^     |
+        // |     V
+        // D <-- C
+        // For each cell.
+        // For each each clockwise edge A->B
+        // If the inverse edge B->A already exists, delete it.
+        // Otherwise add the edge A->B.
+
+        function add(A: number, B: number): void {
+            const adjBack = adjList.get(B);
+            if (adjBack?.has(A)) {
+                adjBack.delete(A);
+                if (0 >= adjBack.size) adjList.delete(B);
             }
-            return adj;
+            else {
+                let adj = adjList.get(A);
+                if (null == adj) {
+                    adj = new Set();
+                    adjList.set(A, adj);
+                }
+                adj.add(B);
+            }
         }
 
         const len = grid.width * grid.height;
         for (let idx = 0; idx < len; idx++) {
             if (true === idxBitset[idx]) {
-                // A --> B
-                // ^     |
-                // |     V
-                // D <-- C
-                // For each cell.
-                // For each each clockwise edge A->B
-                // If the inverse edge B->A already exists, delete it.
-                // Otherwise add the edge A->B.
                 const { x, y } = idx2xy(idx, grid);
                 const A = xy2vertId(    x,     y, grid);
                 const B = xy2vertId(1 + x,     y, grid);
                 const C = xy2vertId(1 + x, 1 + y, grid);
                 const D = xy2vertId(    x, 1 + y, grid);
-                if (getAdj(B).has(A)) getAdj(B).delete(A); else getAdj(A).add(B);
-                if (getAdj(C).has(B)) getAdj(C).delete(B); else getAdj(B).add(C);
-                if (getAdj(D).has(C)) getAdj(D).delete(C); else getAdj(C).add(D);
-                if (getAdj(A).has(D)) getAdj(A).delete(D); else getAdj(D).add(A);
+                add(A, B);
+                add(B, C);
+                add(C, D);
+                add(D, A);
             }
         }
     }
@@ -84,12 +92,7 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
     while (1) {
         // Get a first vertex.
         let vertId = -1;
-        for (const v of adjList.keys()) {
-            if (0 < adjList.get(v)!.size) {
-                vertId = v;
-                break;
-            }
-        }
+        for (vertId of adjList.keys()) break;
         // Exit if no more components.
         if (-1 === vertId)
             break;
@@ -98,18 +101,22 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
         let verts = [ vertId ];
         while (1) {
             const adj = adjList.get(vertId)!;
+            if (null == adj) break;
 
             // Pick any edge to traverse and delete it from the graph.
-            vertId = -1;
-            for (vertId of adj) break;
-            if (-1 === vertId) break;
-            adj.delete(vertId);
+            let nextVertId = -1;
+            for (nextVertId of adj) break;
+            if (-1 === nextVertId) break;
+            adj.delete(nextVertId);
+            if (0 >= adj.size) adjList.delete(vertId);
 
-            const start = verts.indexOf(vertId);
+            const start = verts.indexOf(nextVertId);
             // If we ever hit an existing vertex, splice that off as a separate component.
             if (0 <= start) components.push(verts.splice(start));
             // Otherwise keep extending this componenet.
-            else verts.push(vertId);
+            else verts.push(nextVertId);
+
+            vertId = nextVertId;
         }
     }
 
