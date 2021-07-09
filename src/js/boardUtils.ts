@@ -50,7 +50,27 @@ export function getFirstCell(idxBitset: Record<string, true>, grid: { width: num
     return null;
 }
 
-export function getEdges(idxBitset: Record<string, true>, grid: { width: number, height: number }, inset: number): string | null {
+export function bitsetToList(bitset: null | undefined | Record<string, true>): number[] {
+    if (null == bitset) return [];
+    return Object.keys(bitset).filter(k => !!bitset[k]).map(Number);
+}
+
+export function svg2pixel({ offsetX, offsetY}: { offsetX: number, offsetY: number }, board: SVGSVGElement): { x: number, y: number } {
+    const { width: elWidth, height: elHeight } = board.getBoundingClientRect();
+    const { x: originX, y: originY, width, height } = board.viewBox.baseVal;
+    // if (offsetX < 0 || offsetY < 0) return null;
+    const x = (width  * offsetX / elWidth  + originX);
+    const y = (height * offsetY / elHeight + originY);
+    return { x, y };
+}
+
+/**
+ * @param cellIdxs Cell indexes (0 to 80 for 9x9).
+ * @param grid
+ * @param inset (Optional) Amount to inset the outline.
+ * @returns Path "d" string.
+ */
+export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0): string | null {
     const adjList = new Map<number, Set<number>>();
 
     {
@@ -78,20 +98,16 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
                 adj.add(B);
             }
         }
-
-        const len = grid.width * grid.height;
-        for (let idx = 0; idx < len; idx++) {
-            if (idxBitset[idx]) {
-                const { x, y } = idx2xy(idx, grid);
-                const A = xy2vertId(    x,     y, grid);
-                const B = xy2vertId(1 + x,     y, grid);
-                const C = xy2vertId(1 + x, 1 + y, grid);
-                const D = xy2vertId(    x, 1 + y, grid);
-                add(A, B);
-                add(B, C);
-                add(C, D);
-                add(D, A);
-            }
+        for (const idx of cellIdxs) {
+            const { x, y } = idx2xy(idx, grid);
+            const A = xy2vertId(    x,     y, grid);
+            const B = xy2vertId(1 + x,     y, grid);
+            const C = xy2vertId(1 + x, 1 + y, grid);
+            const D = xy2vertId(    x, 1 + y, grid);
+            add(A, B);
+            add(B, C);
+            add(C, D);
+            add(D, A);
         }
     }
 

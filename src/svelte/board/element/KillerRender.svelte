@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getEdges, getFirstCell } from "../../../js/boardUtils";
+    import { bitsetToList, getEdges, getFirstCell } from "../../../js/boardUtils";
     import type { StateRef } from "../../../js/state_manager";
 
     export let id: string;
@@ -14,7 +14,7 @@
         const out: { cageId: string, sum: number, labelPos: { x: number, y: number }, d: string }[] = [];
         for (const [ cageId, { sum, cells } ] of Object.entries(value)) {
             const first = getFirstCell(cells, grid);
-            const d = getEdges(cells, grid, inset);
+            const d = getEdges(bitsetToList(cells), grid, inset);
             if (null != d && null != first) {
                 const labelPos = {
                     x: first.x + inset - stroke,

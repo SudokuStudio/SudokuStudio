@@ -49,6 +49,10 @@ export class StateRef {
         return new StateRef(this._stateManager, [ ...this._path, ...path ]);
     }
 
+    get<T extends Data>(): null | T {
+        return this._stateManager.get(...this._path);
+    }
+
     watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean): Watcher<T> {
         this._stateManager.watch(watcher, triggerNow, this._path.join('/'));
         return watcher;

@@ -3,13 +3,18 @@
     import { CONSTRAINT_RENDERERS } from "../../js/board";
     import type { ConstraintRenderer } from "../../js/board";
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "../../js/boardUtils";
+    import SelectRender from "./element/SelectRender.svelte";
 
     export let boardState: StateManager;
+    export let userState: StateManager;
+    export let boardOnClick: (event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: { width: number, height: number }) => void;
 
     const grid = boardState.ref('grid');
 
     type ConstraintList = { id: string, order: number, ref: StateRef, component: ConstraintRenderer }[];
-    const list: ConstraintList = [];
+    const list: ConstraintList = [
+        { id: 'select', order: 9.5, ref: userState.ref('select'), component: SelectRender }
+    ];
 
     boardState.ref('elements/*').watch<schema.Element>(([ _elements, constraintId ], oldVal, newVal) => {
         let i = -1;
@@ -52,7 +57,9 @@
     }, true);
 </script>
 
-<svg id="sudoku" viewBox="{-GRID_THICKNESS_HALF} {-GRID_THICKNESS_HALF} {$grid.width + GRID_THICKNESS} {$grid.height + GRID_THICKNESS}" xmlns="http://www.w3.org/2000/svg">
+<svg id="sudoku" viewBox="{-GRID_THICKNESS_HALF} {-GRID_THICKNESS_HALF} {$grid.width + GRID_THICKNESS} {$grid.height + GRID_THICKNESS}"
+    xmlns="http://www.w3.org/2000/svg" on:click={e => boardOnClick(e, $grid)}
+>
     <defs>
         {#each list as { id, ref, component } (id)}
             <svelte:component this={component} {id} {ref} grid={$grid} />

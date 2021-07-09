@@ -21,14 +21,13 @@ import MinRender from '../svelte/board/element/MinRender.svelte';
 import MaxRender from '../svelte/board/element/MaxRender.svelte';
 import KillerRender from '../svelte/board/element/KillerRender.svelte';
 
+import SelectRender from '../svelte/board/element/SelectRender.svelte';
+
 export type ConstraintDataAndComponent = {
     id: string,
     value: unknown,
     component: ConstraintComponent,
 };
-
-export const boardState = (window as any).boardState = new StateManager();
-
 
 export enum ConstraintMenuType {
     GLOBAL,
@@ -93,8 +92,12 @@ export const CONSTRAINT_RENDERERS = {
     ['king']: null,
     ['disjointGroups']: null,
     ['consecutive']: null,
+
+    ['select']: SelectRender,
 } as const;
 
+
+export const boardState = (window as any).boardState = new StateManager();
 boardState.update({
     grid: {
         width: 9,
