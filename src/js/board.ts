@@ -19,6 +19,7 @@ import ThermoRender from '../svelte/board/element/ThermoRender.svelte';
 import ArrowRender from '../svelte/board/element/ArrowRender.svelte';
 import MinRender from '../svelte/board/element/MinRender.svelte';
 import MaxRender from '../svelte/board/element/MaxRender.svelte';
+import KillerRender from '../svelte/board/element/KillerRender.svelte';
 
 export type ConstraintDataAndComponent = {
     id: string,
@@ -45,6 +46,7 @@ export const CONSTRAINT_MENU_TYPES = {
     ['sandwich']: ConstraintMenuType.LOCAL,
     ['min']: ConstraintMenuType.LOCAL,
     ['max']: ConstraintMenuType.LOCAL,
+    ['killer']: ConstraintMenuType.LOCAL,
 
     ['diagonal']: ConstraintMenuType.GLOBAL,
     ['knight']: ConstraintMenuType.GLOBAL,
@@ -64,6 +66,7 @@ export const CONSTRAINT_COMPONENTS = {
     ['sandwich']: Sandwich,
     ['min']: Min,
     ['max']: Max,
+    ['killer']: null, // TODO!!
 
     ['diagonal']: Diagonal,
     ['knight']: Knight,
@@ -83,6 +86,7 @@ export const CONSTRAINT_RENDERERS = {
     ['sandwich']: null,
     ['min']: MinRender,
     ['max']: MaxRender,
+    ['killer']: KillerRender,
 
     ['diagonal']: null,
     ['knight']: null,
@@ -210,6 +214,20 @@ boardState.update({
                 "67": true,
                 "68": true,
                 "77": true,
+            },
+        },
+        '10180': {
+            type: 'killer',
+            order: 12,
+            value: {
+                "150": {
+                    sum: 20,
+                    cells: {
+                        "45": true,
+                        "54": true,
+                        "55": true,
+                    },
+                },
             },
         },
     },

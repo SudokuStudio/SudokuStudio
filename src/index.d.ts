@@ -20,7 +20,7 @@ declare namespace schema {
     };
     export type ElementType = ElementTypeIds[keyof ElementTypeIds];
 
-    export type Element = GridElement | BoxElement | BooleanElement | DigonalElement;
+    export type Element = GridElement | BoxElement | BooleanElement | DigonalElement | KillerElement;
 
     interface AbstractElement {
         type: ElementType,
@@ -51,6 +51,15 @@ declare namespace schema {
         value: {
             positive: boolean,
             negative: boolean,
+        },
+    }
+    export interface KillerElement extends AbstractElement {
+        type: 'killer',
+        value: {
+            [K: string]: {
+                sum: number,
+                cells: Record<string, true>,
+            },
         },
     }
 }
