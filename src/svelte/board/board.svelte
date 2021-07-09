@@ -59,6 +59,17 @@
     on:mousedown={e => mouseHandlers.down(e, $grid)}
     on:mousemove={e => mouseHandlers.move(e, $grid)}
 >
+    <style>
+        text {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        text::selection {
+            background: none;
+        }
+    </style>
     <defs>
         {#each list as { id, ref, component } (id)}
             <svelte:component this={component} {id} {ref} grid={$grid} />
@@ -68,3 +79,11 @@
         <use href="#{id}" />
     {/each}
 </svg>
+
+<style lang="scss">
+    svg {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: none;
+    }
+</style>
