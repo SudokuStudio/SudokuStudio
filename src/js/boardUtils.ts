@@ -41,7 +41,7 @@ export function vertId2xy(vertId: number, { width }: { width: number }): { x: nu
     return { x, y };
 }
 
-export function getEdges(idxBitset: Record<string, true>, grid: { width: number, height: number }): string | null {
+export function getEdges(idxBitset: Record<string, true>, grid: { width: number, height: number }, inset: number): string | null {
     const adjList = new Map<number, Set<number>>();
 
     {
@@ -94,7 +94,13 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
     while (1) {
         // Get a first vertex.
         let vertId = -1;
-        for (vertId of adjList.keys()) break;
+        if (0 >= adjList.size) break;
+        {
+            const arr = Array.from(adjList.keys());
+            console.log('a', arr.length);
+            vertId = arr[Math.floor(arr.length * Math.random())];
+        }
+        // for (vertId of adjList.keys()) break;
         // Exit if no more components.
         if (-1 === vertId) break;
 
@@ -102,18 +108,29 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
         let verts = [ vertId ];
         while (1) {
             const adj = adjList.get(vertId)!;
-            if (null == adj) break;
+            if (null == adj) {
+                components.push(verts.slice(1));
+                break;
+            }
 
             // Pick any edge to traverse and delete it from the graph.
             let nextVertId = -1;
-            for (nextVertId of adj) break;
+            if (0 >= adj.size) break;
+            {
+                const arr = Array.from(adj);
+                console.log('b', arr.length);
+                nextVertId = arr[Math.floor(arr.length * Math.random())];
+            }
+
+            // for (nextVertId of adj) break;
             if (-1 === nextVertId) break;
+
             adj.delete(nextVertId);
             if (0 >= adj.size) adjList.delete(vertId);
 
             const start = verts.indexOf(nextVertId);
-            // If we ever hit an existing vertex, splice that off as a separate component.
-            if (0 <= start) components.push(verts.splice(start));
+            // // If we ever hit an existing vertex, splice that off as a separate component.
+            // if (0 <= start) components.push(verts.splice(start));
             // And keep extending this componenet.
             verts.push(nextVertId);
 
@@ -122,13 +139,28 @@ export function getEdges(idxBitset: Record<string, true>, grid: { width: number,
     }
 
     return components
-        .map(component =>
-            component.map(vertId => {
-                const { x, y } = vertId2xy(vertId, grid);
-                return `${x},${y}`;
-            })
-            .join('L')
-        )
+        .map(component => {
+            // Iterate in a, b, c triples.
+            let a = vertId2xy(component[component.length - 2], grid);
+            let b = vertId2xy(component[component.length - 1], grid);
+            return component
+                .map(cVertId => {
+                    const c = vertId2xy(cVertId, grid);
+
+                    const crossProd = (b.x - a.x) * (c.y - b.y) + (b.y - a.y) * (c.x - b.x);
+                    let { x, y } = b;
+                    y += inset * (b.x - a.x) + crossProd * inset * (b.y - a.y);
+                    x += inset * (b.y - c.y) + crossProd * inset * (b.x - c.x);
+
+                    a = b; // Rotate vars.
+                    b = c;
+
+                    if (Math.abs(crossProd) < 1e-6) return null;
+                    return `${x},${y}`;
+                })
+                .filter(s => s)
+                .join('L');
+        })
         .map(d => `M${d}Z`) // Each segment.
         .join('');
 }
