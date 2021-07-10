@@ -298,8 +298,10 @@ export class StateManager {
                 // Yes changes.
                 const newData = Object.assign(Object.create(null), dataObj);
                 for (const [ k, v ] of Object.entries(dataObjNew)) { // Assign, except null deletes keys.
-                    if (null == v) delete newData[k];
-                    else newData[k] = v;
+                    { // Handle delete.
+                        if (null == v) delete newData[k];
+                        else newData[k] = v;
+                    }
                 }
                 // If obj is empty, return null.
                 if (0 === Object.keys(newData).length)
@@ -320,7 +322,11 @@ export class StateManager {
                 return { data, redo, undo };
             }
             // Yes changes.
-            const newData = Object.assign(Object.create(null), dataObj, { [key]: newInnerData });
+            const newData = Object.assign(Object.create(null), dataObj);
+            { // Handle delete.
+                if (null == newInnerData) delete newData[key];
+                else newData[key] = newInnerData;
+            }
             if (Object.values(newData).every(val => null == val)) {
                 // All vals null, return null.
                 return { data: null, redo, undo };

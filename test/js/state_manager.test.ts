@@ -182,9 +182,19 @@ describe('class StateManager', () => {
             ]));
         });
 
-        it('handles replacement', () => {
+        it('handles replacement (select)', () => {
             const stateMgr = new StateManager();
             stateMgr.update({
+                select: {
+                    0: true,
+                    1: true,
+                    2: true,
+                    3: true,
+                },
+            });
+
+            stateMgr.ref('select', '2').replace(null);
+            expect(stateMgr.get()).toEqual({
                 select: {
                     0: true,
                     1: true,
@@ -196,7 +206,9 @@ describe('class StateManager', () => {
                 'select': { 4: true },
             });
 
-            expect(stateMgr.get()).toEqual({ select: { 4: true }});
+            expect(stateMgr.get()).toEqual({
+                select: { 4: true }
+            });
         });
     });
 
