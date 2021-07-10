@@ -1,4 +1,4 @@
-import type { Idx, Coord, IdxBitset, Geometry } from "./units";
+import type { Grid, Idx, Coord, IdxBitset, Geometry } from "./units";
 
 // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
 export function any(x: any): any {
@@ -10,11 +10,6 @@ export const GRID_THICKNESS_HALF = 0.5 * GRID_THICKNESS;
 
 export const BOX_THICKNESS = 4 * GRID_THICKNESS;
 export const BOX_THICKNESS_HALF = 0.5 * BOX_THICKNESS;
-
-export type Grid = {
-    width: number,
-    height: number,
-};
 
 export function cellIdx2cellCoord(idx: Idx<Geometry.CELL>, { width }: Grid): Coord<Geometry.CELL> {
     const x = idx % width;
@@ -33,6 +28,27 @@ export function cornerIdx2cornerCoord(vertId: Idx<Geometry.CORNER>, { width }: G
     const x = vertId % (width + 1);
     const y = Math.floor(vertId / (width + 1));
     return [ x, y ];
+}
+
+/**
+ * Get the CELL coordinates from SVG coordinates.
+ * @param param0 SVG coordinates.
+ * @param param1 Grid size.
+ * @param limitCircle If true only count clicks within the 0.5 radius circle centered on the cell.
+ * @returns The CELL coordinates, or null if the click was outside the grid or outside the circle when limitCircle is true.
+ */
+export function svgCoord2cellCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid, limitCircle: boolean): null | Coord<Geometry.CELL> {
+    // Check coord is inside grid.
+    if ((xf < 0 || width <= xf) || (yf < 0 || height <= yf)) return null;
+
+    if (limitCircle) {
+      // Limit to circles.
+      const xr = xf % 1 - 0.5;
+      const yr = yf % 1 - 0.5;
+      if (0.25 < xr * xr + yr * yr) return null;
+    }
+
+    return [ Math.floor(xf), Math.floor(yf) ];
 }
 
 

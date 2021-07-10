@@ -7,15 +7,15 @@
 // look like the same type, they are distinct and incompatible.
 export declare module Geometry {
     const CELL: unique symbol;
-    /// Grid cells -- where numbers go.
+    /** Grid cells -- where numbers go. */
     export type CELL = typeof CELL;
 
     const CORNER: unique symbol;
-    /// Corners of the grid where four cells meet (or fewer if you're at an edge/corner of the board).
+    /** Corners of the grid where four cells meet (or fewer if you're at an edge/corner of the board). */
     export type CORNER = typeof CORNER;
 
     const SVG: unique symbol;
-    /// SVG unit space (only useful for Coord).
+    /** SVG unit space (only useful for Coord) - values can have decimals. */
     export type SVG = typeof SVG;
 }
 // Overload the type of Geometry to make it act like an enum.
@@ -23,11 +23,17 @@ export declare module Geometry {
 // When treaded as a type it acts like the union of the types inside the module above.
 export type Geometry = typeof Geometry[keyof typeof Geometry];
 
-/// An 1d index for the given Geometry.
+/** An 1d index for the given Geometry. */
 export type Idx<TAG extends Geometry> = number & { _idx?: TAG };
-/// 2d coordinates [ x, y ] for the given Geometry.
+/** 2d coordinates [ x, y ] for the given Geometry. */
 export type Coord<TAG extends Geometry> = [ x: number, y: number ] & { _coord?: TAG }
-/// JS Object map from Idx<TAG> to boolean flag representing set membership.
+/** JS Object map from Idx<TAG> to boolean flag representing set membership. */
 export type IdxBitset<TAG extends Geometry> = {
     [K in Idx<TAG> as `${K}`]: boolean;
+};
+
+/** Width and height of the grid. */
+export type Grid = {
+    width: number,
+    height: number,
 };
