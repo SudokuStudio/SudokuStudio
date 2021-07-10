@@ -5,8 +5,18 @@
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "../../js/boardUtils";
     import SelectRender from "./element/SelectRender.svelte";
     import { userState, mouseHandlers } from "../../js/user";
+    import { derived } from "svelte/store";
 
     const grid = boardState.ref('grid');
+
+    // TODO somehow update this based on elements.
+    const viewBox = derived(grid, $grid => ({
+        x: -GRID_THICKNESS_HALF,
+        y: -GRID_THICKNESS_HALF,
+        width: $grid.width + GRID_THICKNESS,
+        height: $grid.height + GRID_THICKNESS,
+    }));
+
 
     type ConstraintList = { id: string, order: number, ref: StateRef, component: ConstraintRenderer }[];
     const list: ConstraintList = [
@@ -55,7 +65,7 @@
 </script>
 
 <svelte:window on:mouseup={e => mouseHandlers.up(e, $grid)} />
-<svg id="sudoku" viewBox="{-GRID_THICKNESS_HALF} {-GRID_THICKNESS_HALF} {$grid.width + GRID_THICKNESS} {$grid.height + GRID_THICKNESS}" xmlns="http://www.w3.org/2000/svg"
+<svg id="sudoku" viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}" xmlns="http://www.w3.org/2000/svg"
     on:mousedown={e => mouseHandlers.down(e, $grid)}
     on:mousemove={e => mouseHandlers.move(e, $grid)}
 
