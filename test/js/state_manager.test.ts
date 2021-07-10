@@ -181,6 +181,23 @@ describe('class StateManager', () => {
                 { path: [ 'people', 'suri', 'age' ], oldVal: null, newVal: 26 },
             ]));
         });
+
+        it('handles replacement', () => {
+            const stateMgr = new StateManager();
+            stateMgr.update({
+                select: {
+                    0: true,
+                    1: true,
+                    3: true,
+                },
+            });
+
+            stateMgr.update({
+                'select': { 4: true },
+            });
+
+            expect(stateMgr.get()).toEqual({ select: { 4: true }});
+        });
     });
 
     describe('delete', () => {
@@ -382,7 +399,7 @@ describe('class StateManager', () => {
             stateMgr.update({
                 foo: null,
             });
-            expect(stateMgr.get()).toEqual(null);
+            expect(stateMgr.get()).toBeNull();
 
             expect(log.length).toEqual(2);
             expect(log[log.length - 1].path).toEqual([ 'foo' ]);

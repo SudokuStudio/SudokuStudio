@@ -288,11 +288,7 @@ export class StateManager {
                         dataUpdated = true;
                         redo.push(...innerRedo);
                         undo.push(...innerUndo);
-                        if (null != updateObj && Object.prototype.hasOwnProperty.call(updateObj, key)) {
-                            // Only take the update if it came from UPDATE and therefore wasn't a delete.
-                            if (null != newInnerData) // Do not include deletes as nulls.
-                                dataObjNew[key] = newInnerData;
-                        }
+                        dataObjNew[key] = newInnerData;
                     }
                 }
                 if (!dataUpdated) {
@@ -300,17 +296,17 @@ export class StateManager {
                     return { data, redo, undo };
                 }
                 // Yes changes.
-                if (0 >= Object.keys(dataObjNew).length) {
-                    // If dataObjNew is empty then take the update itself.
-                    return { data: update, redo, undo };
+                const newData = Object.assign(Object.create(null), dataObj);
+                for (const [ k, v ] of Object.entries(dataObjNew)) { // Assign, except null deletes keys.
+                    if (null == v) delete newData[k];
+                    else newData[k] = v;
                 }
-                else {
-                    // Otherwise create the object.
-                    return {
-                        data: Object.assign(Object.create(null), dataObj, dataObjNew),
-                        redo, undo,
-                    };
-                }
+                // If obj is empty, return null.
+                if (0 === Object.keys(newData).length)
+                    return { data: null, redo, undo };
+
+                // Otherwise create the object.
+                return { data: newData, redo, undo };
             }
             // Not at an update point, just traversing the SEGS.
             const [ key, ...segsRest ] = segs;
