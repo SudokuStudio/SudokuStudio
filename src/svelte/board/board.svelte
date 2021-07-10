@@ -82,6 +82,9 @@
         text::selection {
             background: none;
         }
+        svg * {
+            pointer-events: none;
+        }
     </style>
     <defs>
         {#each list as { id, ref, component } (id)}
