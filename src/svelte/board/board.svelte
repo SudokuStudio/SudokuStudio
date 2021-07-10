@@ -91,6 +91,8 @@
     {#each list as { id } (id)}
         <use href="#{id}" />
     {/each}
+    <!-- Rect to capture hits. -->
+    <rect x={$viewBox.x} y={$viewBox.y} width={$viewBox.width} height={$viewBox.height} fill="none" stroke="none" />
 </svg>
 
 <style lang="scss">
