@@ -1,30 +1,62 @@
+import type { Idx, Coord, IdxBitset, Geometry } from "./units";
+
+// Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
+export function any(x: any): any {
+    return x;
+}
+
 export const GRID_THICKNESS = 0.01;
 export const GRID_THICKNESS_HALF = 0.5 * GRID_THICKNESS;
 
 export const BOX_THICKNESS = 4 * GRID_THICKNESS;
 export const BOX_THICKNESS_HALF = 0.5 * BOX_THICKNESS;
 
-// Annoying that Svelte doesn't support TS inside the element templates.
-export function any(x: any): any {
-    return x;
-}
+export type Grid = {
+    width: number,
+    height: number,
+};
 
-export function idx2xy(idx: number, { width }: { width: number }): { x: number, y: number } {
+export function cellIdx2cellCoord(idx: Idx<Geometry.CELL>, { width }: Grid): Coord<Geometry.CELL> {
     const x = idx % width;
     const y = Math.floor(idx / width);
-    return { x, y };
+    return [ x, y ];
 }
-export function xy2idx({ x, y }: { x: number, y: number }, { width }: { width: number }): number {
+export function cellCoord2CellIdx([ x, y ]: Coord<Geometry.CELL>, { width }: Grid): Idx<Geometry.CELL> {
     return y * width + x;
 }
 
-export function makePath(idxArr: Record<string, number>, grid: { width: number }): string {
+// Same as cell fns but with width increased by 1 b/c of the one extra fencepost.
+export function cornerCoord2cornerIdx([ x, y ]: Coord<Geometry.CORNER>, { width }: Grid): Idx<Geometry.CORNER> {
+    return y * (width + 1) + x;
+}
+export function cornerIdx2cornerCoord(vertId: Idx<Geometry.CORNER>, { width }: Grid): Coord<Geometry.CORNER> {
+    const x = vertId % (width + 1);
+    const y = Math.floor(vertId / (width + 1));
+    return [ x, y ];
+}
+
+
+// Bitset functions.
+export function getFirstFromBitset<TAG extends Geometry>(idxBitset: IdxBitset<TAG>, grid: Grid): null | Idx<TAG> {
+    const len = grid.width * grid.height;
+    for (let idx: Idx<TAG> = 0; idx < len; idx++) {
+        if (idxBitset[idx]) return idx;
+    }
+    return null;
+}
+export function bitsetToList<TAG extends Geometry>(bitset: null | undefined | IdxBitset<TAG>): Idx<TAG>[] {
+    if (null == bitset) return [];
+    return Object.keys(bitset).filter(k => !!bitset[k]).map(Number);
+}
+
+
+export function makePath(idxArr: Record<string, Idx<Geometry.CELL>>, grid: Grid): string {
     const points: string[] = [];
 
     let i = 0;
     let idx;
     while (null != (idx = idxArr[i])) {
-        const { x, y } = idx2xy(idx, grid);
+        const [ x, y ] = cellIdx2cellCoord(idx, grid);
         points.push(`${x + 0.5},${y + 0.5}`);
         i++;
     }
@@ -32,46 +64,26 @@ export function makePath(idxArr: Record<string, number>, grid: { width: number }
     return `M ${points.join(' L ')}`;
 }
 
-export function xy2vertId(x: number, y: number, { width }: { width: number }): number {
-    return y * (width + 1) + x;
-}
-export function vertId2xy(vertId: number, { width }: { width: number }): { x: number, y: number } {
-    const x = vertId % (width + 1);
-    const y = Math.floor(vertId / (width + 1));
-    return { x, y };
-}
 
-export function getFirstCell(idxBitset: Record<string, boolean>, grid: { width: number, height: number }): null | { x: number, y: number } {
-    const len = grid.width * grid.height;
-    for (let idx = 0; idx < len; idx++) {
-        if (idxBitset[idx])
-            return idx2xy(idx, grid);
-    }
-    return null;
-}
-
-export function bitsetToList(bitset: null | undefined | Record<string, boolean>): number[] {
-    if (null == bitset) return [];
-    return Object.keys(bitset).filter(k => !!bitset[k]).map(Number);
-}
-
-export function svg2pixel({ offsetX, offsetY}: { offsetX: number, offsetY: number }, board: SVGSVGElement): { x: number, y: number } {
+export function click2svgCoord({ offsetX, offsetY }: { offsetX: number, offsetY: number }, board: SVGSVGElement): Coord<Geometry.SVG> {
     const { width: elWidth, height: elHeight } = board.getBoundingClientRect();
     const { x: originX, y: originY, width, height } = board.viewBox.baseVal;
     // if (offsetX < 0 || offsetY < 0) return null;
     const x = (width  * offsetX / elWidth  + originX);
     const y = (height * offsetY / elHeight + originY);
-    return { x, y };
+    return [ x, y ];
 }
 
 /**
  * @param cellIdxs Cell indexes (0 to 80 for 9x9).
- * @param grid
+ * @param grid Grid width and height.
  * @param inset (Optional) Amount to inset the outline.
- * @returns Path "d" string.
+ * @returns SVG <path d="..." /> string.
  */
-export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0): string | null {
-    const adjList = new Map<number, Set<number>>();
+export function getEdges(cellIdxs: Idx<Geometry.CELL>[], grid: Grid, inset = 0): string | null {
+
+    // Adjacency table representing the directed graph created by the clockwise outline(s) of the selected cells.
+    const adjList = new Map<Idx<Geometry.CORNER>, Set<Idx<Geometry.CORNER>>>();
 
     {
         // A --> B
@@ -83,7 +95,7 @@ export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0)
         // If the inverse edge B->A already exists, delete that.
         // Otherwise create the edge A->B.
 
-        function add(A: number, B: number): void {
+        function add(A: Idx<Geometry.CORNER>, B: Idx<Geometry.CORNER>): void {
             const adjBack = adjList.get(B);
             if (adjBack?.has(A)) {
                 adjBack.delete(A);
@@ -99,11 +111,11 @@ export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0)
             }
         }
         for (const idx of cellIdxs) {
-            const { x, y } = idx2xy(idx, grid);
-            const A = xy2vertId(    x,     y, grid);
-            const B = xy2vertId(1 + x,     y, grid);
-            const C = xy2vertId(1 + x, 1 + y, grid);
-            const D = xy2vertId(    x, 1 + y, grid);
+            const [ x, y ] = cellIdx2cellCoord(idx, grid);
+            const A = cornerCoord2cornerIdx([     x,     y ], grid);
+            const B = cornerCoord2cornerIdx([ 1 + x,     y ], grid);
+            const C = cornerCoord2cornerIdx([ 1 + x, 1 + y ], grid);
+            const D = cornerCoord2cornerIdx([     x, 1 + y ], grid);
             add(A, B);
             add(B, C);
             add(C, D);
@@ -124,8 +136,8 @@ export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0)
         const secondVertId = Array.from(firstAdj)[0];
 
         // Iterate in triples (a, b, c).
-        let a = vertId2xy(firstVertId, grid);
-        let b = vertId2xy(secondVertId, grid);
+        let a = cornerIdx2cornerCoord(firstVertId, grid);
+        let b = cornerIdx2cornerCoord(secondVertId, grid);
         let vertId = secondVertId;
 
         const points: string[] = [];
@@ -138,8 +150,8 @@ export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0)
             let nextVertId = -1;
             let c = null;
             for (const aVertId of adj) {
-                const aC = vertId2xy(aVertId, grid);
-                const aCrossProd = (b.x - a.x) * (aC.y - b.y) - (b.y - a.y) * (aC.x - b.x);
+                const aC = cornerIdx2cornerCoord(aVertId, grid);
+                const aCrossProd = (b[0] - a[0]) * (aC[1] - b[1]) - (b[1] - a[1]) * (aC[0] - b[0]);
                 if (crossProd < aCrossProd) {
                     crossProd = aCrossProd;
                     nextVertId = aVertId;
@@ -152,9 +164,9 @@ export function getEdges(cellIdxs: number[], grid: { width: number }, inset = 0)
 
             // Calculate insets, push to list.
             if (0 !== crossProd) {
-                let { x, y } = b;
-                y += inset * (b.x - a.x) + crossProd * inset * (a.y - b.y);
-                x += inset * (b.y - c.y) + crossProd * inset * (c.x - b.x);
+                let [ x, y ] = b;
+                y += inset * (b[0] - a[0]) + crossProd * inset * (a[1] - b[1]);
+                x += inset * (b[1] - c[1]) + crossProd * inset * (c[0] - b[0]);
                 points.push(`${x},${y}`);
             }
 

@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { bitsetToList, getEdges, getFirstCell } from "../../../js/boardUtils";
+    import { bitsetToList, getEdges, getFirstFromBitset, cellIdx2cellCoord } from "../../../js/boardUtils";
+    import type { Geometry } from "../../../js/units";
     import type { StateRef } from "../../../js/state_manager";
 
     export let id: string;
@@ -13,12 +14,13 @@
     function each(value: schema.KillerElement['value']): { cageId: string, sum: number, labelPos: { x: number, y: number }, d: string }[] {
         const out: { cageId: string, sum: number, labelPos: { x: number, y: number }, d: string }[] = [];
         for (const [ cageId, { sum, cells } ] of Object.entries(value)) {
-            const first = getFirstCell(cells, grid);
+            const firstIdx = getFirstFromBitset<Geometry.CELL>(cells, grid);
             const d = getEdges(bitsetToList(cells), grid, inset);
-            if (null != d && null != first) {
+            if (null != d && null != firstIdx) {
+                const firstCoord = cellIdx2cellCoord(firstIdx, grid);
                 const labelPos = {
-                    x: first.x + inset - stroke,
-                    y: first.y + inset - stroke,
+                    x: firstCoord[0] + inset - stroke,
+                    y: firstCoord[1] + inset - stroke,
                 };
                 out.push({ cageId, sum, labelPos, d });
             }

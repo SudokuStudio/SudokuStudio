@@ -1,4 +1,4 @@
-import { svg2pixel, xy2idx } from "./boardUtils";
+import { click2svgCoord, cellCoord2CellIdx } from "./boardUtils";
 import { StateManager } from "./state_manager";
 
 export const userState = (window as any).userState = new StateManager();
@@ -10,8 +10,8 @@ userState.update({
 
 
 function select(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: { width: number, height: number }, reset: boolean) {
-    const { x, y } = svg2pixel(event, event.currentTarget);
-    const idx = xy2idx({ x: Math.floor(x), y: Math.floor(y) }, grid);
+    const [ x, y ] = click2svgCoord(event, event.currentTarget);
+    const idx = cellCoord2CellIdx([ Math.floor(x), Math.floor(y) ], grid);
     if (reset) userState.ref('select').replace(null);
     userState.ref('select', `${idx}`).replace(true);
 }

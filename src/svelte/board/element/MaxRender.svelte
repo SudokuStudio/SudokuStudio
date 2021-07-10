@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { idx2xy } from "../../../js/boardUtils";
+    import { cellIdx2cellCoord } from "../../../js/boardUtils";
     import type { StateRef } from "../../../js/state_manager";
 
     export let id: string;
@@ -18,19 +18,19 @@
     <rect x="0.25" y="0.25" width={grid.width - 0.5} height={grid.height - 0.5} fill="#fff" />
     {#each Object.entries($ref) as [ idx, _true ] (idx)}
         <!-- Mask for each cell. -->
-        <use href="#max-{id}-maskitem" transform="translate({idx2xy(+idx, grid).x},{idx2xy(+idx, grid).y})" fill="#000" />
+        <use href="#max-{id}-maskitem" transform="translate({cellIdx2cellCoord(+idx, grid)[0]},{cellIdx2cellCoord(+idx, grid)[1]})" fill="#000" />
     {/each}
 </mask>
 <rect width={grid.width} height={grid.height} fill="#fff" />
 <g {id}>
     {#each Object.entries($ref) as [ idx, _true ] (idx)}
         <!-- Background color. -->
-        <rect x={idx2xy(+idx, grid).x} y={idx2xy(+idx, grid).y} width="1" height="1" fill="#f2ebeb" />
+        <rect x={cellIdx2cellCoord(+idx, grid)[0]} y={cellIdx2cellCoord(+idx, grid)[1]} width="1" height="1" fill="#f2ebeb" />
     {/each}
     <g mask="url(#max-{id}-mask)">
         {#each Object.entries($ref) as [ idx, _true ] (idx)}
             <!-- Each <> cell -->
-            <use href="#max-{id}" transform="translate({idx2xy(+idx, grid).x},{idx2xy(+idx, grid).y})" />
+            <use href="#max-{id}" transform="translate({cellIdx2cellCoord(+idx, grid)[0]},{cellIdx2cellCoord(+idx, grid)[1]})" />
         {/each}
     </g>
 </g>
