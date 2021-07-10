@@ -66,11 +66,11 @@
 
 <svelte:window on:mouseup={e => mouseHandlers.up(e, $grid)} />
 <svg id="sudoku" viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}" xmlns="http://www.w3.org/2000/svg"
-    on:mousedown={e => mouseHandlers.down(e, $grid)}
-    on:mousemove={e => mouseHandlers.move(e, $grid)}
+    on:mousedown|capture={e => mouseHandlers.down(e, $grid)}
+    on:mousemove|capture={e => mouseHandlers.move(e, $grid)}
 
-    on:click={e => mouseHandlers.click(e, $grid)}
-    on:contextmenu={e => mouseHandlers.click(e, $grid)}
+    on:click|capture={e => mouseHandlers.click(e, $grid)}
+    on:contextmenu|capture={e => mouseHandlers.click(e, $grid)}
 >
     <style>
         text {

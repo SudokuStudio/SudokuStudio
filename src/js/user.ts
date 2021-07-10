@@ -24,6 +24,7 @@ export const mouseHandlers = (() => {
     return {
         down(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: Grid) {
             event.preventDefault();
+            event.stopPropagation();
 
             const xy = svgCoord2cellCoord(click2svgCoord(event, event.currentTarget), grid, false);
             if (null != xy) {
@@ -60,6 +61,7 @@ export const mouseHandlers = (() => {
         },
         move(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: Grid) {
             event.preventDefault();
+            event.stopPropagation();
 
             if (State.NONE !== state) {
                 startClickCell = null; // Not a click if the mouse moves.
@@ -78,6 +80,7 @@ export const mouseHandlers = (() => {
         // For special single-selected-cell deselect click.
         click(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: Grid) {
             event.preventDefault();
+            event.stopPropagation();
 
             if (null != startClickCell && !event.shiftKey && !event.ctrlKey && !event.altKey) {
                 const xy = svgCoord2cellCoord(click2svgCoord(event, event.currentTarget), grid, false);
