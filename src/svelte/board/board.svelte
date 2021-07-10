@@ -58,6 +58,9 @@
 <svg id="sudoku" viewBox="{-GRID_THICKNESS_HALF} {-GRID_THICKNESS_HALF} {$grid.width + GRID_THICKNESS} {$grid.height + GRID_THICKNESS}" xmlns="http://www.w3.org/2000/svg"
     on:mousedown={e => mouseHandlers.down(e, $grid)}
     on:mousemove={e => mouseHandlers.move(e, $grid)}
+
+    on:click={e => mouseHandlers.click(e, $grid)}
+    on:contextmenu={e => mouseHandlers.click(e, $grid)}
 >
     <style>
         text {
