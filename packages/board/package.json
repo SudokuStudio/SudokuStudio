@@ -7,7 +7,7 @@
     "build": "rollup -c",
     "test": "jest"
   },
-  "module": "lib/index.mjs",
+  "main": "lib/board.js",
   "svelte": "src/main.ts",
   "types": "./types.d.ts",
   "devDependencies": {

@@ -17,15 +17,16 @@
   ],
   "scripts": {
     "clean": "npm run --workspaces clean",
-    "build": "npm run -w packages/state-manager build && npm run -w packages/board-utils build && npm run -w packages/board build && npm run -w packages/web build",
-    "dev":   "npm run -w packages/state-manager build && npm run -w packages/board-utils build && npm run -w packages/board build && npm run -w packages/web dev",
-    "test":  "npm run build && npm run --workspaces test"
+    "build": "npm run -w packages/state-manager build && npm run -w packages/board-utils build && npm run -w packages/web build",
+    "dev": "npm run -w packages/state-manager build && npm run -w packages/board-utils build && npm run -w packages/web dev",
+    "test": "npm run build && npm run --workspaces test"
   },
   "workspaces": [
     "packages/state-manager",
     "packages/schema",
     "packages/board-utils",
     "packages/board",
+    "packages/board-svg",
     "packages/web"
   ]
 }

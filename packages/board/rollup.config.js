@@ -40,19 +40,12 @@ function serve() {
 
 export default {
     input: 'src/main.ts',
-    output: [
-        {
-            file: pkg.module,
-            'format': 'es',
-            sourcemap: true,
-        },
-        {
-            format: 'cjs',
-            name: 'sudoku_studio_board',
-            file: 'public/build/board.js',
-            sourcemap: true,
-        }
-    ],
+    output: {
+        format: 'cjs',
+        name: 'sudoku_studio_board',
+        file: 'lib/board.js',
+        sourcemap: true,
+    },
     plugins: [
         svelte({
             preprocess: sveltePreprocess({

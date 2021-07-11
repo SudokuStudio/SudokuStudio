@@ -1,0 +1,10 @@
+{
+  "name": "@sudoku-studio/board-svg",
+  "version": "0.0.0",
+  "main": "index",
+  "scripts": {
+    "clean": "",
+    "build": "",
+    "test": ""
+  }
+}
