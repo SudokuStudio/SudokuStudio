@@ -1,4 +1,4 @@
-import type { Grid, Idx, Coord, IdxBitset, Geometry } from "./units";
+import type { Grid, Idx, Coord, IdxBitset, Geometry } from "@sudoku-studio/schema";
 
 // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
 export function any(x: any): any {

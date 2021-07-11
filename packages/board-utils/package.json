@@ -1,8 +1,8 @@
 {
-  "name": "@sudoku-studio/state-manager",
+  "name": "@sudoku-studio/board-utils",
   "version": "0.0.0",
-  "main": "./lib/state-manager.js",
-  "types": "./lib/state-manager.d.ts",
+  "main": "./lib/board-utils.js",
+  "types": "./lib/board-utils.d.ts",
   "scripts": {
     "clean": "rm -r lib",
     "build": "tsc",

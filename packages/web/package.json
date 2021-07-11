@@ -1,5 +1,5 @@
 {
-  "name": "sudoku-studio-web",
+  "name": "@sudoku-studio/web",
   "private": true,
   "description": "This set of documents is a basic web UI for a sudoku solving/setting tool.",
   "scripts": {

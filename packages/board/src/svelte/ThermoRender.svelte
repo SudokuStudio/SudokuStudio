@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { makePath, any } from "../js/utils";
-    import type { StateRef } from "sudoku-studio-state-manager";
+    import { makePath, any } from "@sudoku-studio/board-utils";
+    import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
     export let ref: StateRef;

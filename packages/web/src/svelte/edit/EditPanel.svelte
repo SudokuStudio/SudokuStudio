@@ -1,7 +1,7 @@
 <script lang="ts">
     import EditSection from "./EditSection.svelte";
 
-    import type { StateRef } from "sudoku-studio-state-manager";
+    import type { StateRef } from "@sudoku-studio/state-manager";
     import { boardState, ConstraintMenuType, CONSTRAINT_MENU_TYPES, CONSTRAINT_COMPONENTS } from "../../js/board";
     import type { ConstraintComponent } from "../../js/board";
 

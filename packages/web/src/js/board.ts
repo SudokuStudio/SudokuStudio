@@ -1,4 +1,4 @@
-import { StateManager } from 'sudoku-studio-state-manager';
+import { StateManager } from '@sudoku-studio/state-manager';
 
 import Diagonal from '../svelte/edit/constraint/Diagonal.svelte';
 import Knight from '../svelte/edit/constraint/Knight.svelte';
@@ -11,17 +11,6 @@ import Arrow from '../svelte/edit/constraint/Arrow.svelte';
 import Sandwich from '../svelte/edit/constraint/Sandwich.svelte';
 import Min from '../svelte/edit/constraint/Min.svelte';
 import Max from '../svelte/edit/constraint/Max.svelte';
-
-import GridRender from '../svelte/board/element/GridRender.svelte';
-import BoxRender from '../svelte/board/element/BoxRender.svelte';
-import GivenRender from '../svelte/board/element/GivenRender.svelte';
-import ThermoRender from '../svelte/board/element/ThermoRender.svelte';
-import ArrowRender from '../svelte/board/element/ArrowRender.svelte';
-import MinRender from '../svelte/board/element/MinRender.svelte';
-import MaxRender from '../svelte/board/element/MaxRender.svelte';
-import KillerRender from '../svelte/board/element/KillerRender.svelte';
-
-import SelectRender from '../svelte/board/element/SelectRender.svelte';
 
 export type ConstraintDataAndComponent = {
     id: string,
@@ -72,28 +61,6 @@ export const CONSTRAINT_COMPONENTS = {
     ['king']: King,
     ['disjointGroups']: DisjointGroups,
     ['consecutive']: Nonconsecutive,
-} as const;
-
-export type ConstraintRenderer = NonNullable<typeof CONSTRAINT_RENDERERS[keyof typeof CONSTRAINT_RENDERERS]>;
-export const CONSTRAINT_RENDERERS = {
-    ['grid']: GridRender,
-    ['box']: BoxRender,
-
-    ['given']: GivenRender,
-    ['thermo']: ThermoRender,
-    ['arrow']: ArrowRender,
-    ['sandwich']: null,
-    ['min']: MinRender,
-    ['max']: MaxRender,
-    ['killer']: KillerRender,
-
-    ['diagonal']: null,
-    ['knight']: null,
-    ['king']: null,
-    ['disjointGroups']: null,
-    ['consecutive']: null,
-
-    ['select']: SelectRender,
 } as const;
 
 

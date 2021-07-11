@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Board from "./svelte/board/Board.svelte";
+    import BoardContainer from "./svelte/board/BoardContainer.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
     import Header from "./svelte/Header.svelte";
@@ -19,7 +19,7 @@
                 <EditPanel />
             </div>
             <div class="center-panel">
-                <Board />
+                <BoardContainer />
             </div>
             <div class="right-panel">
                 <EntryPanel />

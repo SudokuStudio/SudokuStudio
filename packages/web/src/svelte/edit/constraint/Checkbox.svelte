@@ -2,7 +2,7 @@
     let counter = 0;
 </script>
 <script lang="ts">
-    import type { StateRef } from 'sudoku-studio-state-manager';
+    import type { StateRef } from '@sudoku-studio/state-manager';
 
     export let name: string;
     export let icon: string;

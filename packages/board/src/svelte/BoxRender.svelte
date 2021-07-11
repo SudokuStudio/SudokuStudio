@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { BOX_THICKNESS, BOX_THICKNESS_HALF } from "../js/utils";
-    import type { StateRef } from "sudoku-studio-state-manager";
+    import { BOX_THICKNESS, BOX_THICKNESS_HALF } from "@sudoku-studio/board-utils";
+    import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
     export let ref: StateRef;

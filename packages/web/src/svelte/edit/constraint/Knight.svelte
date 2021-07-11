@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { StateRef } from "sudoku-studio-state-manager";
+    import type { StateRef } from "@sudoku-studio/state-manager";
     import ConstraintRow from "./ConstraintRow.svelte";
     import Checkbox from "./Checkbox.svelte";
 

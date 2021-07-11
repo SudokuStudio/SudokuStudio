@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type * as schema from "./js/schema";
-    import type { StateRef } from "sudoku-studio-state-manager";
+    import type { schema } from "@sudoku-studio/schema";
+    import type { StateRef } from "@sudoku-studio/state-manager";
     import type { ElementRenderer } from "./js/elements";
 
-    import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "./js/utils";
+    import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
     import { derived } from "svelte/store";
     import { ELEMENT_RENDERERS } from "./js/elements";
     import SelectRender from "./svelte/SelectRender.svelte";

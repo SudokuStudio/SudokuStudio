@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { cellIdx2cellCoord } from "../js/utils";
-    import type { StateRef } from "sudoku-studio-state-manager";
+    import { cellIdx2cellCoord } from "@sudoku-studio/board-utils";
+    import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
     export let ref: StateRef;

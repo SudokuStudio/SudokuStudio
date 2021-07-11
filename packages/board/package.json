@@ -1,5 +1,5 @@
 {
-  "name": "sudoku-studio-board",
+  "name": "@sudoku-studio/board",
   "private": true,
   "description": "Board Svelte component for Sudoku Studio",
   "scripts": {

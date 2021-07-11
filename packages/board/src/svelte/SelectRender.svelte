@@ -1,8 +1,8 @@
 <script lang="ts">
     import { derived } from "svelte/store";
 
-    import { getEdges, bitsetToList } from "../js/utils";
-    import type { StateRef } from "sudoku-studio-state-manager";
+    import { getEdges, bitsetToList } from "@sudoku-studio/board-utils";
+    import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
     export let ref: StateRef;

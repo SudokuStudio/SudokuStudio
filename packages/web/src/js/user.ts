@@ -1,6 +1,6 @@
-import type { Idx, Geometry, Grid } from "./units";
-import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord } from "./boardUtils";
-import { StateManager } from "sudoku-studio-state-manager";
+import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord } from "@sudoku-studio/board-utils";
+import type { Grid, Idx, Geometry } from "@sudoku-studio/schema";
+import { StateManager } from "@sudoku-studio/state-manager";
 
 export const userState = (window as any).userState = new StateManager();
 userState.update({

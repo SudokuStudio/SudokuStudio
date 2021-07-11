@@ -1,0 +1,19 @@
+{
+  "include": ["src/**/*"],
+
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "ES2017",
+    "lib": [
+      "DOM", "ES2017"
+    ],
+    "outDir": "lib",
+
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "declaration": true
+  }
+}
