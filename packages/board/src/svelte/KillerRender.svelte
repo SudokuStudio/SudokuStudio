@@ -1,8 +1,7 @@
 <script lang="ts">
     import { bitsetToList, getEdges, getFirstFromBitset, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
-    import type { Geometry } from "../js/units";
+    import type { Geometry, schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
-    import type * as schema from "../js/schema";
 
     export let id: string;
     export let ref: StateRef;

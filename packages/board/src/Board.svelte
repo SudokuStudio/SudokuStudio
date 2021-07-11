@@ -6,6 +6,7 @@
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
     import { derived } from "svelte/store";
     import { ELEMENT_RENDERERS } from "./js/elements";
+
     import SelectRender from "./svelte/SelectRender.svelte";
 
     export let userState: StateRef;

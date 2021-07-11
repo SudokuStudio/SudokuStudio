@@ -3,10 +3,11 @@
   "private": true,
   "description": "Board Svelte component for Sudoku Studio",
   "scripts": {
-    "clean": "rm -r lib",
+    "clean": "rm -r public/build",
     "build": "rollup -c",
     "test": "jest"
   },
+  "module": "lib/index.mjs",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-node-resolve": "^11.2.1",

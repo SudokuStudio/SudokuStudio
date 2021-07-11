@@ -9,6 +9,7 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 // import css from 'rollup-plugin-css-only';
 import scss from 'rollup-plugin-scss';
+import pkg from './package.json';
 
 
 const NODE_MODULES = path.resolve('../../node_modules');
@@ -39,12 +40,19 @@ function serve() {
 
 export default {
     input: 'src/main.ts',
-    output: {
-        sourcemap: true,
-        format: 'cjs',
-        name: 'sudoku_studio_board',
-        file: 'lib/board.js'
-    },
+    output: [
+        {
+            file: pkg.module,
+            'format': 'es',
+            sourcemap: true,
+        },
+        {
+            format: 'cjs',
+            name: 'sudoku_studio_board',
+            file: 'public/build/board.js',
+            sourcemap: true,
+        }
+    ],
     plugins: [
         svelte({
             preprocess: sveltePreprocess({
