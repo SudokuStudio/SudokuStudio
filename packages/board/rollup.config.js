@@ -9,9 +9,6 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 // import css from 'rollup-plugin-css-only';
 import scss from 'rollup-plugin-scss';
-import replace from '@rollup/plugin-replace';
-
-import inlineSvg from './inlineSvg';
 
 
 const NODE_MODULES = path.resolve('../../node_modules');
@@ -44,20 +41,11 @@ export default {
     input: 'src/main.ts',
     output: {
         sourcemap: true,
-        format: 'iife',
-        name: 'sudoku-studio-web',
-        file: 'public/build/bundle.js'
+        format: 'cjs',
+        name: 'sudoku-studio-board',
+        file: 'lib/board.js'
     },
     plugins: [
-        replace({
-            preventAssignment: true,
-            // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
-            values: {
-                process: JSON.stringify({
-                    env: process.env,
-                }),
-            },
-        }),
         svelte({
             preprocess: sveltePreprocess({
                 scss: {
@@ -71,9 +59,6 @@ export default {
             },
         }),
         scss({
-            functions: {
-                'inline-svg($filename)': inlineSvg
-            },
             includePaths: [ NODE_MODULES ],
         }),
         // // we'll extract any component CSS out into

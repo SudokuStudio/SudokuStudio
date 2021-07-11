@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Board from "./svelte/board/board.svelte";
+    import Board from "./svelte/board/Board.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
     import Header from "./svelte/Header.svelte";

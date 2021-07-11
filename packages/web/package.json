@@ -1,5 +1,5 @@
 {
-  "name": "sudoku-studio",
+  "name": "sudoku-studio-web",
   "private": true,
   "description": "This set of documents is a basic web UI for a sudoku solving/setting tool.",
   "scripts": {
@@ -18,7 +18,6 @@
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.0",
     "@types/jest": "^26.0.23",
-    "cross-env": "^7.0.3",
     "normalize.css": "^8.0.1",
     "rollup": "^2.3.4",
     "rollup-plugin-livereload": "^2.0.0",
