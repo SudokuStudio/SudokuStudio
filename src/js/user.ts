@@ -34,7 +34,7 @@ export const mouseHandlers = (() => {
                     userState.ref('select', `${idx}`).replace(true);
                     state = State.SELECTING;
                 }
-                else if (event.ctrlKey) {
+                else if (event.ctrlKey || event.metaKey) {
                     // Ctrl: deselect if clicked cell is selected, otherwise select.
                     const selected = userState.get('select', `${idx}`);
                     userState.ref('select', `${idx}`).replace(!selected || null);
@@ -82,7 +82,7 @@ export const mouseHandlers = (() => {
             event.preventDefault();
             event.stopPropagation();
 
-            if (null != startClickCell && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+            if (null != startClickCell && !event.shiftKey && !(event.ctrlKey || event.metaKey) && !event.altKey) {
                 const xy = svgCoord2cellCoord(click2svgCoord(event, event.currentTarget), grid, false);
                 if (null != xy) {
                     const idx = cellCoord2CellIdx(xy, grid);
