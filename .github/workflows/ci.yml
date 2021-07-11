@@ -24,20 +24,21 @@ jobs:
     - name: Deploy to gh-pages
       shell: bash
       run: |
-        git -C public init -q
-        git -C public remote add origin "$(git remote get-url origin)"
-        git -C public fetch origin gh-pages:gh-pages
-        git -C public config credential.helper "$(git config credential.helper)"
-        git -C public config 'http.https://github.com/.extraheader' "$(git config 'http.https://github.com/.extraheader')"
-        git -C public config core.autocrlf input
-        git -C public config core.safecrlf false
-        git -C public symbolic-ref HEAD refs/heads/gh-pages
-        git -C public reset
-        git -C public add -A
-        if git -C public -c 'user.name=github-actions[bot]' -c 'user.email=41898282+github-actions[bot]@users.noreply.github.com' \
+        BASE_DIR=packages/web/public
+        git -C "$BASE_DIR" init -q
+        git -C "$BASE_DIR" remote add origin "$(git remote get-url origin)"
+        git -C "$BASE_DIR" fetch origin gh-pages:gh-pages
+        git -C "$BASE_DIR" config credential.helper "$(git config credential.helper)"
+        git -C "$BASE_DIR" config 'http.https://github.com/.extraheader' "$(git config 'http.https://github.com/.extraheader')"
+        git -C "$BASE_DIR" config core.autocrlf input
+        git -C "$BASE_DIR" config core.safecrlf false
+        git -C "$BASE_DIR" symbolic-ref HEAD refs/heads/gh-pages
+        git -C "$BASE_DIR" reset
+        git -C "$BASE_DIR" add -A
+        if git -C "$BASE_DIR" -c 'user.name=github-actions[bot]' -c 'user.email=41898282+github-actions[bot]@users.noreply.github.com' \
           commit -m "Deploy $(date -I) $(git rev-parse HEAD)";
         then
-          git -C public push -u origin gh-pages --quiet
+          git -C "$BASE_DIR" push -u origin gh-pages --quiet
         else
           echo 'No changes to commit'
         fi
