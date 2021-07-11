@@ -1,16 +1,46 @@
+<script lang="ts" context="module">
+    import GridRender from './svelte/GridRender.svelte';
+    import BoxRender from './svelte/BoxRender.svelte';
+    import GivenRender from './svelte/GivenRender.svelte';
+    import ThermoRender from './svelte/ThermoRender.svelte';
+    import ArrowRender from './svelte/ArrowRender.svelte';
+    import MinRender from './svelte/MinRender.svelte';
+    import MaxRender from './svelte/MaxRender.svelte';
+    import KillerRender from './svelte/KillerRender.svelte';
+    import SelectRender from './svelte/SelectRender.svelte';
+
+    export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
+    export const ELEMENT_RENDERERS = {
+        ['grid']: GridRender,
+        ['box']: BoxRender,
+
+        ['given']: GivenRender,
+        ['thermo']: ThermoRender,
+        ['arrow']: ArrowRender,
+        ['sandwich']: null,
+        ['min']: MinRender,
+        ['max']: MaxRender,
+        ['killer']: KillerRender,
+
+        ['diagonal']: null,
+        ['knight']: null,
+        ['king']: null,
+        ['disjointGroups']: null,
+        ['consecutive']: null,
+
+        ['select']: SelectRender,
+    } as const;
+</script>
 <script lang="ts">
     import type { schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
-    import type { ElementRenderer } from "./js/elements";
 
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
     import { derived } from "svelte/store";
-    import { ELEMENT_RENDERERS } from "./js/elements";
-
-    import SelectRender from "./svelte/SelectRender.svelte";
 
     export let userState: StateRef;
     export let boardState: StateRef;
+    export let svg: SVGSVGElement = null!;
 
     const grid = boardState.ref('grid');
 
@@ -69,7 +99,7 @@
     }, true);
 </script>
 
-<svg id="sudoku" viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}" xmlns="http://www.w3.org/2000/svg">
+<svg bind:this={svg} viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}" xmlns="http://www.w3.org/2000/svg">
     <style>
         text {
             -webkit-user-select: none;

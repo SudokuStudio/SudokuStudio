@@ -4,17 +4,26 @@
     import { userState, mouseHandlers } from "../../js/user";
 
     const grid = boardState.ref('grid');
+
+    let svg: SVGSVGElement = null!;
 </script>
 
 <svelte:window on:mouseup={e => mouseHandlers.up(e, $grid)} />
-<div>
-    <Board {boardState} {userState} />
+<div class="overlay"
+    on:mousedown|capture={e => mouseHandlers.down(e, $grid, svg)}
+    on:mousemove|capture={e => mouseHandlers.move(e, $grid, svg)}
+
+    on:click|capture={e => mouseHandlers.click(e, $grid, svg)}
+    on:contextmenu|capture={e => mouseHandlers.click(e, $grid, svg)}>
 </div>
+<Board {boardState} {userState} bind:svg={svg} />
 
 <style lang="scss">
-    svg {
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-        touch-action: none;
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
 </style>

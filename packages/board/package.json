@@ -8,6 +8,8 @@
     "test": "jest"
   },
   "module": "lib/index.mjs",
+  "svelte": "src/main.ts",
+  "types": "./types.d.ts",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.1.0",
     "@rollup/plugin-node-resolve": "^11.2.1",

@@ -65,6 +65,8 @@
             /* maintain square aspect ratio */
             width: vars.$sudoku-size-big;
             height: vars.$sudoku-size-big;
+
+            position: relative;
         }
     }
 

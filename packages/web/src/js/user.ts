@@ -9,7 +9,6 @@ userState.update({
 });
 
 export const mouseHandlers = (() => {
-
     enum State {
         NONE, // State when nothing has happened.
         SELECTING, // State when user begins selecting.
@@ -22,11 +21,11 @@ export const mouseHandlers = (() => {
 
     // Event order for a click is `mousedown` -> `mouseup` -> `click`.
     return {
-        down(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: Grid) {
+        down(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
             event.preventDefault();
             event.stopPropagation();
 
-            const xy = svgCoord2cellCoord(click2svgCoord(event, event.currentTarget), grid, false);
+            const xy = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
             if (null != xy) {
                 const idx = cellCoord2CellIdx(xy, grid);
                 if (event.shiftKey) {
@@ -59,13 +58,13 @@ export const mouseHandlers = (() => {
                 }
             }
         },
-        move(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: Grid) {
+        move(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
             event.preventDefault();
             event.stopPropagation();
 
             if (State.NONE !== state) {
                 startClickCell = null; // Not a click if the mouse moves.
-                const xy = svgCoord2cellCoord(click2svgCoord(event, event.currentTarget), grid, false);
+                const xy = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
                 if (null != xy) {
                     const idx = cellCoord2CellIdx(xy, grid);
                     userState.ref('select', `${idx}`).replace(State.SELECTING === state || null);
@@ -73,17 +72,17 @@ export const mouseHandlers = (() => {
             }
         },
         // Mouse up is on window to handle dragging mouse out of grid.
-        up(_event: MouseEvent & { currentTarget: EventTarget & Window }, _grid: Grid) {
+        up(_event: MouseEvent, _grid: Grid) {
             state = State.NONE;
         },
 
         // For special single-selected-cell deselect click.
-        click(event: MouseEvent & { currentTarget: EventTarget & SVGSVGElement }, grid: Grid) {
+        click(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
             event.preventDefault();
             event.stopPropagation();
 
             if (null != startClickCell && !event.shiftKey && !(event.ctrlKey || event.metaKey) && !event.altKey) {
-                const xy = svgCoord2cellCoord(click2svgCoord(event, event.currentTarget), grid, false);
+                const xy = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
                 if (null != xy) {
                     const idx = cellCoord2CellIdx(xy, grid);
                     if (idx === startClickCell) {
