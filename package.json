@@ -21,6 +21,7 @@
   },
   "workspaces": [
     "packages/web",
-    "packages/board"
+    "packages/board",
+    "packages/state-manager"
   ]
 }
