@@ -1,9 +1,10 @@
 <script lang="ts">
-    import EditSection from "./EditSection.svelte";
-
+    import type { schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
-    import { boardState, ConstraintMenuType, CONSTRAINT_MENU_TYPES, CONSTRAINT_COMPONENTS } from "../../js/board";
     import type { ConstraintComponent } from "../../js/board";
+
+    import EditSection from "./EditSection.svelte";
+    import { boardState, ConstraintMenuType, CONSTRAINT_MENU_TYPES, CONSTRAINT_COMPONENTS } from "../../js/board";
 
     type ConstraintList = { id: string, ref: StateRef, component: ConstraintComponent }[];
     const constraintsGlobal: ConstraintList = [];
@@ -36,7 +37,7 @@
         else {
             const component = CONSTRAINT_COMPONENTS[newVal.type];
             if (null == component) {
-                console.error(`Cannot show edit menu for unknown constraint type: ${newVal.type}.`);
+                console.warn(`Cannot show edit menu for unknown constraint type: ${newVal.type}.`);
                 return;
             }
 

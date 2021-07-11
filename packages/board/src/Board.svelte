@@ -75,7 +75,7 @@
         else {
             const element = ELEMENT_RENDERERS[newVal.type];
             if (null == element) {
-                console.error(`Cannot render unknown constraint type: ${newVal.type}.`);
+                console.warn(`Cannot render unknown constraint type: ${newVal.type}.`);
                 return;
             }
 
