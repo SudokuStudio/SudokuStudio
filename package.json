@@ -1,11 +1,26 @@
 {
   "name": "sudoku-studio-workspaces",
   "private": true,
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/SudokuStudio/Sudoku#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SudokuStudio/Sudoku.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SudokuStudio/Sudoku/issues"
+  },
+  "contributors": [
+    "David Clamage <dclamage@users.noreply.github.com>",
+    "echoes <DancingGrumpyCat@users.noreply.github.com>",
+    "Mingwei Samuel <mingwei.samuel@gmail.com>"
+  ],
   "scripts": {
     "build": "npm run build -w packages/web",
     "dev": "npm run dev -w packages/web"
   },
   "workspaces": [
-    "packages/web"
+    "packages/web",
+    "packages\\board"
   ]
 }

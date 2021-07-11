@@ -1,0 +1,5 @@
+{
+  "name": "board",
+  "private": true,
+  "description": "Board Svelte component for Sudoku Studio"
+}

@@ -1,21 +1,7 @@
 {
   "name": "sudoku-studio",
-  "version": "0.0.0",
+  "private": true,
   "description": "This set of documents is a basic web UI for a sudoku solving/setting tool.",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/SudokuStudio/Sudoku/issues"
-  },
-  "contributors": [
-    "David Clamage <dclamage@users.noreply.github.com>",
-    "echoes <DancingGrumpyCat@users.noreply.github.com>",
-    "Mingwei Samuel <mingwei.samuel@gmail.com>"
-  ],
-  "homepage": "https://github.com/SudokuStudio/Sudoku#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SudokuStudio/Sudoku.git"
-  },
   "scripts": {
     "clean": "rm -r public/build",
     "build": "rollup -c",
