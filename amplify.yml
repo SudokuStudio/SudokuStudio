@@ -1,0 +1,16 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - SUDOKU_STUDIO_VERSION="${AWS_COMMIT_ID:0:7}" npm run build
+  artifacts:
+    baseDirectory: /packages/web/public/
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
