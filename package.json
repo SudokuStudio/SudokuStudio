@@ -1,5 +1,10 @@
 {
-  "name": "my-workspaces-powered-project",
+  "name": "sudoku-studio-workspaces",
+  "private": true,
+  "scripts": {
+    "build": "npm run build -w packages/web",
+    "dev": "npm run dev -w packages/web"
+  },
   "workspaces": [
     "packages/web"
   ]

@@ -1,15 +1,14 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
 
-  "include": ["src/**/*", "test/js/state_manager.test.ts", "test/state_manager.test.ts"],
-  "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
+  "include": ["src/**/*", "test/**/*"],
 
   "compilerOptions": {
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "sourceMap": true,
+    "sourceMap": true
   },
   "typeRoots": ["src/global.d.ts"]
 }

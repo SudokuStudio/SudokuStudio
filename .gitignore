@@ -2,7 +2,7 @@
 .DS_Store?
 .vscode/
 
-node_modules/
-.parcel-cache/
+node_modules
 
-public/build/
+public/
+packages/web/public/build/

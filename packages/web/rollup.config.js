@@ -1,3 +1,5 @@
+import path from 'path';
+
 import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
@@ -11,6 +13,8 @@ import replace from '@rollup/plugin-replace';
 
 import inlineSvg from './inlineSvg';
 
+
+const NODE_MODULES = path.resolve('../../node_modules');
 const production = !process.env.ROLLUP_WATCH;
 
 function serve() {
@@ -55,7 +59,12 @@ export default {
             },
         }),
         svelte({
-            preprocess: sveltePreprocess({ sourceMap: !production }),
+            preprocess: sveltePreprocess({
+                scss: {
+                    includePaths: [ NODE_MODULES ],
+                },
+                sourceMap: true //!production
+            }),
             compilerOptions: {
                 // enable run-time checks when not in production
                 dev: !production,
@@ -65,6 +74,7 @@ export default {
             functions: {
                 'inline-svg($filename)': inlineSvg
             },
+            includePaths: [ NODE_MODULES ],
         }),
         // // we'll extract any component CSS out into
         // // a separate file - better for performance
