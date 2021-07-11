@@ -90,6 +90,7 @@ boardState.update({
                 positive: true,
                 negative: false,
             },
+            order: 9.5,
         },
         '10090': {
             type: 'knight',

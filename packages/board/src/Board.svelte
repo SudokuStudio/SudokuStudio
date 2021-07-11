@@ -7,6 +7,7 @@
     import MinRender from './svelte/MinRender.svelte';
     import MaxRender from './svelte/MaxRender.svelte';
     import KillerRender from './svelte/KillerRender.svelte';
+    import DiagonalRender from './svelte/DiagonalRender.svelte';
     import SelectRender from './svelte/SelectRender.svelte';
 
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
@@ -22,7 +23,7 @@
         ['max']: MaxRender,
         ['killer']: KillerRender,
 
-        ['diagonal']: null,
+        ['diagonal']: DiagonalRender,
         ['knight']: null,
         ['king']: null,
         ['disjointGroups']: null,
@@ -101,6 +102,10 @@
 
 <svg bind:this={svg} viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}" xmlns="http://www.w3.org/2000/svg">
     <style>
+        svg {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
         text {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -113,6 +118,9 @@
         svg * {
             pointer-events: none;
         }
+        .hide {
+            display: none;
+        }
     </style>
     <defs>
         {#each list as { id, ref, element } (id)}
@@ -123,10 +131,3 @@
         <use href="#{id}" />
     {/each}
 </svg>
-
-<style lang="scss">
-    svg {
-        -webkit-tap-highlight-color: transparent;
-        touch-action: none;
-    }
-</style>
