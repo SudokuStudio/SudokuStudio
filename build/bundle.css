@@ -1,4 +1,4 @@
-header.svelte-1o5emik.svelte-1o5emik {
+header.svelte-uq8vao.svelte-uq8vao {
   font-size: 0.8rem;
   flex: 0 0 auto;
   flex-direction: column;
@@ -7,43 +7,44 @@ header.svelte-1o5emik.svelte-1o5emik {
   height: 2.5rem;
 }
 
-main.svelte-1o5emik.svelte-1o5emik {
+main.svelte-uq8vao.svelte-uq8vao {
   flex: 1 1 auto;
   display: flex;
 }
 
-main.svelte-1o5emik > .content.svelte-1o5emik {
+main.svelte-uq8vao > .content.svelte-uq8vao {
   flex: 1;
 }
 
-main.svelte-1o5emik .left-panel.svelte-1o5emik, main.svelte-1o5emik .right-panel.svelte-1o5emik {
+main.svelte-uq8vao .left-panel.svelte-uq8vao, main.svelte-uq8vao .right-panel.svelte-uq8vao {
   flex: 1 1 100%;
   overflow: visible auto;
   height: calc(100vh - 4rem);
 }
 
-main.svelte-1o5emik .center-panel.svelte-1o5emik {
+main.svelte-uq8vao .center-panel.svelte-uq8vao {
   flex: 0 0 auto;
   width: min(calc(70vw - 20em), calc(100vh - 4rem));
   height: min(calc(70vw - 20em), calc(100vh - 4rem));
+  position: relative;
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  main.svelte-1o5emik .content-row.svelte-1o5emik {
+  main.svelte-uq8vao .content-row.svelte-uq8vao {
     flex-direction: column;
   }
 
-  main.svelte-1o5emik .center-panel.svelte-1o5emik {
+  main.svelte-uq8vao .center-panel.svelte-uq8vao {
     width: min(calc(100vw - 6rem), 50vh);
     height: min(calc(100vw - 6rem), 50vh);
     align-self: center;
   }
 
-  main.svelte-1o5emik .left-panel.svelte-1o5emik {
+  main.svelte-uq8vao .left-panel.svelte-uq8vao {
     display: none;
   }
 }
-footer.svelte-1o5emik.svelte-1o5emik {
+footer.svelte-uq8vao.svelte-uq8vao {
   flex: 0 0 auto;
   height: 1.5rem;
   line-height: 1.5rem;
@@ -872,10 +873,12 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-svg.svelte-h68ot3 {
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: none;
+.overlay.svelte-1rcmmkf {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .info-input.svelte-fcgi7u.svelte-fcgi7u {
@@ -1178,6 +1181,12 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
 
 .container.svelte-hmnhaq .right-container .right .ctrl-pad.svelte-hmnhaq > .svelte-hmnhaq {
   width: 24.444%;
+}
+
+svg.svelte-h68ot3 {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
 }
 
 .constraint-checkbox.svelte-1ns67sk {
