@@ -126,7 +126,6 @@
 
 <style lang="scss">
     svg {
-        cursor: pointer;
         -webkit-tap-highlight-color: transparent;
         touch-action: none;
     }
