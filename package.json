@@ -21,6 +21,6 @@
   },
   "workspaces": [
     "packages/web",
-    "packages\\board"
+    "packages/board"
   ]
 }
