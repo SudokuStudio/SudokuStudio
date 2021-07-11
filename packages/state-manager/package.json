@@ -4,6 +4,7 @@
   "main": "./lib/state-manager.js",
   "types": "./lib/state-manager.d.ts",
   "scripts": {
+    "clean": "rm -r lib",
     "build": "tsc",
     "test": "jest"
   },

@@ -1,7 +1,7 @@
 <script lang="ts">
     import EditSection from "./EditSection.svelte";
 
-    import type { StateRef } from "../../js/state_manager";
+    import type { StateRef } from "sudoku-studio-state-manager";
     import { boardState, ConstraintMenuType, CONSTRAINT_MENU_TYPES, CONSTRAINT_COMPONENTS } from "../../js/board";
     import type { ConstraintComponent } from "../../js/board";
 
@@ -16,7 +16,7 @@
         return null;
     }
 
-    boardState.ref('elements/*').watch<schema.Constraint>(([ _elements, constraintId ], oldVal, newVal) => {
+    boardState.ref('elements/*').watch<schema.Element>(([ _elements, constraintId ], oldVal, newVal) => {
         const list = getList(oldVal?.type || newVal!.type);
         if (null == list) return;
 

@@ -45,7 +45,7 @@ export default {
     output: {
         sourcemap: true,
         format: 'iife',
-        name: 'sudoku-studio-web',
+        name: 'sudoku_studio_web',
         file: 'public/build/bundle.js'
     },
     plugins: [

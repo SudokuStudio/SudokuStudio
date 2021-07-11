@@ -1,4 +1,4 @@
-import { StateManager } from './state_manager';
+import { StateManager } from 'sudoku-studio-state-manager';
 
 import Diagonal from '../svelte/edit/constraint/Diagonal.svelte';
 import Knight from '../svelte/edit/constraint/Knight.svelte';

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { StateRef } from "../../js/state_manager";
+    import type { StateRef } from "sudoku-studio-state-manager";
     import { boardState, CONSTRAINT_RENDERERS } from "../../js/board";
     import type { ConstraintRenderer } from "../../js/board";
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "../../js/boardUtils";

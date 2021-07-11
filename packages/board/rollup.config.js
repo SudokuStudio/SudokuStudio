@@ -42,7 +42,7 @@ export default {
     output: {
         sourcemap: true,
         format: 'cjs',
-        name: 'sudoku-studio-board',
+        name: 'sudoku_studio_board',
         file: 'lib/board.js'
     },
     plugins: [

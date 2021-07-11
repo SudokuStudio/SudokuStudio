@@ -16,8 +16,10 @@
     "Mingwei Samuel <mingwei.samuel@gmail.com>"
   ],
   "scripts": {
-    "build": "npm run build -w packages/web",
-    "dev": "npm run dev -w packages/web"
+    "clean": "npm run --workspaces clean",
+    "build": "npm run -w packages/state-manager build && npm run -w packages/web build",
+    "test": "npm run build && npm run --workspaces test",
+    "dev": "npm run -w packages/state-manager build && npm run -w packages/web dev"
   },
   "workspaces": [
     "packages/web",

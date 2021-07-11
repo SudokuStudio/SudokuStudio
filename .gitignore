@@ -5,5 +5,4 @@
 node_modules
 lib
 
-public/
 packages/web/public/build/
