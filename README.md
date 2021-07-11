@@ -9,9 +9,14 @@ This is a basic web UI for a sudoku solving/setting tool.
 
 ## Development
 
-Ensure you have NodeJS and NPM.
+Ensure you have NodeJS and `npm@^7.0.0`.
 
-Clone the project, then to install the dependencies run:
+If your `npm --version` is below 7.0.0 you can update it. You may need to use `sudo`:
+```
+npm i -g npm@^7.0.0
+```
+
+Clone the project, `cd` inside, then to install the dependencies run:
 ```
 npm ci
 ```
