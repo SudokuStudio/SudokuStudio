@@ -16,22 +16,25 @@ const KEYCODES = {
 } as const;
 
 export const keydown = (event: KeyboardEvent) => {
-    console.log(event);
-    let num: null | number;
+    // Null means delete.
+    let num: null | undefined | number = undefined;
+
     if (event.code in KEYCODES) {
         num = KEYCODES[event.code as keyof typeof KEYCODES];
     }
     else {
         const match = DIGIT_REGEX.exec(event.code);
-        if (!match) return;
-        num = Number(match[1]);
+        if (match) num = Number(match[1]);
     }
+    if (undefined === num) return;
 
-    // TODO: Use a helper function.
+    // TODO: Use a helper function to handle buttons as well.
     const selection = bitsetToList(userState.get<IdxBitset<Geometry.CELL>>('select'));
+    const update: Record<string, number | null> = {};
     for (const cellIdx of selection) {
-        filledState.ref(`${cellIdx}`).replace(num);
+        update[`${cellIdx}`] = num;
     }
+    filledState.update(update);
 };
 
 export const mouseHandlers = (() => {
