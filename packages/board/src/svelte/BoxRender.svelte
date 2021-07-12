@@ -13,6 +13,6 @@
 <rect {id}
     x={-BOX_THICKNESS_HALF}
     y={-BOX_THICKNESS_HALF}
-    width={grid.width + BOX_THICKNESS_HALF}
-    height={grid.height + BOX_THICKNESS_HALF}
+    width={grid.width + BOX_THICKNESS}
+    height={grid.height + BOX_THICKNESS}
     fill="url(#box-{id})" stroke="none" />
