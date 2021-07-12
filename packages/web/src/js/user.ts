@@ -93,7 +93,7 @@ export const mouseHandlers = (() => {
 
             if (State.NONE !== state) {
                 startClickCell = null; // Not a click if the mouse moves.
-                const xy = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
+                const xy = svgCoord2cellCoord(click2svgCoord(event, svg), grid, true);
                 if (null != xy) {
                     const idx = cellCoord2CellIdx(xy, grid);
                     userState.ref('select', `${idx}`).replace(State.SELECTING === state || null);
