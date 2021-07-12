@@ -205,3 +205,31 @@ export function getEdges(cellIdxs: Idx<Geometry.CELL>[], grid: Grid, inset = 0):
     }
     return loops.join('');
 }
+
+/**
+ * Linear interpolation between to points, hitting all cells in-between.
+ * @param start
+ * @param end
+ * @returns
+ */
+export function cellLine(a: Coord<Geometry.SVG>, b: Coord<Geometry.SVG>): Coord<Geometry.CELL>[] {
+    const rx = Math.floor(b[0]) - Math.floor(a[0]);
+    const ry = Math.floor(b[1]) - Math.floor(a[1]);
+    const range = Math.max(Math.abs(rx), Math.abs(ry));
+
+    const out: Coord<Geometry.CELL>[] = [];
+    for (let i = 0; i < range; i++) {
+        const lerp = i / range;
+        const x = a[0] * lerp + b[0] * (1 - lerp);
+        const y = a[1] * lerp + b[1] * (1 - lerp);
+
+        out.push([ Math.floor(x), Math.floor(y) ]);
+    }
+    return out;
+}
+
+export function distSq(a: Coord<Geometry.SVG>, b: Coord<Geometry.SVG>): number {
+    const dx = b[0] - a[0];
+    const dy = b[1] - a[1];
+    return dx * dx + dy * dy;
+}
