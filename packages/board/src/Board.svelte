@@ -7,6 +7,7 @@
     import MinRender from './svelte/MinRender.svelte';
     import MaxRender from './svelte/MaxRender.svelte';
     import KillerRender from './svelte/KillerRender.svelte';
+    import QuadrupleRender from './svelte/QuadrupleRender.svelte';
     import DiagonalRender from './svelte/DiagonalRender.svelte';
     import SelectRender from './svelte/SelectRender.svelte';
 
@@ -22,6 +23,7 @@
         ['min']: MinRender,
         ['max']: MaxRender,
         ['killer']: KillerRender,
+        ['quadruple']: QuadrupleRender,
 
         ['diagonal']: DiagonalRender,
         ['knight']: null,

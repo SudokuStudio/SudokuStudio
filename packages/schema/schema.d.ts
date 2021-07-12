@@ -51,7 +51,7 @@ export declare namespace schema {
         height: number,
     }
 
-    export type Element = GridElement | BoxElement | BooleanElement | DigonalElement | KillerElement | KillerElement;
+    export type Element = GridElement | BoxElement | BooleanElement | DigonalElement | KillerElement | KillerElement | QuadrupleElement;
 
     export interface AbstractElement {
         type: Element['type'],
@@ -91,6 +91,18 @@ export declare namespace schema {
                 sum: number,
                 cells: Record<string, boolean>,
             },
+        },
+    }
+    export interface QuadrupleElement extends AbstractElement {
+        type: 'quadruple',
+        value: {
+            [K in Idx<Geometry.CORNER>]: {
+                length: 0 | 1 | 2 | 3 | 4,
+                0?: number,
+                1?: number,
+                2?: number,
+                3?: number,
+            }
         },
     }
 }

@@ -11,7 +11,7 @@
 | arrow | 90 | ✔
 | diagonal | 95 | ✔
 | grid lines | 100 | ✔
-| quadruple | 110 |
+| quadruple | 110 | ✔
 | killer | 120 | ✔
 | kropki/XV | 130 |
 | sandwich/little killer/skyscraper/x-sums | 140 |
