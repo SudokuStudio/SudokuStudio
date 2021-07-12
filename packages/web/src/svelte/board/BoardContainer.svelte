@@ -14,7 +14,9 @@
     on:mousemove|capture={e => mouseHandlers.move(e, $grid, svg)}
 
     on:click|capture={e => mouseHandlers.click(e, $grid, svg)}
-    on:contextmenu|capture={e => mouseHandlers.click(e, $grid, svg)}>
+    on:contextmenu|capture={e => mouseHandlers.click(e, $grid, svg)}
+
+    on:mouseleave|capture={e => mouseHandlers.leave(e, $grid, svg)}>
 </div>
 <Board {boardState} {userState} bind:svg={svg} />
 

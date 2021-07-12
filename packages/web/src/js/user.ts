@@ -106,8 +106,7 @@ export const mouseHandlers = (() => {
                 if (null != prevPos && 1 < distSq(prevPos, pos)) {
                     for (const coord of cellLine(prevPos, pos, grid)) {
                         const idx = cellCoord2CellIdx(coord, grid);
-                        if (null != idx)
-                            userState.ref('select', `${idx}`).replace(State.SELECTING === state || null);
+                        userState.ref('select', `${idx}`).replace(State.SELECTING === state || null);
                     }
                     prevPos = pos;
                 }
@@ -126,6 +125,21 @@ export const mouseHandlers = (() => {
         up(_event: MouseEvent, _grid: Grid) {
             state = State.NONE;
             prevPos = null;
+        },
+        leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (State.NONE !== state && null != prevPos) {
+                // Interpolate mouse jumps if needed.
+                // Pos will be off-grid.
+                const pos = click2svgCoord(event, svg);
+                for (const coord of cellLine(prevPos, pos, grid)) {
+                    const idx = cellCoord2CellIdx(coord, grid);
+                    userState.ref('select', `${idx}`).replace(State.SELECTING === state || null);
+                }
+                prevPos = null;
+            }
         },
 
         // For special single-selected-cell deselect click.
