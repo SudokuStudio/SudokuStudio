@@ -206,24 +206,29 @@ export function getEdges(cellIdxs: Idx<Geometry.CELL>[], grid: Grid, inset = 0):
     return loops.join('');
 }
 
+export function isOnGrid(coord: Coord<Geometry.SVG>, grid: Grid): boolean {
+    return 0 <= coord[0] && coord[0] < grid.width && 0 <= coord[1] && coord[1] < grid.height;
+}
+
 /**
  * Linear interpolation between to points, hitting all cells in-between.
  * @param start
  * @param end
  * @returns
  */
-export function cellLine(a: Coord<Geometry.SVG>, b: Coord<Geometry.SVG>): Coord<Geometry.CELL>[] {
+export function cellLine(a: Coord<Geometry.SVG>, b: Coord<Geometry.SVG>, grid: Grid): Coord<Geometry.CELL>[] {
     const rx = Math.floor(b[0]) - Math.floor(a[0]);
     const ry = Math.floor(b[1]) - Math.floor(a[1]);
     const range = Math.max(Math.abs(rx), Math.abs(ry));
 
     const out: Coord<Geometry.CELL>[] = [];
-    for (let i = 0; i < range; i++) {
+    for (let i = 1; i <= range; i++) {
         const lerp = i / range;
-        const x = a[0] * lerp + b[0] * (1 - lerp);
-        const y = a[1] * lerp + b[1] * (1 - lerp);
+        const x = (1 - lerp) * a[0] + lerp * b[0];
+        const y = (1 - lerp) * a[1] + lerp * b[1];
 
-        out.push([ Math.floor(x), Math.floor(y) ]);
+        if (0 <= x && x < grid.width && 0 <= y && y < grid.height)
+            out.push([ Math.floor(x), Math.floor(y) ]);
     }
     return out;
 }

@@ -1,5 +1,5 @@
-import type { Grid, Idx, Geometry, IdxBitset } from "@sudoku-studio/schema";
-import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, bitsetToList } from "@sudoku-studio/board-utils";
+import type { Grid, Idx, Coord, Geometry, IdxBitset } from "@sudoku-studio/schema";
+import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, bitsetToList, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
 import { StateManager } from "@sudoku-studio/state-manager";
 import { filledState } from "./board";
 
@@ -48,14 +48,19 @@ export const mouseHandlers = (() => {
     // A cell that, if the click finishes, will trigger the special single-selected-cell deselect.
     let startClickCell: Idx<Geometry.CELL> | null = null;
 
+    let prevPos: Coord<Geometry.SVG> | null = null;
+
     // Event order for a click is `mousedown` -> `mouseup` -> `click`.
     return {
         down(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
             event.preventDefault();
             event.stopPropagation();
 
-            const xy = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
+            const pos = click2svgCoord(event, svg);
+            const xy = svgCoord2cellCoord(pos, grid, false);
             if (null != xy) {
+                prevPos = pos;
+
                 const idx = cellCoord2CellIdx(xy, grid);
                 if (event.shiftKey) {
                     // Shift: always select.
@@ -93,16 +98,34 @@ export const mouseHandlers = (() => {
 
             if (State.NONE !== state) {
                 startClickCell = null; // Not a click if the mouse moves.
-                const xy = svgCoord2cellCoord(click2svgCoord(event, svg), grid, true);
-                if (null != xy) {
-                    const idx = cellCoord2CellIdx(xy, grid);
-                    userState.ref('select', `${idx}`).replace(State.SELECTING === state || null);
+
+                const pos = click2svgCoord(event, svg);
+                if (!isOnGrid(pos, grid)) return;
+
+                // Interpolate if mouse jumped.
+                if (null != prevPos && 1 < distSq(prevPos, pos)) {
+                    for (const coord of cellLine(prevPos, pos, grid)) {
+                        const idx = cellCoord2CellIdx(coord, grid);
+                        if (null != idx)
+                            userState.ref('select', `${idx}`).replace(State.SELECTING === state || null);
+                    }
+                    prevPos = pos;
+                }
+                else {
+                    // Select current cell.
+                    const xy = svgCoord2cellCoord(pos, grid, true);
+                    if (null != xy) {
+                        prevPos = pos;
+                        const idx = cellCoord2CellIdx(xy, grid);
+                        userState.ref('select', `${idx}`).replace(State.SELECTING === state || null);
+                    }
                 }
             }
         },
         // Mouse up is on window to handle dragging mouse out of grid.
         up(_event: MouseEvent, _grid: Grid) {
             state = State.NONE;
+            prevPos = null;
         },
 
         // For special single-selected-cell deselect click.
