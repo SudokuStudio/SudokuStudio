@@ -76,6 +76,13 @@ export class StateRef {
         });
     }
 
+    update(update: Update): null | Diff {
+        const path = this._path.join('/') + '/';
+        const rootUpdate = objectFromEntries(Object.entries(update)
+            .map(([ k, v ]) => [ path + k, v]));
+        return this._stateManager.update(rootUpdate);
+    }
+
     // https://svelte.dev/docs#Store_contract
     subscribe(subscription: (value: any) => void): () => void {
         const watch = this.watch((_path, _oldData, newData) => (subscription)(newData), true);
