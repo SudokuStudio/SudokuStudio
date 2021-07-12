@@ -23,6 +23,6 @@
             <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.75" stroke-linejoin="round" stroke-linecap="round" />
         </mask>
         <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.8"   mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
-        <path d={makePath(any(headBody).body, grid)} fill="none" stroke="#000" stroke-width="0.025" mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-head-{id})" />
+        <path d={makePath(any(headBody).body, grid, 0.15)} fill="none" stroke="#000" stroke-width="0.025" mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-head-{id})" />
     {/each}
 </g>

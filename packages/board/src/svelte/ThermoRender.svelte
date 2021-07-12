@@ -18,6 +18,6 @@
 </marker>
 <g {id}>
     {#each Object.entries($ref) as [ thermoId, idxArr ] (thermoId)}
-        <path d={makePath(any(idxArr), grid)} fill="none" stroke="#ddd" stroke-width="0.2" marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
+        <path d={makePath(any(idxArr), grid, 0.25)} fill="none" stroke="#ddd" stroke-width="0.2" marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
     {/each}
 </g>

@@ -66,18 +66,27 @@ export function bitsetToList<TAG extends Geometry>(bitset: null | undefined | Id
 }
 
 
-export function makePath(idxArr: Record<string, Idx<Geometry.CELL>>, grid: Grid): string {
-    const points: string[] = [];
+export function makePath(idxArr: Record<string, Idx<Geometry.CELL>>, grid: Grid, shortenEnd: number = 0): string {
+    const points: [ number, number ][] = [];
 
     let i = 0;
     let idx;
     while (null != (idx = idxArr[i])) {
         const [ x, y ] = cellIdx2cellCoord(idx, grid);
-        points.push(`${x + 0.5},${y + 0.5}`);
+        points.push([ x + 0.5, y + 0.5 ]);
         i++;
     }
     if (1 === points.length) points.push(points[0]); // Double up.
-    return `M ${points.join(' L ')}`;
+
+    if (0 < shortenEnd) {
+        const len = points.length;
+        const dx = points[len - 1][0] - points[len - 2][0];
+        const dy = points[len - 1][1] - points[len - 2][1];
+        points[len - 1][0] += -dx * shortenEnd;
+        points[len - 1][1] += -dy * shortenEnd;
+    }
+
+    return 'M' + points.map(xy => xy.join(',')).join('L');
 }
 
 
