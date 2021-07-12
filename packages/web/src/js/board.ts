@@ -65,6 +65,7 @@ export const CONSTRAINT_COMPONENTS = {
 
 
 export const boardState = (window as any).boardState = new StateManager();
+export const filledState = boardState.ref('elements', '120', 'value'); // TODO "120" magic number.
 boardState.update({
     grid: {
         width: 9,

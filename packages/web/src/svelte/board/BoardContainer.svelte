@@ -1,14 +1,14 @@
 <script lang="ts">
     import { Board } from "@sudoku-studio/board";
     import { boardState } from "../../js/board";
-    import { userState, mouseHandlers } from "../../js/user";
+    import { userState, mouseHandlers, keydown } from "../../js/user";
 
     const grid = boardState.ref('grid');
 
     let svg: SVGSVGElement = null!;
 </script>
 
-<svelte:window on:mouseup={e => mouseHandlers.up(e, $grid)} />
+<svelte:window on:mouseup={e => mouseHandlers.up(e, $grid)} on:keydown={keydown} />
 <div class="overlay"
     on:mousedown|capture={e => mouseHandlers.down(e, $grid, svg)}
     on:mousemove|capture={e => mouseHandlers.move(e, $grid, svg)}

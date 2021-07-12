@@ -1,12 +1,38 @@
-import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord } from "@sudoku-studio/board-utils";
-import type { Grid, Idx, Geometry } from "@sudoku-studio/schema";
+import type { Grid, Idx, Geometry, IdxBitset } from "@sudoku-studio/schema";
+import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, bitsetToList } from "@sudoku-studio/board-utils";
 import { StateManager } from "@sudoku-studio/state-manager";
+import { filledState } from "./board";
 
 export const userState = (window as any).userState = new StateManager();
 userState.update({
     select: {
     },
 });
+
+const DIGIT_REGEX = /^Digit(\d)$/;
+const KEYCODES = {
+    Delete: null,
+    Backspace: null,
+} as const;
+
+export const keydown = (event: KeyboardEvent) => {
+    console.log(event);
+    let num: null | number;
+    if (event.code in KEYCODES) {
+        num = KEYCODES[event.code as keyof typeof KEYCODES];
+    }
+    else {
+        const match = DIGIT_REGEX.exec(event.code);
+        if (!match) return;
+        num = Number(match[1]);
+    }
+
+    // TODO: Use a helper function.
+    const selection = bitsetToList(userState.get<IdxBitset<Geometry.CELL>>('select'));
+    for (const cellIdx of selection) {
+        filledState.ref(`${cellIdx}`).replace(num);
+    }
+};
 
 export const mouseHandlers = (() => {
     enum State {
