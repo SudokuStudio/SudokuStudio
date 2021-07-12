@@ -9,12 +9,13 @@
     ],
     "outDir": "lib",
     "module": "CommonJS",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
 
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "sourceMap": true,
-    "declaration": true
   }
 }
