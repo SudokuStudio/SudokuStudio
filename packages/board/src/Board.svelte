@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
     import GridRender from './svelte/GridRender.svelte';
     import BoxRender from './svelte/BoxRender.svelte';
-    import GivenRender from './svelte/GivenRender.svelte';
+    import DigitRender from './svelte/DigitRender.svelte';
     import ThermoRender from './svelte/ThermoRender.svelte';
     import ArrowRender from './svelte/ArrowRender.svelte';
     import MinRender from './svelte/MinRender.svelte';
@@ -11,12 +11,18 @@
     import DiagonalRender from './svelte/DiagonalRender.svelte';
     import SelectRender from './svelte/SelectRender.svelte';
 
+    function FilledRender(args: any) {
+        args.props.color = '#4e72b0';
+        return new DigitRender(args);
+    }
+
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
         ['grid']: GridRender,
         ['box']: BoxRender,
 
-        ['given']: GivenRender,
+        ['given']: DigitRender,
+        ['filled']: FilledRender,
         ['thermo']: ThermoRender,
         ['arrow']: ArrowRender,
         ['sandwich']: null,

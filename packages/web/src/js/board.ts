@@ -110,6 +110,17 @@ boardState.update({
         },
 
         // LOCALS
+        '120': {
+            type: 'filled',
+            order: 15,
+            value: {
+                "8": 8,
+                "26": 5,
+                "30": 7,
+                "45": 1,
+                "47": 2,
+            },
+        },
         '10130': {
             type: 'given',
             order: 15,
