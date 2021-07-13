@@ -35,6 +35,7 @@ export const CONSTRAINT_MENU_TYPES = {
     ['min']: ConstraintMenuType.LOCAL,
     ['max']: ConstraintMenuType.LOCAL,
     ['killer']: ConstraintMenuType.LOCAL,
+    ['quadruple']: ConstraintMenuType.LOCAL,
 
     ['diagonal']: ConstraintMenuType.GLOBAL,
     ['knight']: ConstraintMenuType.GLOBAL,
@@ -55,6 +56,7 @@ export const CONSTRAINT_COMPONENTS = {
     ['min']: Min,
     ['max']: Max,
     ['killer']: null, // TODO!!
+    ['quadruple']: null, // TODO!!
 
     ['diagonal']: Diagonal,
     ['knight']: Knight,
