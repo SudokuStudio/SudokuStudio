@@ -2,7 +2,7 @@
     let counter = 0;
 </script>
 <script type="ts">
-    import { selectedTool, SELECTED_TOOL_NAME } from "../../../js/input";
+    import { toolState, TOOL_INPUT_NAME } from "../../../js/user";
 
     export let id: string;
     export let name: string;
@@ -10,14 +10,14 @@
 
     export let isLocal: boolean = false;
     export let onClick: svelte.JSX.MouseEventHandler<HTMLDivElement> | undefined =
-        isLocal ? (() => $selectedTool = id) : undefined;
+        isLocal ? (() => $toolState = id) : undefined;
 
     export let onTrash: svelte.JSX.MouseEventHandler<HTMLButtonElement> | undefined = undefined;
 </script>
 
 <div class="constraint-row-container">
     {#if isLocal}
-        <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={SELECTED_TOOL_NAME} bind:group={$selectedTool} />
+        <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={TOOL_INPUT_NAME} bind:group={$toolState} />
     {/if}
     <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
         <div class="constraint-row-left">

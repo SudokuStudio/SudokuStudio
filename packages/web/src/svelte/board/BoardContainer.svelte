@@ -1,7 +1,8 @@
 <script lang="ts">
     import { Board } from "@sudoku-studio/board";
     import { boardState } from "../../js/board";
-    import { userState, mouseHandlers, keydown } from "../../js/user";
+    import { userState } from "../../js/user";
+    import { mouseHandlers, keydown } from "../../js/input";
 
     const grid = boardState.ref('grid');
 
