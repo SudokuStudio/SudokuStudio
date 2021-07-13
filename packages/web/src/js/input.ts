@@ -1,4 +1,4 @@
-import type { Grid, Idx, Coord, Geometry, IdxBitset } from "@sudoku-studio/schema";
+import type { Grid, Coord, Geometry, IdxBitset } from "@sudoku-studio/schema";
 import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, bitsetToList, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
 import { filledState } from "./board";
 import { userSelectState } from "./user";
@@ -32,28 +32,78 @@ export const keydown = (event: KeyboardEvent) => {
 };
 
 
-/**
- * A handler of pointer movement - only considers the position of the pointer
- * and the SVG board element. Doesn't consider clicks or any input mode state.
- * This pointer movement handler emits cells such that each cell is adjacent,
- * either orthogonally or diagonally, to the previous cell (as long as the
- * pointer remains over the board)
- */
-class AdjacentCellPointerMovementHandler {
-    private readonly _handler: (cell: Coord<Geometry.CELL>, grid: Grid) => void;
-    private _prevPos: Coord<Geometry.SVG> | null = null;
+export interface PointerHandler {
+    down(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
+    move(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
+    up(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
+    leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
+    click(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
+}
 
-    constructor(handler: (cell: Coord<Geometry.CELL>, grid: Grid) => void) {
-        this._handler = handler;
+type CellDragStartEvent = {
+    event: MouseEvent,
+};
+type CellDragTapEvent = {
+    event: MouseEvent,
+    coord: Coord<Geometry.CELL>,
+    grid: Grid,
+    svg: SVGSVGElement,
+};
+
+class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
+    private _prevPos: Coord<Geometry.SVG> | null = null;
+    private _isDown = false;
+    private _isTap: boolean = false;
+
+    constructor() {
+        super();
     }
 
-    move(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
+    down(event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
+        this._dispatch<CellDragStartEvent>('dragStart', { event });
+        this._isDown = true;
+        this._isTap = true;
+    }
+
+    move(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
+        if (this._isDown) {
+            this._handle(event, grid, svg);
+        }
+    }
+
+    up(_event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
+        this._prevPos = null;
+        this._isDown = false;
+    }
+
+    leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
+        if (this._isDown)
+            this._handle(event, grid, svg);
+    }
+
+    // For special single-selected-cell deselect click.
+    click(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
+        if (this._isTap) {
+            const coord = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
+            if (null != coord) {
+                this._dispatch<CellDragTapEvent>('tap', { event, coord, grid, svg });
+            }
+        }
+    }
+
+    private _dispatch<T>(name: string, detail: T) {
+        this.dispatchEvent(new CustomEvent<T>(name, { detail }));
+    }
+
+    private _handle(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
+        this._isTap = false; // Moving cancels tap.
+
         const pos = click2svgCoord(event, svg);
 
         // Interpolate if mouse jumped cells within the board.
         if (null != this._prevPos && 1 < distSq(this._prevPos, pos)) {
             for (const coord of cellLine(this._prevPos, pos, grid)) {
-                (this._handler)(coord, grid);
+                this._dispatch<CellDragTapEvent>('drag', { event, coord, grid, svg });
             }
             this._prevPos = isOnGrid(pos, grid) ? pos : null;
         }
@@ -62,7 +112,7 @@ class AdjacentCellPointerMovementHandler {
             const isFirstClick = null == this._prevPos;
             const coord = svgCoord2cellCoord(pos, grid, !isFirstClick);
             if (null != coord) {
-                (this._handler)(coord, grid)
+                this._dispatch<CellDragTapEvent>('drag', { event, coord, grid, svg });
                 this._prevPos = pos;
             }
             // Otherwise otherwise reset prevPos if pointer's off the grid.
@@ -71,108 +121,81 @@ class AdjacentCellPointerMovementHandler {
             }
         }
     }
-
-    reset(): void {
-        this._prevPos = null;
-    }
 }
 
 export const mouseHandlers = (() => {
-    enum State {
-        // State when nothing has happened.
-        NONE,
-        // State when user begins selecting.
-        SELECTING,
-        // State when user begins deselecting.
-        DESELCTING,
-        // State when we are either selecting or deselecting based on the
+    enum Mode {
+        // Mode when starting a *NEW* selection.
+        RESETTING,
+        // Mode when we are either selecting or deselecting based on the
         // opposite of the first cell hit.
         DYNAMIC,
+
+        // Mode when user is selecting.
+        SELECTING,
+        // Mode when user is deselecting.
+        DESELCTING,
     }
-    // The selecting state.
-    let state = State.NONE;
 
-    // A cell that, if the click finishes, will trigger the special single-selected-cell deselect.
-    let startClickCell: Idx<Geometry.CELL> | null = null;
+    // The selecting mode.
+    let mode = Mode.RESETTING;
 
-    const movementHandler = new AdjacentCellPointerMovementHandler((coord, grid) => {
-        if (State.NONE !== state) {
-            const idx = cellCoord2CellIdx(coord, grid);
-            if (State.DYNAMIC === state) {
-                state = userSelectState.ref(`${idx}`).get() ? State.DESELCTING : State.SELECTING;
-            }
-            userSelectState.ref(`${idx}`).replace(State.SELECTING === state || null);
+    const mouseHandler = new AdjacentCellPointerHandler();
+
+    function getMode(mouseEvent: MouseEvent): Mode {
+        if (mouseEvent.shiftKey) {
+            // Shift: always select.
+            return Mode.SELECTING;
         }
-    });
+        else if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            // Ctrl: deselect if clicked cell is selected, otherwise select.
+            return Mode.DYNAMIC;
+        }
+        else if (mouseEvent.altKey) {
+            // Alt: always deselect.
+            return Mode.DESELCTING;
+        }
+        else {
+            // No modifier: reset and select only this cell.
+            return Mode.RESETTING;
+        }
+    }
 
-    // Event order for a click is `mousedown` -> `mouseup` -> `click`.
-    return {
-        down(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
-            event.preventDefault();
-            event.stopPropagation();
+    function handle(event: CustomEvent<CellDragTapEvent>, isClick: boolean): void {
+        const { coord, grid } = event.detail;
+        const idx = cellCoord2CellIdx(coord, grid);
 
-            if (event.shiftKey) {
-                // Shift: always select.
-                state = State.SELECTING;
+        if (Mode.RESETTING === mode) {
+            // Special: Resetting *tap* acts as toggle.
+            const select = isClick && userSelectState.get<Record<string, true>>() || {};
+            if (isClick && 1 === Object.keys(select).length && select[`${idx}`]) {
+                userSelectState.replace({})
             }
-            else if (event.ctrlKey || event.metaKey) {
-                // Ctrl: deselect if clicked cell is selected, otherwise select.
-                state = State.DYNAMIC;
-            }
-            else if (event.altKey) {
-                // Alt: always deselect.
-                state = State.DESELCTING;
-            }
+            // Normal:
             else {
-                // No modifier: reset and select only this cell.
-                {
-                    // Special handling for single-click toggle.
-                    const coord = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
-                    if (coord != null) {
-                        const idx = cellCoord2CellIdx(coord, grid);
-                        const select = userSelectState.get<Record<string, true>>() || {};
-                        if (1 === Object.keys(select).length && select[`${idx}`]) {
-                            startClickCell = idx;
-                        }
-                    }
-                }
-                userSelectState.replace({});
-                state = State.SELECTING;
+                userSelectState.replace({ [`${idx}`]: true });
             }
-            movementHandler.move(event, grid, svg);
-        },
-        move(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
-            event.preventDefault();
-            event.stopPropagation();
+            mode = Mode.SELECTING;
+            return;
+        }
 
-            if (State.NONE !== state) {
-                startClickCell = null;
-                movementHandler.move(event, grid, svg);
-            }
-        },
-        // Mouse up is on window to handle dragging mouse out of grid.
-        up(_event: MouseEvent, _grid: Grid, _svg: SVGSVGElement) {
-            state = State.NONE;
-            movementHandler.reset();
-        },
-        leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
-            event.preventDefault();
-            event.stopPropagation();
+        if (Mode.DYNAMIC === mode) {
+            mode = userSelectState.ref(`${idx}`).get() ? Mode.DESELCTING : Mode.SELECTING;
+        }
+        userSelectState.ref(`${idx}`).replace(Mode.SELECTING === mode || null);
+    }
 
-            if (State.NONE !== state)
-                movementHandler.move(event, grid, svg);
-        },
+    mouseHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEvent>) => {
+        mode = getMode(event.detail.event);
+    }) as EventListener);
 
-        // For special single-selected-cell deselect click.
-        click(event: MouseEvent, _grid: Grid, _svg: SVGSVGElement) {
-            event.preventDefault();
-            event.stopPropagation();
+    mouseHandler.addEventListener('drag', ((event: CustomEvent<CellDragTapEvent>) => {
+        handle(event, false);
+    }) as EventListener);
 
-            if (null != startClickCell) {
-                // Deselect the one selected cell, AKA just unselect all.
-                userSelectState.replace({});
-                startClickCell = null;
-            }
-        },
-    };
+    mouseHandler.addEventListener('tap', ((event: CustomEvent<CellDragTapEvent>) => {
+        handle(event, true);
+    }) as EventListener)
+
+    return mouseHandler;
 })();

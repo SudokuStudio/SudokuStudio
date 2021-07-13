@@ -11,13 +11,13 @@
 
 <svelte:window on:mouseup={e => mouseHandlers.up(e, $grid, svg)} on:keydown={keydown} />
 <div class="overlay"
-    on:mousedown|capture={e => mouseHandlers.down(e, $grid, svg)}
-    on:mousemove|capture={e => mouseHandlers.move(e, $grid, svg)}
+    on:mousedown|capture|stopPropagation|preventDefault={e => mouseHandlers.down(e, $grid, svg)}
+    on:mousemove|capture|stopPropagation|preventDefault={e => mouseHandlers.move(e, $grid, svg)}
 
-    on:click|capture={e => mouseHandlers.click(e, $grid, svg)}
-    on:contextmenu|capture={e => mouseHandlers.click(e, $grid, svg)}
+    on:click|capture|stopPropagation|preventDefault={e => mouseHandlers.click(e, $grid, svg)}
+    on:contextmenu|capture|stopPropagation|preventDefault={e => mouseHandlers.click(e, $grid, svg)}
 
-    on:mouseleave|capture={e => mouseHandlers.leave(e, $grid, svg)}>
+    on:mouseleave|capture|stopPropagation|preventDefault={e => mouseHandlers.leave(e, $grid, svg)}>
 </div>
 <Board {boardState} {userState} bind:svg={svg} />
 
