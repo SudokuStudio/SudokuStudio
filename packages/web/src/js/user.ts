@@ -1,5 +1,5 @@
 import type { Grid, Idx, Coord, Geometry, IdxBitset } from "@sudoku-studio/schema";
-import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, bitsetToList, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
+import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, bitsetToList, distSq, cellLine, isOnGrid, BOX_THICKNESS } from "@sudoku-studio/board-utils";
 import { StateManager } from "@sudoku-studio/state-manager";
 import { filledState } from "./board";
 
@@ -36,6 +36,61 @@ export const keydown = (event: KeyboardEvent) => {
     }
     filledState.update(update);
 };
+
+
+/**
+ * A handler of pointer movement - only considers the position of the pointer
+ * and the SVG board element. Doesn't consider clicks or any input mode state.
+ * This pointer movement handler emits cells such that each cell is adjacent,
+ * either orthogonally or diagonally, to the previous cell (as long as the
+ * pointer remains over the board)
+ */
+class AdjacentCellPointerMovementHandler {
+    private readonly _handler: (cell: Coord<Geometry.CELL>) => void;
+    private _prevPos: Coord<Geometry.SVG> | null = null;
+
+    constructor(handler: (cell: Coord<Geometry.CELL>) => void) {
+        this._handler = handler;
+    }
+
+    move(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
+        const pos = click2svgCoord(event, svg);
+        // Ensure the mouse is not in the margins of the grid.
+        if (!isOnGrid(pos, grid)) return;
+
+        // Interpolate if mouse jumped.
+        if (null != this._prevPos && 1 < distSq(this._prevPos, pos)) {
+            for (const coord of cellLine(this._prevPos, pos, grid)) {
+                (this._handler)(coord);
+            }
+            this._prevPos = pos;
+        }
+        // Otherwise select the current cell.
+        else {
+            const coord = svgCoord2cellCoord(pos, grid, true);
+            if (null != coord) {
+                this._prevPos = pos;
+                (this._handler)(coord)
+            }
+        }
+    }
+
+    reset(): void {
+        this._prevPos = null;
+    }
+
+    leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
+        if (null != this._prevPos) {
+            // Interpolate mouse jumps if needed.
+            // Pos will be off-grid.
+            const pos = click2svgCoord(event, svg);
+            for (const coord of cellLine(this._prevPos, pos, grid)) {
+                (this._handler)(coord);
+            }
+            this._prevPos = null;
+        }
+    }
+}
 
 export const mouseHandlers = (() => {
     enum State {
