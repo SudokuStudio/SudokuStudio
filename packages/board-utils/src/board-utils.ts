@@ -34,18 +34,17 @@ export function cornerIdx2cornerCoord(vertId: Idx<Geometry.CORNER>, { width }: G
  * Get the CELL coordinates from SVG coordinates.
  * @param param0 SVG coordinates.
  * @param param1 Grid size.
- * @param limitCircle If true only count clicks within the 0.5 radius circle centered on the cell.
+ * @param conservative If true only count clicks within a center area of the cell. Used to make diagonals of cells easier to select.
  * @returns The CELL coordinates, or null if the click was outside the grid or outside the circle when limitCircle is true.
  */
-export function svgCoord2cellCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid, limitCircle: boolean): null | Coord<Geometry.CELL> {
+export function svgCoord2cellCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid, conservative: boolean): null | Coord<Geometry.CELL> {
     // Check coord is inside grid.
     if ((xf < 0 || width <= xf) || (yf < 0 || height <= yf)) return null;
 
-    if (limitCircle) {
-      // Limit to circles.
+    if (conservative) {
       const xr = xf % 1 - 0.5;
       const yr = yf % 1 - 0.5;
-      if (0.25 < xr * xr + yr * yr) return null;
+      if (0.5 < Math.abs(xr) + Math.abs(yr)) return null;
     }
 
     return [ Math.floor(xf), Math.floor(yf) ];
