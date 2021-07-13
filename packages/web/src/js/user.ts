@@ -57,7 +57,6 @@ class AdjacentCellPointerMovementHandler {
         const pos = click2svgCoord(event, svg);
 
         // Interpolate if mouse jumped cells within the board.
-        console.log(this._prevPos, null != this._prevPos && 1 < distSq(this._prevPos, pos));
         if (null != this._prevPos && 1 < distSq(this._prevPos, pos)) {
             for (const coord of cellLine(this._prevPos, pos, grid)) {
                 (this._handler)(coord, grid);
