@@ -8,7 +8,7 @@
     let svg: SVGSVGElement = null!;
 </script>
 
-<svelte:window on:mouseup={e => mouseHandlers.up(e, $grid)} on:keydown={keydown} />
+<svelte:window on:mouseup={e => mouseHandlers.up(e, $grid, svg)} on:keydown={keydown} />
 <div class="overlay"
     on:mousedown|capture={e => mouseHandlers.down(e, $grid, svg)}
     on:mousemove|capture={e => mouseHandlers.move(e, $grid, svg)}
