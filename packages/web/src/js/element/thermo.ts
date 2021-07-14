@@ -1,5 +1,5 @@
 import { cellCoord2CellIdx, arrayObj2array } from "@sudoku-studio/board-utils";
-import type { Geometry, Idx, IdxMap, ArrayObj } from "@sudoku-studio/schema";
+import type { Geometry, Idx, IdxMap, ArrayObj, Grid } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import Thermo from "../../svelte/edit/constraint/Thermo.svelte";
 import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "../pointerHandler";
@@ -18,23 +18,20 @@ export class ThermoHandler implements ElementHandler {
         this._bindPointerhandler(ref);
     }
 
-    getViewBox(_active: boolean): null {
+    getViewBox(_active: boolean, _grid: Grid): null {
         return null;
     }
-    getConflicts(digits: IdxMap<Geometry.CELL, number>): Idx<Geometry.CELL>[] {
-        const out: Idx<Geometry.CELL>[] = [];
-
+    getConflicts(digits: IdxMap<Geometry.CELL, number>, _grid: Grid, output: Set<Idx<Geometry.CELL>>) {
         const thermos = this._thermoState.get<Record<string, ArrayObj<Idx<Geometry.CELL>>>>() || {};
         for (const thermoCells of Object.values(thermos).map(arrayObj2array)) {
             let prevCell = Number.NEGATIVE_INFINITY;
             for (const cellIdx of thermoCells) {
                 const digit = digits[cellIdx];
                 if (null != digit && digit <= prevCell) {
-                    out.push(cellIdx);
+                    output.add(cellIdx);
                 }
             }
         }
-        return out;
     }
 
     private _bindPointerhandler(thermoState: StateRef): void {

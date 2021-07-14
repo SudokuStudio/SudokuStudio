@@ -1,4 +1,4 @@
-import type { Grid, Idx, Coord, IdxBitset, Geometry, ArrayObj } from "@sudoku-studio/schema";
+import type { Grid, Idx, Coord, IdxBitset, Geometry, ArrayObj, IdxMap } from "@sudoku-studio/schema";
 
 // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
 export function any(x: any): any {
@@ -70,6 +70,31 @@ export function bitsetToList<TAG extends Geometry>(bitset: null | undefined | Id
     if (null == bitset) return [];
     return Object.keys(bitset).filter(k => !!bitset[k]).map(Number);
 }
+
+
+
+export function getMajorDiagonal(positive: boolean, grid: Grid): Idx<Geometry.CELL>[] {
+    return Array(grid.width).fill(null)
+        .map((_, i) => cellCoord2CellIdx([ i, positive ? (grid.width - 1 - i) : i ], grid));
+}
+
+export function getRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[], output: Set<Idx<Geometry.CELL>>): void {
+    const counts = new Map<number, Idx<Geometry.CELL>[]>();
+    for (const cellIdx of cells) {
+        const digit = digits[cellIdx];
+        if (null == digit) continue;
+
+        let occurances = counts.get(digit);
+        if (null == occurances) {
+            occurances = [];
+            counts.set(digit, occurances);
+        }
+        occurances.push(cellIdx);
+        if (1 < occurances.length)
+            occurances.forEach(output.add);
+    }
+}
+
 
 
 export function makePath(idxArr: Record<string, Idx<Geometry.CELL>>, grid: Grid, shortenEnd: number = 0): string {

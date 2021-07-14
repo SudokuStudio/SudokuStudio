@@ -1,24 +1,23 @@
 import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
-import type { Geometry, Idx, IdxMap } from "@sudoku-studio/schema";
+import type { Geometry, Grid, Idx, IdxMap } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "../pointerHandler";
 import { userSelectState } from "../user";
-import type  { ElementHandler } from "./element";
+import type  { ElementHandler, SvelteComponentConstructor } from "./element";
 
 export class SelectHandler implements ElementHandler {
-    readonly isGlobal = true;
-    readonly MenuComponent = null;
+    readonly isGlobal: boolean = false;
+    readonly MenuComponent: null | SvelteComponentConstructor<any, any> = null;
     readonly pointerHandler = new AdjacentCellPointerHandler(false);
 
     constructor(_ref: StateRef) {
         this._bindPointerhandler();
     }
 
-    getViewBox(_active: boolean): null {
+    getViewBox(_active: boolean, _grid: Grid): null {
         return null;
     }
-    getConflicts(_digits: IdxMap<Geometry.CELL, number>): Idx<Geometry.CELL>[] {
-        return [];
+    getConflicts(_digits: IdxMap<Geometry.CELL, number>, _grid: Grid, _output: Set<Idx<Geometry.CELL>>): void {
     }
 
     private _bindPointerhandler(): void {

@@ -70,6 +70,8 @@
     boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
         let i = -1;
         if (null != oldVal) {
+            if (null == ELEMENT_RENDERERS[oldVal.type]) return;
+
             i = list.findIndex(({ id }) => elementId === id);
             if (0 > i) {
                 console.error(`Failed to find renderer for constraint with id ${elementId}.`);

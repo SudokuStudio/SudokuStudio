@@ -10,6 +10,10 @@ export type ViewBox = {
     height: number,
 };
 
+export interface SvelteComponentConstructor<U, T> {
+    new (options: U): T
+};
+
 export interface ElementHandlerClass<T extends ElementHandler> {
     new (ref: StateRef): T;
 }
@@ -20,6 +24,6 @@ export interface ElementHandler {
 
     readonly pointerHandler: null | PointerHandler;
 
-    getViewBox(active: boolean): null | ViewBox;
-    getConflicts(digits: IdxMap<Geometry.CELL, number>): Idx<Geometry.CELL>[];
+    getViewBox(active: boolean, grid: Grid): null | ViewBox;
+    getConflicts(digits: IdxMap<Geometry.CELL, number>, grid: Grid, output: Set<Idx<Geometry.CELL>>): void;
 }

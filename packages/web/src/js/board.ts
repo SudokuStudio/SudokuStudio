@@ -67,6 +67,7 @@ export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set 
     toolState.watch((_path, _oldVal, newVal) => {
         const toolId = newVal;
         const out = list.find(({ id }) => toolId === id) || null;
+        // console.log(list, toolId, out);
         set(out);
     }, true);
 });
