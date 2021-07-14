@@ -117,6 +117,11 @@ export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set 
                 order: 15,
                 value: {},
             },
+            '150': {
+                type: 'colors',
+                order: 14.5,
+                value: {},
+            },
 
 
             '10': {

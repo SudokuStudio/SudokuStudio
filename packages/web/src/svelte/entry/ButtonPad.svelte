@@ -9,6 +9,7 @@
     const filled = userState.ref('marks', 'filled');
     const corner = userState.ref('marks', 'corner');
     const center = userState.ref('marks', 'center');
+    const colors = userState.ref('marks', 'colors');
 </script>
 
 <div class="container">
@@ -41,7 +42,7 @@
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-colors" value="colors" bind:group={$toolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-colors" value={$colors} bind:group={$toolState} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-colors">
                     <span class="icon icon-inline icon-c-textinv icon-colors" />
                     <span class="sr-only">Colors</span>

@@ -8,6 +8,7 @@ userState.update({
         filled: '120', // TODO magic numbers.
         corner: '130',
         center: '140',
+        colors: '150',
     },
 });
 

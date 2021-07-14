@@ -10,6 +10,7 @@ export const ELEMENT_HANDLERS = {
     ['filled']: assertIsElementHandlerClass(SelectHandler),
     ['center']: assertIsElementHandlerClass(SelectHandler),
     ['corner']: assertIsElementHandlerClass(SelectHandler),
+    ['colors']: assertIsElementHandlerClass(SelectHandler),
 
     ['grid']: null,
     ['box']: null,
