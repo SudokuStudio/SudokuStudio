@@ -2,22 +2,22 @@
     import { Board } from "@sudoku-studio/board";
     import { boardState } from "../../js/board";
     import { userState } from "../../js/user";
-    import { mouseHandlers, keydown } from "../../js/input";
+    import { keydown, thermoPointerHandler as pointerHandler } from "../../js/input";
 
     const grid = boardState.ref('grid');
 
     let svg: SVGSVGElement = null!;
 </script>
 
-<svelte:window on:mouseup={e => mouseHandlers.up(e, $grid, svg)} on:keydown={keydown} />
+<svelte:window on:mouseup={e => pointerHandler.up(e, $grid, svg)} on:keydown={keydown} />
 <div class="overlay"
-    on:mousedown|capture|stopPropagation|preventDefault={e => mouseHandlers.down(e, $grid, svg)}
-    on:mousemove|capture|stopPropagation|preventDefault={e => mouseHandlers.move(e, $grid, svg)}
+    on:mousedown|capture|stopPropagation|preventDefault={e => pointerHandler.down(e, $grid, svg)}
+    on:mousemove|capture|stopPropagation|preventDefault={e => pointerHandler.move(e, $grid, svg)}
 
-    on:click|capture|stopPropagation|preventDefault={e => mouseHandlers.click(e, $grid, svg)}
-    on:contextmenu|capture|stopPropagation|preventDefault={e => mouseHandlers.click(e, $grid, svg)}
+    on:click|capture|stopPropagation|preventDefault={e => pointerHandler.click(e, $grid, svg)}
+    on:contextmenu|capture|stopPropagation|preventDefault={e => pointerHandler.click(e, $grid, svg)}
 
-    on:mouseleave|capture|stopPropagation|preventDefault={e => mouseHandlers.leave(e, $grid, svg)}>
+    on:mouseleave|capture|stopPropagation|preventDefault={e => pointerHandler.leave(e, $grid, svg)}>
 </div>
 <Board {boardState} {userState} bind:svg={svg} />
 

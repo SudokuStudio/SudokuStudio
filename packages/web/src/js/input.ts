@@ -1,6 +1,6 @@
-import type { Grid, Coord, Geometry, IdxBitset } from "@sudoku-studio/schema";
+import type { Grid, Coord, Geometry, IdxBitset, Idx } from "@sudoku-studio/schema";
 import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, bitsetToList, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
-import { filledState } from "./board";
+import { filledState, thermoState_TEMP } from "./board";
 import { userSelectState } from "./user";
 
 const DIGIT_REGEX = /^Digit(\d)$/;
@@ -51,12 +51,16 @@ type CellDragTapEvent = {
 };
 
 class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
+    private readonly _interpolateOnReender: boolean;
+
     private _prevPos: Coord<Geometry.SVG> | null = null;
+    private _prevCell: Idx<Geometry.CELL> | null = null;
     private _isDown = false;
     private _isTap: boolean = false;
 
-    constructor() {
+    constructor(interpolateOnReenter: boolean) {
         super();
+        this._interpolateOnReender = interpolateOnReenter;
     }
 
     down(event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
@@ -73,6 +77,7 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
 
     up(_event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
         this._prevPos = null;
+        this._prevCell = null;
         this._isDown = false;
     }
 
@@ -104,26 +109,61 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
         if (null != this._prevPos && 1 < distSq(this._prevPos, pos)) {
             for (const coord of cellLine(this._prevPos, pos, grid)) {
                 this._dispatch<CellDragTapEvent>('drag', { event, coord, grid, svg });
+                this._prevCell = cellCoord2CellIdx(coord, grid);
             }
-            this._prevPos = isOnGrid(pos, grid) ? pos : null;
+            this._prevPos = (this._interpolateOnReender || isOnGrid(pos, grid)) ? pos : null;
         }
         // Otherwise select the current cell.
         else {
             const isFirstClick = null == this._prevPos;
             const coord = svgCoord2cellCoord(pos, grid, !isFirstClick);
             if (null != coord) {
-                this._dispatch<CellDragTapEvent>('drag', { event, coord, grid, svg });
+                if (this._prevCell !== cellCoord2CellIdx(coord, grid)) {
+                    this._dispatch<CellDragTapEvent>('drag', { event, coord, grid, svg });
+                    this._prevCell = cellCoord2CellIdx(coord, grid);
+                }
                 this._prevPos = pos;
             }
             // Otherwise otherwise reset prevPos if pointer's off the grid.
-            else if (!isOnGrid(pos, grid)) {
+            else if (!(this._interpolateOnReender || isOnGrid(pos, grid))) {
+                this._prevCell = null;
                 this._prevPos = null;
             }
         }
     }
 }
 
-export const mouseHandlers = (() => {
+
+
+export const thermoPointerHandler = (() => {
+    const mouseHandler = new AdjacentCellPointerHandler(true);
+
+    const thermoRef = thermoState_TEMP.ref('200');
+    let len = 0;
+
+    mouseHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEvent>) => {
+        len = 0;
+        thermoRef.replace({});
+    }) as EventListener);
+
+    mouseHandler.addEventListener('drag', ((event: CustomEvent<CellDragTapEvent>) => {
+        const { coord, grid } = event.detail;
+        const idx = cellCoord2CellIdx(coord, grid);
+
+        thermoRef.ref(`${len}`).replace(idx);
+        len++;
+    }) as EventListener);
+
+    mouseHandler.addEventListener('tap', ((event: CustomEvent<CellDragTapEvent>) => {
+        // TODO
+    }) as EventListener)
+
+    return mouseHandler;
+})();
+
+
+
+export const pointerHandler = (() => {
     enum Mode {
         // Mode when starting a *NEW* selection.
         RESETTING,
@@ -140,7 +180,7 @@ export const mouseHandlers = (() => {
     // The selecting mode.
     let mode = Mode.RESETTING;
 
-    const mouseHandler = new AdjacentCellPointerHandler();
+    const mouseHandler = new AdjacentCellPointerHandler(false);
 
     function getMode(mouseEvent: MouseEvent): Mode {
         if (mouseEvent.shiftKey) {
