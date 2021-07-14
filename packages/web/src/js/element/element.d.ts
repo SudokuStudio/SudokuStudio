@@ -10,15 +10,14 @@ export type ViewBox = {
     height: number,
 };
 
-export interface ElementHandlerClass<T extends ElementHandler, C extends SvelteComponent> {
-    readonly TYPE: string;
-    readonly IS_GLOBAL: boolean;
-    readonly MenuComponent: null | SvelteComponentConstructor<C, any>;
-
-    new (ref: StateRef, menuComponent: C): T;
+export interface ElementHandlerClass<T extends ElementHandler> {
+    new (ref: StateRef): T;
 }
 
 export interface ElementHandler {
+    readonly isGlobal: boolean;
+    readonly MenuComponent: null | SvelteComponentConstructor<C, any>;
+
     readonly pointerHandler: null | PointerHandler;
 
     getViewBox(active: boolean): null | ViewBox;

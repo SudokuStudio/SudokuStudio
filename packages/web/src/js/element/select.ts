@@ -2,17 +2,16 @@ import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import type { Geometry, Idx, IdxMap } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "../pointerHandler";
+import { userSelectState } from "../user";
 import type  { ElementHandler } from "./element";
 
 export class SelectHandler implements ElementHandler {
-    static readonly TYPE = 'select';
-    static readonly IS_GLOBAL = true;
-    static readonly MenuComponent = null;
-
+    readonly isGlobal = true;
+    readonly MenuComponent = null;
     readonly pointerHandler = new AdjacentCellPointerHandler(false);
 
-    constructor(ref: StateRef, _menuComponent: null) {
-        this._bindPointerhandler(ref);
+    constructor(_ref: StateRef) {
+        this._bindPointerhandler();
     }
 
     getViewBox(_active: boolean): null {
@@ -22,7 +21,7 @@ export class SelectHandler implements ElementHandler {
         return [];
     }
 
-    private _bindPointerhandler(userSelectState: StateRef): void {
+    private _bindPointerhandler(): void {
 
         enum Mode {
             // Mode when starting a *NEW* selection.

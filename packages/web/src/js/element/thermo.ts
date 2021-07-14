@@ -7,13 +7,13 @@ import type  { ElementHandler } from "./element";
 
 export class ThermoHandler implements ElementHandler {
     static readonly TYPE = 'thermo';
-    static readonly IS_GLOBAL = false;
-    static readonly MenuComponent = Thermo;
 
-    readonly pointerHandler = new AdjacentCellPointerHandler(false);
+    readonly isGlobal = false;
+    readonly MenuComponent = Thermo;
+    readonly pointerHandler = new AdjacentCellPointerHandler(true);
 
     private readonly _thermoState: StateRef;
-    constructor(ref: StateRef, _menuComponent: Thermo) {
+    constructor(ref: StateRef) {
         this._thermoState = ref;
         this._bindPointerhandler(ref);
     }

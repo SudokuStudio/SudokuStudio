@@ -1,10 +1,14 @@
 <script lang="ts">
-    import { TOOL_INPUT_NAME, toolState } from "../../js/user";
+    import { TOOL_INPUT_NAME, toolState, userState } from "../../js/user";
 
     // Ripples.
     import { MDCRipple } from "@material/ripple";
     import { onMount } from "svelte";
     onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
+
+    const filled = userState.ref('marks', 'filled');
+    const corner = userState.ref('marks', 'corner');
+    const center = userState.ref('marks', 'center');
 </script>
 
 <div class="container">
@@ -12,14 +16,14 @@
         <div class="mode-pad">
             <!-- TOOD switch to INPUT RADIOs. -->
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits" value="digits" bind:group={$toolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits" value={$filled} bind:group={$toolState} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits">
                     <span aria-hidden="true">1</span>
                     <span class="sr-only">Digits</span>
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-corner" value="corner" bind:group={$toolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-corner" value={$corner} bind:group={$toolState} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-corner">
                     <span aria-hidden="true" style="font-size: 50%;">
                         <span style="position: absolute; top:    12%; left:  20%;">1</span>
@@ -30,7 +34,7 @@
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-center" value="center" bind:group={$toolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-center" value={$center} bind:group={$toolState} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-center">
                     <span aria-hidden="true" style="font-size: 50%;">123</span>
                     <span class="sr-only">Center Marks</span>

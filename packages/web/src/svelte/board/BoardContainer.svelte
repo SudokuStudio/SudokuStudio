@@ -1,25 +1,15 @@
 <script lang="ts">
-    import type { StateRef } from "@sudoku-studio/state-manager";
     import type { PointerHandler } from "../../js/pointerHandler";
     import { Board } from "@sudoku-studio/board";
-    import { boardState } from "../../js/board";
+    import { boardState, elementHandlerItem } from "../../js/board";
     import { userState } from "../../js/user";
     import { keydown } from "../../js/input";
-    import { ELEMENT_HANDLERS } from "../../js/elements";
     import { derived } from "svelte/store";
 
     const grid = boardState.ref('grid');
-    const toolId = userState.ref('tool');
 
-    const pointerHandler = derived<StateRef, null | PointerHandler>(toolId, $toolId => {
-        // TODO FIXME.
-        const ref = boardState.ref('elements', $toolId, 'value');
-        const type = boardState.get<string>('elements', $toolId, 'type');
-        if (null == type) return null;
-        const ElementHandler = ELEMENT_HANDLERS[type];
-        if (null == ElementHandler) return null;
-        return (new ElementHandler(ref, null)).pointerHandler;
-    });
+    const pointerHandler = derived<typeof elementHandlerItem, null | PointerHandler>(elementHandlerItem,
+        $elementHandlerItem => $elementHandlerItem?.handler?.pointerHandler || null);
 
     let svg: SVGSVGElement = null!; // Assigned on load.
 </script>

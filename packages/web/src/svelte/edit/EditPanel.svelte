@@ -1,73 +1,19 @@
-<script lang="ts" context="module">
-    import type { SvelteComponent } from "svelte";
-
-    type ConstraintRefAndComponent = {
-        id: string,
-        ref: StateRef,
-        component: SvelteComponentConstructor<SvelteComponent, any>,
-    };
-</script>
 <script lang="ts">
-    import type { schema } from "@sudoku-studio/schema";
-    import type { StateRef } from "@sudoku-studio/state-manager";
+    import type { ElementHandlerList } from "../../js/board";
 
     import EditSection from "./EditSection.svelte";
-    import { boardState } from "../../js/board";
-    import { ELEMENT_HANDLERS } from "../../js/elements";
+    import { elementHandlers } from "../../js/board";
+    import { derived } from "svelte/store";
 
-    // type ConstraintList = { id: string, ref: StateRef, component: ConstraintDataAndComponent }[];
-    type ConstraintList = ConstraintRefAndComponent[];
-    const constraintsGlobal: ConstraintList = [];
-    const constraintsLocal: ConstraintList = [];
 
-    boardState.ref('elements/*').watch<schema.Element>(([ _elements, constraintId ], oldVal, newVal) => {
-        const type = oldVal?.type || newVal!.type;
-        const elementHandler = ELEMENT_HANDLERS[type];
-        if (null == elementHandler) {
-            console.warn(`Cannot show edit menu for unknown constraint type: ${type}.`);
-            return;
-        }
-
-        const list = elementHandler.IS_GLOBAL ? constraintsGlobal : constraintsLocal;
-
-        let i = -1;
-        if (null != oldVal) {
-            i = list.findIndex(({ id }) => constraintId === id);
-            if (0 > i) {
-                console.error(`Failed to find constraint with id ${constraintId}.`);
-                return;
-            }
-        }
-
-        if (null == newVal) {
-            // Deleted.
-            delete list[i!];
-        }
-        else {
-            const component = elementHandler.MenuComponent;
-            if (null == component) {
-                console.warn(`Cannot show edit menu for unknown constraint type: ${newVal.type}.`);
-                return;
-            }
-
-            const item = {
-                id: constraintId,
-                ref: boardState.ref(_elements, constraintId, 'value'),
-                component,
-            };
-
-            if (null == oldVal) {
-                list.push(item);
-            }
-            else {
-                if (oldVal.type !== newVal.type)
-                    console.error('Cannot change type of constraint!');
-                list[i] = item;
-            }
-        }
-    }, true);
-
+    const constraintsGlobal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
+        return $elementHandlers.filter(({ handler }) => handler.MenuComponent && handler.isGlobal);
+    });
+    const constraintsLocal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
+        return $elementHandlers.filter(({ handler }) => handler.MenuComponent && !handler.isGlobal);
+    });
 </script>
+
 <ul class="nolist">
     <li>
         <EditSection title="Solver Panel">
@@ -77,9 +23,9 @@
     <li>
         <EditSection title="Global Constraints">
             <ul class="nolist">
-                {#each constraintsGlobal as { id, ref, component } (id)}
+                {#each $constraintsGlobal as { id, valueRef, handler } (id)}
                     <li>
-                        <svelte:component this={component} {id} {ref}  />
+                        <svelte:component this={handler.MenuComponent} {id} ref={valueRef}  />
                     </li>
                 {/each}
             </ul>
@@ -88,9 +34,9 @@
     <li>
         <EditSection title="Local Constraints">
             <ul class="nolist">
-                {#each constraintsLocal as { id, ref, component } (id)}
+                {#each $constraintsLocal as { id, valueRef, handler } (id)}
                     <li>
-                        <svelte:component this={component} {id} {ref}  />
+                        <svelte:component this={handler.MenuComponent} {id} ref={valueRef}  />
                     </li>
                 {/each}
             </ul>

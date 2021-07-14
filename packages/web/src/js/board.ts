@@ -1,11 +1,77 @@
 import { debounce } from "debounce";
-import * as LZString from 'lz-string';
+import LZString from 'lz-string';
 
-import { StateManager } from '@sudoku-studio/state-manager';
+import type { schema } from "@sudoku-studio/schema";
+import type { ElementHandler } from "./element/element";
+import { StateManager, StateRef } from '@sudoku-studio/state-manager';
+import { ELEMENT_HANDLERS } from "./elements";
+import { readable } from "svelte/store";
+import { toolState } from "./user";
 
 export const boardState = (window as any).boardState = new StateManager();
-export const filledState = boardState.ref('elements', '120', 'value'); // TODO "120" magic number.
-export const thermoState_TEMP = boardState.ref('elements', '10140', 'value'); // TODO
+export const filledState = boardState.ref('elements', '120', 'value'); // TODO REMOVEME.
+
+export type ElementHandlerItem = { id: string, valueRef: StateRef, handler: ElementHandler };
+export type ElementHandlerList = ElementHandlerItem[];
+
+export const elementHandlers = readable<ElementHandlerList>([], set => {
+    const list: ElementHandlerList = [];
+
+    boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
+        const type = oldVal?.type || newVal!.type;
+
+        const ElementHandler = ELEMENT_HANDLERS[type];
+        if (null == ElementHandler) {
+            console.warn(`Unknown constraint type: ${type}.`);
+            return;
+        }
+
+        let i = -1;
+        if (null != oldVal) {
+            i = list.findIndex(({ id }) => elementId === id);
+            if (0 > i) {
+                console.error(`Failed to find constraint with id ${elementId}.`);
+                return;
+            }
+        }
+
+        if (null == newVal) {
+            // Deleted.
+            delete list[i!];
+        }
+        else {
+            // Add or change.
+            if (null == oldVal) {
+                // Add.
+                list.push({
+                    id: elementId,
+                    valueRef: boardState.ref(_elements, elementId, 'value'),
+                    handler: new ElementHandler(boardState.ref(_elements, elementId, 'value')),
+                });
+            }
+            else {
+                // Change.
+                if (oldVal.type !== newVal.type)
+                    console.error(`Cannot change type of constraint! ${oldVal.type} -> ${newVal.type}`);
+                // Do nothing.
+            }
+        }
+        set(list);
+    }, true);
+});
+
+export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set => {
+    let list: ElementHandlerList = [];
+    elementHandlers.subscribe(value => list = value);
+
+    toolState.watch((_path, _oldVal, newVal) => {
+        const toolId = newVal;
+        const out = list.find(({ id }) => toolId === id) || null;
+        set(out);
+    }, true);
+});
+
+
 
 // Setup board.
 (() => {
@@ -36,6 +102,23 @@ export const thermoState_TEMP = boardState.ref('elements', '10140', 'value'); //
             height: 9,
         },
         elements: {
+            '120': {
+                type: 'filled',
+                order: 15,
+                value: {},
+            },
+            '130': {
+                type: 'corner',
+                order: 15,
+                value: {},
+            },
+            '140': {
+                type: 'center',
+                order: 15,
+                value: {},
+            },
+
+
             '10': {
                 type: 'box',
                 order: 10,
@@ -49,6 +132,7 @@ export const thermoState_TEMP = boardState.ref('elements', '10140', 'value'); //
                 order: 10,
                 value: null,
             },
+
             '10800': {
                 type: 'diagonal',
                 value: {
@@ -75,17 +159,6 @@ export const thermoState_TEMP = boardState.ref('elements', '10140', 'value'); //
             },
 
             // LOCALS
-            '120': {
-                type: 'filled',
-                order: 15,
-                value: {
-                    "8": 8,
-                    "26": 5,
-                    "30": 7,
-                    "45": 1,
-                    "47": 2,
-                },
-            },
             '10130': {
                 type: 'given',
                 order: 15,

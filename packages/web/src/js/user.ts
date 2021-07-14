@@ -1,9 +1,14 @@
-import { StateManager } from "@sudoku-studio/state-manager";
+import { StateManager } from '@sudoku-studio/state-manager';
 
 export const userState = (window as any).userState = new StateManager();
 userState.update({
     select: {},
-    tool: '10140' // TODO magic number.
+    tool: '120', // TODO magic numbers.
+    marks: {
+        filled: '120', // TODO magic numbers.
+        corner: '130',
+        center: '140',
+    },
 });
 
 export const userSelectState = userState.ref('select');

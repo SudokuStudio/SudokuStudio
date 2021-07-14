@@ -2,12 +2,14 @@ import type { ElementHandlerClass } from "./element/element";
 import { SelectHandler } from "./element/select";
 import { ThermoHandler } from "./element/thermo";
 
-function assertIsElementHandlerClass<T extends ElementHandlerClass<any, any>>(handler: T): T {
+function assertIsElementHandlerClass<T extends ElementHandlerClass<any>>(handler: T): T {
     return handler;
 }
 
 export const ELEMENT_HANDLERS = {
-    [SelectHandler.TYPE]: assertIsElementHandlerClass(SelectHandler),
+    ['filled']: assertIsElementHandlerClass(SelectHandler),
+    ['center']: assertIsElementHandlerClass(SelectHandler),
+    ['corner']: assertIsElementHandlerClass(SelectHandler),
 
     ['grid']: null,
     ['box']: null,
@@ -26,4 +28,4 @@ export const ELEMENT_HANDLERS = {
     ['king']: null,
     ['disjointGroups']: null,
     ['consecutive']: null,
-} as Record<string, null | ElementHandlerClass<any, any>>;
+} as Record<string, null | ElementHandlerClass<any>>;
