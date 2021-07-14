@@ -149,7 +149,7 @@ export const thermoPointerHandler = (() => {
     let thermoRef: null | StateRef = null;
     let len = 0;
 
-    mouseHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEndEvent>) => {
+    mouseHandler.addEventListener('dragStart', ((_event: CustomEvent<CellDragStartEndEvent>) => {
         len = 0;
         thermoRef = thermoState_TEMP.ref(`${Date.now()}_${Math.random()}`);
     }) as EventListener);
@@ -172,7 +172,7 @@ export const thermoPointerHandler = (() => {
         len++;
     }) as EventListener);
 
-    mouseHandler.addEventListener('dragEnd', ((event: CustomEvent<CellDragStartEndEvent>) => {
+    mouseHandler.addEventListener('dragEnd', ((_event: CustomEvent<CellDragStartEndEvent>) => {
         if (1 >= len) {
             thermoRef!.replace(null);
         }
