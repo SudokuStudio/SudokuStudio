@@ -509,7 +509,7 @@ describe('class StateManager', () => {
             expect(log[log.length - 1].newVal).toEqual({ 0: 5 });
         });
 
-        it('cannot watch root', () => {
+        it('cannot watch empty', () => {
             const stateMgr = new StateManager();
 
             const log: Log = [];

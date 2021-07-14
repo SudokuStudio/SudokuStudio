@@ -185,6 +185,7 @@ export class StateManager {
         const segs = pattern.split('/');
         let watcherTree = this._watcherTreeRoot;
         for (const seg of segs) {
+            if ('.' === seg) continue;
             if (!Object.prototype.hasOwnProperty.call(watcherTree, seg)) {
                 watcherTree[seg] = Object.create(null);
             }
@@ -211,6 +212,8 @@ export class StateManager {
         }
 
         const [ seg, ...restSegs ] = segs;
+        if ('.' === seg && !this._unwatchPattern(watcher, watcherTree, restSegs))
+            return false;
         if (!Object.prototype.hasOwnProperty.call(watcherTree, seg))
             return false;
         if (!this._unwatchPattern(watcher, watcherTree[seg], restSegs))
@@ -238,7 +241,10 @@ export class StateManager {
 
         // Recurse.
         const [ seg, ...restSegs ] = segs;
-        if ('*' === seg) {
+        if ('.' === seg) {
+            this._triggerNow(data, restSegs, path, watcher);
+        }
+        else if ('*' === seg) {
             for (const [ k, v ] of Object.entries(data)) {
                 this._triggerNow(v, restSegs, [ ...path, k ], watcher);
             }
