@@ -1,25 +1,34 @@
+<script lang="ts" context="module">
+    import type { SvelteComponent } from "svelte";
+
+    type ConstraintRefAndComponent = {
+        id: string,
+        ref: StateRef,
+        component: SvelteComponentConstructor<SvelteComponent, any>,
+    };
+</script>
 <script lang="ts">
     import type { schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
-    import type { ConstraintComponent } from "../../js/board";
 
     import EditSection from "./EditSection.svelte";
-    import { boardState, ConstraintMenuType, CONSTRAINT_MENU_TYPES, CONSTRAINT_COMPONENTS } from "../../js/board";
+    import { boardState } from "../../js/board";
+    import { ELEMENT_HANDLERS } from "../../js/elements";
 
-    type ConstraintList = { id: string, ref: StateRef, component: ConstraintComponent }[];
+    // type ConstraintList = { id: string, ref: StateRef, component: ConstraintDataAndComponent }[];
+    type ConstraintList = ConstraintRefAndComponent[];
     const constraintsGlobal: ConstraintList = [];
     const constraintsLocal: ConstraintList = [];
 
-    function getList(type: keyof typeof CONSTRAINT_MENU_TYPES): ConstraintList | null {
-        const menuType = CONSTRAINT_MENU_TYPES[type];
-        if (ConstraintMenuType.GLOBAL === menuType) return constraintsGlobal;
-        if (ConstraintMenuType.LOCAL === menuType) return constraintsLocal;
-        return null;
-    }
-
     boardState.ref('elements/*').watch<schema.Element>(([ _elements, constraintId ], oldVal, newVal) => {
-        const list = getList(oldVal?.type || newVal!.type);
-        if (null == list) return;
+        const type = oldVal?.type || newVal!.type;
+        const elementHandler = ELEMENT_HANDLERS[type];
+        if (null == elementHandler) {
+            console.warn(`Cannot show edit menu for unknown constraint type: ${type}.`);
+            return;
+        }
+
+        const list = elementHandler.IS_GLOBAL ? constraintsGlobal : constraintsLocal;
 
         let i = -1;
         if (null != oldVal) {
@@ -35,7 +44,7 @@
             delete list[i!];
         }
         else {
-            const component = CONSTRAINT_COMPONENTS[newVal.type];
+            const component = elementHandler.MenuComponent;
             if (null == component) {
                 console.warn(`Cannot show edit menu for unknown constraint type: ${newVal.type}.`);
                 return;

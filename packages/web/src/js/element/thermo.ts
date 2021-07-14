@@ -6,7 +6,7 @@ import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } f
 import type  { ElementHandler } from "./element";
 
 export class ThermoHandler implements ElementHandler {
-    static readonly TYPE = 'select';
+    static readonly TYPE = 'thermo';
     static readonly IS_GLOBAL = false;
     static readonly MenuComponent = Thermo;
 
@@ -37,18 +37,16 @@ export class ThermoHandler implements ElementHandler {
         return out;
     }
 
-    private _bindPointerhandler(thermoState: StateRef) {
-        const mouseHandler = new AdjacentCellPointerHandler(true);
-
+    private _bindPointerhandler(thermoState: StateRef): void {
         let thermoRef: null | StateRef = null;
         let len = 0;
 
-        mouseHandler.addEventListener('dragStart', ((_event: CustomEvent<CellDragStartEndEvent>) => {
+        this.pointerHandler.addEventListener('dragStart', ((_event: CustomEvent<CellDragStartEndEvent>) => {
             len = 0;
             thermoRef = thermoState.ref(`${Date.now()}_${Math.random()}`);
         }) as EventListener);
 
-        mouseHandler.addEventListener('drag', ((event: CustomEvent<CellDragTapEvent>) => {
+        this.pointerHandler.addEventListener('drag', ((event: CustomEvent<CellDragTapEvent>) => {
             if (null == thermoRef) throw 'UNREACHABLE';
 
             const { coord, grid } = event.detail;
@@ -57,7 +55,7 @@ export class ThermoHandler implements ElementHandler {
             for (const [ i, oldIdx ] of Object.entries(thermoRef.get<ArrayObj<Idx<Geometry.CELL>>>() || {})) {
                 if (idx === oldIdx) {
                     len = +i + 1;
-                    thermoRef.replace(arrayObj2array(thermoRef.get<ArrayObj<Idx<Geometry.CELL>>>() || {}));
+                    thermoRef.replace(arrayObj2array(thermoRef.get<ArrayObj<Idx<Geometry.CELL>>>() || {}).slice(0, len));
                     return;
                 }
             }
@@ -66,13 +64,13 @@ export class ThermoHandler implements ElementHandler {
             len++;
         }) as EventListener);
 
-        mouseHandler.addEventListener('dragEnd', ((_event: CustomEvent<CellDragStartEndEvent>) => {
+        this.pointerHandler.addEventListener('dragEnd', ((_event: CustomEvent<CellDragStartEndEvent>) => {
             if (1 >= len) {
                 thermoRef!.replace(null);
             }
         }) as EventListener);
 
-        mouseHandler.addEventListener('tap', ((event: CustomEvent<CellDragTapEvent>) => {
+        this.pointerHandler.addEventListener('tap', ((event: CustomEvent<CellDragTapEvent>) => {
             const { coord, grid } = event.detail;
             const idx = cellCoord2CellIdx(coord, grid);
 
@@ -84,7 +82,5 @@ export class ThermoHandler implements ElementHandler {
             }
 
         }) as EventListener);
-
-        return mouseHandler;
     }
 }

@@ -9,5 +9,21 @@ function assertIsElementHandlerClass<T extends ElementHandlerClass<any, any>>(ha
 export const ELEMENT_HANDLERS = {
     [SelectHandler.TYPE]: assertIsElementHandlerClass(SelectHandler),
 
+    ['grid']: null,
+    ['box']: null,
+
+    ['given']: null,
+    ['arrow']: null,
+    ['sandwich']: null,
+    ['min']: null,
+    ['max']: null,
+    ['killer']: null,
+    ['quadruple']: null,
+
     [ThermoHandler.TYPE]: assertIsElementHandlerClass(ThermoHandler),
-};
+    ['diagonal']: null,
+    ['knight']: null,
+    ['king']: null,
+    ['disjointGroups']: null,
+    ['consecutive']: null,
+} as Record<string, null | ElementHandlerClass<any, any>>;

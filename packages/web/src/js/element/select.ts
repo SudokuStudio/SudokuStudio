@@ -22,7 +22,7 @@ export class SelectHandler implements ElementHandler {
         return [];
     }
 
-    private _bindPointerhandler(userSelectState: StateRef) {
+    private _bindPointerhandler(userSelectState: StateRef): void {
 
         enum Mode {
             // Mode when starting a *NEW* selection.
@@ -39,8 +39,6 @@ export class SelectHandler implements ElementHandler {
 
         // The selecting mode.
         let mode = Mode.RESETTING;
-
-        const mouseHandler = this.pointerHandler;
 
         function getMode(mouseEvent: MouseEvent): Mode {
             if (mouseEvent.shiftKey) {
@@ -85,15 +83,15 @@ export class SelectHandler implements ElementHandler {
             userSelectState.ref(`${idx}`).replace(Mode.SELECTING === mode || null);
         }
 
-        mouseHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEndEvent>) => {
+        this.pointerHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEndEvent>) => {
             mode = getMode(event.detail.event);
         }) as EventListener);
 
-        mouseHandler.addEventListener('drag', ((event: CustomEvent<CellDragTapEvent>) => {
+        this.pointerHandler.addEventListener('drag', ((event: CustomEvent<CellDragTapEvent>) => {
             handle(event, false);
         }) as EventListener);
 
-        mouseHandler.addEventListener('tap', ((event: CustomEvent<CellDragTapEvent>) => {
+        this.pointerHandler.addEventListener('tap', ((event: CustomEvent<CellDragTapEvent>) => {
             handle(event, true);
         }) as EventListener);
     }

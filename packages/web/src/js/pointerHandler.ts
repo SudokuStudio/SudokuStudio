@@ -1,7 +1,5 @@
 import type { Grid, Coord, Geometry, Idx } from "@sudoku-studio/schema";
 import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
-import { thermoState_TEMP } from "./board";
-import type { StateRef } from "../../../state-manager/lib/state-manager";
 
 export interface PointerHandler {
     down(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
@@ -56,8 +54,9 @@ export class AdjacentCellPointerHandler extends EventTarget implements PointerHa
     }
 
     leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
-        if (this._isDown)
+        if (this._isDown) {
             this._handle(event, grid, svg);
+        }
     }
 
     // For special single-selected-cell deselect click.
@@ -75,7 +74,6 @@ export class AdjacentCellPointerHandler extends EventTarget implements PointerHa
     }
 
     private _handle(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
-
         const pos = click2svgCoord(event, svg);
 
         // Interpolate if mouse jumped cells within the board.
