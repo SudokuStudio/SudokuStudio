@@ -1,3 +1,6 @@
+import { debounce } from "debounce";
+import * as LZString from 'lz-string';
+
 import { StateManager } from '@sudoku-studio/state-manager';
 
 import Diagonal from '../svelte/edit/constraint/Diagonal.svelte';
@@ -72,18 +75,21 @@ export const thermoState_TEMP = boardState.ref('elements', '10140', 'value'); //
 
 // Setup board.
 (() => {
-    boardState.watch((_path, _oldVal, newVal) => {
+    boardState.watch(debounce((_path, _oldVal, newVal) => {
         const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('b', btoa(JSON.stringify(newVal)));
+        newUrl.searchParams.set('b', LZString.compressToEncodedURIComponent(JSON.stringify(newVal)));
         window.history.replaceState(null, '', newUrl.href);
-    }, false, '.');
+    }, 200), false, '.');
 
     const thisUrl = new URL(window.location.href);
     if (thisUrl.searchParams.has('b')) {
         const boardString = thisUrl.searchParams.get('b')!;
         try {
-            boardState.update(JSON.parse(atob(boardString)));
-            return;
+            const json = LZString.decompressFromEncodedURIComponent(boardString);
+            if (null != json) {
+                boardState.update(JSON.parse(json));
+                return;
+            }
         }
         catch (e) {
             console.error('Failed to update board from `b` param.');
