@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PointerHandler } from "../../js/pointerHandler";
+    import type { PointerHandler } from "../../js/element/pointerHandler";
     import { Board } from "@sudoku-studio/board";
     import { boardState, elementHandlerItem } from "../../js/board";
     import { userState } from "../../js/user";

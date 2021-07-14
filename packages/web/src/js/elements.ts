@@ -1,5 +1,5 @@
-import type { Geometry, Grid, Idx, IdxMap } from "../../../schema/schema";
-import type { StateRef } from "../../../state-manager/lib/state-manager";
+import type { Geometry, Grid, Idx, IdxMap } from "@sudoku-studio/schema";
+import type { StateRef } from "@sudoku-studio/state-manager";
 import { DiagonalHandler } from "./element/diagonal";
 import type { ElementHandler, ElementHandlerClass, SvelteComponentConstructor } from "./element/element";
 

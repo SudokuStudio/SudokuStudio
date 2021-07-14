@@ -2,7 +2,7 @@ import { cellCoord2CellIdx, arrayObj2array } from "@sudoku-studio/board-utils";
 import type { Geometry, Idx, IdxMap, ArrayObj, Grid } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import Thermo from "../../svelte/edit/constraint/Thermo.svelte";
-import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "../pointerHandler";
+import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "./pointerHandler";
 import type  { ElementHandler } from "./element";
 
 export class ThermoHandler implements ElementHandler {

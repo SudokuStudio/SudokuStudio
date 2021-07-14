@@ -1,7 +1,7 @@
 import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import type { Geometry, Grid, Idx, IdxMap } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "../pointerHandler";
+import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "./pointerHandler";
 import { userSelectState } from "../user";
 import type  { ElementHandler, SvelteComponentConstructor } from "./element";
 
