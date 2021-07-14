@@ -12,14 +12,12 @@
     const toolId = userState.ref('tool');
 
     const pointerHandler = derived<StateRef, null | PointerHandler>(toolId, $toolId => {
-        console.log('toolId', $toolId);
+        // TODO FIXME.
         const ref = boardState.ref('elements', $toolId, 'value');
         const type = boardState.get<string>('elements', $toolId, 'type');
-        console.log(type);
         if (null == type) return null;
         const ElementHandler = ELEMENT_HANDLERS[type];
         if (null == ElementHandler) return null;
-        console.log(ElementHandler);
         return (new ElementHandler(ref, null)).pointerHandler;
     });
 
