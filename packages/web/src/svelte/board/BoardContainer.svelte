@@ -3,7 +3,6 @@
     import { Board } from "@sudoku-studio/board";
     import { boardState, elementHandlerItem } from "../../js/board";
     import { userState } from "../../js/user";
-    import { keydown } from "../../js/input";
     import { derived } from "svelte/store";
 
     const grid = boardState.ref('grid');
@@ -14,7 +13,7 @@
     let svg: SVGSVGElement = null!; // Assigned on load.
 </script>
 
-<svelte:window on:mouseup={e => $pointerHandler && $pointerHandler.up(e, $grid, svg)} on:keydown={keydown} />
+<svelte:window on:mouseup={e => $pointerHandler && $pointerHandler.up(e, $grid, svg)} />
 <div class="overlay"
     on:mousedown|capture|stopPropagation|preventDefault={e => $pointerHandler && $pointerHandler.down(e, $grid, svg)}
     on:mousemove|capture|stopPropagation|preventDefault={e => $pointerHandler && $pointerHandler.move(e, $grid, svg)}

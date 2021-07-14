@@ -1,17 +1,22 @@
-import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
-import type { Geometry, Grid, Idx, IdxMap } from "@sudoku-studio/schema";
+import type { Geometry, Grid, Idx, IdxBitset, IdxMap } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
+import { bitsetToList, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "./pointerHandler";
 import { userSelectState } from "../user";
 import type  { ElementHandler, SvelteComponentConstructor } from "./element";
+import { DigitInputEvent, DigitInputHandler } from "./inputHandler";
 
 export class SelectHandler implements ElementHandler {
     readonly isGlobal: boolean = false;
     readonly MenuComponent: null | SvelteComponentConstructor<any, any> = null;
     readonly pointerHandler = new AdjacentCellPointerHandler(false);
+    readonly inputHandler = new DigitInputHandler();
 
-    constructor(_ref: StateRef) {
+    private readonly _stateRef: StateRef;
+    constructor(ref: StateRef) {
+        this._stateRef = ref;
         this._bindPointerhandler();
+        this._bindInputHandler();
     }
 
     getViewBox(_active: boolean, _grid: Grid): null {
@@ -91,6 +96,17 @@ export class SelectHandler implements ElementHandler {
 
         this.pointerHandler.addEventListener('tap', ((event: CustomEvent<CellDragTapEvent>) => {
             handle(event, true);
+        }) as EventListener);
+    }
+
+    private _bindInputHandler(): void {
+        this.inputHandler.addEventListener('digit', ((event: CustomEvent<DigitInputEvent>) => {
+            const { digit } = event.detail;
+            const update: IdxMap<Geometry.CELL, number | null> = {};
+            for (const cellIdx of bitsetToList(userSelectState.get<IdxBitset<Geometry.CELL>>())) {
+                update[`${cellIdx}`] = digit;
+            }
+            this._stateRef.update(update);
         }) as EventListener);
     }
 }

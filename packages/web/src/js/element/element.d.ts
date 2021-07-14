@@ -2,6 +2,7 @@ import type { SvelteComponent } from "svelte";
 import type { Geometry, Idx, IdxMap } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import type { PointerHandler } from "./pointerHandler";
+import type { Inputhandler } from "./inputHandler";
 
 export type ViewBox = {
     x: number,
@@ -23,7 +24,7 @@ export interface ElementHandler {
     readonly MenuComponent: null | SvelteComponentConstructor<C, any>;
 
     readonly pointerHandler: null | PointerHandler;
-    // readonly inputHandler: null | Inputhandler;
+    readonly inputHandler: null | InputHandler;
 
     getViewBox(active: boolean, grid: Grid): null | ViewBox;
     getConflicts(digits: IdxMap<Geometry.CELL, number>, grid: Grid, output: Set<Idx<Geometry.CELL>>): void;

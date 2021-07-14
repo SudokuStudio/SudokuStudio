@@ -21,6 +21,7 @@ function makeSimpleHandler(isGlobal: boolean, menuComponent: null | SvelteCompon
         readonly isGlobal: boolean = isGlobal;
         readonly MenuComponent: null | SvelteComponentConstructor<any, any> = menuComponent;
         readonly pointerHandler = null;
+        readonly inputHandler = null;
 
         constructor(_ref: StateRef) {
         }

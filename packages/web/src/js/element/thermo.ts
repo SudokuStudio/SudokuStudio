@@ -11,6 +11,7 @@ export class ThermoHandler implements ElementHandler {
     readonly isGlobal = false;
     readonly MenuComponent = Thermo;
     readonly pointerHandler = new AdjacentCellPointerHandler(true);
+    readonly inputHandler = null;
 
     private readonly _thermoState: StateRef;
     constructor(ref: StateRef) {

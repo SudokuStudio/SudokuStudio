@@ -1,10 +1,15 @@
 <script lang="ts">
+    import type { InputHandler } from "../../js/element/inputHandler";
+    import { derived } from "svelte/store";
     import { TOOL_INPUT_NAME, toolState, userState } from "../../js/user";
-
-    // Ripples.
+    import { elementHandlerItem } from "../../js/board";
+    // Button ripples.
     import { MDCRipple } from "@material/ripple";
     import { onMount } from "svelte";
     onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
+
+    const inputHandler = derived<typeof elementHandlerItem, null | InputHandler>(elementHandlerItem,
+        $elementHandlerItem => $elementHandlerItem?.handler?.inputHandler || null);
 
     const filled = userState.ref('marks', 'filled');
     const corner = userState.ref('marks', 'corner');
@@ -12,6 +17,9 @@
     const colors = userState.ref('marks', 'colors');
 </script>
 
+<svelte:window
+    on:keydown={e => $inputHandler && $inputHandler.keydown(e)}
+    on:keyup={e => $inputHandler && $inputHandler.keyup(e)} />
 <div class="container">
     <div class="mode-pad-container">
         <div class="mode-pad">
@@ -53,20 +61,31 @@
     <div class="right-container">
         <div class="right">
             <div class="num-pad">
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 1 / 2 / 2">1</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 2 / 2 / 3">2</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 3 / 2 / 4">3</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 1 / 2 / 2" value="1"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>1</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 2 / 2 / 3" value="2"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>2</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 3 / 2 / 4" value="3"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>3</button>
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 1 / 3 / 2">4</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 2 / 3 / 3">5</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 3 / 3 / 4">6</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 1 / 3 / 2" value="4"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>4</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 2 / 3 / 3" value="5"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>5</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 3 / 3 / 4" value="6"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>6</button>
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 1 / 4 / 2">7</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 2 / 4 / 3">8</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 3 / 4 / 4">9</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 1 / 4 / 2" value="7"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>7</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 2 / 4 / 3" value="8"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>8</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 3 / 4 / 4" value="9"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>9</button>
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 1 / 5 / 2">0</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 2 / 5 / 4" title="Delete" aria-label="Delete">
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 1 / 5 / 2" value="0"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)}>0</button>
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 2 / 5 / 4" value="Delete"
+                    on:click={e => $inputHandler && $inputHandler.padClick(e)} title="Delete" aria-label="Delete">
                     <span class="icon icon-inline icon-c-textinv icon-delete" />
                 </button>
             </div>

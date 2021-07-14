@@ -11,6 +11,7 @@ export class ArrowHandler implements ElementHandler {
     readonly isGlobal = false;
     readonly MenuComponent = Arrow;
     readonly pointerHandler = new AdjacentCellPointerHandler(true);
+    readonly inputHandler = null;
 
     constructor(ref: StateRef) {
         this._bindPointerhandler(ref);

@@ -10,6 +10,7 @@ export class DiagonalHandler implements ElementHandler {
     readonly isGlobal = true;
     readonly MenuComponent = Diagonal;
     readonly pointerHandler = null;
+    readonly inputHandler = null;
 
     private readonly _ref: StateRef;
     constructor(ref: StateRef) {
