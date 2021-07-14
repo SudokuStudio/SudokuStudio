@@ -1,4 +1,4 @@
-import type { Grid, Idx, Coord, IdxBitset, Geometry } from "@sudoku-studio/schema";
+import type { Grid, Idx, Coord, IdxBitset, Geometry, ArrayObj } from "@sudoku-studio/schema";
 
 // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
 export function any(x: any): any {
@@ -10,6 +10,13 @@ export const GRID_THICKNESS_HALF = 0.5 * GRID_THICKNESS;
 
 export const BOX_THICKNESS = 4 * GRID_THICKNESS;
 export const BOX_THICKNESS_HALF = 0.5 * BOX_THICKNESS;
+
+
+export function arrayObj2array<T>(arrayObj: ArrayObj<T>): T[] {
+    const length = Object.keys(arrayObj).length;
+    return Array.from({ ...arrayObj, length: length });
+}
+
 
 export function cellIdx2cellCoord(idx: Idx<Geometry.CELL>, { width }: Grid): Coord<Geometry.CELL> {
     const x = idx % width;

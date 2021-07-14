@@ -30,8 +30,13 @@ export type Idx<TAG extends Geometry> = number & { _idx?: TAG };
 /** 2d coordinates [ x, y ] for the given Geometry. */
 export type Coord<TAG extends Geometry> = [ x: number, y: number ] & { _coord?: TAG }
 /** JS Object map from Idx<TAG> to boolean flag representing set membership. */
-export type IdxBitset<TAG extends Geometry> = {
-    [K in Idx<TAG> as `${K}`]: boolean;
+export type IdxBitset<TAG extends Geometry> = IdxMap<TAG, boolean>;
+/** JS Object map from Idx<TAG> to any value. */
+export type IdxMap<TAG extends Geometry, V> = {
+    [K in Idx<TAG> as `${K}`]?: V;
+};
+export type ArrayObj<V> = {
+    [K: number]: V;
 };
 
 /** Width and height of the grid. */
