@@ -17,7 +17,7 @@
     <circle cx="0.5" cy="0.5" r="0.4" fill="#ddd" />
 </marker>
 <g {id}>
-    {#each Object.entries($ref) as [ thermoId, idxArr ] (thermoId)}
+    {#each Object.entries($ref || {}) as [ thermoId, idxArr ] (thermoId)}
         <path d={makePath(any(idxArr), grid, 0.25)} fill="none" stroke="#ddd" stroke-width="0.2" marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
     {/each}
 </g>

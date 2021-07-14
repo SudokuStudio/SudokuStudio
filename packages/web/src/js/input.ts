@@ -2,6 +2,7 @@ import type { Grid, Coord, Geometry, IdxBitset, Idx } from "@sudoku-studio/schem
 import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, bitsetToList, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
 import { filledState, thermoState_TEMP } from "./board";
 import { userSelectState } from "./user";
+import type { StateRef } from "../../../state-manager/lib/state-manager";
 
 const DIGIT_REGEX = /^Digit(\d)$/;
 const KEYCODES = {
@@ -40,7 +41,7 @@ export interface PointerHandler {
     click(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
 }
 
-type CellDragStartEvent = {
+type CellDragStartEndEvent = {
     event: MouseEvent,
 };
 type CellDragTapEvent = {
@@ -64,7 +65,7 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
     }
 
     down(event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
-        this._dispatch<CellDragStartEvent>('dragStart', { event });
+        this._dispatch<CellDragStartEndEvent>('dragStart', { event });
         this._isDown = true;
         this._isTap = true;
     }
@@ -75,10 +76,13 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
         }
     }
 
-    up(_event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
-        this._prevPos = null;
-        this._prevCell = null;
-        this._isDown = false;
+    up(event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
+        if (this._isDown) {
+            this._dispatch<CellDragStartEndEvent>('dragEnd', { event });
+            this._prevPos = null;
+            this._prevCell = null;
+            this._isDown = false;
+        }
     }
 
     leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
@@ -101,7 +105,6 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
     }
 
     private _handle(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
-        this._isTap = false; // Moving cancels tap.
 
         const pos = click2svgCoord(event, svg);
 
@@ -112,6 +115,7 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
                 this._prevCell = cellCoord2CellIdx(coord, grid);
             }
             this._prevPos = (this._interpolateOnReender || isOnGrid(pos, grid)) ? pos : null;
+            this._isTap = false; // Cancel tap (jumped cells).
         }
         // Otherwise select the current cell.
         else {
@@ -119,6 +123,9 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
             const coord = svgCoord2cellCoord(pos, grid, !isFirstClick);
             if (null != coord) {
                 if (this._prevCell !== cellCoord2CellIdx(coord, grid)) {
+                    if (null != this._prevCell)
+                        this._isTap = false; // Cancel tap as soon as moved one cell.
+
                     this._dispatch<CellDragTapEvent>('drag', { event, coord, grid, svg });
                     this._prevCell = cellCoord2CellIdx(coord, grid);
                 }
@@ -128,6 +135,7 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
             else if (!(this._interpolateOnReender || isOnGrid(pos, grid))) {
                 this._prevCell = null;
                 this._prevPos = null;
+                this._isTap = false; // Cancel tap -- off grid.
             }
         }
     }
@@ -138,24 +146,49 @@ class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
 export const thermoPointerHandler = (() => {
     const mouseHandler = new AdjacentCellPointerHandler(true);
 
-    const thermoRef = thermoState_TEMP.ref('200');
+    let thermoRef: null | StateRef = null;
     let len = 0;
 
-    mouseHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEvent>) => {
+    mouseHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEndEvent>) => {
         len = 0;
-        thermoRef.replace({});
+        thermoRef = thermoState_TEMP.ref(`${Date.now()}_${Math.random()}`);
     }) as EventListener);
 
     mouseHandler.addEventListener('drag', ((event: CustomEvent<CellDragTapEvent>) => {
+        if (null == thermoRef) throw 'UNREACHABLE';
+
         const { coord, grid } = event.detail;
         const idx = cellCoord2CellIdx(coord, grid);
+
+        for (const [ i, oldIdx ] of Object.entries(thermoRef.get<Record<string, number>>() || {})) {
+            if (idx === oldIdx) {
+                len = +i + 1;
+                thermoRef.replace(Array.from({ ...(thermoRef.get<Record<string, number>>() || {}), length: len }));
+                return;
+            }
+        }
 
         thermoRef.ref(`${len}`).replace(idx);
         len++;
     }) as EventListener);
 
+    mouseHandler.addEventListener('dragEnd', ((event: CustomEvent<CellDragStartEndEvent>) => {
+        if (1 >= len) {
+            thermoRef!.replace(null);
+        }
+    }) as EventListener);
+
     mouseHandler.addEventListener('tap', ((event: CustomEvent<CellDragTapEvent>) => {
-        // TODO
+        const { coord, grid } = event.detail;
+        const idx = cellCoord2CellIdx(coord, grid);
+
+        for (const [ thermoId, thermoVals ] of Object.entries(thermoState_TEMP.get<Record<string, Record<string, number>>>() || {})) {
+            if (idx === thermoVals[0]) {
+                thermoState_TEMP.ref(`${thermoId}`).replace(null);
+                return;
+            }
+        }
+
     }) as EventListener)
 
     return mouseHandler;
@@ -225,7 +258,7 @@ export const pointerHandler = (() => {
         userSelectState.ref(`${idx}`).replace(Mode.SELECTING === mode || null);
     }
 
-    mouseHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEvent>) => {
+    mouseHandler.addEventListener('dragStart', ((event: CustomEvent<CellDragStartEndEvent>) => {
         mode = getMode(event.detail.event);
     }) as EventListener);
 
