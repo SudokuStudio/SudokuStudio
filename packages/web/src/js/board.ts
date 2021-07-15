@@ -1,17 +1,19 @@
 import { debounce } from "debounce";
 import LZString from 'lz-string';
 
-import type { schema } from "@sudoku-studio/schema";
-import type { ElementHandler } from "./element/element";
+import type { Grid, schema } from "@sudoku-studio/schema";
+import type { ElementInfo } from "./element/element";
 import { StateManager, StateRef } from '@sudoku-studio/state-manager';
 import { ELEMENT_HANDLERS } from "./elements";
-import { readable } from "svelte/store";
+import { derived, readable, writable } from "svelte/store";
 import { toolState } from "./user";
+import type { InputHandler } from "./input/inputHandler";
 
 export const boardState = (window as any).boardState = new StateManager();
+export const boardGridRef = boardState.ref('grid');
 export const filledState = boardState.ref('elements', '120', 'value'); // TODO REMOVEME.
 
-export type ElementHandlerItem = { id: string, valueRef: StateRef, handler: ElementHandler };
+export type ElementHandlerItem = { id: string, valueRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];
 
 export const elementHandlers = readable<ElementHandlerList>([], set => {
@@ -20,8 +22,8 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
     boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
         const type = oldVal?.type || newVal!.type;
 
-        const ElementHandler = ELEMENT_HANDLERS[type];
-        if (null == ElementHandler) {
+        const elementInfo = ELEMENT_HANDLERS[type];
+        if (null == elementInfo) {
             console.warn(`Unknown constraint type: ${type}.`);
             return;
         }
@@ -42,11 +44,13 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
         else {
             // Add or change.
             if (null == oldVal) {
+                const valueRef = boardState.ref(_elements, elementId, 'value')
+
                 // Add.
                 list.push({
                     id: elementId,
-                    valueRef: boardState.ref(_elements, elementId, 'value'),
-                    handler: new ElementHandler(boardState.ref(_elements, elementId, 'value')),
+                    valueRef,
+                    info: elementInfo,
                 });
             }
             else {
@@ -60,7 +64,7 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
     }, true);
 });
 
-export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set => {
+export const currentElement = readable<null | ElementHandlerItem>(null, set => {
     let list: ElementHandlerList = [];
     elementHandlers.subscribe(value => list = value);
 
@@ -72,7 +76,17 @@ export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set 
     }, true);
 });
 
+export const boardSvg = writable<SVGSVGElement>();
 
+export const currentInputHandler = derived<[ typeof currentElement, typeof boardSvg ], null | InputHandler>(
+    [ currentElement, boardSvg ],
+    ([ $currentElement, $boardSvg ]) => {
+        if (null == $currentElement) return null;
+        const { info, valueRef } = $currentElement;
+        if (null == info || null == info.getInputHandler) return null;
+
+        return info.getInputHandler(valueRef, boardGridRef.get<Grid>(), $boardSvg);
+    });
 
 // Setup board.
 (() => {
@@ -166,7 +180,7 @@ export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set 
 
             // LOCALS
             '10130': {
-                type: 'given',
+                type: 'givens',
                 order: 15,
                 value: {
                     "12": 3,

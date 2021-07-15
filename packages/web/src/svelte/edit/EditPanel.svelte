@@ -5,12 +5,11 @@
     import { elementHandlers } from "../../js/board";
     import { derived } from "svelte/store";
 
-
     const constraintsGlobal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
-        return $elementHandlers.filter(({ handler }) => handler.MenuComponent && handler.isGlobal);
+        return $elementHandlers.filter(({ info }) => info.menuComponent && info.inGlobalMenu);
     });
     const constraintsLocal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
-        return $elementHandlers.filter(({ handler }) => handler.MenuComponent && !handler.isGlobal);
+        return $elementHandlers.filter(({ info }) => info.menuComponent && !info.inGlobalMenu);
     });
 </script>
 
@@ -23,9 +22,9 @@
     <li>
         <EditSection title="Global Constraints">
             <ul class="nolist">
-                {#each $constraintsGlobal as { id, valueRef, handler } (id)}
+                {#each $constraintsGlobal as { id, valueRef, info } (id)}
                     <li>
-                        <svelte:component this={handler.MenuComponent} {id} ref={valueRef}  />
+                        <svelte:component this={info.menuComponent} {id} ref={valueRef}  />
                     </li>
                 {/each}
             </ul>
@@ -34,9 +33,9 @@
     <li>
         <EditSection title="Local Constraints">
             <ul class="nolist">
-                {#each $constraintsLocal as { id, valueRef, handler } (id)}
+                {#each $constraintsLocal as { id, valueRef, info } (id)}
                     <li>
-                        <svelte:component this={handler.MenuComponent} {id} ref={valueRef}  />
+                        <svelte:component this={info.menuComponent} {id} ref={valueRef}  />
                     </li>
                 {/each}
             </ul>

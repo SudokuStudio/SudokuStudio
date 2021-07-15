@@ -1,8 +1,8 @@
 import type { SvelteComponent } from "svelte";
-import type { Geometry, Idx, IdxMap } from "@sudoku-studio/schema";
+import type { Geometry, Idx, IdxBitset, IdxMap } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import type { PointerHandler } from "./pointerHandler";
-import type { Inputhandler } from "./inputHandler";
+import type { InputHandler } from "../input/inputHandler";
 
 export type ViewBox = {
     x: number,
@@ -11,21 +11,11 @@ export type ViewBox = {
     height: number,
 };
 
-export interface SvelteComponentConstructor<U, T> {
-    new (options: U): T
+export type ElementInfo = {
+    getInputHandler?: null | ((ref: StateRef, grid: Grid, svg: SVGSVGElement) => InputHandler);
+
+    /** Can be unset if no menu component. */
+    inGlobalMenu?: null | boolean,
+    // TODO: use pre-build menu components for most/all elements.
+    menuComponent?: null | { new (options: any): SvelteComponent },
 };
-
-export interface ElementHandlerClass<T extends ElementHandler> {
-    new (ref: StateRef): T;
-}
-
-export interface ElementHandler {
-    readonly isGlobal: boolean;
-    readonly MenuComponent: null | SvelteComponentConstructor<C, any>;
-
-    readonly pointerHandler: null | PointerHandler;
-    readonly inputHandler: null | InputHandler;
-
-    getViewBox(active: boolean, grid: Grid): null | ViewBox;
-    getConflicts(digits: IdxMap<Geometry.CELL, number>, grid: Grid, output: Set<Idx<Geometry.CELL>>): void;
-}

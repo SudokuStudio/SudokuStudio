@@ -1,25 +1,18 @@
 import type { Grid, Coord, Geometry, Idx } from "@sudoku-studio/schema";
 import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
 
-export interface PointerHandler {
-    down(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
-    move(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
-    up(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
-    leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
-    click(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void;
-}
-
-export type CellDragStartEndEvent = {
-    event: MouseEvent,
-};
 export type CellDragTapEvent = {
     event: MouseEvent,
     coord: Coord<Geometry.CELL>,
     grid: Grid,
-    svg: SVGSVGElement,
 };
 
-export class AdjacentCellPointerHandler extends EventTarget implements PointerHandler {
+export class AdjacentCellPointerHandler {
+    onTap: null | ((event: CellDragTapEvent) => void) = null;
+    onDrag: null | ((event: CellDragTapEvent) => void) = null;
+    onDragStart: null | ((event: MouseEvent) => void) = null;
+    onDragEnd: null | (() => void) = null;
+
     private readonly _interpolateOnReender: boolean;
 
     private _prevPos: Coord<Geometry.SVG> | null = null;
@@ -28,12 +21,11 @@ export class AdjacentCellPointerHandler extends EventTarget implements PointerHa
     private _isTap: boolean = false;
 
     constructor(interpolateOnReenter: boolean) {
-        super();
         this._interpolateOnReender = interpolateOnReenter;
     }
 
-    down(event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
-        this._dispatch<CellDragStartEndEvent>('dragStart', { event });
+    down(event: MouseEvent): void {
+        this.onDragStart && this.onDragStart(event);
         this._isDown = true;
         this._isTap = true;
     }
@@ -44,9 +36,9 @@ export class AdjacentCellPointerHandler extends EventTarget implements PointerHa
         }
     }
 
-    up(event: MouseEvent, _grid: Grid, _svg: SVGSVGElement): void {
+    up(): void {
         if (this._isDown) {
-            this._dispatch<CellDragStartEndEvent>('dragEnd', { event });
+            this.onDragEnd && this.onDragEnd();
             this._prevPos = null;
             this._prevCell = null;
             this._isDown = false;
@@ -64,13 +56,9 @@ export class AdjacentCellPointerHandler extends EventTarget implements PointerHa
         if (this._isTap) {
             const coord = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
             if (null != coord) {
-                this._dispatch<CellDragTapEvent>('tap', { event, coord, grid, svg });
+                this.onTap && this.onTap({ event, coord, grid });
             }
         }
-    }
-
-    private _dispatch<T>(name: string, detail: T) {
-        this.dispatchEvent(new CustomEvent<T>(name, { detail }));
     }
 
     private _handle(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
@@ -79,7 +67,7 @@ export class AdjacentCellPointerHandler extends EventTarget implements PointerHa
         // Interpolate if mouse jumped cells within the board.
         if (null != this._prevPos && 1 < distSq(this._prevPos, pos)) {
             for (const coord of cellLine(this._prevPos, pos, grid)) {
-                this._dispatch<CellDragTapEvent>('drag', { event, coord, grid, svg });
+                this.onDrag && this.onDrag({ event, coord, grid });
                 this._prevCell = cellCoord2CellIdx(coord, grid);
             }
             this._prevPos = (this._interpolateOnReender || isOnGrid(pos, grid)) ? pos : null;
@@ -94,7 +82,7 @@ export class AdjacentCellPointerHandler extends EventTarget implements PointerHa
                     if (null != this._prevCell)
                         this._isTap = false; // Cancel tap as soon as moved one cell.
 
-                    this._dispatch<CellDragTapEvent>('drag', { event, coord, grid, svg });
+                    this.onDrag && this.onDrag({ event, coord, grid });
                     this._prevCell = cellCoord2CellIdx(coord, grid);
                 }
                 this._prevPos = pos;
