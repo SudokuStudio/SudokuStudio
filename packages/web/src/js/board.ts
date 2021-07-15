@@ -181,13 +181,11 @@ export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set 
                 order: 3,
                 value: {
                     "110": {
-                        length: 4,
                         "0": 3,
                         "1": 13,
                         "2": 23,
                     },
                     "120": {
-                        length: 4,
                         "0": 29,
                         "1": 20,
                         "2": 21,
@@ -200,11 +198,9 @@ export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set 
                 value: {
                     "110": {
                         "head": {
-                            length: 1,
                             "0": 27,
                         },
                         "body": {
-                            length: 3,
                             "0": 27, // TODO REMOVE ?
                             "1": 28,
                             "2": 29,
@@ -212,12 +208,10 @@ export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set 
                     },
                     "120": {
                         "head": {
-                            length: 2,
                             "0": 45, // TODO REMOVE ?
                             "1": 46,
                         },
                         "body": {
-                            length: 5,
                             "0": 46, // TODO REMOVE ?
                             "1": 47,
                             "2": 56,
@@ -288,18 +282,15 @@ export const elementHandlerItem = readable<null | ElementHandlerItem>(null, set 
                 order: 11,
                 value: {
                     "12": {
-                        length: 3,
                         "0": 1,
                         "1": 5,
                         "2": 9,
                     },
                     "24": {
-                        length: 2,
                         "0": 8,
                         "1": 9,
                     },
                     "66": {
-                        length: 4,
                         "0": 1,
                         "1": 1,
                         "2": 2,

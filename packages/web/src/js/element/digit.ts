@@ -1,5 +1,5 @@
 import type { Geometry, Grid, Idx, IdxBitset, IdxMap } from "@sudoku-studio/schema";
-import type { StateRef } from "@sudoku-studio/state-manager";
+import type { StateRef, Update } from "@sudoku-studio/state-manager";
 import { bitsetToList, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "./pointerHandler";
 import { userSelectState } from "../user";
@@ -106,9 +106,16 @@ export class DigitHandler implements ElementHandler {
     private _bindInputHandler(): void {
         this.inputHandler.addEventListener('digit', ((event: CustomEvent<DigitInputEvent>) => {
             const { digit } = event.detail;
-            const update: IdxMap<Geometry.CELL, number | null> = {};
+
+            const update: Update = {};
             for (const cellIdx of bitsetToList(userSelectState.get<IdxBitset<Geometry.CELL>>())) {
-                update[`${cellIdx}`] = digit;
+                // Null (delete) case can fall through.
+                if (this._multipleDigits && null != digit) {
+                    update[`${cellIdx}/${digit}`] = true;
+                }
+                else {
+                    update[`${cellIdx}`] = digit;
+                }
             }
             this._stateRef.update(update);
         }) as EventListener);

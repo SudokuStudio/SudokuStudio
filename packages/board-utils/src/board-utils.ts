@@ -71,7 +71,7 @@ export function getFirstFromBitset<TAG extends Geometry>(idxBitset: IdxBitset<TA
 }
 export function bitsetToList<TAG extends Geometry>(bitset: null | undefined | IdxBitset<TAG>): Idx<TAG>[] {
     if (null == bitset) return [];
-    return Object.keys(bitset).filter(k => !!bitset[k]).map(Number);
+    return Object.keys(bitset).filter(k => !!bitset[k]).map(Number).sort();
 }
 
 

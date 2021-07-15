@@ -23,6 +23,9 @@
 
         ['given']: DigitRender,
         ['filled']: FilledRender,
+        ['corner']: null,
+        ['center']: CenterRender,
+
         ['thermo']: ThermoRender,
         ['arrow']: ArrowRender,
         ['sandwich']: null,
@@ -46,6 +49,7 @@
 
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
     import { derived } from "svelte/store";
+import CenterRender from './svelte/CenterRender.svelte';
 
     export let userState: StateRef;
     export let boardState: StateRef;
