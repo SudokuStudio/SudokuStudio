@@ -1,16 +1,16 @@
 import { bitsetToList, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import type { Geometry, Grid, IdxBitset } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
-import { userSelectState } from "../user";
+import { userToolState, userSelectState, userState, userPrevToolState } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import { InputHandler, parseDigit } from "./inputHandler";
 
 const selectPointerHandler = new AdjacentCellPointerHandler(false);
 
 export function getSelectDigitInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, multipleDigits: boolean): InputHandler {
-    function onInput(code: string) {
+    function onDigitInput(code: string): boolean {
         const digit = parseDigit(code);
-        if (undefined === digit) return;
+        if (undefined === digit) return false;
 
         const update: Update = {};
         for (const cellIdx of bitsetToList(userSelectState.get<IdxBitset<Geometry.CELL>>())) {
@@ -23,6 +23,46 @@ export function getSelectDigitInputHandler(ref: StateRef, grid: Grid, svg: SVGSV
             }
         }
         ref.update(update);
+
+        return true;
+    }
+
+    function onQuickshift(event: KeyboardEvent): boolean {
+        const modeKeys = new Set([
+            'Shift',
+            'Control',
+            'Alt',
+            'Meta',
+        ]);
+
+        if (!modeKeys.has(event.key)) return false;
+
+        const oldTool = userToolState.get();
+        if (event.shiftKey) {
+            if (event.ctrlKey || event.metaKey) {
+                userToolState.replace(userState.get('marks', 'colors'));
+            }
+            else {
+                userToolState.replace(userState.get('marks', 'corner'));
+            }
+        }
+        else if (event.ctrlKey || event.metaKey) {
+            userToolState.replace(userState.get('marks', 'center'));
+        }
+        else if (event.altKey) {
+            userToolState.replace(userState.get('marks', 'colors'));
+        }
+        else {
+            userToolState.replace(userPrevToolState.get());
+            userPrevToolState.replace(null);
+            return true;
+        }
+
+        if (null == userPrevToolState.get()) {
+            userPrevToolState.replace(oldTool);
+            return true;
+        }
+        return false;
     }
 
     return {
@@ -33,12 +73,19 @@ export function getSelectDigitInputHandler(ref: StateRef, grid: Grid, svg: SVGSV
         },
 
         keydown(event: KeyboardEvent): void {
-            onInput(event.code);
+            if (onDigitInput(event.code) || onQuickshift(event)) {
+                event.stopImmediatePropagation();
+                event.preventDefault();
+            }
         },
-        keyup(_event: KeyboardEvent): void {
+        keyup(event: KeyboardEvent): void {
+            if (onQuickshift(event)) {
+                event.stopImmediatePropagation();
+                event.preventDefault();
+            }
         },
         padClick(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {
-            onInput(event.currentTarget.value);
+            onDigitInput(event.currentTarget.value);
         },
 
         down(event: MouseEvent): void {

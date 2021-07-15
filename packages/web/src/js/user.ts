@@ -15,5 +15,6 @@ userState.update({
 
 export const userSelectState = userState.ref('select');
 
-export const toolState = userState.ref('tool');
+export const userPrevToolState = userState.ref('prevTool');
+export const userToolState = userState.ref('tool');
 export const TOOL_INPUT_NAME = 'tool';

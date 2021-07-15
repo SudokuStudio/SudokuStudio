@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TOOL_INPUT_NAME, toolState, userState } from "../../js/user";
+    import { TOOL_INPUT_NAME, userToolState, userState } from "../../js/user";
     import { currentInputHandler } from "../../js/board";
 
     // Button ripples.
@@ -14,21 +14,21 @@
 </script>
 
 <svelte:window
-    on:keydown|preventDefault={$currentInputHandler && $currentInputHandler.keydown || undefined}
-    on:keyup|preventDefault={$currentInputHandler && $currentInputHandler.keyup || undefined} />
+    on:keydown={$currentInputHandler && $currentInputHandler.keydown || undefined}
+    on:keyup={$currentInputHandler && $currentInputHandler.keyup || undefined} />
 <div class="container">
     <div class="mode-pad-container">
         <div class="mode-pad">
             <!-- TOOD switch to INPUT RADIOs. -->
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits" value={$filled} bind:group={$toolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits" value={$filled} bind:group={$userToolState} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits">
                     <span aria-hidden="true">1</span>
                     <span class="sr-only">Digits</span>
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-corner" value={$corner} bind:group={$toolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-corner" value={$corner} bind:group={$userToolState} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-corner">
                     <span aria-hidden="true" style="font-size: 50%;">
                         <span style="position: absolute; top:    12%; left:  20%;">1</span>
@@ -39,14 +39,14 @@
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-center" value={$center} bind:group={$toolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-center" value={$center} bind:group={$userToolState} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-center">
                     <span aria-hidden="true" style="font-size: 50%;">123</span>
                     <span class="sr-only">Center Marks</span>
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-colors" value={$colors} bind:group={$toolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-colors" value={$colors} bind:group={$userToolState} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-colors">
                     <span class="icon icon-inline icon-c-textinv icon-colors" />
                     <span class="sr-only">Colors</span>
