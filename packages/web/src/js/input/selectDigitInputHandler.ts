@@ -1,28 +1,55 @@
 import { bitsetToList, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import type { Geometry, Grid, IdxBitset } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
+import { getDigits } from "../board";
 import { userToolState, userSelectState, userState, userPrevToolState } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import { InputHandler, parseDigit } from "./inputHandler";
 
 const selectPointerHandler = new AdjacentCellPointerHandler(false);
 
-export function getSelectDigitInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, multipleDigits: boolean): InputHandler {
+export type DigitInputHandlerOptions = {
+    multipleDigits: boolean,
+    blockedByGivens: boolean,
+    blockedByFilled: boolean,
+};
+
+export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, options: DigitInputHandlerOptions): InputHandler {
+    const { multipleDigits, blockedByGivens, blockedByFilled } = options;
+
     function onDigitInput(code: string): boolean {
         const digit = parseDigit(code);
         if (undefined === digit) return false;
 
+        const blockingDigits = getDigits(blockedByGivens, blockedByFilled);
+
         const update: Update = {};
+        // Keep track of if all marks are already set, and if so delete them instead of adding them.
+        let allAlreadySet = (null == digit) ? false : true;
+
         for (const cellIdx of bitsetToList(userSelectState.get<IdxBitset<Geometry.CELL>>())) {
+            // Ignore filled/given digits as needed.
+            if (null != blockingDigits[cellIdx]) continue;
+
             // Null (delete) case can fall through.
             if (multipleDigits && null != digit) {
                 update[`${cellIdx}/${digit}`] = true;
+                allAlreadySet &&= !!stateRef.ref(`${cellIdx}`, `${digit}`).get();
             }
             else {
                 update[`${cellIdx}`] = digit;
+                allAlreadySet &&= !!stateRef.ref(`${cellIdx}`).get();
             }
         }
-        ref.update(update);
+
+        if (allAlreadySet) {
+            // All already set, so we need to delete instead of add.
+            for (const key of Object.keys(update)) {
+                update[key] = null;
+            }
+        }
+
+        stateRef.update(update);
 
         return true;
     }

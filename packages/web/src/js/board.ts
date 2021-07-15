@@ -1,7 +1,7 @@
 import { debounce } from "debounce";
 import LZString from 'lz-string';
 
-import type { Grid, schema } from "@sudoku-studio/schema";
+import type { Geometry, Grid, IdxMap, schema } from "@sudoku-studio/schema";
 import type { ElementInfo } from "./element/element";
 import { StateManager, StateRef } from '@sudoku-studio/state-manager';
 import { ELEMENT_HANDLERS } from "./elements";
@@ -9,9 +9,24 @@ import { derived, readable, writable } from "svelte/store";
 import { userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 
+export const boardSvg = writable<SVGSVGElement>();
+
 export const boardState = (window as any).boardState = new StateManager();
 export const boardGridRef = boardState.ref('grid');
-export const filledState = boardState.ref('elements', '120', 'value'); // TODO REMOVEME.
+
+export function getDigits(includeGivens: boolean = true, includeFilled: boolean = true): IdxMap<Geometry.CELL, number> {
+    const out: IdxMap<Geometry.CELL, number> = {};
+    if (!includeGivens && !includeFilled) return out;
+
+    const elements = boardState.get<schema.Board['elements']>('elements') || {};
+    for (const element of Object.values(elements)) {
+        if ((includeGivens && 'givens' === element.type) || (includeFilled && 'filled' === element.type)) {
+            Object.assign(out, element.value);
+        }
+    }
+
+    return out;
+}
 
 export type ElementHandlerItem = { id: string, valueRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];
@@ -76,8 +91,6 @@ export const currentElement = readable<null | ElementHandlerItem>(null, set => {
     }, true);
 });
 
-export const boardSvg = writable<SVGSVGElement>();
-
 export const currentInputHandler = derived<[ typeof currentElement, typeof boardSvg ], null | InputHandler>(
     [ currentElement, boardSvg ],
     ([ $currentElement, $boardSvg ]) => {
@@ -117,6 +130,17 @@ export const currentInputHandler = derived<[ typeof currentElement, typeof board
             height: 9,
         },
         elements: {
+            '110': {
+                type: 'givens',
+                order: 15,
+                value: {
+                    "12": 3,
+                    "13": 4,
+                    "39": 4,
+                    "40": 1,
+                    "64": 3,
+                },
+            },
             '120': {
                 type: 'filled',
                 order: 15,
@@ -179,17 +203,6 @@ export const currentInputHandler = derived<[ typeof currentElement, typeof board
             },
 
             // LOCALS
-            '10130': {
-                type: 'givens',
-                order: 15,
-                value: {
-                    "12": 3,
-                    "13": 4,
-                    "39": 4,
-                    "40": 1,
-                    "64": 3,
-                },
-            },
             '10140': {
                 type: 'thermo',
                 order: 3,

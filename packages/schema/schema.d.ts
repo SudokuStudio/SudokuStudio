@@ -48,7 +48,7 @@ export type Grid = {
 export declare namespace schema {
     export interface Board {
         grid: Grid,
-        constraints: Record<string, Element>,
+        elements: Record<string, Element>,
     }
 
     export interface Grid {
@@ -56,7 +56,9 @@ export declare namespace schema {
         height: number,
     }
 
-    export type Element = GridElement | BoxElement | BooleanElement | DigonalElement | KillerElement | KillerElement | QuadrupleElement;
+    export type Element =
+        GridElement | BoxElement | GivensElement | FilledElement | PencilMarksElement | ColorsElement |
+        BooleanElement | DigonalElement | KillerElement | KillerElement | QuadrupleElement;
 
     export interface AbstractElement {
         type: Element['type'],
@@ -75,6 +77,35 @@ export declare namespace schema {
             height: boolean,
         },
     }
+    export interface GivensElement extends AbstractElement {
+        type: 'givens',
+        value: {
+            [K in Idx<Geometry.CENTER>]: number
+        },
+    }
+    export interface FilledElement extends AbstractElement {
+        type: 'filled',
+        value: {
+            [K in Idx<Geometry.CENTER>]: number
+        },
+    }
+    export interface PencilMarksElement extends AbstractElement {
+        type: 'corner' | 'center',
+        value: {
+            [K in Idx<Geometry.CENTER>]: {
+                [K: number]: true
+            }
+        },
+    }
+    export interface ColorsElement extends AbstractElement {
+        type: 'colors',
+        value: {
+            [K in Idx<Geometry.CENTER>]: {
+                [K: string]: true
+            }
+        },
+    }
+
     export interface BooleanElement extends AbstractElement {
         type: 'knight' | 'king' | 'disjointGroups' | 'consecutive',
         value: {
