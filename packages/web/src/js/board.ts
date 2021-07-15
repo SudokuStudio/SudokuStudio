@@ -6,7 +6,7 @@ import type { ElementInfo } from "./element/element";
 import { StateManager, StateRef } from '@sudoku-studio/state-manager';
 import { ELEMENT_HANDLERS } from "./elements";
 import { derived, readable, writable } from "svelte/store";
-import { toolState } from "./user";
+import { userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 
 export const boardState = (window as any).boardState = new StateManager();
@@ -68,7 +68,7 @@ export const currentElement = readable<null | ElementHandlerItem>(null, set => {
     let list: ElementHandlerList = [];
     elementHandlers.subscribe(value => list = value);
 
-    toolState.watch((_path, _oldVal, newVal) => {
+    userToolState.watch((_path, _oldVal, newVal) => {
         const toolId = newVal;
         const out = list.find(({ id }) => toolId === id) || null;
         // console.log(list, toolId, out);

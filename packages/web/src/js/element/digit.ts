@@ -7,6 +7,7 @@ import Givens from "../../svelte/edit/constraint/Givens.svelte";
 
 export const givensInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        console.log('GIVENS!');
         return getSelectDigitInputHandler(ref, grid, svg, false);
     },
     inGlobalMenu: false,

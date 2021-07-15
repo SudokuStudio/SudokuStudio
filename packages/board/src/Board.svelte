@@ -23,7 +23,7 @@
         ['grid']: GridRender,
         ['box']: BoxRender,
 
-        ['given']: DigitRender,
+        ['givens']: DigitRender,
         ['filled']: FilledRender,
         ['corner']: CornerRender,
         ['center']: CenterRender,
