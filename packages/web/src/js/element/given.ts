@@ -1,9 +1,9 @@
 import Given from "../../svelte/edit/constraint/Given.svelte";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import type  { ElementHandler } from "./element";
-import { SelectHandler } from "./select";
+import { DigitHandler } from "./digit";
 
-export class GivenHandler extends SelectHandler implements ElementHandler {
+export class GivenHandler extends DigitHandler implements ElementHandler {
     readonly isGlobal = false;
     readonly MenuComponent = Given;
 

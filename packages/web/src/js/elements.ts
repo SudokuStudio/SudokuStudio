@@ -4,7 +4,7 @@ import { DiagonalHandler } from "./element/diagonal";
 import type { ElementHandler, ElementHandlerClass, SvelteComponentConstructor } from "./element/element";
 
 import { GivenHandler } from "./element/given";
-import { SelectHandler } from "./element/select";
+import { DigitHandler } from "./element/digit";
 import { ThermoHandler } from "./element/thermo";
 
 import Knight from "../svelte/edit/constraint/Knight.svelte";
@@ -35,10 +35,10 @@ function makeSimpleHandler(isGlobal: boolean, menuComponent: null | SvelteCompon
 }
 
 export const ELEMENT_HANDLERS = {
-    ['filled']: assertIsElementHandlerClass(SelectHandler),
-    ['center']: assertIsElementHandlerClass(SelectHandler),
-    ['corner']: assertIsElementHandlerClass(SelectHandler),
-    ['colors']: assertIsElementHandlerClass(SelectHandler),
+    ['filled']: assertIsElementHandlerClass(DigitHandler),
+    ['center']: assertIsElementHandlerClass(DigitHandler),
+    ['corner']: assertIsElementHandlerClass(DigitHandler),
+    ['colors']: assertIsElementHandlerClass(DigitHandler),
 
     ['given']: assertIsElementHandlerClass(GivenHandler),
 

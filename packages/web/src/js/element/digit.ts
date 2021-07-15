@@ -6,7 +6,7 @@ import { userSelectState } from "../user";
 import type  { ElementHandler, SvelteComponentConstructor } from "./element";
 import { DigitInputEvent, DigitInputHandler } from "./inputHandler";
 
-export class SelectHandler implements ElementHandler {
+export class DigitHandler implements ElementHandler {
     readonly isGlobal: boolean = false;
     readonly MenuComponent: null | SvelteComponentConstructor<any, any> = null;
     readonly pointerHandler = new AdjacentCellPointerHandler(false);
