@@ -1,7 +1,7 @@
 import { bitsetToList, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import type { Geometry, Grid, IdxBitset } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
-import { getDigits } from "../board";
+import { boardState, getDigits } from "../board";
 import { userToolState, userSelectState, userState, userPrevToolState } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import { InputHandler, parseDigit } from "./inputHandler";
@@ -17,15 +17,31 @@ export type DigitInputHandlerOptions = {
 export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, options: DigitInputHandlerOptions): InputHandler {
     const { multipleDigits, blockedByGivens, blockedByFilled } = options;
 
+    const DELETE_ORDER = [ 'filled', 'corner', 'center', 'colors' ];
+
     function onDigitInput(code: string): boolean {
         const digit = parseDigit(code);
         if (undefined === digit) return false;
 
+        const shouldDelegate = onDigitInputHelper(stateRef, digit);
+        if (shouldDelegate) {
+            for (const type of DELETE_ORDER) {
+                const elementId = userState.get('marks', type);
+                if (null == elementId) continue;
+
+                const otherRef = boardState.ref('elements', `${elementId}`, 'value');
+                if (!onDigitInputHelper(otherRef, digit)) break;
+            }
+        }
+        return true;
+    }
+
+    function onDigitInputHelper(stateRef: StateRef, digit: null | number): boolean {
         const blockingDigits = getDigits(blockedByGivens, blockedByFilled);
 
         const update: Update = {};
         // Keep track of if all marks are already set, and if so delete them instead of adding them.
-        let allAlreadySet = (null == digit) ? false : true;
+        let allAlreadySet = true;
 
         for (const cellIdx of bitsetToList(userSelectState.get<IdxBitset<Geometry.CELL>>())) {
             // Ignore filled/given digits as needed.
@@ -38,20 +54,27 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
             }
             else {
                 update[`${cellIdx}`] = digit;
-                allAlreadySet &&= digit === stateRef.ref(`${cellIdx}`).get();
+                // Use `==` so `null == undefined`.
+                allAlreadySet &&= digit == stateRef.ref(`${cellIdx}`).get();
             }
         }
 
         if (allAlreadySet) {
-            // All already set, so we need to delete instead of add.
-            for (const key of Object.keys(update)) {
-                update[key] = null;
+            if (null == digit) {
+                // Everything we wanted to delete is already deleted, so delete something else.
+                return true;
+            }
+            else {
+                // All already set, so we need to delete instead of add.
+                for (const key of Object.keys(update)) {
+                    update[key] = null;
+                }
             }
         }
 
         stateRef.update(update);
 
-        return true;
+        return false;
     }
 
     function onQuickshift(event: KeyboardEvent): boolean {
