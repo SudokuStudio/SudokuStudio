@@ -2,6 +2,7 @@ import { diagonalInfo } from "./element/diagonal";
 import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
+import { thermoInfo } from "./element/thermo";
 
 function check<T extends ElementInfo>(factory: T): ElementInfo {
     return factory;
@@ -24,10 +25,10 @@ export const ELEMENT_HANDLERS = {
     ['killer']: null,
     ['quadruple']: null,
 
-    ['thermo']: null, //check(ThermoHandler),
+    ['thermo']: check(thermoInfo),
     ['diagonal']: check(diagonalInfo),
-    ['knight']: null, //check(makeSimpleHandler(true, Knight)),
-    ['king']: null, //check(makeSimpleHandler(true, King)),
-    ['disjointGroups']: null, //check(makeSimpleHandler(true, DisjointGroups)),
-    ['consecutive']: null, //check(makeSimpleHandler(true, Consecutive)),
+    ['knight']: null,
+    ['king']: null,
+    ['disjointGroups']: null,
+    ['consecutive']: null,
 } as const;
