@@ -873,15 +873,6 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-.overlay.svelte-kdd1wn {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-}
-
 .info-input.svelte-fcgi7u.svelte-fcgi7u {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -967,6 +958,15 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
     margin: 1em 0 0 0;
   }
 }
+.overlay.svelte-kdd1wn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
 .section-title.svelte-1o8sn12.svelte-1o8sn12.svelte-1o8sn12 {
   padding: 0.5em 0.5em;
   font-weight: 800;
