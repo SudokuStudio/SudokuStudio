@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { cornerIdx2cornerCoord } from "@sudoku-studio/board-utils";
+    import { arrayObj2array, cornerIdx2cornerCoord } from "@sudoku-studio/board-utils";
     import type { Idx, Geometry, schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
@@ -13,7 +13,7 @@
         const out: { idx: number, x: number, y: number, lines: string[] }[] = [];
         for (const [ cornerIdx, digits ] of Object.entries(value)) {
             const [ x, y ] = cornerIdx2cornerCoord(+cornerIdx, grid);
-            const digitStr = Array.from(digits as ArrayLike<number>).join('');
+            const digitStr = arrayObj2array(digits as any).join('');
             const lines = digitStr.match(splitter) || [];
             out.push({
                 idx: +cornerIdx,

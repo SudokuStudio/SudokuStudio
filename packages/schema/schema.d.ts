@@ -102,7 +102,6 @@ export declare namespace schema {
         type: 'quadruple',
         value: {
             [K in Idx<Geometry.CORNER>]: {
-                length: 0 | 1 | 2 | 3 | 4,
                 0?: number,
                 1?: number,
                 2?: number,
