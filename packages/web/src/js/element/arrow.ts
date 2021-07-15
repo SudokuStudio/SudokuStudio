@@ -1,4 +1,4 @@
-import { cellCoord2CellIdx, arrayObj2array, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
+import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import type { Geometry, Idx, IdxMap, ArrayObj, Grid } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import Arrow from "../../svelte/edit/constraint/Arrow.svelte";
@@ -20,7 +20,7 @@ export class ArrowHandler implements ElementHandler {
     getViewBox(_active: boolean, _grid: Grid): null {
         return null;
     }
-    getConflicts(digits: IdxMap<Geometry.CELL, number>, _grid: Grid, output: Set<Idx<Geometry.CELL>>) {
+    getConflicts(_digits: IdxMap<Geometry.CELL, number>, _grid: Grid, _output: Set<Idx<Geometry.CELL>>) {
         // TODO!!!
     }
 

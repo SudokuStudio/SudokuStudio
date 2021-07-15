@@ -4,12 +4,16 @@ export interface InputHandler {
     padClick(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void;
 }
 
-const DIGIT_REGEX = /^(?:Digit)?(\d)$/;
+const DIGIT_REGEX = /^(?:Digit|Numpad)?(\d)$/;
 const KEYCODES = {
     Delete: null,
     Backspace: null,
+    NumpadDecimal: null,
 } as const;
 
+export type KeyboardEventEvent = {
+    event: KeyboardEvent,
+}
 export type DigitInputEvent = {
     digit: null | number,
 };
@@ -17,10 +21,11 @@ export type DigitInputEvent = {
 export class DigitInputHandler extends EventTarget implements InputHandler {
     keydown(event: KeyboardEvent): void {
         this._handle(event.code);
+        this._dispatch<KeyboardEventEvent>('keydown', { event });
     }
 
-    keyup(_event: KeyboardEvent): void {
-
+    keyup(event: KeyboardEvent): void {
+        this._dispatch<KeyboardEventEvent>('keyup', { event });
     }
 
     padClick(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {
@@ -28,7 +33,7 @@ export class DigitInputHandler extends EventTarget implements InputHandler {
         this._handle(currentTarget.value);
     }
 
-    private _handle(code: string) {
+    private _handle(code: string): void {
         let digit: null | undefined | number = undefined;
 
         if (code in KEYCODES) {
