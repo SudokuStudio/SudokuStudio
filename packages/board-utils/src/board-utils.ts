@@ -269,3 +269,26 @@ export function distSq(a: Coord<Geometry.SVG>, b: Coord<Geometry.SVG>): number {
     const dy = b[1] - a[1];
     return dx * dx + dy * dy;
 }
+
+
+export function cornerMarkPos(i: number, len: number): [ number, number ] {
+    let dx: number, dy: number;
+    if (len <= 4) {
+        dx = (i % 2) * 0.6 - 0.3;
+        dy = ((i / 2) | 0) * 0.6 - 0.3;
+    }
+    else {
+        const half = (len / 2) | 0;
+        if (i < half) {
+            const d = 0.6 / (half - 1);
+            dx = i * d - 0.3;
+            dy = -0.3;
+        }
+        else {
+            const d = 0.6 / (len - half - 1);
+            dx = (i - half) * d - 0.3;
+            dy = 0.3;
+        }
+    }
+    return [ dx, dy ];
+}

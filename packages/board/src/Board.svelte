@@ -10,6 +10,8 @@
     import QuadrupleRender from './svelte/QuadrupleRender.svelte';
     import DiagonalRender from './svelte/DiagonalRender.svelte';
     import SelectRender from './svelte/SelectRender.svelte';
+    import CornerRender from './svelte/CornerRender.svelte';
+    import CenterRender from './svelte/CenterRender.svelte';
 
     function FilledRender(args: any) {
         args.props.color = '#4e72b0';
@@ -23,7 +25,7 @@
 
         ['given']: DigitRender,
         ['filled']: FilledRender,
-        ['corner']: null,
+        ['corner']: CornerRender,
         ['center']: CenterRender,
 
         ['thermo']: ThermoRender,
@@ -49,7 +51,6 @@
 
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
     import { derived } from "svelte/store";
-import CenterRender from './svelte/CenterRender.svelte';
 
     export let userState: StateRef;
     export let boardState: StateRef;

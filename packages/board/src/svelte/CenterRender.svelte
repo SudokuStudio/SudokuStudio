@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Geometry, IdxMap } from "@sudoku-studio/schema";
+    import type { Geometry, Idx, IdxMap } from "@sudoku-studio/schema";
     import { bitsetToList, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
@@ -7,14 +7,14 @@
     export let ref: StateRef;
     export let grid: { width: number, height: number };
 
-    function getMarks(cells: IdxMap<Geometry.CELL, Record<string, boolean>>): { idx: number, x: number, y: number, nums: string }[] {
-        const out: { idx: number, x: number, y: number, nums: string }[] = [];
+    function getMarks(cells: IdxMap<Geometry.CELL, Record<string, boolean>>): { idx: number, x: number, y: number, nums: Idx<Geometry.CELL>[] }[] {
+        const out: { idx: number, x: number, y: number, nums: Idx<Geometry.CELL>[] }[] = [];
         for (const [ idx, nums ] of Object.entries(cells)) {
             out.push({
                 idx: +idx,
                 x: cellIdx2cellCoord(+idx, grid)[0] + 0.5,
                 y: cellIdx2cellCoord(+idx, grid)[1] + 0.5,
-                nums: bitsetToList(nums).join(''),
+                nums: bitsetToList(nums),
             })
         }
 
@@ -25,8 +25,8 @@
 <g {id}>
     {#each getMarks($ref || {}) as { idx, x, y, nums } (idx)}
         <text {x} {y} fill="#4e72b0" text-anchor="middle" dominant-baseline="central" font-size="0.3" font-weight="600"
-                textLength={nums.length > 5 ? '0.9' : ''} lengthAdjust="spacingAndGlyphs">
-            {nums}
+                textLength={nums.length > 5 ? '0.9' : undefined} lengthAdjust="spacingAndGlyphs">
+            {nums.join('')}
         </text>
     {/each}
 </g>
