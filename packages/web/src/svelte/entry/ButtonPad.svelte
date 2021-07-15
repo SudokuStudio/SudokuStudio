@@ -18,8 +18,8 @@
 </script>
 
 <svelte:window
-    on:keydown={e => $inputHandler && $inputHandler.keydown(e)}
-    on:keyup={e => $inputHandler && $inputHandler.keyup(e)} />
+    on:keydown|preventDefault={e => $inputHandler && $inputHandler.keydown(e)}
+    on:keyup|preventDefault={e => $inputHandler && $inputHandler.keyup(e)} />
 <div class="container">
     <div class="mode-pad-container">
         <div class="mode-pad">

@@ -3,6 +3,7 @@ import { StateManager } from '@sudoku-studio/state-manager';
 export const userState = (window as any).userState = new StateManager();
 userState.update({
     select: {},
+    prevTool: null,
     tool: '120', // TODO magic numbers.
     marks: {
         filled: '120', // TODO magic numbers.

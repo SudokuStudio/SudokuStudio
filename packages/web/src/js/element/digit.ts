@@ -2,9 +2,9 @@ import type { Geometry, Grid, Idx, IdxBitset, IdxMap } from "@sudoku-studio/sche
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
 import { bitsetToList, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import { AdjacentCellPointerHandler, CellDragTapEvent, CellDragStartEndEvent } from "./pointerHandler";
-import { userSelectState } from "../user";
+import { toolState, userSelectState, userState } from "../user";
 import type  { ElementHandler, SvelteComponentConstructor } from "./element";
-import { DigitInputEvent, DigitInputHandler } from "./inputHandler";
+import { DigitInputEvent, DigitInputHandler, KeyboardEventEvent } from "./inputHandler";
 
 export class DigitHandler implements ElementHandler {
     readonly isGlobal: boolean = false;
@@ -118,6 +118,57 @@ export class DigitHandler implements ElementHandler {
                 }
             }
             this._stateRef.update(update);
+        }) as EventListener);
+
+        const modeKeys = new Set([
+            'ShiftLeft',
+            'ShiftRight',
+            'ControlLeft',
+            'ControlRight',
+            'AltLeft',
+            'AltRight',
+            'OSLeft',
+            'OSRight',
+        ]);
+
+        function handleModifierKeys(event: KeyboardEvent) {
+            if (!modeKeys.has(event.code)) return;
+
+            const oldTool = toolState.get();
+
+            if (event.shiftKey) {
+                if (event.ctrlKey || event.metaKey) {
+                    toolState.replace(userState.get('marks', 'colors'));
+                }
+                else {
+                    toolState.replace(userState.get('marks', 'corner'));
+                }
+            }
+            else if (event.ctrlKey || event.metaKey) {
+                toolState.replace(userState.get('marks', 'center'));
+            }
+            else if (event.altKey) {
+                toolState.replace(userState.get('marks', 'colors'));
+            }
+            else {
+                toolState.replace(userState.get('prevTool'));
+                userState.ref('prevTool').replace(null);
+                return;
+            }
+
+            if (null == userState.get('prevTool')) {
+                userState.ref('prevTool').replace(oldTool);
+            }
+        }
+
+        this.inputHandler.addEventListener('keydown', ((event: CustomEvent<KeyboardEventEvent>) => {
+            const { event: keyboardEvent } = event.detail;
+            handleModifierKeys(keyboardEvent);
+        }) as EventListener);
+
+        this.inputHandler.addEventListener('keyup', ((event: CustomEvent<KeyboardEventEvent>) => {
+            const { event: keyboardEvent } = event.detail;
+            handleModifierKeys(keyboardEvent);
         }) as EventListener);
     }
 }
