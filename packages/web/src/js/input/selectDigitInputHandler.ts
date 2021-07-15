@@ -38,7 +38,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
             }
             else {
                 update[`${cellIdx}`] = digit;
-                allAlreadySet &&= !!stateRef.ref(`${cellIdx}`).get();
+                allAlreadySet &&= digit === stateRef.ref(`${cellIdx}`).get();
             }
         }
 
