@@ -1,10 +1,24 @@
 <script lang="ts">
-    import { makePath, any } from "@sudoku-studio/board-utils";
+    import type { ArrayObj, Geometry, Idx } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
+    import { makePath, arrayObj2array } from "@sudoku-studio/board-utils";
 
     export let id: string;
     export let ref: StateRef;
     export let grid: { width: number, height: number };
+
+    export function getThermos(thermos: Record<string, ArrayObj<Idx<Geometry.CELL>>>): { thermoId: string, d: string, invalid: boolean }[] {
+        const out: { thermoId: string, d: string, invalid: boolean }[] = [];
+        for (const [ thermoId, idxArrObj ] of Object.entries(thermos)) {
+            const idxArr = arrayObj2array(idxArrObj);
+            out.push({
+                thermoId,
+                d: makePath(idxArr, grid, 0.25),
+                invalid: idxArr.length > grid.width,
+            });
+        }
+        return out;
+    }
 </script>
 
 
@@ -17,7 +31,7 @@
     <circle cx="0.5" cy="0.5" r="0.4" fill="#ddd" />
 </marker>
 <g {id}>
-    {#each Object.entries($ref || {}) as [ thermoId, idxArr ] (thermoId)}
-        <path d={makePath(any(idxArr), grid, 0.25)} fill="none" stroke="#ddd" stroke-width="0.2" marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
+    {#each getThermos($ref || {}) as { thermoId, d, invalid } (thermoId)}
+        <path {d} fill="none" stroke={invalid ? '#fcc' : '#ddd'} stroke-width="0.2" marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
     {/each}
 </g>

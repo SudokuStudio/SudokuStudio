@@ -13,8 +13,12 @@ export class SelectHandler implements ElementHandler {
     readonly inputHandler = new DigitInputHandler();
 
     private readonly _stateRef: StateRef;
-    constructor(ref: StateRef) {
+    private readonly _multipleDigits: boolean
+
+    constructor(ref: StateRef, multipleDigits: boolean = false) {
         this._stateRef = ref;
+        this._multipleDigits = multipleDigits;
+
         this._bindPointerhandler();
         this._bindInputHandler();
     }

@@ -13,8 +13,11 @@ export const BOX_THICKNESS_HALF = 0.5 * BOX_THICKNESS;
 
 
 export function arrayObj2array<T>(arrayObj: ArrayObj<T>): T[] {
-    const length = Object.keys(arrayObj).length;
-    return Array.from({ ...arrayObj, length: length });
+    const arr: T[] = [];
+    for (let i = 0; null != arrayObj[i]; i++) {
+        arr.push(arrayObj[i]);
+    }
+    return arr;
 }
 
 
@@ -97,15 +100,12 @@ export function getRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells:
 
 
 
-export function makePath(idxArr: Record<string, Idx<Geometry.CELL>>, grid: Grid, shortenEnd: number = 0): string {
+export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, shortenEnd: number = 0): string {
     const points: [ number, number ][] = [];
 
-    let i = 0;
-    let idx;
-    while (null != (idx = idxArr[i])) {
+    for (const idx of idxArr) {
         const [ x, y ] = cellIdx2cellCoord(idx, grid);
         points.push([ x + 0.5, y + 0.5 ]);
-        i++;
     }
     if (1 === points.length) points.push(points[0]); // Double up.
 

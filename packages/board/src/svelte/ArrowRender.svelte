@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { makePath, any } from "@sudoku-studio/board-utils";
+    import { makePath, any, arrayObj2array } from "@sudoku-studio/board-utils";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
@@ -20,9 +20,9 @@
     {#each Object.entries($ref) as [ arrowId, headBody ] (arrowId)}
         <mask id="arrow-{id}-mask-{arrowId}" maskUnits="userSpaceOnUse">
             <rect width={grid.width} height={grid.height} fill="#fff" />
-            <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.75" stroke-linejoin="round" stroke-linecap="round" />
+            <path d={makePath(arrayObj2array(any(headBody).head), grid)} fill="none" stroke="#000" stroke-width="0.75" stroke-linejoin="round" stroke-linecap="round" />
         </mask>
-        <path d={makePath(any(headBody).head, grid)} fill="none" stroke="#000" stroke-width="0.8"   mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
-        <path d={makePath(any(headBody).body, grid, 0.15)} fill="none" stroke="#000" stroke-width="0.025" mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-head-{id})" />
+        <path d={makePath(arrayObj2array(any(headBody).head), grid)}       fill="none" stroke="#000" stroke-width="0.8"   mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
+        <path d={makePath(arrayObj2array(any(headBody).body), grid, 0.15)} fill="none" stroke="#000" stroke-width="0.025" mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-head-{id})" />
     {/each}
 </g>
