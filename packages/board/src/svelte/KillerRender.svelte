@@ -39,7 +39,7 @@
 </mask>
 <g {id}>
     {#each each($ref) as { cageId, sum, labelPos, d } (cageId)}
-        <text x={labelPos.x} y={labelPos.y} text-anchor="start" dominant-baseline="hanging" font-size={fontSize} font-weight="700">{sum}</text>
+        <text x={labelPos.x} y={labelPos.y} text-anchor="start" dominant-baseline="hanging" font-size={fontSize} font-weight="600">{sum}</text>
         <path {d} fill="none" stroke="#000" stroke-width={stroke} stroke-dasharray="0.075 0.04" mask="url(#killer-{id}-mask)" />
     {/each}
 </g>
