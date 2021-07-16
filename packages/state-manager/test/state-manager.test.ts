@@ -357,6 +357,58 @@ describe('class StateManager', () => {
     });
 
     describe('edge cases', () => {
+        it('replace obj with true', () => {
+            const stateMgr = new StateManager();
+
+            {
+                const diff = stateMgr.update({
+                    foo: {
+                        0: 'a',
+                        1: 'b',
+                        2: 'c',
+                    },
+                });
+                expect(diff).toEqual({
+                    redo: {
+                        "foo/0": "a",
+                        "foo/1": "b",
+                        "foo/2": "c",
+                    },
+                    undo: {
+                        "foo/0": null, // Is this desired behavior?
+                        "foo/1": null,
+                        "foo/2": null,
+                    },
+                });
+                expect(stateMgr.get()).toEqual({
+                    foo: {
+                        0: 'a',
+                        1: 'b',
+                        2: 'c',
+                    },
+                });
+            }
+
+            {
+                const diff = stateMgr.update({
+                    foo: true,
+                });
+                expect(diff).toEqual({
+                    redo: {
+                        foo: true,
+                    },
+                    undo: {
+                        "foo/0": "a",
+                        "foo/1": "b",
+                        "foo/2": "c",
+                    },
+                });
+                expect(stateMgr.get()).toEqual({
+                    foo: true,
+                });
+            }
+        });
+
         it('handle false basic', () => {
             const stateMgr = new StateManager();
 

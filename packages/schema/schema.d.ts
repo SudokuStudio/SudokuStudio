@@ -121,7 +121,7 @@ export declare namespace schema {
     }
     export interface QuadrupleElement extends AbstractElement {
         type: 'quadruple',
-        value: IdxMap<Geometry.CORNER, {
+        value: IdxMap<Geometry.CORNER, true | {
             0?: number,
             1?: number,
             2?: number,

@@ -23,6 +23,8 @@
 
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
+        ['select']: UserRender,
+
         ['grid']: GridRender,
         ['box']: BoxRender,
 
@@ -47,13 +49,22 @@
         ['disjointGroups']: null,
         ['consecutive']: null,
     } as const;
+
+    // TODO denormalize this.
+    const MARGINS = {
+        ['grid']: GRID_THICKNESS_HALF,
+        ['box']: BOX_THICKNESS_HALF,
+
+        ['quadruple']: 0.2225,
+    } as { [K in keyof typeof ELEMENT_RENDERERS]?: number };
+
 </script>
 <script lang="ts">
     import type { schema } from "@sudoku-studio/schema";
     import type { StateManager, StateRef } from "@sudoku-studio/state-manager";
 
-    import { bitsetToList, getDigits, getEdges, GRID_THICKNESS, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
-    import { derived } from "svelte/store";
+    import { bitsetToList, BOX_THICKNESS_HALF, getDigits, getEdges, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
+    import { derived, readable } from "svelte/store";
 
     export let userState: StateManager;
     export let boardState: StateManager;
@@ -68,61 +79,83 @@
     const givensFilledMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
         getEdges(bitsetToList(getDigits(elements || {}, true, true)), grid, 0) || undefined);
 
-    // TODO somehow update this based on elements.
-    const viewBox = derived(grid, $grid => ({
-        x: -GRID_THICKNESS_HALF,
-        y: -GRID_THICKNESS_HALF,
-        width: $grid.width + GRID_THICKNESS,
-        height: $grid.height + GRID_THICKNESS,
-    }));
+    type ElementList = {
+        id: string,
+        type: keyof typeof ELEMENT_RENDERERS,
+        order: number,
+        ref: StateRef,
+        element: ElementRenderer
+    }[];
 
+    const list = readable<ElementList>([], set => {
+        const list: ElementList = [
+            {
+                id: 'select_192839012', // TODO
+                type: 'select',
+                order: 9.5,
+                ref: userState as any, // TODO
+                element: UserRender,
+            },
+        ];
 
-    type ElementList = { id: string, order: number, ref: StateRef, element: ElementRenderer }[];
-    const list: ElementList = [
-        { id: 'select', order: 9.5, ref: userState as any /* TODO */, element: UserRender }
-    ];
+        boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
+            let i = -1;
+            if (null != oldVal) {
+                if (null == ELEMENT_RENDERERS[oldVal.type]) return;
 
-    boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
-        let i = -1;
-        if (null != oldVal) {
-            if (null == ELEMENT_RENDERERS[oldVal.type]) return;
-
-            i = list.findIndex(({ id }) => elementId === id);
-            if (0 > i) {
-                console.error(`Failed to find renderer for constraint with id ${elementId}.`);
-                return;
-            }
-        }
-
-        if (null == newVal) {
-            // Deleted.
-            delete list[i];
-        }
-        else {
-            const element = ELEMENT_RENDERERS[newVal.type];
-            if (null == element) {
-                console.warn(`Cannot render unknown constraint type: ${newVal.type}.`);
-                return;
+                i = list.findIndex(({ id }) => elementId === id);
+                if (0 > i) {
+                    console.error(`Failed to find renderer for constraint with id ${elementId}.`);
+                    return;
+                }
             }
 
-            const item = {
-                id: elementId,
-                order: newVal.order,
-                ref: boardState.ref(_elements, elementId, 'value'),
-                element,
-            };
-
-            if (null == oldVal) {
-                list.push(item);
+            if (null == newVal) {
+                // Deleted.
+                delete list[i];
             }
             else {
-                if (oldVal.type !== newVal.type)
-                    console.error('Cannot change type of constraint!');
-                list[i] = item;
+                const element = ELEMENT_RENDERERS[newVal.type];
+                if (null == element) {
+                    console.warn(`Cannot render unknown constraint type: ${newVal.type}.`);
+                    return;
+                }
+
+                const item = {
+                    id: elementId,
+                    type: newVal.type,
+                    order: newVal.order,
+                    ref: boardState.ref(_elements, elementId, 'value'),
+                    element,
+                };
+
+                if (null == oldVal) {
+                    list.push(item);
+                }
+                else {
+                    if (oldVal.type !== newVal.type)
+                        console.error('Cannot change type of constraint!');
+                    list[i] = item;
+                }
             }
-        }
-        list.sort((a, b) => a.order - b.order);
-    }, true);
+            list.sort((a, b) => a.order - b.order);
+            set(list);
+        }, true);
+    });
+
+    // TODO somehow update this based on elements.
+    const viewBox = derived([ grid, list ], ([ $grid, $list ]) => {
+        const margin = $list
+            .map(({ type }) => MARGINS[type])
+            .filter<number>((margin): margin is number => null != margin)
+                .reduce((a, b) => a > b ? a : b, 0);
+        return {
+            x: -margin,
+            y: -margin,
+            width: $grid.width + 2 * margin,
+            height: $grid.height + 2 * margin,
+        };
+    });
 </script>
 
 <svg bind:this={svg} viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}" xmlns="http://www.w3.org/2000/svg">
@@ -156,11 +189,11 @@
             <rect x="0" y="0" width={$grid.width} height={$grid.height} fill="#fff" />
             <path d={$givensFilledMaskPath} fill="#000" stroke="none" />
         </mask>
-        {#each list as { id, ref, element } (id)}
+        {#each $list as { id, ref, element } (id)}
             <svelte:component this={element} {id} {ref} grid={$grid} />
         {/each}
     </defs>
-    {#each list as { id } (id)}
+    {#each $list as { id } (id)}
         <use href="#{id}" />
     {/each}
 </svg>

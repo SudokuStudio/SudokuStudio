@@ -7,6 +7,9 @@
     export let ref: StateRef;
     export let grid: { width: number, height: number };
 
+    const radius = 0.2125;
+    const strokeWidth = 0.02;
+
     const splitter = /.{1,2}/g;
 
     function each(value: schema.QuadrupleElement['value']): { idx: Idx<Geometry.CORNER>, x: number, y: number, lines: string[] }[] {
@@ -26,8 +29,8 @@
 </script>
 
 <g {id}>
-    {#each each($ref) as { idx, x, y, lines } (idx)}
-        <circle cx={x} cy={y} r="0.2125" fill="#fff" stroke="#000" stroke-width="0.02" />
+    {#each each($ref || {}) as { idx, x, y, lines } (idx)}
+        <circle cx={x} cy={y} r={radius} fill="#fff" stroke="#000" stroke-width={strokeWidth} />
         {#each lines as line, i}
             <text {x} y={y + fontSize * (i - 0.5 * (lines.length - 1))} text-anchor="middle" dominant-baseline="central" font-size={fontSize} font-weight="600">{line}</text>
         {/each}

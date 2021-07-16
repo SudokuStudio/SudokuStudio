@@ -21,7 +21,7 @@
     <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke="#000" stroke-width={strokeWidth} />
 </marker>
 <g {id}>
-    {#each Object.entries($ref) as [ arrowId, headBody ] (arrowId)}
+    {#each Object.entries($ref || {}) as [ arrowId, headBody ] (arrowId)}
         <mask id="arrow-{id}-mask-{arrowId}" maskUnits="userSpaceOnUse">
             <rect width={grid.width} height={grid.height} fill="#fff" />
             <path d={makePath(arrayObj2array(any(headBody).head), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius - outlineWidth} stroke-linejoin="round" stroke-linecap="round" />

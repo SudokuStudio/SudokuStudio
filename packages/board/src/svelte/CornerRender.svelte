@@ -7,12 +7,12 @@
     export let ref: StateRef;
     export let grid: { width: number, height: number };
 
-    function getMarks(cells: IdxMap<Geometry.CELL, Record<string, boolean>>): { idx: number, nums: { x: number, y: number, num: number }[] }[] {
+    function getMarks(cells: IdxMap<Geometry.CELL, true | Record<string, boolean>>): { idx: number, nums: { x: number, y: number, num: number }[] }[] {
         const out: { idx: number, nums: { x: number, y: number, num: number }[] }[] = [];
         for (const [ idx, numsBitset ] of Object.entries(cells)) {
             const x = cellIdx2cellCoord(+idx, grid)[0] + 0.5;
             const y = cellIdx2cellCoord(+idx, grid)[1] + 0.5;
-            const nums = bitsetToList(numsBitset).map((num, i, arr) => {
+            const nums = (true === numsBitset) ? [] : bitsetToList(numsBitset).map((num, i, arr) => {
                 const [ dx, dy ] = cornerMarkPos(i, arr.length)
                 return {
                     x: x + dx,

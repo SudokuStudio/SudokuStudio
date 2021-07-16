@@ -328,9 +328,9 @@ export class StateManager {
                         else newData[k] = v;
                     }
                 }
-                // If obj is empty, return null.
+                // If obj is empty, return null if object, or value.
                 if (0 === Object.keys(newData).length)
-                    return { data: null, redo, undo };
+                    return { data: updateObj || update, redo, undo };
 
                 // Otherwise create the object.
                 return { data: newData, redo, undo };

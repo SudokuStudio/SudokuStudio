@@ -60,6 +60,13 @@ export function svgCoord2cellCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, hei
     return [ Math.floor(xf), Math.floor(yf) ];
 }
 
+export function svgCoord2cornerCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid): null | Coord<Geometry.CORNER> {
+    const x = Math.round(xf);
+    const y = Math.round(yf);
+    if ((x < 0 || width < x) || (y < 0 || height < y)) return null;
+    return [ x, y ];
+}
+
 
 // Bitset functions.
 export function getFirstFromBitset<TAG extends Geometry>(idxBitset: IdxBitset<TAG>, grid: Grid): null | Idx<TAG> {

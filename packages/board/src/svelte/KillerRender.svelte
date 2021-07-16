@@ -32,13 +32,13 @@
 
 <mask id="killer-{id}-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
     <rect x="0" y="0" width={grid.width} height={grid.height} fill="#fff" />
-    {#each each($ref) as { cageId, sum, labelPos } (cageId)}
+    {#each each($ref || {}) as { cageId, sum, labelPos } (cageId)}
         <!-- Mask-out each sum label. -->
         <rect x={labelPos.x} y={labelPos.y} width={0.7 * `${sum}`.length * fontSize} height={1.1 * fontSize} fill="#000" />
     {/each}
 </mask>
 <g {id}>
-    {#each each($ref) as { cageId, sum, labelPos, d } (cageId)}
+    {#each each($ref || {}) as { cageId, sum, labelPos, d } (cageId)}
         <text x={labelPos.x} y={labelPos.y} text-anchor="start" dominant-baseline="hanging" font-size={fontSize} font-weight="600">{sum}</text>
         <path {d} fill="none" stroke="#000" stroke-width={stroke} stroke-dasharray="0.075 0.04" mask="url(#killer-{id}-mask)" />
     {/each}
