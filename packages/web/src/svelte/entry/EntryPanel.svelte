@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
-import { boardState } from "../../js/board";
+    import { boardState } from "../../js/board";
     import ButtonPad from "./ButtonPad.svelte";
 
     // Hide spellcheck squiggles when the user is not editing the rules.
