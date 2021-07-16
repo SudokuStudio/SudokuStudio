@@ -3,6 +3,7 @@
     import BoxRender from './svelte/BoxRender.svelte';
     import DigitRender from './svelte/DigitRender.svelte';
     import ThermoRender from './svelte/ThermoRender.svelte';
+    import BetweenRender from './svelte/BetweenRender.svelte';
     import ArrowRender from './svelte/ArrowRender.svelte';
     import MinRender from './svelte/MinRender.svelte';
     import MaxRender from './svelte/MaxRender.svelte';
@@ -32,6 +33,7 @@
         ['colors']: ColorsRender,
 
         ['thermo']: ThermoRender,
+        ['between']: BetweenRender,
         ['arrow']: ArrowRender,
         ['sandwich']: null,
         ['min']: MinRender,

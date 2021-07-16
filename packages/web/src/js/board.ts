@@ -140,6 +140,11 @@ export function getDigits(includeGivens: boolean = true, includeFilled: boolean 
                     },
                 },
             },
+            '10141': {
+                type: 'between',
+                order: 5,
+                value: {},
+            },
             '10150': {
                 type: 'arrow',
                 order: 9,

@@ -57,8 +57,8 @@ export declare namespace schema {
     }
 
     export type Element =
-        GridElement | BoxElement | GivensElement | FilledElement | PencilMarksElement | ColorsElement |
-        BooleanElement | DigonalElement | KillerElement | KillerElement | QuadrupleElement;
+        GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement |
+        BooleanElement | DigonalElement | KillerElement | KillerElement | QuadrupleElement | LineElement;
 
     export interface AbstractElement {
         type: Element['type'],
@@ -77,33 +77,23 @@ export declare namespace schema {
             height: boolean,
         },
     }
-    export interface GivensElement extends AbstractElement {
-        type: 'givens',
-        value: {
-            [K in Idx<Geometry.CELL>]: number
-        },
-    }
-    export interface FilledElement extends AbstractElement {
-        type: 'filled',
+    export interface DigitElement extends AbstractElement {
+        type: 'givens' | 'filled',
         value: {
             [K in Idx<Geometry.CELL>]: number
         },
     }
     export interface PencilMarksElement extends AbstractElement {
         type: 'corner' | 'center',
-        value: {
-            [K in Idx<Geometry.CELL>]: {
-                [K: number]: true
-            }
-        },
+        value: IdxMap<Geometry.CELL, {
+            [K: number]: true
+        }>,
     }
     export interface ColorsElement extends AbstractElement {
         type: 'colors',
-        value: {
-            [K in Idx<Geometry.CELL>]: {
-                [K: string]: true
-            }
-        },
+        value: IdxMap<Geometry.CELL, {
+            [K: string]: true
+        }>,
     }
 
     export interface BooleanElement extends AbstractElement {
@@ -125,19 +115,23 @@ export declare namespace schema {
         value: {
             [K: string]: {
                 sum: number,
-                cells: Record<string, boolean>,
+                cells: IdxBitset<Geometry.CELL>,
             },
         },
     }
     export interface QuadrupleElement extends AbstractElement {
         type: 'quadruple',
+        value: IdxMap<Geometry.CORNER, {
+            0?: number,
+            1?: number,
+            2?: number,
+            3?: number,
+        }>,
+    }
+    export interface LineElement extends AbstractElement {
+        type: 'thermo' | 'between',
         value: {
-            [K in Idx<Geometry.CORNER>]: {
-                0?: number,
-                1?: number,
-                2?: number,
-                3?: number,
-            }
+            [K: string]: ArrayObj<Idx<Geometry.CELL>>,
         },
     }
 }

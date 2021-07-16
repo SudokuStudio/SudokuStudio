@@ -1,7 +1,7 @@
 import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
-import { thermoInfo } from "./element/line";
+import { betweenInfo, thermoInfo } from "./element/lines";
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo } from "./element/toggles";
 import { maxInfo, minInfo } from "./element/minMax";
 
@@ -27,6 +27,7 @@ export const ELEMENT_HANDLERS = {
     ['quadruple']: null,
 
     ['thermo']: check(thermoInfo),
+    ['between']: check(betweenInfo),
     ['diagonal']: check(diagonalInfo),
     ['knight']: check(knightInfo),
     ['king']: check(kingInfo),
