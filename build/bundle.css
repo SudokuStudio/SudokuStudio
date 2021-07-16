@@ -302,13 +302,28 @@ a:hover {
   cursor: pointer;
 }
 
+.focus-skip {
+  position: absolute;
+  top: 0;
+  left: -900vw;
+  font-size: 0.7rem;
+  padding: 0.1rem;
+  background-color: #fff;
+  text-decoration: underline;
+  z-index: 999;
+  pointer-events: none;
+}
+.focus-skip:focus {
+  left: 0;
+}
+
 /**
- * @license
- * Copyright Google LLC All Rights Reserved.
- *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://github.com/material-components/material-components-web/blob/master/LICENSE
- */
+* @license
+* Copyright Google LLC All Rights Reserved.
+*
+* Use of this source code is governed by an MIT-style license that can be
+* found in the LICENSE file at https://github.com/material-components/material-components-web/blob/master/LICENSE
+*/
 @-webkit-keyframes mdc-ripple-fg-radius-in {
   from {
     -webkit-animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
