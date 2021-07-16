@@ -1,8 +1,8 @@
-import { diagonalInfo } from "./element/diagonal";
 import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
 import { thermoInfo } from "./element/thermo";
+import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo } from "./element/toggles";
 
 function check<T extends ElementInfo>(factory: T): ElementInfo {
     return factory;
@@ -27,8 +27,8 @@ export const ELEMENT_HANDLERS = {
 
     ['thermo']: check(thermoInfo),
     ['diagonal']: check(diagonalInfo),
-    ['knight']: null,
-    ['king']: null,
-    ['disjointGroups']: null,
-    ['consecutive']: null,
+    ['knight']: check(knightInfo),
+    ['king']: check(kingInfo),
+    ['disjointGroups']: check(disjointGroupsInfo),
+    ['consecutive']: check(consecutiveInfo),
 } as const;
