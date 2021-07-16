@@ -21,9 +21,10 @@
     on:keyup={wrapListener($currentInputHandler, 'keyup')} />
 
 <div bind:this={$boardDiv} class="overlay" tabindex="0"
-    on:mousedown={(e) => e.currentTarget.focus()}
-
-    on:mousedown|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'down')}
+    on:mousedown|capture|stopPropagation|preventDefault={event => {
+        event.currentTarget.focus();
+        return $currentInputHandler && $currentInputHandler.down(event);
+    }}
     on:mousemove|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'move')}
 
     on:click|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'click')}
