@@ -518,7 +518,39 @@ describe('class StateManager', () => {
     });
 
     describe('diff', () => {
-        it('makes diffs', () => {
+        it('makes diffs for simple values', () => {
+            const stateMgr = new StateManager();
+
+            {
+                const diff = stateMgr.update({
+                    a: 1,
+                });
+                expect(diff).toEqual({
+                    redo: {
+                        a: 1,
+                    },
+                    undo: {
+                        a: null,
+                    },
+                });
+            }
+
+            {
+                const diff = stateMgr.update({
+                    a: 2,
+                });
+                expect(diff).toEqual({
+                    redo: {
+                        a: 2,
+                    },
+                    undo: {
+                        a: 1,
+                    },
+                });
+            }
+        });
+
+        it('makes diffs nested', () => {
             const stateMgr = new StateManager();
 
             let diff: null | Diff;
@@ -567,6 +599,50 @@ describe('class StateManager', () => {
                 'bang': null,
             });
             expect(diff).toBeNull();
+        });
+
+        it('makes diffs for updates with multiple entries', () => {
+            const stateMgr = new StateManager();
+
+            {
+                const diff = stateMgr.update({
+                    a: 1,
+                    b: 1,
+                    c: 1,
+                });
+                expect(diff).toEqual({
+                    redo: {
+                        a: 1,
+                        b: 1,
+                        c: 1,
+                    },
+                    undo: {
+                        a: null,
+                        b: null,
+                        c: null,
+                    },
+                });
+            }
+
+            {
+                const diff = stateMgr.update({
+                    b: 2,
+                    c: 2,
+                    d: 2,
+                });
+                expect(diff).toEqual({
+                    redo: {
+                        b: 2,
+                        c: 2,
+                        d: 2,
+                    },
+                    undo: {
+                        b: 1,
+                        c: 1,
+                        d: null,
+                    },
+                });
+            }
         });
 
         it('val to empty obj', () => {

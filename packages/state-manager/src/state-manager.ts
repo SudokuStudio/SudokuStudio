@@ -361,13 +361,17 @@ export class StateManager {
             //     if (undo) undo[path.join('/')] = data;
             // }
             {
+                // NULL.
                 if (null == data) {
+                    // NULL -> NULL.
                     if (null == newData) {
                         throw "N/A";
                     }
+                    // NULL -> OBJECT.
                     if ('object' === typeof newData) {
                         // nested.
                     }
+                    // NULL -> VALUE.
                     else {
                         redo.length = 0;
                         redo.push([ path.join('/'), newData ]);
@@ -375,37 +379,44 @@ export class StateManager {
                         undo.push([ path.join('/'), null ]);
                     }
                 }
+                // OBJECT.
                 else if ('object' === typeof data) {
+                    // OBJECT -> NULL.
                     if (null == newData) {
                         // redo.length = 0;
                         // redo.push([ path.join('/'), null ]);
                         // (nested)
                     }
+                    // OBJECT -> OBJECT.
                     else if ('object' === typeof newData) {
                         // (both nested)
                     }
+                    // OBJECT -> VALUE.
                     else {
                         redo.length = 0;
                         redo.push([ path.join('/'), newData ]);
                         // (nested)
                     }
                 }
+                // VALUE.
                 else {
-                    // value
+                    // VALUE -> NULL.
                     if (null == newData) {
                         redo.length = 0;
                         redo.push([ path.join('/'), null ]);
                         undo.length = 0;
                         undo.push([ path.join('/'), data ]);
                     }
+                    // VALUE -> OBJECT.
                     else if ('object' === typeof newData) {
                         // (nested)
                         undo.length = 0;
                         undo.push([ path.join('/'), data ]);
                     }
+                    // VALUE -> VALUE.
                     else {
                         redo.length = 0;
-                        redo.push([ path.join('/'), null ]);
+                        redo.push([ path.join('/'), newData ]);
                         undo.length = 0;
                         undo.push([ path.join('/'), data ]);
                     }
