@@ -5,8 +5,8 @@ userState.update({
     select: {},
     cursor: null,
 
-    prevTool: null,
     tool: '120', // TODO magic numbers.
+    prevTool: '120',
     marks: {
         filled: '120', // TODO magic numbers.
         corner: '130',

@@ -96,7 +96,6 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         if ('Space' === event.code) {
             if ('keydown' === event.type) {
                 userToolState.replace(userState.get('marks', nextMode));
-                userPrevToolState.replace(null);
             }
             return true;
         }
@@ -121,7 +120,6 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         else {
             // Only keyup case.
             userToolState.replace(userPrevToolState.get());
-            userPrevToolState.replace(null);
             return true;
         }
 

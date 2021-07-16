@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TOOL_INPUT_NAME, userToolState, userState } from "../../js/user";
+    import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState } from "../../js/user";
     import { currentInputHandler } from "../../js/elementStores";
 
     // Button ripples.
@@ -7,6 +7,10 @@
     import { onMount } from "svelte";
     import { changeHistory } from "../../js/history";
     onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
+
+    function setPreviousMode() {
+        userPrevToolState.set(userToolState.get());
+    }
 
     const filled = userState.ref('marks', 'filled');
     const corner = userState.ref('marks', 'corner');
@@ -19,14 +23,16 @@
         <div class="mode-pad">
             <!-- TOOD switch to INPUT RADIOs. -->
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits" value={$filled} bind:group={$userToolState} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits" on:click>
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits"
+                    value={$filled} bind:group={$userToolState} on:change={setPreviousMode} />
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits">
                     <span aria-hidden="true">1</span>
                     <span class="sr-only">Digits</span>
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-corner" value={$corner} bind:group={$userToolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-corner"
+                    value={$corner} bind:group={$userToolState} on:change={setPreviousMode} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-corner">
                     <span aria-hidden="true" style="font-size: 50%;">
                         <span style="position: absolute; top:    12%; left:  20%;">1</span>
@@ -37,14 +43,16 @@
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-center" value={$center} bind:group={$userToolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-center"
+                    value={$center} bind:group={$userToolState} on:change={setPreviousMode} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-center">
                     <span aria-hidden="true" style="font-size: 50%;">123</span>
                     <span class="sr-only">Center Marks</span>
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-colors" value={$colors} bind:group={$userToolState} />
+                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-colors"
+                    value={$colors} bind:group={$userToolState} on:change={setPreviousMode} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-colors">
                     <span class="icon icon-inline icon-c-textinv icon-colors" />
                     <span class="sr-only">Colors</span>
