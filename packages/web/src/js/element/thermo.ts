@@ -5,6 +5,7 @@ import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentC
 import type { InputHandler } from "../input/inputHandler";
 import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import { pushHistory } from "../history";
+import { userCursorState, userSelectState } from "../user";
 
 export const thermoInfo = {
     getInputHandler,
@@ -76,6 +77,9 @@ function getInputHandler(thermoState: StateRef, grid: Grid, svg: SVGSVGElement):
 
     return {
         load(): void {
+            // TODO: not really that great of a way of doing this.
+            userSelectState.replace(null);
+            userCursorState.replace(null);
         },
         unload(): void {
             pointerHandler.up();

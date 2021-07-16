@@ -80,5 +80,7 @@ export const currentInputHandler = derived<[ typeof currentElement, typeof board
         const { info, valueRef } = $currentElement;
         if (null == info || null == info.getInputHandler) return null;
 
-        return info.getInputHandler(valueRef, boardGridRef.get<Grid>(), $boardSvg);
+        const inputHandler = info.getInputHandler(valueRef, boardGridRef.get<Grid>(), $boardSvg);
+        inputHandler.load();
+        return inputHandler;
     });
