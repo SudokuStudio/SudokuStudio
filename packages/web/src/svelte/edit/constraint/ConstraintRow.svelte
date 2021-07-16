@@ -2,6 +2,8 @@
     let counter = 0;
 </script>
 <script type="ts">
+import { boardDiv } from "../../../js/elementStores";
+
     import { userToolState, TOOL_INPUT_NAME, userPrevToolState } from "../../../js/user";
 
     export let id: string;
@@ -19,6 +21,7 @@
     {#if isLocal}
         <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={TOOL_INPUT_NAME}
             bind:group={$userToolState} on:change={() => userPrevToolState.set(userToolState.get())} />
+        <button class="nobutton focus-skip" on:click={() => $boardDiv && $boardDiv.focus()}>Jump To Board</button>
     {/if}
     <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
         <div class="constraint-row-left">

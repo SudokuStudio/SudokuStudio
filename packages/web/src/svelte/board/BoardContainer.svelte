@@ -1,14 +1,13 @@
 <script lang="ts">
     import { Board } from "@sudoku-studio/board";
     import { boardState } from "../../js/board";
-    import { boardSvg, currentInputHandler } from "../../js/elementStores";
+    import { boardDiv, boardSvg, currentInputHandler } from "../../js/elementStores";
     import type { InputHandler } from "../../js/input/inputHandler";
     import { userState } from "../../js/user";
 
-    let overlay: HTMLDivElement = null!;
     function wrapListener(inputHandler: null | InputHandler, key: keyof InputHandler): (event: any) => void {
         return event => {
-            if (null != inputHandler && document.activeElement === overlay)
+            if (null != inputHandler && (document.activeElement === $boardDiv || document.activeElement === document.body))
                 inputHandler[key](event);
         };
     }
@@ -20,7 +19,7 @@
     on:keydown={wrapListener($currentInputHandler, 'keydown')}
     on:keyup={wrapListener($currentInputHandler, 'keyup')} />
 
-<div bind:this={overlay} class="overlay" tabindex="0"
+<div bind:this={$boardDiv} class="overlay" tabindex="0"
     on:mousedown={(e) => e.currentTarget.focus()}
 
     on:mousedown|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'down')}

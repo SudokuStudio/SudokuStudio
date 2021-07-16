@@ -3,9 +3,11 @@
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
     import Header from "./svelte/Header.svelte";
+    import { boardDiv } from "./js/elementStores";
 </script>
 
 <header>
+    <button class="nobutton focus-skip" on:click={() => $boardDiv && $boardDiv.focus()}>Jump To Board</button>
     <div class="content">
         <div class="content-row">
             <Header />

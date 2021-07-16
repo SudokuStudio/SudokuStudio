@@ -8,6 +8,7 @@ import { userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 
 export const boardSvg = writable<SVGSVGElement>();
+export const boardDiv = writable<HTMLDivElement>();
 
 export type ElementHandlerItem = { id: string, valueRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];

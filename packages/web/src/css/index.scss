@@ -78,3 +78,21 @@ a:hover {
 .clickable {
     cursor: pointer;
 }
+
+.focus-skip {
+    position: absolute;
+    top: 0;
+    left: -900vw;
+
+    font-size: 0.7rem;
+    padding: 0.1rem;
+    background-color: #fff;
+    text-decoration: underline;
+    z-index: 999;
+
+    pointer-events: none;
+
+    &:focus {
+        left: 0;
+    }
+}
