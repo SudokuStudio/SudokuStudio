@@ -1,6 +1,8 @@
 <script lang="ts">
-import { onDestroy } from "svelte";
-import ButtonPad from "./ButtonPad.svelte";
+    import { onDestroy } from "svelte";
+import { boardState } from "../../js/board";
+    import ButtonPad from "./ButtonPad.svelte";
+
     // Hide spellcheck squiggles when the user is not editing the rules.
     function setSpellcheck(event: FocusEvent & { currentTarget: EventTarget & HTMLTextAreaElement}): void {
         event.currentTarget.setAttribute('spellcheck', `${document.activeElement === event.currentTarget}`);
@@ -15,6 +17,10 @@ import ButtonPad from "./ButtonPad.svelte";
     window.addEventListener('resize', onResize);
     onDestroy(() => window.removeEventListener('resize', onResize));
     requestAnimationFrame(onResize); // Run on load.
+
+    const title = boardState.ref('meta', 'title');
+    const author = boardState.ref('meta', 'author');
+    const description = boardState.ref('meta', 'description');
 </script>
 
 <div class="entry-column">
@@ -22,9 +28,9 @@ import ButtonPad from "./ButtonPad.svelte";
         <ButtonPad />
     </div>
     <div class="entry-info">
-        <input class="info-input title" type="text" placeholder="Untitled" value="Killer" />
-        <input class="info-input setter" type="text" placeholder="Anonymous" />
-        <textarea class="rules-text" spellcheck="false" on:focus={setSpellcheck} on:blur={setSpellcheck}>Normal killer sudoku rules apply: digits in cages sum to the number in the cage's top left, and do not repeat.</textarea>
+        <input class="info-input title" type="text" placeholder="Untitled" bind:value={$title} />
+        <input class="info-input setter" type="text" placeholder="Anonymous" bind:value={$author} />
+        <textarea class="rules-text" spellcheck="false" bind:value={$description} on:focus={setSpellcheck} on:blur={setSpellcheck}></textarea>
     </div>
 </div>
 

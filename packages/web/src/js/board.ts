@@ -129,6 +129,11 @@ export const currentInputHandler = derived<[ typeof currentElement, typeof board
             width: 9,
             height: 9,
         },
+        meta: {
+            title: 'Killer',
+            author: null,
+            description: "Normal killer sudoku rules apply: digits in cages sum to the number in the cage's top left, and do not repeat.",
+        },
         elements: {
             '110': {
                 type: 'givens',
