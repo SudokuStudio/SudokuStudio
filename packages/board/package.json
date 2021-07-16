@@ -16,6 +16,7 @@
     "@rollup/plugin-typescript": "^8.2.1",
     "@tsconfig/svelte": "^2.0.1",
     "@types/jest": "^26.0.24",
+    "hsluv": "^0.1.0",
     "rollup": "^2.53.0",
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-scss": "^3.0.0",

@@ -2,6 +2,7 @@
     import type { Geometry, IdxMap } from "@sudoku-studio/schema";
     import { makeConicalCellSlice } from "@sudoku-studio/board-utils";
     import type { StateRef } from "@sudoku-studio/state-manager";
+    import hsluv from "hsluv";
 
     export let id: string;
     export let ref: StateRef;
@@ -12,7 +13,11 @@
         const out: Item[] = [];
         for (const [ idx, colorsBitset ] of Object.entries(cells)) {
             const colors = Object.keys(colorsBitset || {});
-            colors.sort(); // TODO smarter ordering.
+            colors.sort((a, b) => {
+                const hsluvA = hsluv.hexToHsluv(a);
+                const hsluvB = hsluv.hexToHsluv(b);
+                return hsluvA[0] - hsluvB[0] || hsluvA[1] - hsluvB[1] || hsluvA[2] - hsluvB[2];
+            });
 
             const slices = colors.map((color, i, arr) => ({
                 fill: color,

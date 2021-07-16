@@ -2,6 +2,7 @@ import type { StateRef } from "@sudoku-studio/state-manager";
 import type { Grid } from "@sudoku-studio/schema";
 import type { InputHandler } from "../input/inputHandler";
 import { getSelectDigitInputHandler } from "../input/selectDigitInputHandler";
+import hsluv from "hsluv";
 
 import Givens from "../../svelte/edit/constraint/Givens.svelte";
 
@@ -43,7 +44,18 @@ export const colorsInfo = {
             multipleDigits: true,
             blockedByGivens: false,
             blockedByFilled: false,
-            digitMapping: [ "#111111", "#666666", "#b2b2b2", "#fe525d", "#e28800", "#fee076", "#6ce000", "#a0dcff", "#4e7aff", "#ec80ff" ],
+            digitMapping: [
+                "#111111",
+                "#666666",
+                "#b2b2b2",
+                hsluv.hsluvToHex([  10, 100, 60 ]),
+                hsluv.hsluvToHex([  40, 100, 65 ]),
+                hsluv.hsluvToHex([  70, 100, 92 ]),
+                hsluv.hsluvToHex([ 120, 100, 80 ]),
+                hsluv.hsluvToHex([ 230, 100, 85 ]),
+                hsluv.hsluvToHex([ 260, 100, 55 ]),
+                hsluv.hsluvToHex([ 300, 100, 70 ]),
+            ],
         });
     },
 } as const;
