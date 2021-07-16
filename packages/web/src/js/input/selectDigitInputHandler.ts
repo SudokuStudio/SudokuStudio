@@ -1,9 +1,9 @@
-import { bitsetToList, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
+import { bitsetToList, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
 import type { Geometry, Grid, IdxBitset } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
 import { boardState, getDigits } from "../board";
 import { pushHistory } from "../history";
-import { userToolState, userSelectState, userState, userPrevToolState } from "../user";
+import { userToolState, userSelectState, userState, userPrevToolState, userCursorState } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import { InputHandler, parseDigit } from "./inputHandler";
 
@@ -133,6 +133,39 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         return false;
     }
 
+    const ARROW_KEYS = {
+        ArrowLeft: [ -1, 0 ],
+        ArrowUp: [ 0, -1 ],
+        ArrowRight: [ 1, 0 ],
+        ArrowDown: [ 0, 1 ],
+    } as const;
+
+    function onArrowKey(event: KeyboardEvent) {
+        if (!(event.code in ARROW_KEYS)) return false;
+
+        const [ dx, dy ] = ARROW_KEYS[event.code as keyof typeof ARROW_KEYS];
+        let [ x, y ] = cellIdx2cellCoord(userCursorState.get() || 0, grid);
+        x += dx + grid.width;
+        y += dy + grid.height;
+        x %= grid.width;
+        y %= grid.height;
+
+        const idx = cellCoord2CellIdx([ x, y ], grid);
+        userCursorState.replace(idx);
+
+        if (event.shiftKey) {
+            userSelectState.ref(`${idx}`).replace(true);
+        }
+        else if (event.ctrlKey) {
+            userSelectState.ref(`${idx}`).replace(null);
+        }
+        else {
+            userSelectState.replace({
+                [idx]: true,
+            });
+        }
+    }
+
     return {
         load(): void {
         },
@@ -141,7 +174,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         },
 
         keydown(event: KeyboardEvent): void {
-            if (onDigitInput(event.code) || onQuickshift(event)) {
+            if (onDigitInput(event.code) || onQuickshift(event) || onArrowKey(event)) {
                 event.stopImmediatePropagation();
                 event.preventDefault();
             }
@@ -213,6 +246,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
     function handle(event: CellDragTapEvent, isClick: boolean): void {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
+        userCursorState.replace(idx);
 
         if (Mode.RESETTING === mode) {
             // Special: Resetting *tap* acts as toggle.

@@ -9,7 +9,7 @@
     import KillerRender from './svelte/KillerRender.svelte';
     import QuadrupleRender from './svelte/QuadrupleRender.svelte';
     import DiagonalRender from './svelte/DiagonalRender.svelte';
-    import SelectRender from './svelte/SelectRender.svelte';
+    import UserRender from './svelte/UserRender.svelte';
     import CornerRender from './svelte/CornerRender.svelte';
     import CenterRender from './svelte/CenterRender.svelte';
     import ColorsRender from './svelte/ColorsRender.svelte';
@@ -43,8 +43,6 @@
         ['king']: null,
         ['disjointGroups']: null,
         ['consecutive']: null,
-
-        ['select']: SelectRender,
     } as const;
 </script>
 <script lang="ts">
@@ -71,7 +69,7 @@
 
     type ElementList = { id: string, order: number, ref: StateRef, element: ElementRenderer }[];
     const list: ElementList = [
-        { id: 'select', order: 9.5, ref: userState.ref('select'), element: SelectRender }
+        { id: 'select', order: 9.5, ref: userState, element: UserRender }
     ];
 
     boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
