@@ -5,7 +5,7 @@
     // Button ripples.
     import { MDCRipple } from "@material/ripple";
     import { onMount } from "svelte";
-import { changeHistory } from "../../js/history";
+    import { changeHistory } from "../../js/history";
     onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
 
     const filled = userState.ref('marks', 'filled');
@@ -14,16 +14,13 @@ import { changeHistory } from "../../js/history";
     const colors = userState.ref('marks', 'colors');
 </script>
 
-<svelte:window
-    on:keydown={$currentInputHandler && $currentInputHandler.keydown || undefined}
-    on:keyup={$currentInputHandler && $currentInputHandler.keyup || undefined} />
 <div class="container">
     <div class="mode-pad-container">
         <div class="mode-pad">
             <!-- TOOD switch to INPUT RADIOs. -->
             <div>
                 <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits" value={$filled} bind:group={$userToolState} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits" on:click>
                     <span aria-hidden="true">1</span>
                     <span class="sr-only">Digits</span>
                 </label>
