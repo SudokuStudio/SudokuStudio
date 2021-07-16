@@ -12,6 +12,7 @@ export const givensInfo = {
             multipleDigits: false,
             blockedByGivens: false,
             blockedByFilled: false,
+            nextMode: 'corner',
         });
     },
     inGlobalMenu: false,
@@ -23,6 +24,7 @@ export const filledInfo = {
             multipleDigits: false,
             blockedByGivens: true,
             blockedByFilled: false,
+            nextMode: 'corner',
         });
     },
 } as const;
@@ -33,10 +35,20 @@ export const cornerInfo = {
             multipleDigits: true,
             blockedByGivens: true,
             blockedByFilled: true,
+            nextMode: 'center',
         });
     },
 } as const;
-export const centerInfo = cornerInfo;
+export const centerInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getSelectDigitInputHandler(ref, grid, svg, {
+            multipleDigits: true,
+            blockedByGivens: true,
+            blockedByFilled: true,
+            nextMode: 'colors',
+        });
+    },
+} as const;;
 
 export const colorsInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
@@ -44,6 +56,7 @@ export const colorsInfo = {
             multipleDigits: true,
             blockedByGivens: false,
             blockedByFilled: false,
+            nextMode: 'filled',
             digitMapping: [
                 "#111111",
                 "#666666",

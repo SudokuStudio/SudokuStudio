@@ -13,11 +13,12 @@ export type DigitInputHandlerOptions = {
     multipleDigits: boolean,
     blockedByGivens: boolean,
     blockedByFilled: boolean,
+    nextMode: string,
     digitMapping?: null | (string | number)[],
 };
 
 export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, options: DigitInputHandlerOptions): InputHandler {
-    const { multipleDigits, blockedByGivens, blockedByFilled, digitMapping } = options;
+    const { multipleDigits, blockedByGivens, blockedByFilled, digitMapping, nextMode } = options;
 
     const DELETE_ORDER = [ 'filled', 'corner', 'center', 'colors' ];
 
@@ -84,15 +85,23 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         return false;
     }
 
-    function onQuickshift(event: KeyboardEvent): boolean {
-        const modeKeys = new Set([
-            'Shift',
-            'Control',
-            'Alt',
-            'Meta',
-        ]);
+    const MODE_KEYS = new Set([
+        'Shift',
+        'Control',
+        'Alt',
+        'Meta',
+    ]);
 
-        if (!modeKeys.has(event.key)) return false;
+    function onQuickshift(event: KeyboardEvent): boolean {
+        if ('Space' === event.code) {
+            if ('keydown' === event.type) {
+                userToolState.replace(userState.get('marks', nextMode));
+                userPrevToolState.replace(null);
+            }
+            return true;
+        }
+        if (!MODE_KEYS.has(event.key))
+            return false;
 
         const oldTool = userToolState.get();
         if (event.shiftKey) {
@@ -110,11 +119,13 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
             userToolState.replace(userState.get('marks', 'colors'));
         }
         else {
+            // Only keyup case.
             userToolState.replace(userPrevToolState.get());
             userPrevToolState.replace(null);
             return true;
         }
 
+        // Any mode key down case.
         if (null == userPrevToolState.get()) {
             userPrevToolState.replace(oldTool);
             return true;
