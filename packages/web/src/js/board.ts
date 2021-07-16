@@ -1,15 +1,8 @@
 import { debounce } from "debounce";
 import LZString from 'lz-string';
 
-import type { Geometry, Grid, IdxMap, schema } from "@sudoku-studio/schema";
-import type { ElementInfo } from "./element/element";
-import { StateManager, StateRef } from '@sudoku-studio/state-manager';
-import { ELEMENT_HANDLERS } from "./elements";
-import { derived, readable, writable } from "svelte/store";
-import { userToolState } from "./user";
-import type { InputHandler } from "./input/inputHandler";
-
-export const boardSvg = writable<SVGSVGElement>();
+import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
+import { StateManager } from '@sudoku-studio/state-manager';
 
 export const boardState = (window as any).boardState = new StateManager();
 export const boardGridRef = boardState.ref('grid');
@@ -27,79 +20,6 @@ export function getDigits(includeGivens: boolean = true, includeFilled: boolean 
 
     return out;
 }
-
-export type ElementHandlerItem = { id: string, valueRef: StateRef, info: ElementInfo };
-export type ElementHandlerList = ElementHandlerItem[];
-
-export const elementHandlers = readable<ElementHandlerList>([], set => {
-    const list: ElementHandlerList = [];
-
-    boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
-        const type = oldVal?.type || newVal!.type;
-
-        const elementInfo = ELEMENT_HANDLERS[type];
-        if (null == elementInfo) {
-            console.warn(`Unknown constraint type: ${type}.`);
-            return;
-        }
-
-        let i = -1;
-        if (null != oldVal) {
-            i = list.findIndex(({ id }) => elementId === id);
-            if (0 > i) {
-                console.error(`Failed to find constraint with id ${elementId}.`);
-                return;
-            }
-        }
-
-        if (null == newVal) {
-            // Deleted.
-            delete list[i!];
-        }
-        else {
-            // Add or change.
-            if (null == oldVal) {
-                const valueRef = boardState.ref(_elements, elementId, 'value')
-
-                // Add.
-                list.push({
-                    id: elementId,
-                    valueRef,
-                    info: elementInfo,
-                });
-            }
-            else {
-                // Change.
-                if (oldVal.type !== newVal.type)
-                    console.error(`Cannot change type of constraint! ${oldVal.type} -> ${newVal.type}`);
-                // Do nothing.
-            }
-        }
-        set(list);
-    }, true);
-});
-
-export const currentElement = readable<null | ElementHandlerItem>(null, set => {
-    let list: ElementHandlerList = [];
-    elementHandlers.subscribe(value => list = value);
-
-    userToolState.watch((_path, _oldVal, newVal) => {
-        const toolId = newVal;
-        const out = list.find(({ id }) => toolId === id) || null;
-        // console.log(list, toolId, out);
-        set(out);
-    }, true);
-});
-
-export const currentInputHandler = derived<[ typeof currentElement, typeof boardSvg ], null | InputHandler>(
-    [ currentElement, boardSvg ],
-    ([ $currentElement, $boardSvg ]) => {
-        if (null == $currentElement) return null;
-        const { info, valueRef } = $currentElement;
-        if (null == info || null == info.getInputHandler) return null;
-
-        return info.getInputHandler(valueRef, boardGridRef.get<Grid>(), $boardSvg);
-    });
 
 // Setup board.
 (() => {

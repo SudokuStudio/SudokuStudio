@@ -1,6 +1,6 @@
 <script lang="ts">
     import { TOOL_INPUT_NAME, userToolState, userState } from "../../js/user";
-    import { currentInputHandler } from "../../js/board";
+    import { currentInputHandler } from "../../js/elementStores";
 
     // Button ripples.
     import { MDCRipple } from "@material/ripple";

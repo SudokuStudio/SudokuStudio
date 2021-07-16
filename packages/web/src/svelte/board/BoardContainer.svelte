@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Board } from "@sudoku-studio/board";
-    import { boardSvg, boardState, currentInputHandler } from "../../js/board";
+    import { boardState } from "../../js/board";
+    import { boardSvg, currentInputHandler } from "../../js/elementStores";
     import { userState } from "../../js/user";
 </script>
 

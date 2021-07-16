@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { ElementHandlerList } from "../../js/board";
+    import type { ElementHandlerList } from "../../js/elementStores";
 
     import EditSection from "./EditSection.svelte";
-    import { elementHandlers } from "../../js/board";
+    import { elementHandlers } from "../../js/elementStores";
     import { derived } from "svelte/store";
 
     const constraintsGlobal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
