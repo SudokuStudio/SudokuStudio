@@ -5,6 +5,10 @@
     export let id: string;
     export let ref: StateRef;
     export let grid: { width: number, height: number };
+
+    const bulbRadius = 0.375;
+    const outlineWidth = 0.025;
+    const strokeWidth = 0.025;
 </script>
 
 
@@ -14,15 +18,17 @@
     markerWidth="1" markerHeight="1"
     orient="auto"
 >
-    <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke="#000" stroke-width="0.025" />
+    <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke="#000" stroke-width={strokeWidth} />
 </marker>
 <g {id}>
     {#each Object.entries($ref) as [ arrowId, headBody ] (arrowId)}
         <mask id="arrow-{id}-mask-{arrowId}" maskUnits="userSpaceOnUse">
             <rect width={grid.width} height={grid.height} fill="#fff" />
-            <path d={makePath(arrayObj2array(any(headBody).head), grid)} fill="none" stroke="#000" stroke-width="0.75" stroke-linejoin="round" stroke-linecap="round" />
+            <path d={makePath(arrayObj2array(any(headBody).head), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius - outlineWidth} stroke-linejoin="round" stroke-linecap="round" />
         </mask>
-        <path d={makePath(arrayObj2array(any(headBody).head), grid)}       fill="none" stroke="#000" stroke-width="0.8"   mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
-        <path d={makePath(arrayObj2array(any(headBody).body), grid, 0.15)} fill="none" stroke="#000" stroke-width="0.025" mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-head-{id})" />
+        <path d={makePath(arrayObj2array(any(headBody).head), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius + outlineWidth}
+            mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
+        <path d={makePath(arrayObj2array(any(headBody).body), grid, 0.15)} fill="none" stroke="#000" stroke-width={strokeWidth}
+            mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-head-{id})" />
     {/each}
 </g>

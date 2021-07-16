@@ -7,6 +7,8 @@
     export let ref: StateRef;
     export let grid: { width: number, height: number };
 
+    const bulbRadius = 0.375;
+
     export function getThermos(thermos: Record<string, ArrayObj<Idx<Geometry.CELL>>>): { thermoId: string, d: string, invalid: boolean }[] {
         const out: { thermoId: string, d: string, invalid: boolean }[] = [];
         for (const [ thermoId, idxArrObj ] of Object.entries(thermos)) {
@@ -28,7 +30,7 @@
     markerWidth="1" markerHeight="1"
     orient="auto"
 >
-    <circle cx="0.5" cy="0.5" r="0.4" fill="#666" />
+    <circle cx="0.5" cy="0.5" r={bulbRadius} fill="#666" />
 </marker>
 <mask id="thermo-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
     {#each getThermos($ref || {}) as { thermoId, d, invalid } (thermoId)}
