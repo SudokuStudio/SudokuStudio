@@ -80,19 +80,19 @@ export declare namespace schema {
     export interface GivensElement extends AbstractElement {
         type: 'givens',
         value: {
-            [K in Idx<Geometry.CENTER>]: number
+            [K in Idx<Geometry.CELL>]: number
         },
     }
     export interface FilledElement extends AbstractElement {
         type: 'filled',
         value: {
-            [K in Idx<Geometry.CENTER>]: number
+            [K in Idx<Geometry.CELL>]: number
         },
     }
     export interface PencilMarksElement extends AbstractElement {
         type: 'corner' | 'center',
         value: {
-            [K in Idx<Geometry.CENTER>]: {
+            [K in Idx<Geometry.CELL>]: {
                 [K: number]: true
             }
         },
@@ -100,7 +100,7 @@ export declare namespace schema {
     export interface ColorsElement extends AbstractElement {
         type: 'colors',
         value: {
-            [K in Idx<Geometry.CENTER>]: {
+            [K in Idx<Geometry.CELL>]: {
                 [K: string]: true
             }
         },
