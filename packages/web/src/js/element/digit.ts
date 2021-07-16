@@ -4,9 +4,9 @@ import type { InputHandler } from "../input/inputHandler";
 import { getSelectDigitInputHandler } from "../input/selectDigitInputHandler";
 import hsluv from "hsluv";
 
-import Givens from "../../svelte/edit/constraint/Givens.svelte";
+import type { ElementInfo } from "./element";
 
-export const givensInfo = {
+export const givensInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: false,
@@ -16,7 +16,11 @@ export const givensInfo = {
         });
     },
     inGlobalMenu: false,
-    menuComponent: Givens,
+    menu: {
+        type: 'select',
+        name: 'Givens',
+        icon: 'given',
+    },
 } as const;
 export const filledInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {

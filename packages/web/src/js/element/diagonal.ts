@@ -1,6 +1,21 @@
-import Diagonal from "../../svelte/edit/constraint/Diagonal.svelte";
+import type { ElementInfo } from "./element";
 
-export const diagonalInfo = {
+export const diagonalInfo: ElementInfo = {
     inGlobalMenu: true,
-    menuComponent: Diagonal,
+    menu: {
+        type: 'checkbox',
+        name: 'Diagonals',
+        checkbox: [
+            {
+                name: 'Positive Diagonal',
+                icon: 'positive-diagonal',
+                refPath: 'positive',
+            },
+            {
+                name: 'Negative Diagonal',
+                icon: 'negative-diagonal',
+                refPath: 'nevative',
+            },
+        ],
+    },
 };

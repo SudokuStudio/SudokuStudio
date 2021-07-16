@@ -1,17 +1,21 @@
 import type { Geometry, Idx, ArrayObj, Grid } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
-import Thermo from "../../svelte/edit/constraint/Thermo.svelte";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
 import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import { pushHistory } from "../history";
 import { userCursorState, userSelectState } from "../user";
+import type { ElementInfo } from "./element";
 
-export const thermoInfo = {
+export const thermoInfo: ElementInfo = {
     getInputHandler,
 
     inGlobalMenu: false,
-    menuComponent: Thermo,
+    menu: {
+        type: 'select',
+        name: 'Thermos',
+        icon: 'thermo',
+    },
 };
 
 function getInputHandler(thermoState: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
