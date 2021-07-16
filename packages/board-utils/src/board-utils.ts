@@ -1,4 +1,4 @@
-import type { Grid, Idx, Coord, IdxBitset, Geometry, ArrayObj, IdxMap } from "@sudoku-studio/schema";
+import type { Grid, Idx, Coord, IdxBitset, Geometry, ArrayObj, IdxMap, schema } from "@sudoku-studio/schema";
 
 // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
 export function any(x: any): any {
@@ -69,9 +69,9 @@ export function getFirstFromBitset<TAG extends Geometry>(idxBitset: IdxBitset<TA
     }
     return null;
 }
-export function bitsetToList<TAG extends Geometry>(bitset: null | undefined | IdxBitset<TAG>): Idx<TAG>[] {
+export function bitsetToList<TAG extends Geometry>(bitset: null | undefined | IdxMap<TAG, any>): Idx<TAG>[] {
     if (null == bitset) return [];
-    return Object.keys(bitset).filter(k => !!bitset[k]).map(Number).sort();
+    return Object.keys(bitset).filter(k => null != bitset[k] && false != bitset[k]).map(Number).sort();
 }
 
 
@@ -340,4 +340,33 @@ export function makeConicalCellSlice(idx: Idx<Geometry.CELL>, grid: Grid, index:
             .map(([ x, y ]) => [ cx + 0.5 * (x + 1), cy + 0.5 * (y + 1) ])
             .map(([ x, y ]) => `${x},${y}`)
             .join('L') + 'Z';
+}
+
+
+export function getDigits(elements: schema.Board['elements'], includeGivens: boolean = true, includeFilled: boolean = true): IdxMap<Geometry.CELL, number> {
+    const out: IdxMap<Geometry.CELL, number> = {};
+    if (!includeGivens && !includeFilled) return out;
+
+    for (const element of Object.values(elements)) {
+        if (includeFilled && 'filled' === element.type) {
+            Object.assign(out, element.value);
+        }
+    }
+
+    // Ensure that givens occlude filled.
+    for (const element of Object.values(elements)) {
+        if ('givens' === element.type) {
+            if (includeGivens) {
+                Object.assign(out, element.value);
+            }
+            else {
+                // Ensure occluded filled are ignored.
+                for (const cellIdx of Object.keys(element.value)) {
+                    delete out[cellIdx];
+                }
+            }
+        }
+    }
+
+    return out;
 }

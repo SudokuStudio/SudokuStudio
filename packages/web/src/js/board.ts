@@ -3,22 +3,13 @@ import LZString from 'lz-string';
 
 import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
 import { StateManager } from '@sudoku-studio/state-manager';
+import { getDigits as getDigitsHelper } from '@sudoku-studio/board-utils';
 
 export const boardState = (window as any).boardState = new StateManager();
 export const boardGridRef = boardState.ref('grid');
 
 export function getDigits(includeGivens: boolean = true, includeFilled: boolean = true): IdxMap<Geometry.CELL, number> {
-    const out: IdxMap<Geometry.CELL, number> = {};
-    if (!includeGivens && !includeFilled) return out;
-
-    const elements = boardState.get<schema.Board['elements']>('elements') || {};
-    for (const element of Object.values(elements)) {
-        if ((includeGivens && 'givens' === element.type) || (includeFilled && 'filled' === element.type)) {
-            Object.assign(out, element.value);
-        }
-    }
-
-    return out;
+    return getDigitsHelper(boardState.get<schema.Board['elements']>('elements') || {}, includeGivens, includeFilled);
 }
 
 // Setup board.

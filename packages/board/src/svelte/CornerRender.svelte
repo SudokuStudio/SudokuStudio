@@ -26,7 +26,7 @@
     }
 </script>
 
-<g {id}>
+<g {id} mask="url(#SUDOKU_MASK_GIVENS_FILLED)">
     {#each getMarks($ref || {}) as { idx, nums } (idx)}
         {#each nums as { x, y, num }}
             <text {x} {y} fill="#4e72b0" text-anchor="middle" dominant-baseline="central" font-size="0.3" font-weight="600">

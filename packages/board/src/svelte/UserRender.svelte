@@ -37,7 +37,7 @@
         <feFuncA type="linear" slope="20" intercept="-9.5" />
     </feComponentTransfer>
 </filter>
-<mask id="select-{id}-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
+<mask id="select-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
     <rect x="0" y="0" width={grid.width} height={grid.height} fill={outlineOpacity} />
     <path d={$dMask} fill={innerOpacity} stroke="none" filter="url(#select-{id}-blur)" />
 </mask>

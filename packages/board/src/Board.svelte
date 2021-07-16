@@ -16,6 +16,7 @@
 
     function FilledRender(args: any) {
         args.props.color = '#4e72b0';
+        args.props.mask = 'url(#SUDOKU_MASK_GIVENS)';
         return new DigitRender(args);
     }
 
@@ -47,16 +48,23 @@
 </script>
 <script lang="ts">
     import type { schema } from "@sudoku-studio/schema";
-    import type { StateRef } from "@sudoku-studio/state-manager";
+    import type { StateManager, StateRef } from "@sudoku-studio/state-manager";
 
-    import { GRID_THICKNESS, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
+    import { bitsetToList, getDigits, getEdges, GRID_THICKNESS, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
     import { derived } from "svelte/store";
 
-    export let userState: StateRef;
-    export let boardState: StateRef;
+    export let userState: StateManager;
+    export let boardState: StateManager;
     export let svg: SVGSVGElement = null!;
 
+
     const grid = boardState.ref('grid');
+
+    const elementsRef = boardState.ref('elements');
+    const givensMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
+        getEdges(bitsetToList(getDigits(elements || {}, true, false)), grid, 0) || undefined);
+    const givensFilledMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
+        getEdges(bitsetToList(getDigits(elements || {}, true, true)), grid, 0) || undefined);
 
     // TODO somehow update this based on elements.
     const viewBox = derived(grid, $grid => ({
@@ -69,7 +77,7 @@
 
     type ElementList = { id: string, order: number, ref: StateRef, element: ElementRenderer }[];
     const list: ElementList = [
-        { id: 'select', order: 9.5, ref: userState, element: UserRender }
+        { id: 'select', order: 9.5, ref: userState as any /* TODO */, element: UserRender }
     ];
 
     boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
@@ -138,6 +146,14 @@
         }
     </style>
     <defs>
+        <mask id="SUDOKU_MASK_GIVENS" maskUnits="userSpaceOnUse">
+            <rect x="0" y="0" width={$grid.width} height={$grid.height} fill="#fff" />
+            <path d={$givensMaskPath} fill="#000" stroke="none" />
+        </mask>
+        <mask id="SUDOKU_MASK_GIVENS_FILLED" maskUnits="userSpaceOnUse">
+            <rect x="0" y="0" width={$grid.width} height={$grid.height} fill="#fff" />
+            <path d={$givensFilledMaskPath} fill="#000" stroke="none" />
+        </mask>
         {#each list as { id, ref, element } (id)}
             <svelte:component this={element} {id} {ref} grid={$grid} />
         {/each}
