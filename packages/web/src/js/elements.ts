@@ -1,7 +1,7 @@
 import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
-import { thermoInfo } from "./element/thermo";
+import { thermoInfo } from "./element/line";
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo } from "./element/toggles";
 import { maxInfo, minInfo } from "./element/minMax";
 
