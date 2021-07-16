@@ -53,6 +53,10 @@ export class StateRef {
         }
     }
 
+    path(): string[] {
+        return [ ...this._path ];
+    }
+
     ref(...path: string[]): StateRef {
         return new StateRef(this._stateManager, [ ...this._path, ...path ]);
     }

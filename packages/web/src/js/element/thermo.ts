@@ -1,9 +1,10 @@
 import type { Geometry, Idx, ArrayObj, Grid } from "@sudoku-studio/schema";
-import type { StateRef } from "@sudoku-studio/state-manager";
+import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import Thermo from "../../svelte/edit/constraint/Thermo.svelte";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
-import { cellCoord2CellIdx, arrayObj2array } from "@sudoku-studio/board-utils";
+import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
+import { pushHistory } from "../history";
 
 export const thermoInfo = {
     getInputHandler,
@@ -16,10 +17,10 @@ function getInputHandler(thermoState: StateRef, grid: Grid, svg: SVGSVGElement):
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
     let thermoRef: null | StateRef = null;
-    let len = 0;
+    const thermoCells: Idx<Geometry.CELL>[] = [];
 
     pointerHandler.onDragStart = (_event: MouseEvent) => {
-        len = 0;
+        thermoCells.length = 0;
         thermoRef = thermoState.ref(`${Date.now()}_${Math.random()}`);
     };
 
@@ -29,22 +30,36 @@ function getInputHandler(thermoState: StateRef, grid: Grid, svg: SVGSVGElement):
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
-        for (const [ i, oldIdx ] of Object.entries(thermoRef.get<ArrayObj<Idx<Geometry.CELL>>>() || {})) {
-            if (idx === oldIdx) {
-                len = +i + 1;
-                thermoRef.replace(arrayObj2array(thermoRef.get<ArrayObj<Idx<Geometry.CELL>>>() || {}).slice(0, len));
-                return;
-            }
+        const selfHit = thermoCells.indexOf(idx);
+        if (0 <= selfHit) {
+            thermoCells.length = selfHit + 1;
         }
-
-        thermoRef.ref(`${len}`).replace(idx);
-        len++;
+        else {
+            thermoCells.push(idx);
+        }
+        thermoRef.replace(thermoCells);
     };
 
     pointerHandler.onDragEnd = () => {
-        if (1 >= len) {
-            thermoRef!.replace(null);
+        if (null == thermoRef) {
+            throw new Error('Thermo handler, onDragEnd NULL thermoRef.');
         }
+
+        if (1 >= thermoCells.length) {
+            thermoRef.replace(null);
+        }
+        else {
+            const path = thermoRef.path().join('/');
+            const diff: Diff = {
+                redo: {},
+                undo: { [path]: null },
+            };
+            for (let i = 0; i < thermoCells.length; i++) {
+                diff.redo[`${path}/${i}`] = thermoCells[i];
+            }
+            pushHistory(diff);
+        }
+        thermoRef = null;
     };
 
     pointerHandler.onTap = (event: CellDragTapEvent) => {
@@ -53,7 +68,7 @@ function getInputHandler(thermoState: StateRef, grid: Grid, svg: SVGSVGElement):
 
         for (const [ thermoId, thermoVals ] of Object.entries(thermoState.get<Record<string, ArrayObj<Idx<Geometry.CELL>>>>() || {})) {
             if (idx === thermoVals[0]) {
-                thermoState.ref(`${thermoId}`).replace(null);
+                pushHistory(thermoState.ref(`${thermoId}`).replace(null));
                 return;
             }
         }

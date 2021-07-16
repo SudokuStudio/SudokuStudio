@@ -101,6 +101,8 @@ export function getRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells:
 
 
 export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, shortenEnd: number = 0): string {
+    if (0 >= idxArr.length) return '';
+
     const points: [ number, number ][] = [];
 
     for (const idx of idxArr) {
