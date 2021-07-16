@@ -1,14 +1,11 @@
-import { derived, readable, writable } from "svelte/store";
+import { derived, readable } from "svelte/store";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import type { ElementInfo } from "./element/element";
-import { boardGridRef, boardState } from "./board";
+import { boardGridRef, boardState, boardSvg } from "./board";
 import type { Grid, schema } from "@sudoku-studio/schema";
 import { ELEMENT_HANDLERS } from "./elements";
 import { userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
-
-export const boardSvg = writable<SVGSVGElement>();
-export const boardDiv = writable<HTMLDivElement>();
 
 export type ElementHandlerItem = { id: string, valueRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];

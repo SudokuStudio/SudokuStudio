@@ -1,9 +1,10 @@
 <script lang="ts">
+    import { boardDiv } from "./js/board";
     import BoardContainer from "./svelte/board/BoardContainer.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
     import Header from "./svelte/Header.svelte";
-    import { boardDiv } from "./js/elementStores";
+
 </script>
 
 <header>

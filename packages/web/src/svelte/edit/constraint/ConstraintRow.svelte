@@ -2,8 +2,7 @@
     let counter = 0;
 </script>
 <script type="ts">
-import { boardDiv } from "../../../js/elementStores";
-
+    import { boardDiv } from "../../../js/board";
     import { userToolState, TOOL_INPUT_NAME, userPrevToolState } from "../../../js/user";
 
     export let id: string;
