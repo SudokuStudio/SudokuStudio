@@ -11,6 +11,8 @@ userState.update({
         center: '140',
         colors: '150',
     },
+    history: {},
+    historyUndone: {},
 });
 
 export const userSelectState = userState.ref('select');

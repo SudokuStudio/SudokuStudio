@@ -2,6 +2,7 @@ import { bitsetToList, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import type { Geometry, Grid, IdxBitset } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
 import { boardState, getDigits } from "../board";
+import { pushHistory } from "../history";
 import { userToolState, userSelectState, userState, userPrevToolState } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import { InputHandler, parseDigit } from "./inputHandler";
@@ -77,7 +78,8 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
             }
         }
 
-        stateRef.update(update);
+        const diff = stateRef.update(update);
+        pushHistory(diff);
 
         return false;
     }

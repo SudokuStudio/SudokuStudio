@@ -5,6 +5,7 @@
     // Button ripples.
     import { MDCRipple } from "@material/ripple";
     import { onMount } from "svelte";
+import { changeHistory } from "../../js/history";
     onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
 
     const filled = userState.ref('marks', 'filled');
@@ -86,10 +87,10 @@
                 </button>
             </div>
             <div class="ctrl-pad">
-                <button class="mdc-ripple-surface padbutton" title="Undo" aria-label="Undo">
+                <button class="mdc-ripple-surface padbutton" title="Undo" aria-label="Undo" on:click={() => changeHistory(false)}>
                     <span class="icon icon-inline icon-c-textinv icon-undo" />
                 </button>
-                <button class="mdc-ripple-surface padbutton" title="Redo" aria-label="Redo">
+                <button class="mdc-ripple-surface padbutton" title="Redo" aria-label="Redo" on:click={() => changeHistory(true)}>
                     <span class="icon icon-inline icon-c-textinv icon-undo redo" />
                 </button>
                 <button class="mdc-ripple-surface padbutton" title="Take Screenshot" aria-label="Take Screenshot">
