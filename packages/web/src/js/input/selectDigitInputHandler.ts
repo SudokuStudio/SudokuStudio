@@ -12,15 +12,20 @@ export type DigitInputHandlerOptions = {
     multipleDigits: boolean,
     blockedByGivens: boolean,
     blockedByFilled: boolean,
+    digitMapping?: null | (string | number)[],
 };
 
 export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, options: DigitInputHandlerOptions): InputHandler {
-    const { multipleDigits, blockedByGivens, blockedByFilled } = options;
+    const { multipleDigits, blockedByGivens, blockedByFilled, digitMapping } = options;
 
     const DELETE_ORDER = [ 'filled', 'corner', 'center', 'colors' ];
 
     function onDigitInput(code: string): boolean {
-        const digit = parseDigit(code);
+        let digit: undefined | null | number | string = parseDigit(code);
+
+        if (digitMapping && (null != digit) && digit in digitMapping)
+            digit = digitMapping[digit];
+
         if (undefined === digit) return false;
 
         const shouldDelegate = onDigitInputHelper(stateRef, digit);
@@ -36,7 +41,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         return true;
     }
 
-    function onDigitInputHelper(stateRef: StateRef, digit: null | number): boolean {
+    function onDigitInputHelper(stateRef: StateRef, digit: null | number | string): boolean {
         const blockingDigits = getDigits(blockedByGivens, blockedByFilled);
 
         const update: Update = {};

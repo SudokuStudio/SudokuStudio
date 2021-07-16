@@ -43,6 +43,7 @@ export const colorsInfo = {
             multipleDigits: true,
             blockedByGivens: false,
             blockedByFilled: false,
+            digitMapping: [ "#111111", "#666666", "#b2b2b2", "#fe525d", "#e28800", "#fee076", "#6ce000", "#a0dcff", "#4e7aff", "#ec80ff" ],
         });
     },
 } as const;

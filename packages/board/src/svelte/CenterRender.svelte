@@ -10,10 +10,9 @@
     function getMarks(cells: IdxMap<Geometry.CELL, Record<string, boolean>>): { idx: number, x: number, y: number, nums: Idx<Geometry.CELL>[] }[] {
         const out: { idx: number, x: number, y: number, nums: Idx<Geometry.CELL>[] }[] = [];
         for (const [ idx, nums ] of Object.entries(cells)) {
+            const [ x, y ] = cellIdx2cellCoord(+idx, grid).map(x => x + 0.5);
             out.push({
-                idx: +idx,
-                x: cellIdx2cellCoord(+idx, grid)[0] + 0.5,
-                y: cellIdx2cellCoord(+idx, grid)[1] + 0.5,
+                idx: +idx, x, y,
                 nums: bitsetToList(nums),
             })
         }

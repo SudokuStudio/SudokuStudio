@@ -292,3 +292,50 @@ export function cornerMarkPos(i: number, len: number): [ number, number ] {
     }
     return [ dx, dy ];
 }
+
+export const TWO_PI = 2 * Math.PI;
+
+export function makeConicalCellSlice(idx: Idx<Geometry.CELL>, grid: Grid, index: number, slices: number, offsetFrac = 0.2): string {
+    if (index >= slices) throw Error(`INDEX ${index} must be less than SLICES ${slices}.`);
+    if (0 > index) throw Error(`INDEX ${index} must be positive`);
+
+    const [ cx, cy ] = cellIdx2cellCoord(idx, grid);
+
+    if (1 === slices) {
+        return `M${cx},${cy}L${cx + 1},${cy}L${cx + 1},${cy + 1}L${cx},${cy + 1}Z`;
+    }
+
+    const headFrac = ((offsetFrac + index / slices) % 1 + 1) % 1;
+    const tailFrac = ((offsetFrac + (index + 1) / slices) % 1 + 1) % 1;
+
+    const fracs = [
+        0.125,
+        0.375,
+        0.625,
+        0.875,
+    ];
+    let s, e;
+    for (s = 0; s < fracs.length && fracs[s] < headFrac; s++);
+    for (e = 0; e < fracs.length && fracs[e] < tailFrac; e++);
+    s %= fracs.length;
+    e %= fracs.length;
+
+    const selectedFracs: number[] = [ headFrac ];
+    while (s !== e) {
+        selectedFracs.push(fracs[s]);
+        s++;
+        s %= fracs.length;
+    }
+    selectedFracs.push(tailFrac);
+
+    return `M${cx + 0.5},${cy + 0.5}L` +
+        selectedFracs
+            .map(frac => [ Math.cos(TWO_PI * frac), Math.sin(TWO_PI * frac) ])
+            .map(([ x, y ]) => {
+                const max = Math.max(Math.abs(x), Math.abs(y));
+                return [ x / max, y / max ];
+            })
+            .map(([ x, y ]) => [ cx + 0.5 * (x + 1), cy + 0.5 * (y + 1) ])
+            .map(([ x, y ]) => `${x},${y}`)
+            .join('L') + 'Z';
+}

@@ -14,15 +14,15 @@ export interface InputHandler {
 }
 
 const DIGIT_REGEX = /^(?:Digit|Numpad)?(\d)$/;
-const KEYCODES = {
+const NULL_KEYCODES = {
     Delete: null,
     Backspace: null,
     NumpadDecimal: null,
 } as const;
 
 export function parseDigit(code: string): undefined | null | number {
-    if (code in KEYCODES) {
-        return KEYCODES[code as keyof typeof KEYCODES];
+    if (code in NULL_KEYCODES) {
+        return NULL_KEYCODES[code as keyof typeof NULL_KEYCODES];
     }
 
     const match = DIGIT_REGEX.exec(code);

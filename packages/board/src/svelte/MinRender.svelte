@@ -25,7 +25,7 @@
 <g {id}>
     {#each Object.entries($ref) as [ idx, _true ] (idx)}
         <!-- Background color. -->
-        <rect x={cellIdx2cellCoord(+idx, grid)[0]} y={cellIdx2cellCoord(+idx, grid)[1]} width="1" height="1" fill="#f0edf2" />
+        <rect x={cellIdx2cellCoord(+idx, grid)[0]} y={cellIdx2cellCoord(+idx, grid)[1]} width="1" height="1" fill="#694b7d" fill-opacity="0.1" />
     {/each}
     <g mask="url(#min-{id}-mask)">
         {#each Object.entries($ref) as [ idx, _true ] (idx)}

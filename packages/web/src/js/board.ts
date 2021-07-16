@@ -158,7 +158,7 @@ export const currentInputHandler = derived<[ typeof currentElement, typeof board
             },
             '150': {
                 type: 'colors',
-                order: 14.5,
+                order: 0.5,
                 value: {},
             },
 
