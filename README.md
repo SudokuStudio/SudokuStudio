@@ -1,7 +1,7 @@
 # Sudoku Studio
 
 ### Website
-https://sudokustudio.github.io/SudokuStudio/
+https://sudokustudio.net
 
 ## About
 
