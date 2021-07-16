@@ -3,6 +3,7 @@ import type { ElementInfo } from "./element/element";
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
 import { thermoInfo } from "./element/thermo";
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo } from "./element/toggles";
+import { maxInfo, minInfo } from "./element/minMax";
 
 function check<T extends ElementInfo>(factory: T): ElementInfo {
     return factory;
@@ -20,8 +21,8 @@ export const ELEMENT_HANDLERS = {
 
     ['arrow']: null,
     ['sandwich']: null,
-    ['min']: null,
-    ['max']: null,
+    ['min']: check(minInfo),
+    ['max']: check(maxInfo),
     ['killer']: null,
     ['quadruple']: null,
 

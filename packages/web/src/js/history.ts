@@ -4,6 +4,7 @@ import { userState } from "./user";
 
 export function pushHistory(history: Diff | null): boolean {
     if (!history) return false;
+    if (0 === Object.keys(history.redo).length && 0 === Object.keys(history.undo).length) return false;
     userState.update({
         [`history/${Date.now()}`]: JSON.stringify(history),
         historyUndone: null,
