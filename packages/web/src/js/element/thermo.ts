@@ -85,6 +85,9 @@ function getInputHandler(thermoState: StateRef, grid: Grid, svg: SVGSVGElement):
             pointerHandler.up();
         },
 
+        blur(_event: FocusEvent): void {
+        },
+
         keydown(_event: KeyboardEvent): void {
         },
         keyup(_event: KeyboardEvent): void {

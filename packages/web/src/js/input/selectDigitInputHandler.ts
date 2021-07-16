@@ -171,6 +171,11 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
             selectPointerHandler.up();
         },
 
+        blur(_event: FocusEvent): void {
+            // Reset any tool toggles.
+            userToolState.replace(userPrevToolState.get());
+        },
+
         keydown(event: KeyboardEvent): void {
             if (onDigitInput(event.code) || onQuickshift(event) || onArrowKey(event)) {
                 event.stopImmediatePropagation();

@@ -15,6 +15,7 @@
 </script>
 
 <svelte:window
+    on:blur={wrapListener($currentInputHandler, 'blur')}
     on:mouseup={wrapListener($currentInputHandler, 'up')}
     on:keydown={wrapListener($currentInputHandler, 'keydown')}
     on:keyup={wrapListener($currentInputHandler, 'keyup')} />

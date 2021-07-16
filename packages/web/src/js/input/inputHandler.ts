@@ -2,6 +2,8 @@ export interface InputHandler {
     load(): void,
     unload(): void,
 
+    blur(event: FocusEvent): void,
+
     keydown(event: KeyboardEvent): void;
     keyup(event: KeyboardEvent): void;
     padClick(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void;
