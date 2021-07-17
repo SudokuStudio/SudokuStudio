@@ -15,6 +15,8 @@ export const givensInfo: ElementInfo = {
             nextMode: 'corner',
         });
     },
+    order: 220,
+    permanent: true,
     inGlobalMenu: false,
     menu: {
         type: 'select',
@@ -22,7 +24,7 @@ export const givensInfo: ElementInfo = {
         icon: 'given',
     },
 } as const;
-export const filledInfo = {
+export const filledInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: false,
@@ -31,9 +33,10 @@ export const filledInfo = {
             nextMode: 'corner',
         });
     },
+    order: 210,
 } as const;
 
-export const cornerInfo = {
+export const cornerInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: true,
@@ -42,8 +45,9 @@ export const cornerInfo = {
             nextMode: 'center',
         });
     },
+    order: 200,
 } as const;
-export const centerInfo = {
+export const centerInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: true,
@@ -52,9 +56,10 @@ export const centerInfo = {
             nextMode: 'colors',
         });
     },
-} as const;;
+    order: 200,
+} as const;
 
-export const colorsInfo = {
+export const colorsInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: true,
@@ -75,4 +80,5 @@ export const colorsInfo = {
             ],
         });
     },
+    order: 15,
 } as const;

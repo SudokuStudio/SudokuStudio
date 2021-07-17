@@ -52,6 +52,7 @@ export type Grid = {
 export declare namespace schema {
     export interface Board {
         grid: Grid,
+        meta: Record<string, any>,
         elements: Record<string, Element>,
     }
 
@@ -63,7 +64,9 @@ export declare namespace schema {
     export type Element =
         GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
         | BooleanElement | ConsecutiveElement | DiagonalElement | KillerElement
-        | KillerElement | QuadrupleElement | LineElement | EdgeNumberElement;
+        | KillerElement | QuadrupleElement | LineElement | ArrowElement | EdgeNumberElement
+        | CellSetElement | TODO_ELEMENTS;
+    export type ElementType = Element['type'];
 
     export interface AbstractElement {
         type: Element['type'],
@@ -73,13 +76,13 @@ export declare namespace schema {
 
     export interface GridElement extends AbstractElement {
         type: 'grid',
-        value: null, // TODO?
+        value: null,
     }
     export interface BoxElement extends AbstractElement {
         type: 'box',
         value: {
-            width: boolean,
-            height: boolean,
+            width: number,
+            height: number,
         },
     }
     export interface DigitElement extends AbstractElement {
@@ -131,6 +134,7 @@ export declare namespace schema {
             },
         },
     }
+
     export interface QuadrupleElement extends AbstractElement {
         type: 'quadruple',
         value: IdxMap<Geometry.CORNER, true | {
@@ -146,8 +150,27 @@ export declare namespace schema {
             [K: string]: ArrayObj<Idx<Geometry.CELL>>,
         },
     }
+    export interface ArrowElement extends AbstractElement {
+        type: 'arrow',
+        value: {
+            [K: string]: {
+                bulb: ArrayObj<Idx<Geometry.CELL>>,
+                body: ArrayObj<Idx<Geometry.CELL>>,
+            },
+        },
+    }
     export interface EdgeNumberElement extends AbstractElement {
-        type: 'difference' | 'ratio',
+        type: 'difference' | 'ratio' | 'xv',
         value: IdxMap<Geometry.EDGE, true | number>,
+    }
+
+    export interface CellSetElement extends AbstractElement {
+        type: 'min' | 'max',
+        value: IdxMap<Geometry.CELL, true>,
+    }
+
+    export interface TODO_ELEMENTS extends AbstractElement {
+        type: 'sandwich',
+        value: unknown,
     }
 }

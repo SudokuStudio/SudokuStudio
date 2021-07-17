@@ -9,7 +9,7 @@ import type { ElementInfo } from "./element";
 
 export const minInfo: ElementInfo = {
     getInputHandler,
-
+    order: 20,
     inGlobalMenu: false,
     menu: {
         type: 'select',
@@ -20,7 +20,7 @@ export const minInfo: ElementInfo = {
 
 export const maxInfo: ElementInfo = {
     getInputHandler,
-
+    order: 21,
     inGlobalMenu: false,
     menu: {
         type: 'select',

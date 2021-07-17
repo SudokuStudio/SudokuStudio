@@ -1,5 +1,9 @@
 import { StateManager } from '@sudoku-studio/state-manager';
 
+export const MARK_TYPES = [
+    'filled', 'corner', 'center', 'colors',
+] as const;
+
 export const userState = (window as any).userState = new StateManager();
 userState.update({
     select: {},

@@ -8,6 +8,7 @@
     export let id: string;
     export let elementRef: StateRef;
     export let info: CheckboxMenuComponent;
+    export let deletable: boolean;
 
     const valueRef = elementRef.ref('value');
 
@@ -37,7 +38,7 @@
     }
 </script>
 
-<ConstraintRow {id} name={info.name} unused={unused($valueRef)} onClick={onClick} onTrash={() => elementRef.replace(null)}>
+<ConstraintRow {id} {deletable} name={info.name} unused={unused($valueRef)} onClick={onClick} onTrash={() => elementRef.replace(null)}>
     {#each (Array.isArray(info.checkbox) ? info.checkbox : [ info.checkbox ]) as { name, icon, refPath }}
         <Checkbox {name} {icon} checked={refPath ? valueRef.ref(refPath) : valueRef} />
     {/each}

@@ -8,6 +8,7 @@
     export let id: string;
     export let name: string;
     export let unused: boolean;
+    export let deletable: boolean;
 
     export let isLocal: boolean = false;
     export let onClick: svelte.JSX.MouseEventHandler<HTMLDivElement> | undefined =
@@ -24,10 +25,11 @@
     {/if}
     <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
         <div class="constraint-row-left">
-            <button class="nobutton hoverable" on:click|stopPropagation={onTrash}>
-                <span class="icon hoverable-icon icon-inline icon-c-clickable icon-trash" />
-            </button>
-            {#if isLocal}
+            {#if deletable}
+                <button class="delete-button nobutton hoverable" on:click|stopPropagation={onTrash}>
+                    <span class="icon hoverable-icon icon-inline icon-c-clickable icon-trash" />
+                </button><!-- no whitespace
+         -->{/if}{#if isLocal}
                 <label class:unused={unused} class="name clickable" for="local-radio-{counter}">{name}</label>
             {:else}
                 <span class:unused={unused} class="name">{name}</span>
@@ -56,7 +58,8 @@
     .constraint-row {
         @include clearfix.clearfix;
 
-        padding: 0.25em 0.25em;
+        $padding: 0.25em;
+        padding: $padding;
 
         cursor: pointer;
         -webkit-user-select: none;
@@ -68,6 +71,12 @@
 
         .constraint-row-left {
             float: left;
+
+            padding-left: 1.5em;
+            .delete-button {
+                margin-left: -1.5em;
+                width: 1.5em;
+            }
         }
         .constraint-row-right {
             margin-left: 0.5em;

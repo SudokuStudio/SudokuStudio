@@ -2,6 +2,7 @@ import type { ElementInfo } from "./element";
 
 export const diagonalInfo: ElementInfo = {
     inGlobalMenu: true,
+    order: 0,
     menu: {
         type: 'checkbox',
         name: 'Diagonals',
@@ -22,6 +23,7 @@ export const diagonalInfo: ElementInfo = {
 
 export const disjointGroupsInfo: ElementInfo = {
     inGlobalMenu: true,
+    order: 0,
     menu: {
         type: 'checkbox',
         name: 'Disjoint Groups',
@@ -34,6 +36,7 @@ export const disjointGroupsInfo: ElementInfo = {
 
 export const consecutiveInfo: ElementInfo = {
     inGlobalMenu: true,
+    order: 0,
     menu: {
         type: 'checkbox',
         name: 'Nonconsecutive',
@@ -54,6 +57,7 @@ export const consecutiveInfo: ElementInfo = {
 
 export const consecutiveDiagonalInfo: ElementInfo = {
     inGlobalMenu: true,
+    order: 0,
     menu: {
         type: 'checkbox',
         name: 'Nonconsecutive Diag.',
@@ -66,6 +70,7 @@ export const consecutiveDiagonalInfo: ElementInfo = {
 
 export const kingInfo: ElementInfo = {
     inGlobalMenu: true,
+    order: 0,
     menu: {
         type: 'checkbox',
         name: 'Antiking',
@@ -78,6 +83,7 @@ export const kingInfo: ElementInfo = {
 
 export const knightInfo: ElementInfo = {
     inGlobalMenu: true,
+    order: 0,
     menu: {
         type: 'checkbox',
         name: 'Antiknight',
@@ -90,6 +96,7 @@ export const knightInfo: ElementInfo = {
 
 export const selfTaxicabInfo: ElementInfo = {
     inGlobalMenu: true,
+    order: 0,
     menu: {
         type: 'checkbox',
         name: 'Self-Taxicab',

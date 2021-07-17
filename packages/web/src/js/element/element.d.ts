@@ -29,6 +29,11 @@ export type MenuComponent = SelectMenuComponent | CheckboxMenuComponent;
 export type ElementInfo = {
     getInputHandler?: null | ((ref: StateRef, grid: Grid, svg: SVGSVGElement) => InputHandler);
 
+    /** Render order. */
+    order: number,
+    /** If this element CANNOT be deleted. */
+    permanent?: null | boolean,
+
     /** Can be unset if no menu component. */
     inGlobalMenu?: null | boolean,
     menu?: null | MenuComponent;

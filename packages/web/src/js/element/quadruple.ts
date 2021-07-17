@@ -8,7 +8,7 @@ import { pushHistory } from "../history";
 
 export const quadrupleInfo: ElementInfo = {
     getInputHandler,
-
+    order: 110,
     inGlobalMenu: false,
     menu: {
         type: 'select',

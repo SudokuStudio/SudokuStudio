@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { ElementHandlerList } from "../../js/elementStores";
+    import { addElement } from "../../js/elementStores";
     import type { ElementInfo } from "../../js/element/element";
 
     import EditSection from "./EditSection.svelte";
@@ -7,6 +8,7 @@
     import { derived } from "svelte/store";
     import SelectMenuComponent from "./constraint/SelectMenuComponent.svelte";
     import CheckboxMenuComponent from "./constraint/CheckboxMenuComponent.svelte";
+    import { ELEMENT_HANDLERS } from "../../js/elements";
 
     const constraintsGlobal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
         return $elementHandlers.filter(({ info }) => info.menu && info.inGlobalMenu);
@@ -30,6 +32,18 @@
             throw Error(`Unknown menu type "${(menuInfo as any).type}".`);
         };
     }
+
+    function showAddModal(_global: boolean): void {
+        const type = window.prompt('TEMPORARY. Enter element type string:\n'
+            + Object.keys(ELEMENT_HANDLERS).join(', '));
+        if (null == type) return;
+        try {
+            addElement(type as any);
+        }
+        catch (e) {
+            alert(`Unknown element type string: ${JSON.stringify(type)}`)
+        }
+    }
 </script>
 
 <ul class="nolist">
@@ -39,22 +53,22 @@
         </EditSection>
     </li>
     <li>
-        <EditSection title="Global Constraints">
+        <EditSection title="Global Constraints" onAdd={() => showAddModal(true)}>
             <ul class="nolist">
                 {#each $constraintsGlobal as { id, elementRef, info } (id)}
                     <li>
-                        <svelte:component this={componentFor(info)} {id} {elementRef}  />
+                        <svelte:component this={componentFor(info)} {id} {elementRef} deletable={!info.permanent}  />
                     </li>
                 {/each}
             </ul>
         </EditSection>
     </li>
     <li>
-        <EditSection title="Local Constraints">
+        <EditSection title="Local Constraints" onAdd={() => showAddModal(false)}>
             <ul class="nolist">
                 {#each $constraintsLocal as { id, elementRef, info } (id)}
                     <li>
-                        <svelte:component this={componentFor(info)} {id} {elementRef}  />
+                        <svelte:component this={componentFor(info)} {id} {elementRef} deletable={!info.permanent}  />
                     </li>
                 {/each}
             </ul>

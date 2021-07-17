@@ -6,37 +6,47 @@ import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo
 import { maxInfo, minInfo } from "./element/minMax";
 import { quadrupleInfo } from "./element/quadruple";
 import { differenceInfo, ratioInfo, xvInfo } from "./element/edges";
-
-function check<T extends ElementInfo>(factory: T): ElementInfo {
-    return factory;
-}
+import type { schema } from "@sudoku-studio/schema";
+import { boxInfo, gridInfo } from "./element/basic";
 
 export const ELEMENT_HANDLERS = {
-    ['givens']: check(givensInfo),
-    ['filled']: check(filledInfo),
-    ['center']: check(centerInfo),
-    ['corner']: check(cornerInfo),
-    ['colors']: check(colorsInfo),
+    ['givens']: givensInfo,
+    ['filled']: filledInfo,
+    ['center']: centerInfo,
+    ['corner']: cornerInfo,
+    ['colors']: colorsInfo,
 
-    ['grid']: null,
-    ['box']: null,
+    ['grid']: gridInfo,
+    ['box']: boxInfo,
 
-    ['thermo']: check(thermoInfo),
-    ['between']: check(betweenInfo),
-    ['diagonal']: check(diagonalInfo),
+    ['thermo']: thermoInfo,
+    ['between']: betweenInfo,
+    ['diagonal']: diagonalInfo,
     ['arrow']: null,
     ['sandwich']: null,
-    ['min']: check(minInfo),
-    ['max']: check(maxInfo),
+    ['min']: minInfo,
+    ['max']: maxInfo,
     ['killer']: null,
-    ['quadruple']: check(quadrupleInfo),
-    ['difference']: check(differenceInfo),
-    ['ratio']: check(ratioInfo),
-    ['xv']: check(xvInfo),
+    ['quadruple']: quadrupleInfo,
+    ['difference']: differenceInfo,
+    ['ratio']: ratioInfo,
+    ['xv']: xvInfo,
 
-    ['knight']: check(knightInfo),
-    ['king']: check(kingInfo),
-    ['disjointGroups']: check(disjointGroupsInfo),
-    ['consecutive']: check(consecutiveInfo),
-    ['selfTaxicab']: check(selfTaxicabInfo),
-} as const;
+    ['knight']: knightInfo,
+    ['king']: kingInfo,
+    ['disjointGroups']: disjointGroupsInfo,
+    ['consecutive']: consecutiveInfo,
+    ['selfTaxicab']: selfTaxicabInfo,
+} as Record<schema.ElementType, null | ElementInfo>;
+
+export function createElement<E extends schema.Element>(type: E['type'], value?: E['value']): E {
+    if (!(type in ELEMENT_HANDLERS)) throw Error(`Cannot add unknown element type: ${type}.`);
+    const handler = ELEMENT_HANDLERS[type];
+    if (null == handler) throw Error(`Cannot add unimplmeneted element type: ${type}.`);
+
+    return {
+        type,
+        order: handler.order,
+        value: value,
+    } as E; // Technically the type variance for "E extends schema.Element" is backwards.
+}

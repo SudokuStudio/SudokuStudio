@@ -11,7 +11,7 @@ export const thermoInfo: ElementInfo = {
             deletePrioritizeTail: false,
         });
     },
-
+    order: 30,
     inGlobalMenu: false,
     menu: {
         type: 'select',
@@ -27,7 +27,7 @@ export const betweenInfo: ElementInfo = {
             deletePrioritizeTail: true,
         });
     },
-
+    order: 50,
     inGlobalMenu: false,
     menu: {
         type: 'select',

@@ -8,7 +8,7 @@ import { pushHistory } from "../history";
 
 export const differenceInfo: ElementInfo = {
     getInputHandler,
-
+    order: 140,
     inGlobalMenu: false,
     menu: {
         type: 'select',
@@ -19,7 +19,7 @@ export const differenceInfo: ElementInfo = {
 
 export const ratioInfo: ElementInfo = {
     getInputHandler,
-
+    order: 141,
     inGlobalMenu: false,
     menu: {
         type: 'select',
@@ -39,7 +39,7 @@ export const xvInfo: ElementInfo = {
             max: 100,
         })
     },
-
+    order: 130,
     inGlobalMenu: false,
     menu: {
         type: 'select',

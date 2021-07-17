@@ -12,7 +12,7 @@
 </script>
 
 
-<marker id="arrow-head-{id}"
+<marker id="arrow-bulb-{id}"
     viewBox="0 0 1 1" refX="0.5" refY="0.5"
     markerUnits="userSpaceOnUse"
     markerWidth="1" markerHeight="1"
@@ -21,14 +21,14 @@
     <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke="#000" stroke-width={strokeWidth} />
 </marker>
 <g {id}>
-    {#each Object.entries($ref || {}) as [ arrowId, headBody ] (arrowId)}
+    {#each Object.entries($ref || {}) as [ arrowId, bulbBody ] (arrowId)}
         <mask id="arrow-{id}-mask-{arrowId}" maskUnits="userSpaceOnUse">
             <rect width={grid.width} height={grid.height} fill="#fff" />
-            <path d={makePath(arrayObj2array(any(headBody).head), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius - outlineWidth} stroke-linejoin="round" stroke-linecap="round" />
+            <path d={makePath(arrayObj2array(any(bulbBody).bulb), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius - outlineWidth} stroke-linejoin="round" stroke-linecap="round" />
         </mask>
-        <path d={makePath(arrayObj2array(any(headBody).head), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius + outlineWidth}
+        <path d={makePath(arrayObj2array(any(bulbBody).bulb), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius + outlineWidth}
             mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
-        <path d={makePath(arrayObj2array(any(headBody).body), grid, 0.15)} fill="none" stroke="#000" stroke-width={strokeWidth}
-            mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-head-{id})" />
+        <path d={makePath(arrayObj2array(any(bulbBody).body), grid, 0.15)} fill="none" stroke="#000" stroke-width={strokeWidth}
+            mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-bulb-{id})" />
     {/each}
 </g>
