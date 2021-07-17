@@ -6,6 +6,8 @@
     import { MDCRipple } from "@material/ripple";
     import { onMount } from "svelte";
     import { changeHistory } from "../../js/history";
+    import { boardDiv } from "../../js/board";
+
     onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
 
     function setPreviousMode() {
@@ -16,9 +18,17 @@
     const corner = userState.ref('marks', 'corner');
     const center = userState.ref('marks', 'center');
     const colors = userState.ref('marks', 'colors');
+
+    // Keep focus on board if user *clicks* on button pad.
+    function onBubblingClick(event: MouseEvent): void {
+        const isKeyboardClick = 0 === event.screenX && 0 === event.screenY;
+        if (!isKeyboardClick) {
+            $boardDiv.focus();
+        }
+    }
 </script>
 
-<div class="container">
+<div class="container" on:click={onBubblingClick}>
     <div class="mode-pad-container">
         <div class="mode-pad">
             <!-- TOOD switch to INPUT RADIOs. -->
