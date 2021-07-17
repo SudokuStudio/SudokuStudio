@@ -7,7 +7,7 @@ import { ELEMENT_HANDLERS } from "./elements";
 import { userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 
-export type ElementHandlerItem = { id: string, valueRef: StateRef, info: ElementInfo };
+export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];
 
 export const elementHandlers = readable<ElementHandlerList>([], set => {
@@ -33,17 +33,17 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
 
         if (null == newVal) {
             // Deleted.
-            delete list[i!];
+            list.splice(i, 1);
         }
         else {
             // Add or change.
             if (null == oldVal) {
-                const valueRef = boardState.ref(_elements, elementId, 'value')
+                const elementRef = boardState.ref(_elements, elementId)
 
                 // Add.
                 list.push({
                     id: elementId,
-                    valueRef,
+                    elementRef,
                     info: elementInfo,
                 });
             }
@@ -74,7 +74,8 @@ export const currentInputHandler = derived<[ typeof currentElement, typeof board
     [ currentElement, boardSvg ],
     ([ $currentElement, $boardSvg ]) => {
         if (null == $currentElement) return null;
-        const { info, valueRef } = $currentElement;
+        const { info, elementRef } = $currentElement;
+        const valueRef = elementRef.ref('value');
         if (null == info || null == info.getInputHandler) return null;
 
         const inputHandler = info.getInputHandler(valueRef, boardGridRef.get<Grid>(), $boardSvg);

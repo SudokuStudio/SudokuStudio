@@ -6,21 +6,23 @@
     import { pushHistory } from "../../../js/history";
 
     export let id: string;
-    export let ref: StateRef;
+    export let elementRef: StateRef;
     export let info: CheckboxMenuComponent;
+
+    const valueRef = elementRef.ref('value');
 
     function onClick() {
         if (!Array.isArray(info.checkbox)) {
-            const diff = ref.replace(!ref.get<boolean>());
+            const diff = valueRef.replace(!valueRef.get<boolean>());
             pushHistory(diff);
         }
         else {
-            const val = info.checkbox.some(({ refPath }) => !ref.ref(refPath).get<boolean>());
+            const val = info.checkbox.some(({ refPath }) => !valueRef.ref(refPath).get<boolean>());
             const dict: Record<string, boolean> = {};
             for (const { refPath } of info.checkbox) {
                 dict[refPath] = val;
             }
-            const diff = ref.replace(dict);
+            const diff = valueRef.replace(dict);
             pushHistory(diff);
         }
     }
@@ -30,13 +32,13 @@
             return !data;
         }
         else {
-            return info.checkbox.every(({ refPath }) => !ref.ref(refPath).get<boolean>());
+            return info.checkbox.every(({ refPath }) => !valueRef.ref(refPath).get<boolean>());
         }
     }
 </script>
 
-<ConstraintRow {id} name={info.name} unused={unused($ref)} onClick={onClick} >
+<ConstraintRow {id} name={info.name} unused={unused($valueRef)} onClick={onClick} onTrash={() => elementRef.replace(null)}>
     {#each (Array.isArray(info.checkbox) ? info.checkbox : [ info.checkbox ]) as { name, icon, refPath }}
-        <Checkbox {name} {icon} checked={refPath ? ref.ref(refPath) : ref} />
+        <Checkbox {name} {icon} checked={refPath ? valueRef.ref(refPath) : valueRef} />
     {/each}
 </ConstraintRow>

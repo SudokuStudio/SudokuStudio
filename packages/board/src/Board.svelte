@@ -151,7 +151,7 @@
 
             if (null == newVal) {
                 // Deleted.
-                delete list[i];
+                list.splice(i, 1);
             }
             else {
                 const element = ELEMENT_RENDERERS[newVal.type];

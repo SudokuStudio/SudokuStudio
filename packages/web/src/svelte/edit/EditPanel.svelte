@@ -41,9 +41,9 @@
     <li>
         <EditSection title="Global Constraints">
             <ul class="nolist">
-                {#each $constraintsGlobal as { id, valueRef, info } (id)}
+                {#each $constraintsGlobal as { id, elementRef, info } (id)}
                     <li>
-                        <svelte:component this={componentFor(info)} {id} ref={valueRef}  />
+                        <svelte:component this={componentFor(info)} {id} {elementRef}  />
                     </li>
                 {/each}
             </ul>
@@ -52,9 +52,9 @@
     <li>
         <EditSection title="Local Constraints">
             <ul class="nolist">
-                {#each $constraintsLocal as { id, valueRef, info } (id)}
+                {#each $constraintsLocal as { id, elementRef, info } (id)}
                     <li>
-                        <svelte:component this={componentFor(info)} {id} ref={valueRef}  />
+                        <svelte:component this={componentFor(info)} {id} {elementRef}  />
                     </li>
                 {/each}
             </ul>
