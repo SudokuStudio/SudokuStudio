@@ -14,7 +14,7 @@ export const diagonalInfo: ElementInfo = {
             {
                 name: 'Negative Diagonal',
                 icon: 'negative-diagonal',
-                refPath: 'nevative',
+                refPath: 'negative',
             },
         ],
     },
