@@ -11,9 +11,9 @@
     export let fill: string = "#fff";
     export let textColor: string = "#000";
 
-    export let radius = 0.12;
+    export let radius = 0.15;
     export let strokeWidth = 0.02;
-    export let fontSize = 0.20;
+    export let fontSize = 0.25;
     export let fontWeight = 600;
 
     export let mapDigits = (num: true | number): string => true !== num ? `${num}` : '';

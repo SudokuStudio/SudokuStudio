@@ -27,7 +27,6 @@
             stroke: "#242424",
             fill: "#fff",
             textColor: "#000",
-            radius: 0.12,
             strokeWidth: 0.02,
         });
         return new EdgeNumberRender(args);
@@ -38,7 +37,6 @@
             stroke: 'none',
             fill: "#000",
             textColor: "#fff",
-            radius: 0.12,
         });
         return new EdgeNumberRender(args);
     }
