@@ -16,7 +16,7 @@
             colors.sort((a, b) => {
                 const hsluvA = hsluv.hexToHsluv(a);
                 const hsluvB = hsluv.hexToHsluv(b);
-                return hsluvA[0] - hsluvB[0] || hsluvA[1] - hsluvB[1] || hsluvA[2] - hsluvB[2];
+                return Math.round(0.06 * (hsluvA[0] - hsluvB[0])) || hsluvA[2] - hsluvB[2];
             });
 
             const slices = colors.map((color, i, arr) => ({
