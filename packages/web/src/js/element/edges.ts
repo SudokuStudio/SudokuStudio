@@ -66,7 +66,8 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options:
         };
         if (undefined === digit) return false;
 
-        const diff = edgeRef.replace(digit ?? true);
+        const oldVal = edgeRef.get<true | number>();
+        const diff = edgeRef.replace(digit ?? (true !== oldVal || null));
         pushHistory(diff);
 
         return true;

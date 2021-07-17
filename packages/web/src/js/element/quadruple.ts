@@ -1,4 +1,4 @@
-import type { Grid } from "@sudoku-studio/schema";
+import type { ArrayObj, Grid } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import { click2svgCoord, cornerCoord2cornerIdx, svgCoord2cornerCoord } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
@@ -28,6 +28,12 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHa
         if (undefined === digit) return false;
 
         if (null == digit) {
+            if (true === cornerRef.get<true | ArrayObj<number>>()) {
+                // Already empty -> delete.
+                const diff = cornerRef.replace(null);
+                pushHistory(diff);
+                return true;
+            }
             digits.length = 0;
         }
         else {
