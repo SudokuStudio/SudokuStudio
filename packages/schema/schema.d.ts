@@ -61,8 +61,9 @@ export declare namespace schema {
     }
 
     export type Element =
-        GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement | BooleanElement
-        | DigonalElement | KillerElement | KillerElement | QuadrupleElement | LineElement | EdgeNumberElement;
+        GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
+        | BooleanElement | ConsecutiveElement | DiagonalElement | KillerElement
+        | KillerElement | QuadrupleElement | LineElement | EdgeNumberElement;
 
     export interface AbstractElement {
         type: Element['type'],
@@ -114,7 +115,7 @@ export declare namespace schema {
             diag: boolean,
         },
     }
-    export interface DigonalElement extends AbstractElement {
+    export interface DiagonalElement extends AbstractElement {
         type: 'diagonal',
         value: {
             positive: boolean,
