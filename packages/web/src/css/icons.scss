@@ -54,6 +54,7 @@
         "undo": "svg/16px/symbols/undo.svg",
         "screenshot": "svg/large/screenshot.svg",
         "delete": "svg/16px/symbols/x.svg",
+        "add": "svg/16px/symbols/add.svg",
 
         "colors": "svg/large/colors.svg",
 
@@ -101,4 +102,8 @@
 }
 .icon-c-warning {
     background-color: $color-warning;
+}
+
+.hoverable .hoverable-icon.icon-c-clickable:hover {
+    background-color: $color-clickable-light;
 }

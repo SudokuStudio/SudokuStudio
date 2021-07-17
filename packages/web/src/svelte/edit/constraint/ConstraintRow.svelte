@@ -24,8 +24,8 @@
     {/if}
     <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
         <div class="constraint-row-left">
-            <button class="nobutton" on:click|stopPropagation={onTrash}>
-                <span class="icon icon-inline icon-c-clickable icon-trash" />
+            <button class="nobutton hoverable" on:click|stopPropagation={onTrash}>
+                <span class="icon hoverable-icon icon-inline icon-c-clickable icon-trash" />
             </button>
             {#if isLocal}
                 <label class:unused={unused} class="name clickable" for="local-radio-{counter}">{name}</label>
@@ -49,7 +49,7 @@
     }
 
     .constraint-row-container {
-        margin: 0.25em 0 0.5em .75em;
+        margin: 0.25em 0 0.5em 0em;
         position: relative;
     }
 

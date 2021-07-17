@@ -1,7 +1,7 @@
 <script lang="ts">
     export let title: string;
-
     export let closed: boolean = false;
+    export let onAdd: undefined | svelte.JSX.MouseEventHandler<HTMLButtonElement> = undefined;
 
     function onClick() {
         closed = !closed;
@@ -10,10 +10,13 @@
 
 <div class="container" class:closed>
     <button class="section-title nobutton" on:click={onClick}>
-        {title}
-        <span
-            class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu"
-        />
+        <span>
+            <button class="nobutton hoverable" on:click|stopPropagation={onAdd}>
+                <span class="icon hoverable-icon icon-inline icon-c-clickable icon-add" />
+            </button>
+            {title}
+        </span>
+        <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu" />
     </button>
     <div class="panel-wrapper">
         <div class="panel">
