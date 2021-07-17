@@ -49,7 +49,7 @@
 <ul class="nolist">
     <li>
         <EditSection title="Solver Panel">
-            <p style="margin: 0; padding: 0.25em 1em;">Nothing Here!</p>
+            <div class="empty-placeholder">Nothing here!</div>
         </EditSection>
     </li>
     <li>
@@ -59,6 +59,8 @@
                     <li>
                         <svelte:component this={componentFor(info)} {id} {elementRef} deletable={!info.permanent}  />
                     </li>
+                {:else}
+                    <li><div class="empty-placeholder">Nothing here!</div></li>
                 {/each}
             </ul>
         </EditSection>
@@ -70,13 +72,21 @@
                     <li>
                         <svelte:component this={componentFor(info)} {id} {elementRef} deletable={!info.permanent}  />
                     </li>
+                {:else}
+                    <li><div class="empty-placeholder">Nothing here!</div></li>
                 {/each}
             </ul>
         </EditSection>
     </li>
     <li>
         <EditSection title="Cosmetic Tools">
-            <p style="margin: 0; padding: 0.25em 1em;">Nothing Here!</p>
+            <div class="empty-placeholder">Nothing here!</div>
         </EditSection>
     </li>
 </ul>
+
+<style lang="scss">
+    .empty-placeholder {
+        padding: 0.25em 0 0.25em 1.75em;
+    }
+</style>
