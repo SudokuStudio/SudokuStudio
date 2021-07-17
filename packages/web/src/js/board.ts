@@ -98,7 +98,7 @@ export function getDigits(includeGivens: boolean = true, includeFilled: boolean 
                 value: null,
             },
 
-            '10800': {
+            '10080': {
                 type: 'diagonal',
                 value: {
                     positive: true,
@@ -249,6 +249,24 @@ export function getDigits(includeGivens: boolean = true, includeFilled: boolean 
                         "2": 2,
                         "3": 2,
                     },
+                },
+            },
+            '10200': {
+                type: 'difference',
+                order: 13,
+                value: {
+                    "10": 8,
+                    "25": 5,
+                    "140": true,
+                },
+            },
+            '10210': {
+                type: 'ratio',
+                order: 13,
+                value: {
+                    "33": 9,
+                    "48": 4,
+                    "117": true,
                 },
             },
         },

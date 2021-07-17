@@ -61,8 +61,8 @@ export declare namespace schema {
     }
 
     export type Element =
-        GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement |
-        BooleanElement | DigonalElement | KillerElement | KillerElement | QuadrupleElement | LineElement;
+        GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement | BooleanElement
+        | DigonalElement | KillerElement | KillerElement | QuadrupleElement | LineElement | EdgeNumberElement;
 
     export interface AbstractElement {
         type: Element['type'],
@@ -137,5 +137,9 @@ export declare namespace schema {
         value: {
             [K: string]: ArrayObj<Idx<Geometry.CELL>>,
         },
+    }
+    export interface EdgeNumberElement extends AbstractElement {
+        type: 'difference' | 'ratio',
+        value: IdxMap<Geometry.EDGE, true | number>,
     }
 }

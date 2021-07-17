@@ -9,6 +9,7 @@
     import MaxRender from './svelte/MaxRender.svelte';
     import KillerRender from './svelte/KillerRender.svelte';
     import QuadrupleRender from './svelte/QuadrupleRender.svelte';
+    import EdgeNumberRender from './svelte/EdgeNumberRender.svelte';
     import DiagonalRender from './svelte/DiagonalRender.svelte';
     import UserRender from './svelte/UserRender.svelte';
     import CornerRender from './svelte/CornerRender.svelte';
@@ -19,6 +20,27 @@
         args.props.color = '#4e72b0';
         args.props.mask = 'url(#SUDOKU_MASK_GIVENS)';
         return new DigitRender(args);
+    }
+
+    function DifferenceRender(args: any) {
+        Object.assign(args.props, {
+            stroke: "#242424",
+            fill: "#fff",
+            textColor: "#000",
+            radius: 0.12,
+            strokeWidth: 0.02,
+        });
+        return new EdgeNumberRender(args);
+    }
+
+    function RatioRender(args: any) {
+        Object.assign(args.props, {
+            stroke: 'none',
+            fill: "#000",
+            textColor: "#fff",
+            radius: 0.12,
+        });
+        return new EdgeNumberRender(args);
     }
 
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
@@ -42,6 +64,8 @@
         ['max']: MaxRender,
         ['killer']: KillerRender,
         ['quadruple']: QuadrupleRender,
+        ['difference']: DifferenceRender,
+        ['ratio']: RatioRender,
 
         ['diagonal']: DiagonalRender,
         ['knight']: null,
