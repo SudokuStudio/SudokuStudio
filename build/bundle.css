@@ -115,6 +115,10 @@ footer.svelte-uq8vao.svelte-uq8vao {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;stroke:%23fff;stroke-miterlimit:10;stroke-width:4px;%7D%3C/style%3E%3C/defs%3E%3Cg id='ui'%3E%3Cline class='cls-1' x1='7.25' y1='7.25' x2='17.75' y2='17.75'/%3E%3Cline class='cls-1' x1='7.25' y1='17.75' x2='17.75' y2='7.25'/%3E%3C/g%3E%3C/svg%3E");
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:none;stroke:%23fff;stroke-miterlimit:10;stroke-width:4px;%7D%3C/style%3E%3C/defs%3E%3Cg id='ui'%3E%3Cline class='cls-1' x1='7.25' y1='7.25' x2='17.75' y2='17.75'/%3E%3Cline class='cls-1' x1='7.25' y1='17.75' x2='17.75' y2='7.25'/%3E%3C/g%3E%3C/svg%3E");
 }
+.icon.icon-add {
+  mask-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23fff' stroke='none' d='M 8,0 A 8,8 0 1 0 16,8 8,8 0 0 0 8,0 Z M 12.7,9 H 9 v 3.7 H 7 V 9 H 3.3 V 7 H 7 V 3.3 H 9 V 7 H 12.7 Z' /%3E%3C/svg%3E%0A");
+  -webkit-mask-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23fff' stroke='none' d='M 8,0 A 8,8 0 1 0 16,8 8,8 0 0 0 8,0 Z M 12.7,9 H 9 v 3.7 H 7 V 9 H 3.3 V 7 H 7 V 3.3 H 9 V 7 H 12.7 Z' /%3E%3C/svg%3E%0A");
+}
 .icon.icon-colors {
   mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M23.89,6.69C21.47,1.71,15.27-1,9.49.4A12.45,12.45,0,0,0,12.26,25a3,3,0,0,0,1.82-.77,2,2,0,0,0,.05-2.68,2,2,0,0,1-.39-2.25,2.12,2.12,0,0,1,2.15-1.14c.78,0,1.57,0,2.35,0A6.61,6.61,0,0,0,23.78,15C25.54,12.31,25.23,9.45,23.89,6.69Zm-19,6A2.17,2.17,0,1,1,7.08,10.5,2.17,2.17,0,0,1,4.91,12.67ZM9.05,7.14A2.17,2.17,0,1,1,11.22,5,2.17,2.17,0,0,1,9.05,7.14Zm6.88,0A2.17,2.17,0,1,1,18.1,5,2.17,2.17,0,0,1,15.93,7.14Zm4.12,5.53a2.17,2.17,0,1,1,2.17-2.17A2.17,2.17,0,0,1,20.05,12.67Z'/%3E%3C/svg%3E");
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg id='ui' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;%7D%3C/style%3E%3C/defs%3E%3Cpath class='cls-1' d='M23.89,6.69C21.47,1.71,15.27-1,9.49.4A12.45,12.45,0,0,0,12.26,25a3,3,0,0,0,1.82-.77,2,2,0,0,0,.05-2.68,2,2,0,0,1-.39-2.25,2.12,2.12,0,0,1,2.15-1.14c.78,0,1.57,0,2.35,0A6.61,6.61,0,0,0,23.78,15C25.54,12.31,25.23,9.45,23.89,6.69Zm-19,6A2.17,2.17,0,1,1,7.08,10.5,2.17,2.17,0,0,1,4.91,12.67ZM9.05,7.14A2.17,2.17,0,1,1,11.22,5,2.17,2.17,0,0,1,9.05,7.14Zm6.88,0A2.17,2.17,0,1,1,18.1,5,2.17,2.17,0,0,1,15.93,7.14Zm4.12,5.53a2.17,2.17,0,1,1,2.17-2.17A2.17,2.17,0,0,1,20.05,12.67Z'/%3E%3C/svg%3E");
@@ -209,6 +213,10 @@ footer.svelte-uq8vao.svelte-uq8vao {
 
 .icon-c-warning {
   background-color: #916363;
+}
+
+.hoverable .hoverable-icon.icon-c-clickable:hover {
+  background-color: #778dad;
 }
 
 input[type=checkbox] {
@@ -1233,17 +1241,17 @@ line.svelte-1qd4hgf {
   display: inline-block;
 }
 
-.unused.svelte-1xnmwrx.svelte-1xnmwrx {
+.unused.svelte-1yj5trp.svelte-1yj5trp {
   opacity: 0.5;
 }
 
-.constraint-row-container.svelte-1xnmwrx.svelte-1xnmwrx {
-  margin: 0.25em 0 0.5em 0.75em;
+.constraint-row-container.svelte-1yj5trp.svelte-1yj5trp {
+  margin: 0.25em 0 0.5em 0em;
   position: relative;
 }
 
-.constraint-row.svelte-1xnmwrx.svelte-1xnmwrx {
-  padding: 0.25em 0.25em;
+.constraint-row.svelte-1yj5trp.svelte-1yj5trp {
+  padding: 0.25em;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1255,38 +1263,44 @@ line.svelte-1qd4hgf {
   z-index: 0;
 }
 
-.constraint-row.svelte-1xnmwrx.svelte-1xnmwrx:before, .constraint-row.svelte-1xnmwrx.svelte-1xnmwrx:after {
+.constraint-row.svelte-1yj5trp.svelte-1yj5trp:before, .constraint-row.svelte-1yj5trp.svelte-1yj5trp:after {
   content: " ";
   display: table;
 }
 
-.constraint-row.svelte-1xnmwrx.svelte-1xnmwrx:after {
+.constraint-row.svelte-1yj5trp.svelte-1yj5trp:after {
   clear: both;
 }
 
-.constraint-row.svelte-1xnmwrx .constraint-row-left.svelte-1xnmwrx {
+.constraint-row.svelte-1yj5trp .constraint-row-left.svelte-1yj5trp {
   float: left;
+  padding-left: 1.5em;
 }
 
-.constraint-row.svelte-1xnmwrx .constraint-row-right.svelte-1xnmwrx {
+.constraint-row.svelte-1yj5trp .constraint-row-left .delete-button.svelte-1yj5trp {
+  margin-left: -1.5em;
+  width: 1.5em;
+}
+
+.constraint-row.svelte-1yj5trp .constraint-row-right.svelte-1yj5trp {
   margin-left: 0.5em;
   float: right;
 }
 
-.radio-select-button.svelte-1xnmwrx.svelte-1xnmwrx:focus-visible {
+.radio-select-button.svelte-1yj5trp.svelte-1yj5trp:focus-visible {
   outline-offset: -0.1em;
 }
 
-.constraint-row.svelte-1xnmwrx.svelte-1xnmwrx:hover, .radio-select-button.svelte-1xnmwrx:focus-visible ~ .constraint-row.svelte-1xnmwrx {
+.constraint-row.svelte-1yj5trp.svelte-1yj5trp:hover, .radio-select-button.svelte-1yj5trp:focus-visible ~ .constraint-row.svelte-1yj5trp {
   border-color: #637691;
 }
 
-.radio-select-button.svelte-1xnmwrx:checked ~ .constraint-row.svelte-1xnmwrx {
+.radio-select-button.svelte-1yj5trp:checked ~ .constraint-row.svelte-1yj5trp {
   background-color: #f5f5fe;
   border-color: #637691;
 }
 
-.radio-select-button.svelte-1xnmwrx.svelte-1xnmwrx {
+.radio-select-button.svelte-1yj5trp.svelte-1yj5trp {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
