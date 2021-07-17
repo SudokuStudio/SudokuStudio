@@ -37,6 +37,26 @@ export const consecutiveInfo: ElementInfo = {
     menu: {
         type: 'checkbox',
         name: 'Nonconsecutive',
+        checkbox: [
+            {
+                name: 'Nonconsecutive Orthogonal Neighbors',
+                icon: 'consec-orth',
+                refPath: 'orth',
+            },
+            {
+                name: 'Nonconsecutive Diagonal Neighbors',
+                icon: 'consec-diag',
+                refPath: 'diag',
+            },
+        ],
+    },
+};
+
+export const consecutiveDiagonalInfo: ElementInfo = {
+    inGlobalMenu: true,
+    menu: {
+        type: 'checkbox',
+        name: 'Nonconsecutive Diag.',
         checkbox: {
             name: 'Nonconsecutive',
             icon: 'nonconsecutive',
@@ -64,6 +84,18 @@ export const knightInfo: ElementInfo = {
         checkbox: {
             name: 'Antiknight',
             icon: 'knight',
+        },
+    },
+};
+
+export const selfTaxicabInfo: ElementInfo = {
+    inGlobalMenu: true,
+    menu: {
+        type: 'checkbox',
+        name: 'Self-Taxicab',
+        checkbox: {
+            name: 'Self-Taxicab',
+            icon: 'taxi',
         },
     },
 };

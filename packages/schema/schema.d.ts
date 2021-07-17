@@ -101,10 +101,17 @@ export declare namespace schema {
     }
 
     export interface BooleanElement extends AbstractElement {
-        type: 'knight' | 'king' | 'disjointGroups' | 'consecutive',
+        type: 'knight' | 'king' | 'disjointGroups' | 'selfTaxicab',
         value: {
             positive: boolean,
             negative: boolean,
+        },
+    }
+    export interface ConsecutiveElement extends AbstractElement {
+        type: 'consecutive',
+        value: {
+            orth: boolean,
+            diag: boolean,
         },
     }
     export interface DigonalElement extends AbstractElement {

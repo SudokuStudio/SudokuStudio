@@ -2,7 +2,7 @@ import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
 import { betweenInfo, thermoInfo } from "./element/lines";
-import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo } from "./element/toggles";
+import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo, selfTaxicabInfo } from "./element/toggles";
 import { maxInfo, minInfo } from "./element/minMax";
 import { quadrupleInfo } from "./element/quadruple";
 import { differenceInfo, ratioInfo, xvInfo } from "./element/edges";
@@ -38,4 +38,5 @@ export const ELEMENT_HANDLERS = {
     ['king']: check(kingInfo),
     ['disjointGroups']: check(disjointGroupsInfo),
     ['consecutive']: check(consecutiveInfo),
+    ['selfTaxicab']: check(selfTaxicabInfo),
 } as const;

@@ -120,6 +120,13 @@ export function getDigits(includeGivens: boolean = true, includeFilled: boolean 
             },
             '10120': {
                 type: 'consecutive',
+                value: {
+                    orth: true,
+                    diag: false,
+                },
+            },
+            '20120': {
+                type: 'selfTaxicab',
                 value: false,
             },
 
