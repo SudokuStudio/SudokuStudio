@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { makePath, any, arrayObj2array } from "@sudoku-studio/board-utils";
+    import { makePath, arrayObj2array } from "@sudoku-studio/board-utils";
+    import type { schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
@@ -9,6 +10,20 @@
     const bulbRadius = 0.375;
     const outlineWidth = 0.025;
     const strokeWidth = 0.025;
+
+
+    type Item = { arrowId: string, dBulb: string, dBody: string };
+    function each(value: schema.ArrowElement['value']): Item[] {
+        const out: Item[] = [];
+        for (const [ arrowId, arrowValue ] of Object.entries(value)) {
+            const bulb = arrowValue.bulb || (arrowValue as any).head || {};
+            const body = arrowValue.body || {};
+            const dBulb = makePath(arrayObj2array(bulb), grid);
+            const dBody = makePath(arrayObj2array(body), grid);
+            out.push({ arrowId, dBulb, dBody });
+        }
+        return out;
+    }
 </script>
 
 
@@ -21,14 +36,14 @@
     <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke="#000" stroke-width={strokeWidth} />
 </marker>
 <g {id}>
-    {#each Object.entries($ref || {}) as [ arrowId, bulbBody ] (arrowId)}
+    {#each each($ref || {}) as { arrowId, dBulb, dBody } (arrowId)}
         <mask id="arrow-{id}-mask-{arrowId}" maskUnits="userSpaceOnUse">
             <rect width={grid.width} height={grid.height} fill="#fff" />
-            <path d={makePath(arrayObj2array(any(bulbBody).bulb), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius - outlineWidth} stroke-linejoin="round" stroke-linecap="round" />
+            <path d={dBulb} fill="none" stroke="#000" stroke-width={2 * bulbRadius - outlineWidth} stroke-linejoin="round" stroke-linecap="round" />
         </mask>
-        <path d={makePath(arrayObj2array(any(bulbBody).bulb), grid)} fill="none" stroke="#000" stroke-width={2 * bulbRadius + outlineWidth}
+        <path d={dBulb} fill="none" stroke="#000" stroke-width={2 * bulbRadius + outlineWidth}
             mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
-        <path d={makePath(arrayObj2array(any(bulbBody).body), grid, 0.15)} fill="none" stroke="#000" stroke-width={strokeWidth}
+        <path d={dBody} fill="none" stroke="#000" stroke-width={strokeWidth}
             mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-bulb-{id})" />
     {/each}
 </g>
