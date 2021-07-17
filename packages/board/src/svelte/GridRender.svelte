@@ -6,7 +6,8 @@
     export let ref: StateRef;
     export let grid: { width: number, height: number };
 
-    $ref; // UNUSED.
+    // @ts-ignore
+    const _ = ref; // Unused.
 </script>
 
 

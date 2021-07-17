@@ -12,7 +12,7 @@ export const differenceInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'Differences',
+        name: 'Difference',
         icon: 'kropki',
     },
 };
@@ -23,7 +23,7 @@ export const ratioInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'Ratios',
+        name: 'Ratio',
         icon: 'kropki',
     },
 };
@@ -43,7 +43,7 @@ export const xvInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'XV Sums',
+        name: 'XV Sum',
         icon: 'xv',
     },
 };

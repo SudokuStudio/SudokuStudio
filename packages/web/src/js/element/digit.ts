@@ -18,7 +18,7 @@ export const givensInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'Givens',
+        name: 'Given',
         icon: 'given',
     },
 } as const;

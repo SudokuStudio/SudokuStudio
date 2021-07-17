@@ -15,6 +15,7 @@
     import CornerRender from './svelte/CornerRender.svelte';
     import CenterRender from './svelte/CenterRender.svelte';
     import ColorsRender from './svelte/ColorsRender.svelte';
+    import NullRender from './svelte/NullRender.svelte';
 
     function FilledRender(args: any) {
         args.props.color = '#4e72b0';
@@ -80,10 +81,12 @@
         ['xv']: XVRender,
 
         ['diagonal']: DiagonalRender,
-        ['knight']: null,
-        ['king']: null,
-        ['disjointGroups']: null,
-        ['consecutive']: null,
+
+        ['knight']: NullRender,
+        ['king']: NullRender,
+        ['disjointGroups']: NullRender,
+        ['consecutive']: NullRender,
+        ['selfTaxicab']: NullRender,
     } as const;
 
     // TODO denormalize this.

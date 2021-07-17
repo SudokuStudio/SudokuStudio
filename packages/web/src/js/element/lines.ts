@@ -15,7 +15,7 @@ export const thermoInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'Thermos',
+        name: 'Thermo',
         icon: 'thermo',
     },
 };

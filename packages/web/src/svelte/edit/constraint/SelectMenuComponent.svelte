@@ -8,7 +8,8 @@
     export let ref: StateRef;
     export let info: SelectMenuComponent;
 
-    $ref; // TODO UNUSED.
+    // @ts-ignore
+    const _ = ref; // Unused.
 </script>
 
 <ConstraintRow {id} name={info.name} unused={false} isLocal={true}>
