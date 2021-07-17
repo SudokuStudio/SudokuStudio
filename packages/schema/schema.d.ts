@@ -16,6 +16,10 @@ export declare module Geometry {
     /** Corners of the grid where four cells meet (or fewer if you're at an edge/corner of the board). */
     export type CORNER = typeof CORNER;
 
+    const EDGE: unique symbol;
+    /** An inner edge (an edge between two cells). Only useful for Idx<EDGE>, Coord<EDGE> is not meaningful. */
+    export type EDGE = typeof EDGE;
+
     const SVG: unique symbol;
     /** SVG unit space (only useful for Coord) - values can have decimals. */
     export type SVG = typeof SVG;

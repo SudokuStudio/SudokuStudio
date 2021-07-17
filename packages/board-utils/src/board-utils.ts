@@ -29,17 +29,6 @@ export function cellIdx2cellCoord(idx: Idx<Geometry.CELL>, { width }: Grid): Coo
 export function cellCoord2CellIdx([ x, y ]: Coord<Geometry.CELL>, { width }: Grid): Idx<Geometry.CELL> {
     return y * width + x;
 }
-
-// Same as cell fns but with width increased by 1 b/c of the one extra fencepost.
-export function cornerCoord2cornerIdx([ x, y ]: Coord<Geometry.CORNER>, { width }: Grid): Idx<Geometry.CORNER> {
-    return y * (width + 1) + x;
-}
-export function cornerIdx2cornerCoord(vertId: Idx<Geometry.CORNER>, { width }: Grid): Coord<Geometry.CORNER> {
-    const x = vertId % (width + 1);
-    const y = Math.floor(vertId / (width + 1));
-    return [ x, y ];
-}
-
 /**
  * Get the CELL coordinates from SVG coordinates.
  * @param param0 SVG coordinates.
@@ -60,12 +49,51 @@ export function svgCoord2cellCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, hei
     return [ Math.floor(xf), Math.floor(yf) ];
 }
 
+
+// Same as cell fns but with width increased by 1 b/c of the one extra fencepost.
+export function cornerCoord2cornerIdx([ x, y ]: Coord<Geometry.CORNER>, { width }: Grid): Idx<Geometry.CORNER> {
+    return y * (width + 1) + x;
+}
+export function cornerIdx2cornerCoord(vertId: Idx<Geometry.CORNER>, { width }: Grid): Coord<Geometry.CORNER> {
+    const x = vertId % (width + 1);
+    const y = Math.floor(vertId / (width + 1));
+    return [ x, y ];
+}
 export function svgCoord2cornerCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid): null | Coord<Geometry.CORNER> {
     const x = Math.round(xf);
     const y = Math.round(yf);
     if ((x < 0 || width < x) || (y < 0 || height < y)) return null;
     return [ x, y ];
 }
+
+
+export function svgCoord2edgeIdx([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid): null | Idx<Geometry.EDGE> {
+    const d = Math.abs(yf % 1 - 0.5) >= Math.abs(xf % 1 - 0.5);
+    const w = width - (+!d);
+    const h = height - (+d);
+    const r = Math.floor(yf - 0.5 * (+ d));
+    const c = Math.floor(xf - 0.5 * (+!d));
+    if (c < 0 || w <= c) return null;
+    if (r < 0 || h <= r) return null;
+    return 2 * (w * r + c) + (+d);
+}
+export function edgeIdx2svgCoord(idx: Idx<Geometry.EDGE>, grid: Grid): Coord<Geometry.SVG> {
+    const [ idx0, idx1 ] = edgeIdx2cellCoords(idx, grid);
+    const [ x0, y0 ] = cellIdx2cellCoord(idx0, grid);
+    const [ x1, y1 ] = cellIdx2cellCoord(idx1, grid);
+    return [ 0.5 * (x0 + x1 + 1), 0.5 * (y0 + y1 + 1) ];
+}
+export function edgeIdx2cellCoords(idx: Idx<Geometry.EDGE>, grid: Grid): [ Idx<Geometry.CELL>, Idx<Geometry.CELL> ] {
+    if (1 === idx % 2) {
+        const cellIdx = 0.5 * (idx - 1);
+        return [ cellIdx, cellIdx + grid.width ];
+    }
+    else {
+        const cellIdx = 0.5 * idx + Math.floor(0.5 * idx / (grid.width - 1));
+        return [ cellIdx, cellIdx + 1 ];
+    }
+}
+
 
 
 // Bitset functions.
