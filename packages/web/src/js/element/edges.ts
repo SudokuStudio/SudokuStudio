@@ -1,6 +1,6 @@
 import type { Grid } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { click2svgCoord, edgeIdx2cellCoords, svgCoord2edgeIdx } from "@sudoku-studio/board-utils";
+import { click2svgCoord, svgCoord2edgeIdx } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
@@ -33,11 +33,10 @@ export const xvInfo: ElementInfo = {
         return getInputHandler(ref, grid, svg, {
             keymap: {
                 // TODO this is jank.
-                'Digit0': 10,
-                'Numpad0': 10,
                 'KeyX': 10,
                 'KeyV': 5,
-            }
+            },
+            max: 100,
         })
     },
 
@@ -49,8 +48,9 @@ export const xvInfo: ElementInfo = {
     },
 };
 
-function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options: { keymap?: Record<string, number | null> } = {}): InputHandler {
-    const { keymap } = options || {};
+function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options: { keymap?: Record<string, number | null>, max: number } = { max: 10 }): InputHandler {
+    const keymap = options.keymap || {};
+    const { max } = options;
 
     let edgeRef: null | StateRef = null;
 
@@ -58,7 +58,7 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options:
         if (null == edgeRef) return false;
 
         let digit = undefined;
-        if (keymap && code in keymap) {
+        if (code in keymap) {
             digit = keymap[code];
         }
         else {
@@ -67,6 +67,12 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options:
         if (undefined === digit) return false;
 
         const oldVal = edgeRef.get<true | number>();
+        if (null != digit && 'number' === typeof oldVal) {
+            const multiDigit = oldVal * 10 + digit;
+            if (multiDigit < max)
+                digit = multiDigit;
+        }
+
         const diff = edgeRef.replace(digit ?? (true !== oldVal || null));
         pushHistory(diff);
 
