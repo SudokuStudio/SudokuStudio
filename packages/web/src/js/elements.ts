@@ -5,7 +5,7 @@ import { betweenInfo, thermoInfo } from "./element/lines";
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo } from "./element/toggles";
 import { maxInfo, minInfo } from "./element/minMax";
 import { quadrupleInfo } from "./element/quadruple";
-import { differenceInfo, ratioInfo } from "./element/edges";
+import { differenceInfo, ratioInfo, xvInfo } from "./element/edges";
 
 function check<T extends ElementInfo>(factory: T): ElementInfo {
     return factory;
@@ -32,6 +32,7 @@ export const ELEMENT_HANDLERS = {
     ['quadruple']: check(quadrupleInfo),
     ['difference']: check(differenceInfo),
     ['ratio']: check(ratioInfo),
+    ['xv']: check(xvInfo),
 
     ['knight']: check(knightInfo),
     ['king']: check(kingInfo),

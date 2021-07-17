@@ -269,6 +269,14 @@ export function getDigits(includeGivens: boolean = true, includeFilled: boolean 
                     "117": true,
                 },
             },
+            '10220': {
+                type: 'xv',
+                order: 13,
+                value: {
+                    "99": 5,
+                    "100": 10,
+                },
+            },
         },
     });
 })();

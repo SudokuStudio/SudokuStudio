@@ -43,6 +43,19 @@
         return new EdgeNumberRender(args);
     }
 
+    function XVRender(args: any) {
+        Object.assign(args.props, {
+            stroke: 'none',
+            fill: "#fff",
+            textColor: "#000",
+            radius: 0.17,
+            fontSize: 0.3,
+            fontWeight: 800,
+            mapDigits: (num: true | number) => true !== num ? num2roman(num) : '_',
+        });
+        return new EdgeNumberRender(args);
+    }
+
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
         ['select']: UserRender,
@@ -66,6 +79,7 @@
         ['quadruple']: QuadrupleRender,
         ['difference']: DifferenceRender,
         ['ratio']: RatioRender,
+        ['xv']: XVRender,
 
         ['diagonal']: DiagonalRender,
         ['knight']: null,
@@ -87,7 +101,7 @@
     import type { schema } from "@sudoku-studio/schema";
     import type { StateManager, StateRef } from "@sudoku-studio/state-manager";
 
-    import { bitsetToList, BOX_THICKNESS_HALF, getDigits, getEdges, GRID_THICKNESS_HALF } from "@sudoku-studio/board-utils";
+    import { bitsetToList, BOX_THICKNESS_HALF, getDigits, getEdges, GRID_THICKNESS_HALF, num2roman } from "@sudoku-studio/board-utils";
     import { derived, readable } from "svelte/store";
 
     export let userState: StateManager;

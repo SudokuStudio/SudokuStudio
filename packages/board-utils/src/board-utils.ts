@@ -405,3 +405,35 @@ export function getDigits(elements: schema.Board['elements'], includeGivens: boo
 
     return out;
 }
+
+
+export const num2roman = (() => {
+    // CC BY-SA 3.0.
+    // This is a modified version of code by August.
+    // https://stackoverflow.com/a/41358305/2398020
+    const ROMAN_VALUES = [
+        [ 'M',  1000 ],
+        [ 'CM', 900 ],
+        [ 'D',  500 ],
+        [ 'CD', 400 ],
+        [ 'C',  100 ],
+        [ 'XC', 90 ],
+        [ 'L',  50 ],
+        [ 'XL', 40 ],
+        [ 'X',  10 ],
+        [ 'IX', 9 ],
+        [ 'V',  5 ],
+        [ 'IV', 4 ],
+        [ 'I',  1 ],
+    ] as const;
+    return function num2roman(num: number): string {
+        if (0 >= num) return `${num}`;
+        let str = '';
+        for (const [ c, v ] of ROMAN_VALUES) {
+            var q = Math.floor(num / v);
+            num -= q * v;
+            str += c.repeat(q);
+        }
+        return str;
+    }
+})();

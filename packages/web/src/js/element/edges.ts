@@ -1,6 +1,6 @@
 import type { Grid } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { click2svgCoord, svgCoord2edgeIdx } from "@sudoku-studio/board-utils";
+import { click2svgCoord, edgeIdx2cellCoords, svgCoord2edgeIdx } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
@@ -12,7 +12,7 @@ export const differenceInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'Difference',
+        name: 'Differences',
         icon: 'kropki',
     },
 };
@@ -23,18 +23,47 @@ export const ratioInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'Ratio',
+        name: 'Ratios',
         icon: 'kropki',
     },
 };
 
-function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const xvInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, {
+            keymap: {
+                // TODO this is jank.
+                'Digit0': 10,
+                'Numpad0': 10,
+                'KeyX': 10,
+                'KeyV': 5,
+            }
+        })
+    },
+
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'XV Sums',
+        icon: 'xv',
+    },
+};
+
+function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options: { keymap?: Record<string, number | null> } = {}): InputHandler {
+    const { keymap } = options || {};
+
     let edgeRef: null | StateRef = null;
 
     function onDigitInput(code: string): boolean {
         if (null == edgeRef) return false;
 
-        const digit = parseDigit(code);
+        let digit = undefined;
+        if (keymap && code in keymap) {
+            digit = keymap[code];
+        }
+        else {
+            digit = parseDigit(code)
+        };
         if (undefined === digit) return false;
 
         const diff = edgeRef.replace(digit ?? true);
