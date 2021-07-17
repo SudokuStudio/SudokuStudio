@@ -920,6 +920,10 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
+.empty-placeholder.svelte-1hnsx93 {
+  padding: 0.25em 0 0.25em 1.75em;
+}
+
 .overlay.svelte-kdd1wn {
   position: absolute;
   top: 0;
