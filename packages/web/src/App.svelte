@@ -1,12 +1,21 @@
 <script lang="ts">
+import { debounce } from "debounce";
+
     import { boardDiv } from "./js/board";
-    import { SUDOKU_STUDIO_VERSION, URL_NEW_FEATURE_REQUEST, URL_NEW_ISSUE } from "./js/github";
+    import { SUDOKU_STUDIO_VERSION, URL_REQUEST_FEATURE, URL_REPORT_BUG } from "./js/github";
     import BoardContainer from "./svelte/board/BoardContainer.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
     import Header from "./svelte/Header.svelte";
 
-    let bugReportBoardUrl: string = '';
+    function updateBugReportUrl(event: MouseEvent & { currentTarget: EventTarget & HTMLAnchorElement}): void {
+        const url = new URL(URL_REPORT_BUG);
+        url.searchParams.append('version', SUDOKU_STUDIO_VERSION);
+        url.searchParams.append('browser', window.navigator.userAgent);
+        url.searchParams.append('os', window.navigator.platform);
+        url.searchParams.append('url', window.location.href);
+        event.currentTarget.href = url.href;
+    }
 </script>
 
 <header>
@@ -33,22 +42,17 @@
     </div>
 </main>
 <footer>
-    <a href="https://github.com/SudokuStudio/SudokuStudio">
-        Sudoku Studio v.{SUDOKU_STUDIO_VERSION}
-    </a>
-    <form target="_blank" action={URL_NEW_ISSUE} method="get">
-        <input type="hidden" name="labels" value="bug" />
-        <input type="hidden" name="template" value="bug_report.yml" />
-        <input type="hidden" name="title" value="🐞 Bug: " />
-        <input type="hidden" name="version" value={SUDOKU_STUDIO_VERSION} />
-        <input type="hidden" name="browser" value={navigator.userAgent} />
-        <input type="hidden" name="os" value={navigator.platform} />
-        <input type="hidden" name="url" value={bugReportBoardUrl} />
-        <input class="anchor nobutton" type="submit" value="Report Bug" on:click={() => bugReportBoardUrl = window.location.href} />
-    </form>
-    <a href={URL_NEW_FEATURE_REQUEST}>
-        Request Feature
-    </a>
+    <div class="footer-text">
+        <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio">
+            Sudoku Studio v.{SUDOKU_STUDIO_VERSION}
+        </a>
+        <a target="_blank" href={URL_REPORT_BUG} on:mouseover={debounce(updateBugReportUrl, 500, true)}>
+            Bug Report
+        </a>
+        <a target="_blank" href={URL_REQUEST_FEATURE}>
+            Feature Request
+        </a>
+    </div>
 </footer>
 
 <style lang="scss">
@@ -112,8 +116,14 @@
         font-size: 0.8rem;
         text-align: center;
 
-        display: flex;
-        justify-content: center;
-        @include vars.gap(5em);
+        .footer-text {
+            margin: 0 auto;
+            width: 100%;
+            max-width: 35em;
+
+            display: flex;
+            justify-content: space-evenly;
+            @include vars.gap(2em);
+        }
     }
 </style>
