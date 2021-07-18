@@ -7,6 +7,7 @@ import { createElement, ELEMENT_HANDLERS } from "./elements";
 import { userPrevToolState, userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 import { pushHistory } from "./history";
+import { makeUid } from "./util";
 
 export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];
@@ -17,7 +18,7 @@ export function addElement<E extends schema.Element>(type: E['type'], value?: E[
     const handler = ELEMENT_HANDLERS[type];
     if (null == handler) throw Error(`Cannot add unimplmeneted element type: ${type}.`);
 
-    const id = `${(31 * Math.floor(0xFFFFFFFF * Math.random()) + Date.now()) % 0xFFFFFFFF}`;
+    const id = makeUid();
     const diff = boardState.update({
         [`elements/${id}`]: element,
     });

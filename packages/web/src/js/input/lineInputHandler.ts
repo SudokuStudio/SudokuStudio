@@ -3,6 +3,7 @@ import type { ArrayObj, Geometry, Grid, Idx } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { pushHistory } from "../history";
 import { userSelectState, userCursorState } from "../user";
+import { makeUid } from "../util";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import type { InputHandler } from "./inputHandler";
 
@@ -21,7 +22,7 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
 
     pointerHandler.onDragStart = (_event: MouseEvent) => {
         lineCells.length = 0;
-        lineRef = stateRef.ref(`${Date.now()}_${Math.random()}`);
+        lineRef = stateRef.ref(makeUid());
     };
 
     pointerHandler.onDrag = (event: CellDragTapEvent) => {
@@ -38,7 +39,7 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
             lineCells.push(idx);
         }
 
-        lineRef.replace(lineCells.length > 1 ? lineCells : null);
+        lineRef.replace(1 < lineCells.length ? lineCells : null);
     };
 
     pointerHandler.onDragEnd = () => {
@@ -84,7 +85,6 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
         }
         if (null != lineIdToDelete) {
             pushHistory(stateRef.ref(`${lineIdToDelete}`).replace(null));
-            return;
         }
     };
 

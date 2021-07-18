@@ -155,6 +155,7 @@ export declare namespace schema {
         value: {
             [K: string]: {
                 bulb: ArrayObj<Idx<Geometry.CELL>>,
+                /** The first cell of the body is the bulb origin and should not be considered for the sum. */
                 body: ArrayObj<Idx<Geometry.CELL>>,
             },
         },

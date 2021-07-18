@@ -8,6 +8,7 @@ import { quadrupleInfo } from "./element/quadruple";
 import { differenceInfo, ratioInfo, xvInfo } from "./element/edges";
 import type { schema } from "@sudoku-studio/schema";
 import { boxInfo, gridInfo } from "./element/basic";
+import { arrowInfo } from "./element/arrow";
 
 export const ELEMENT_HANDLERS = {
     ['givens']: givensInfo,
@@ -22,7 +23,7 @@ export const ELEMENT_HANDLERS = {
     ['thermo']: thermoInfo,
     ['between']: betweenInfo,
     ['diagonal']: diagonalInfo,
-    ['arrow']: null,
+    ['arrow']: arrowInfo,
     ['sandwich']: null,
     ['min']: minInfo,
     ['max']: maxInfo,
