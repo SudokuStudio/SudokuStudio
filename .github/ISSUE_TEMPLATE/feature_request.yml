@@ -1,0 +1,20 @@
+name: '✨ Feature Request'
+title: '✨ Feature: '
+description: Suggest an idea for Sudoku Studio.
+labels: [ 'enhancement' ]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to fill out this feature request!
+  - id: description
+    type: textarea
+    attributes:
+      label: What's Your Feature Idea?
+      description: |
+        Describe your idea, how it would be used, and how it could benefit users.
+
+        Are any existing features or other feature requests similar to this idea?
+
+        Tip: You can attach images by clicking this area to highlight it and then dragging files in.
+    validations:
+      required: true

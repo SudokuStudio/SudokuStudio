@@ -1,0 +1,49 @@
+name: '🐞 Bug Report'
+title: '🐞 Bug: '
+description: Create a report to help improve Sudoku Studio.
+labels: [ 'bug' ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+        If you came here directly from Sudoku Studio's webpage some of these fields may be auto-filled.
+  - id: description
+    type: textarea
+    attributes:
+      label: Describe the Bug
+      description: |
+        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+    validations:
+      required: true
+  - id: reproduction
+    type: textarea
+    attributes:
+      label: Reproduction steps
+      description: How can the bug be triggered? Does the bug always occur or is it inconsistent?
+      placeholder: |
+        1.
+        2.
+  - id: url
+    type: input
+    attributes:
+      label: Sudoku Studio Save Url
+      description: A link to a save containing the bug.
+      placeholder: https://www.sudokustudio.net/?b=aBc123
+  - id: version
+    type: input
+    attributes:
+      label: Sudoku Studio Version
+      description: 'The version can be found in the footer of the webpage: "Sudoku Studio v.`VERSION`".'
+      placeholder: cde1234
+  - id: browser
+    type: input
+    attributes:
+      label: Browser Version
+      description: Your browser and version.
+  - id: os
+    type: input
+    attributes:
+      label: OS Version
+      description: YOur operating system (desktop or mobile) and version.

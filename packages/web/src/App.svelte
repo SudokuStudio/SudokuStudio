@@ -1,10 +1,12 @@
 <script lang="ts">
     import { boardDiv } from "./js/board";
-import { SUDOKU_STUDIO_VERSION, URL_BUG_REPORT, URL_FEATURE_REQUEST } from "./js/github";
+    import { SUDOKU_STUDIO_VERSION, URL_NEW_FEATURE_REQUEST, URL_NEW_ISSUE } from "./js/github";
     import BoardContainer from "./svelte/board/BoardContainer.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
     import Header from "./svelte/Header.svelte";
+
+    let bugReportBoardUrl: string = '';
 </script>
 
 <header>
@@ -34,10 +36,17 @@ import { SUDOKU_STUDIO_VERSION, URL_BUG_REPORT, URL_FEATURE_REQUEST } from "./js
     <a href="https://github.com/SudokuStudio/SudokuStudio">
         Sudoku Studio v.{SUDOKU_STUDIO_VERSION}
     </a>
-    <a href={URL_BUG_REPORT}>
-        Report Bug
-    </a>
-    <a href={URL_FEATURE_REQUEST}>
+    <form target="_blank" action={URL_NEW_ISSUE} method="get">
+        <input type="hidden" name="labels" value="bug" />
+        <input type="hidden" name="template" value="bug_report.yml" />
+        <input type="hidden" name="title" value="🐞 Bug: " />
+        <input type="hidden" name="version" value={SUDOKU_STUDIO_VERSION} />
+        <input type="hidden" name="browser" value={navigator.userAgent} />
+        <input type="hidden" name="os" value={navigator.platform} />
+        <input type="hidden" name="url" value={bugReportBoardUrl} />
+        <input class="anchor nobutton" type="submit" value="Report Bug" on:click={() => bugReportBoardUrl = window.location.href} />
+    </form>
+    <a href={URL_NEW_FEATURE_REQUEST}>
         Request Feature
     </a>
 </footer>
