@@ -41,7 +41,7 @@
             addElement(type as any);
         }
         catch (e) {
-            alert(`Unknown element type string: ${JSON.stringify(type)}`)
+            alert(`Unknown or unimplemented element type string: ${JSON.stringify(type)}`)
         }
     }
 </script>
