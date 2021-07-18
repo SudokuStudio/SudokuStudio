@@ -32,7 +32,7 @@
     {#each each($ref || {}) as { idx, x, y, lines } (idx)}
         <circle cx={x} cy={y} r={radius} fill="#fff" stroke="#000" stroke-width={strokeWidth} />
         {#each lines as line, i}
-            <text {x} y={y + fontSize * (i - 0.5 * (lines.length - 1))} text-anchor="middle" dominant-baseline="central" font-size={fontSize} font-weight="600">{line}</text>
+            <text {x} y={y + 0.9 * fontSize * (i - 0.5 * (lines.length - 1))} text-anchor="middle" dominant-baseline="central" font-size={fontSize} font-weight="600">{line}</text>
         {/each}
     {/each}
 </g>
