@@ -66,7 +66,7 @@
         </EditSection>
     </li>
     <li>
-        <EditSection icon="taxi" title="Local Constraints" onAdd={() => showAddModal(false)}>
+        <EditSection icon="location" title="Local Constraints" onAdd={() => showAddModal(false)}>
             <ul class="nolist">
                 {#each $constraintsLocal as { id, elementRef, info } (id)}
                     <li>
@@ -79,7 +79,7 @@
         </EditSection>
     </li>
     <li>
-        <EditSection icon="colors" title="Cosmetic Tools">
+        <EditSection icon="pencil" title="Cosmetic Tools">
             <div class="empty-placeholder">Nothing here!</div>
         </EditSection>
     </li>
