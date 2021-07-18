@@ -10,6 +10,7 @@ import typescript from '@rollup/plugin-typescript';
 // import css from 'rollup-plugin-css-only';
 import scss from 'rollup-plugin-scss';
 import replace from '@rollup/plugin-replace';
+import { string } from "rollup-plugin-string";
 
 import inlineSvg from './inlineSvg';
 
@@ -49,6 +50,9 @@ export default {
         file: 'public/build/bundle.js'
     },
     plugins: [
+        string({
+            include: "../../../../**/*.md",
+        }),
         replace({
             preventAssignment: true,
             // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app

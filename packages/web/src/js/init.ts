@@ -2,7 +2,7 @@ import { debounce } from "debounce";
 import LZString from "lz-string";
 import type { schema } from "@sudoku-studio/schema";
 import { boardState } from "./board";
-import { createElement, ELEMENT_HANDLERS } from "./elements";
+import { createElement } from "./elements";
 import { MARK_TYPES, userState } from "./user";
 
 /** Load tools and pencil marks for the user. */

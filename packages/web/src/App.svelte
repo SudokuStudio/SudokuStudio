@@ -1,5 +1,6 @@
 <script lang="ts">
     import { boardDiv } from "./js/board";
+import { SUDOKU_STUDIO_VERSION, URL_BUG_REPORT, URL_FEATURE_REQUEST } from "./js/github";
     import BoardContainer from "./svelte/board/BoardContainer.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
@@ -31,7 +32,13 @@
 </main>
 <footer>
     <a href="https://github.com/SudokuStudio/SudokuStudio">
-        Sudoku Studio version {process.env.SUDOKU_STUDIO_VERSION || 'DEV'}
+        Sudoku Studio v.{SUDOKU_STUDIO_VERSION}
+    </a>
+    <a href={URL_BUG_REPORT}>
+        Report Bug
+    </a>
+    <a href={URL_FEATURE_REQUEST}>
+        Request Feature
     </a>
 </footer>
 
@@ -95,5 +102,9 @@
 
         font-size: 0.8rem;
         text-align: center;
+
+        display: flex;
+        justify-content: center;
+        @include vars.gap(5em);
     }
 </style>
