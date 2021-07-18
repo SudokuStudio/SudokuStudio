@@ -4,24 +4,29 @@ import type { ElementInfo } from "./element/element";
 import { boardGridRef, boardState, boardSvg } from "./board";
 import type { Grid, schema } from "@sudoku-studio/schema";
 import { createElement, ELEMENT_HANDLERS } from "./elements";
-import { userToolState } from "./user";
+import { userPrevToolState, userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 import { pushHistory } from "./history";
 
 export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];
 
-export function addElement<E extends schema.Element>(type: E['type'], value?: E['value']): number {
+export function addElement<E extends schema.Element>(type: E['type'], value?: E['value']): string {
     const element = createElement(type, value);
     if (!(type in ELEMENT_HANDLERS)) throw Error(`Cannot add unknown element type: ${type}.`);
     const handler = ELEMENT_HANDLERS[type];
     if (null == handler) throw Error(`Cannot add unimplmeneted element type: ${type}.`);
 
-    const id = (31 * Math.floor(0xFFFFFFFF * Math.random()) + Date.now()) % 0xFFFFFFFF;
+    const id = `${(31 * Math.floor(0xFFFFFFFF * Math.random()) + Date.now()) % 0xFFFFFFFF}`;
     const diff = boardState.update({
         [`elements/${id}`]: element,
     });
     pushHistory(diff);
+
+    if ('select' === handler.menu?.type) {
+        userToolState.replace(id);
+        userPrevToolState.replace(id);
+    }
 
     return id;
 }
