@@ -48,12 +48,12 @@
 
 <ul class="nolist">
     <li>
-        <EditSection title="Solver Panel">
+        <EditSection icon="computer" title="Solver Panel">
             <div class="empty-placeholder">Nothing here!</div>
         </EditSection>
     </li>
     <li>
-        <EditSection title="Global Constraints" onAdd={() => showAddModal(true)}>
+        <EditSection icon="globe" title="Global Constraints" onAdd={() => showAddModal(true)}>
             <ul class="nolist">
                 {#each $constraintsGlobal as { id, elementRef, info } (id)}
                     <li>
@@ -66,7 +66,7 @@
         </EditSection>
     </li>
     <li>
-        <EditSection title="Local Constraints" onAdd={() => showAddModal(false)}>
+        <EditSection icon="taxi" title="Local Constraints" onAdd={() => showAddModal(false)}>
             <ul class="nolist">
                 {#each $constraintsLocal as { id, elementRef, info } (id)}
                     <li>
@@ -79,7 +79,7 @@
         </EditSection>
     </li>
     <li>
-        <EditSection title="Cosmetic Tools">
+        <EditSection icon="colors" title="Cosmetic Tools">
             <div class="empty-placeholder">Nothing here!</div>
         </EditSection>
     </li>

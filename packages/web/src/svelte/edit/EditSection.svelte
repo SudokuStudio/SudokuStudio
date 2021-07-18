@@ -1,4 +1,5 @@
 <script lang="ts">
+    export let icon: string;
     export let title: string;
     export let closed: boolean = false;
     export let onAdd: undefined | svelte.JSX.MouseEventHandler<HTMLButtonElement> = undefined;
@@ -9,15 +10,16 @@
 </script>
 
 <div class="container" class:closed>
-    <button class="section-title nobutton" on:click={onClick}>
+    <div role="button" tabindex="0" class="section-title" on:click={onClick}>
+        <button class="delete-button nobutton hoverable" on:click|stopPropagation={onAdd}>
+            <span class="icon hoverable-icon icon-inline icon-c-clickable icon-add" />
+        </button>
         <span>
-            <button class="nobutton hoverable" on:click|stopPropagation={onAdd}>
-                <span class="icon hoverable-icon icon-inline icon-c-clickable icon-add" />
-            </button>
+            <span class="icon hoverable-icon icon-inline icon-c-text icon-{icon}" />
             {title}
         </span>
         <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu" />
-    </button>
+    </div>
     <div class="panel-wrapper">
         <div class="panel">
             <slot />
@@ -40,6 +42,7 @@
         background: none;
         cursor: pointer;
         width: 100%;
+        box-sizing: border-box;
         text-align: left;
 
         white-space: nowrap;
@@ -47,6 +50,10 @@
         @include vars.hoverborder();
         &:hover, &:focus-visible {
             @include vars.hoverborder-hover();
+        }
+
+        .delete-button {
+            margin-right: 0.5em;
         }
     }
 

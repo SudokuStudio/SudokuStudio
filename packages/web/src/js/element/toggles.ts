@@ -102,7 +102,7 @@ export const selfTaxicabInfo: ElementInfo = {
         name: 'Self-Taxicab',
         checkbox: {
             name: 'Self-Taxicab',
-            icon: 'taxi',
+            icon: 'cityblock',
         },
     },
 };
