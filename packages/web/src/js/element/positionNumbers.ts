@@ -1,13 +1,18 @@
-import type { Grid } from "@sudoku-studio/schema";
+import type { Coord, Geometry, Grid, Idx } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { click2svgCoord, svgCoord2edgeIdx } from "@sudoku-studio/board-utils";
+import { click2svgCoord, svgCoord2edgeIdx, svgCoord2seriesIdx } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
 
 export const differenceInfo: ElementInfo = {
-    getInputHandler,
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, {
+            svgCoord2idx: svgCoord2edgeIdx,
+            max: 10,
+        });
+    },
     order: 140,
     inGlobalMenu: false,
     menu: {
@@ -18,7 +23,12 @@ export const differenceInfo: ElementInfo = {
 };
 
 export const ratioInfo: ElementInfo = {
-    getInputHandler,
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, {
+            svgCoord2idx: svgCoord2edgeIdx,
+            max: 10,
+        });
+    },
     order: 141,
     inGlobalMenu: false,
     menu: {
@@ -31,15 +41,16 @@ export const ratioInfo: ElementInfo = {
 export const xvInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, {
+            svgCoord2idx: svgCoord2edgeIdx,
             keymap: {
                 // TODO this is jank.
                 'KeyX': 10,
                 'KeyV': 5,
             },
             max: 100,
-        })
+        });
     },
-    order: 130,
+    order: 142,
     inGlobalMenu: false,
     menu: {
         type: 'select',
@@ -48,14 +59,72 @@ export const xvInfo: ElementInfo = {
     },
 };
 
-function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options: { keymap?: Record<string, number | null>, max: number } = { max: 10 }): InputHandler {
-    const keymap = options.keymap || {};
-    const { max } = options;
+export const sandwichInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, {
+            svgCoord2idx: svgCoord2seriesIdx,
+            max: 100,
+        });
+    },
+    order: 150,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Sandwich',
+        icon: 'sandwich',
+    },
+};
 
-    let edgeRef: null | StateRef = null;
+export const skyscraperInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, {
+            svgCoord2idx: svgCoord2seriesIdx,
+            max: 100,
+        });
+    },
+    order: 151,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Skyscraper',
+        icon: 'skyscraper',
+    },
+};
+
+export const xsumsInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, {
+            svgCoord2idx: svgCoord2seriesIdx,
+            max: 100,
+        });
+    },
+    order: 152,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'X-Sums',
+        icon: 'xv',
+    },
+};
+
+
+
+
+type PositionNumberInputHandlerOptions<TAG extends Geometry> = {
+    svgCoord2idx: (coord: Coord<Geometry.SVG>, grid: Grid) => null | Idx<TAG>,
+    max: number,
+
+    keymap?: Record<string, number | null>,
+};
+
+function getInputHandler<TAG extends Geometry>(ref: StateRef, grid: Grid, svg: SVGSVGElement, options: PositionNumberInputHandlerOptions<TAG>): InputHandler {
+    const keymap = options.keymap || {};
+    const { max, svgCoord2idx } = options;
+
+    let idxRef: null | StateRef = null;
 
     function onDigitInput(code: string): boolean {
-        if (null == edgeRef) return false;
+        if (null == idxRef) return false;
 
         let digit = undefined;
         if (code in keymap) {
@@ -66,14 +135,14 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options:
         };
         if (undefined === digit) return false;
 
-        const oldVal = edgeRef.get<true | number>();
+        const oldVal = idxRef.get<true | number>();
         if (null != digit && 'number' === typeof oldVal) {
             const multiDigit = oldVal * 10 + digit;
             if (multiDigit < max)
                 digit = multiDigit;
         }
 
-        const diff = edgeRef.replace(digit ?? (true !== oldVal || null));
+        const diff = idxRef.replace(digit ?? (true !== oldVal || null));
         pushHistory(diff);
 
         return true;
@@ -115,17 +184,17 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement, options:
         leave(_event: MouseEvent): void {
         },
         click(event: MouseEvent): void {
-            const idx = svgCoord2edgeIdx(click2svgCoord(event, svg), grid);
+            const idx = svgCoord2idx(click2svgCoord(event, svg), grid);
             if (null == idx) return;
-            const clickedEdgeRef = ref.ref(`${idx}`);
+            const clickedIdxRef = ref.ref(`${idx}`);
 
-            if (true === clickedEdgeRef.get()) {
+            if (true === clickedIdxRef.get()) {
                 // Delete empty.
-                clickedEdgeRef.replace(null);
+                clickedIdxRef.replace(null);
                 return;
             }
             // Otherwise clear or create new.
-            edgeRef = clickedEdgeRef;
+            idxRef = clickedIdxRef;
             onDigitInput('Delete');
         },
     }

@@ -5,7 +5,7 @@ import { betweenInfo, thermoInfo } from "./element/lines";
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo, selfTaxicabInfo } from "./element/toggles";
 import { maxInfo, minInfo } from "./element/minMax";
 import { quadrupleInfo } from "./element/quadruple";
-import { differenceInfo, ratioInfo, xvInfo } from "./element/edges";
+import { differenceInfo, ratioInfo, xvInfo, sandwichInfo, skyscraperInfo, xsumsInfo } from "./element/positionNumbers";
 import type { schema } from "@sudoku-studio/schema";
 import { boxInfo, gridInfo } from "./element/basic";
 import { arrowInfo } from "./element/arrow";
@@ -24,7 +24,6 @@ export const ELEMENT_HANDLERS = {
     ['between']: betweenInfo,
     ['diagonal']: diagonalInfo,
     ['arrow']: arrowInfo,
-    ['sandwich']: null,
     ['min']: minInfo,
     ['max']: maxInfo,
     ['killer']: null,
@@ -32,6 +31,9 @@ export const ELEMENT_HANDLERS = {
     ['difference']: differenceInfo,
     ['ratio']: ratioInfo,
     ['xv']: xvInfo,
+    ['sandwich']: sandwichInfo,
+    ['skyscraper']: skyscraperInfo,
+    ['xsums']: xsumsInfo,
 
     ['knight']: knightInfo,
     ['king']: kingInfo,

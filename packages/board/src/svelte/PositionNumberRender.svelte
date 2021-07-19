@@ -1,11 +1,12 @@
 <script lang="ts">
-    import { edgeIdx2svgCoord } from "@sudoku-studio/board-utils";
-    import type { Idx, Geometry, schema } from "@sudoku-studio/schema";
+    import type { Idx, Geometry, schema, Grid, Coord } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
     export let ref: StateRef;
     export let grid: { width: number, height: number };
+
+    export let idx2coord: (idx: Idx<any>, grid: Grid) => Coord<any>;
 
     export let stroke: string = "#242424";
     export let fill: string = "#fff";
@@ -20,13 +21,13 @@
 
 
     type Item = { idx: Idx<Geometry.EDGE>, x: number, y: number, text: string };
-    function each(value: schema.EdgeNumberElement['value']): Item[] {
+    function each(value: schema.SeriesNumberElement['value']): Item[] {
         const out: Item[] = [];
-        for (const [ edgeIdx, digitOrTrue ] of Object.entries(value)) {
+        for (const [ seriesIdx, digitOrTrue ] of Object.entries(value)) {
             const text = mapDigits(digitOrTrue!);
-            const [ x, y ] = edgeIdx2svgCoord(+edgeIdx, grid);
+            const [ x, y ] = idx2coord(+seriesIdx, grid);
             out.push({
-                idx: +edgeIdx,
+                idx: +seriesIdx,
                 x, y, text,
             });
         }
@@ -36,7 +37,9 @@
 
 <g {id}>
     {#each each($ref || {}) as { idx, x, y, text } (idx)}
-        <circle cx={x} cy={y} r={radius} {fill} {stroke} stroke-width={strokeWidth} />
+        {#if 0 < radius}
+            <circle cx={x} cy={y} r={radius} {fill} {stroke} stroke-width={strokeWidth} />
+        {/if}
         <text {x} {y} text-anchor="middle" dominant-baseline="central" fill={textColor} font-size={fontSize} font-weight={fontWeight}>{text}</text>
     {/each}
 </g>

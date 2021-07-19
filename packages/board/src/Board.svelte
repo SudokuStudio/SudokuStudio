@@ -1,4 +1,10 @@
 <script lang="ts" context="module">
+    import type { Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
+    import type { StateManager, StateRef } from "@sudoku-studio/state-manager";
+
+    import { bitsetToList, BOX_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getEdges, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils";
+    import { derived, readable } from "svelte/store";
+
     import GridRender from './svelte/GridRender.svelte';
     import BoxRender from './svelte/BoxRender.svelte';
     import DigitRender from './svelte/DigitRender.svelte';
@@ -9,13 +15,13 @@
     import MaxRender from './svelte/MaxRender.svelte';
     import KillerRender from './svelte/KillerRender.svelte';
     import QuadrupleRender from './svelte/QuadrupleRender.svelte';
-    import EdgeNumberRender from './svelte/EdgeNumberRender.svelte';
     import DiagonalRender from './svelte/DiagonalRender.svelte';
     import UserRender from './svelte/UserRender.svelte';
     import CornerRender from './svelte/CornerRender.svelte';
     import CenterRender from './svelte/CenterRender.svelte';
     import ColorsRender from './svelte/ColorsRender.svelte';
     import NullRender from './svelte/NullRender.svelte';
+    import PositionNumberRender from './svelte/PositionNumberRender.svelte';
 
     function FilledRender(args: any) {
         args.props.color = '#4e72b0';
@@ -25,34 +31,51 @@
 
     function DifferenceRender(args: any) {
         Object.assign(args.props, {
-            stroke: "#242424",
-            fill: "#fff",
-            textColor: "#000",
+            idx2coord: edgeIdx2svgCoord,
+            stroke: '#242424',
+            fill: '#fff',
+            textColor: '#000',
             strokeWidth: 0.02,
         });
-        return new EdgeNumberRender(args);
+        return new PositionNumberRender(args);
     }
 
     function RatioRender(args: any) {
         Object.assign(args.props, {
+            idx2coord: edgeIdx2svgCoord,
             stroke: 'none',
-            fill: "#000",
-            textColor: "#fff",
+            fill: '#000',
+            textColor: '#fff',
         });
-        return new EdgeNumberRender(args);
+        return new PositionNumberRender(args);
     }
 
     function XVRender(args: any) {
         Object.assign(args.props, {
+            idx2coord: edgeIdx2svgCoord,
             stroke: 'none',
-            fill: "#fff",
-            textColor: "#000",
+            fill: '#fff',
+            textColor: '#000',
             radius: 0.17,
             fontSize: 0.3,
             fontWeight: 800,
             mapDigits: (num: true | number) => true !== num ? num2roman(num) : '_',
         });
-        return new EdgeNumberRender(args);
+        return new PositionNumberRender(args);
+    }
+
+    function SeriesRender(args: any) {
+        Object.assign(args.props, {
+            idx2coord: (idx: Idx<Geometry.SERIES>, grid: Grid) => {
+                const [ x, y ] = seriesIdx2seriesCoord(idx, grid);
+                return [ x + 0.5, y + 0.5 ];
+            },
+            radius: 0,
+            textColor: '#000',
+            fontSize: 0.5,
+            mapDigits: (num: true | number) => true !== num ? num : '_',
+        });
+        return new PositionNumberRender(args);
     }
 
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
@@ -71,7 +94,6 @@
         ['thermo']: ThermoRender,
         ['between']: BetweenRender,
         ['arrow']: ArrowRender,
-        ['sandwich']: null,
         ['min']: MinRender,
         ['max']: MaxRender,
         ['killer']: KillerRender,
@@ -79,6 +101,9 @@
         ['difference']: DifferenceRender,
         ['ratio']: RatioRender,
         ['xv']: XVRender,
+        ['sandwich']: SeriesRender,
+        ['xsums']: SeriesRender,
+        ['skyscraper']: SeriesRender,
 
         ['diagonal']: DiagonalRender,
 
@@ -95,16 +120,13 @@
         ['box']: BOX_THICKNESS_HALF,
 
         ['quadruple']: 0.2225,
+        ['sandwich']: 1,
+        ['xsums']: 1,
+        ['skyscraper']: 1,
     } as { [K in keyof typeof ELEMENT_RENDERERS]?: number };
 
 </script>
 <script lang="ts">
-    import type { schema } from "@sudoku-studio/schema";
-    import type { StateManager, StateRef } from "@sudoku-studio/state-manager";
-
-    import { bitsetToList, BOX_THICKNESS_HALF, getDigits, getEdges, GRID_THICKNESS_HALF, num2roman } from "@sudoku-studio/board-utils";
-    import { derived, readable } from "svelte/store";
-
     export let userState: StateManager;
     export let boardState: StateManager;
     export let svg: SVGSVGElement = null!;

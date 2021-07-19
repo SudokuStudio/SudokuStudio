@@ -20,6 +20,10 @@ export declare module Geometry {
     /** An inner edge (an edge between two cells). Only useful for Idx<EDGE>, Coord<EDGE> is not meaningful. */
     export type EDGE = typeof EDGE;
 
+    const SERIES: unique symbol;
+    /** A row or column, from the top or bottom, Coord<SERIES> will correspond to a point outside the grid. */
+    export type SERIES = typeof SERIES;
+
     const SVG: unique symbol;
     /** SVG unit space (only useful for Coord) - values can have decimals. */
     export type SVG = typeof SVG;
@@ -65,7 +69,7 @@ export declare namespace schema {
         GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
         | BooleanElement | ConsecutiveElement | DiagonalElement | KillerElement
         | KillerElement | QuadrupleElement | LineElement | ArrowElement | EdgeNumberElement
-        | CellSetElement | TODO_ELEMENTS;
+        | SeriesNumberElement | CellSetElement | TODO_ELEMENTS;
     export type ElementType = Element['type'];
 
     export interface AbstractElement {
@@ -164,6 +168,10 @@ export declare namespace schema {
         type: 'difference' | 'ratio' | 'xv',
         value: IdxMap<Geometry.EDGE, true | number>,
     }
+    export interface SeriesNumberElement extends AbstractElement {
+        type: 'sandwich' | 'xsums' | 'skyscraper',
+        value: IdxMap<Geometry.SERIES, true | number>,
+    }
 
     export interface CellSetElement extends AbstractElement {
         type: 'min' | 'max',
@@ -171,7 +179,7 @@ export declare namespace schema {
     }
 
     export interface TODO_ELEMENTS extends AbstractElement {
-        type: 'sandwich',
+        type: never,
         value: unknown,
     }
 }

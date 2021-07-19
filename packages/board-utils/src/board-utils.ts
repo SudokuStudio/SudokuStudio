@@ -95,6 +95,30 @@ export function edgeIdx2cellCoords(idx: Idx<Geometry.EDGE>, grid: Grid): [ Idx<G
 }
 
 
+export function svgCoord2seriesIdx([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid): null | Idx<Geometry.SERIES> {
+    const isCol = yf < 0 || height <= yf;
+    const isRow = xf < 0 || width <= xf;
+    if (isCol === isRow) return null; // XOR.
+
+    const z = Math.floor(isCol ? xf : yf);
+    const w = 0 < (isCol ? yf : xf);
+    // Most significant bits are the position (offset from top left).
+    // Twos bit is col (0) or row (1).
+    // Ones bit is top/left (0) or bottom/right (1).
+    return (z << 2) | (+isRow << 1) | (+w);
+}
+export function seriesIdx2seriesCoord(idx: Idx<Geometry.SERIES>, { width, height }: Grid): Coord<Geometry.SERIES> {
+    const z = idx >> 2;
+    const w = 0b1 & idx;
+    if (0b10 & idx) { // Row.
+        return [ w * (1 + width) - 1, z ];
+    }
+    else { // Col.
+        return [ z, w * (1 + height) - 1 ];
+    }
+}
+
+
 
 // Bitset functions.
 export function getFirstFromBitset<TAG extends Geometry>(idxBitset: IdxBitset<TAG>, grid: Grid): null | Idx<TAG> {
