@@ -8,9 +8,11 @@
     import GridRender from './svelte/GridRender.svelte';
     import BoxRender from './svelte/BoxRender.svelte';
     import DigitRender from './svelte/DigitRender.svelte';
+
     import ThermoRender from './svelte/ThermoRender.svelte';
     import BetweenRender from './svelte/BetweenRender.svelte';
     import ArrowRender from './svelte/ArrowRender.svelte';
+    import LineRender from "./svelte/LineRender.svelte";
 
     import MinRender from './svelte/MinRender.svelte';
     import MaxRender from './svelte/MaxRender.svelte';
@@ -82,6 +84,30 @@
         return new PositionNumberRender(args);
     }
 
+    function PalindromeRender(args: any) {
+        Object.assign(args.props, {
+            stroke: '#c7855c',
+            strokeWidth: 0.125,
+        });
+        return new LineRender(args);
+    }
+
+    function WhisperRender(args: any) {
+        Object.assign(args.props, {
+            stroke: '#8fcbcf',
+            strokeWidth: 0.1,
+        });
+        return new LineRender(args);
+    }
+
+    function RenbanRender(args: any) {
+        Object.assign(args.props, {
+            stroke: '#cfd184',
+            strokeWidth: 0.075,
+        });
+        return new LineRender(args);
+    }
+
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
         ['select']: UserRender,
@@ -97,6 +123,9 @@
 
         ['thermo']: ThermoRender,
         ['between']: BetweenRender,
+        ['palindrome']: PalindromeRender,
+        ['whisper']: WhisperRender,
+        ['renban']: RenbanRender,
         ['arrow']: ArrowRender,
 
         ['min']: MinRender,

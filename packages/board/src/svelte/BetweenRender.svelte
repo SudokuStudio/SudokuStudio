@@ -10,7 +10,7 @@
 
     const bulbRadius = 0.375;
     const outlineWidth = 0.025;
-    const strokeWidth = 0.1;
+    const strokeWidth = 0.15;
 
     type Item = { itemId: string, d: string, head: Coord<Geometry.CELL>, tail: Coord<Geometry.CELL> };
     function getItems(items: null | Record<string, ArrayObj<Idx<Geometry.CELL>>>): Item[] {
@@ -48,7 +48,7 @@
 </mask>
 <g {id}>
     {#each $items as { itemId, d } (itemId)}
-        <path {d} fill="none" stroke="#c18bb7" stroke-linejoin="round" stroke-linecap="round"
+        <path {d} fill="none" stroke="#c18bb7" stroke-opacity="0.95" stroke-linejoin="round" stroke-linecap="round"
             stroke-width={strokeWidth} mask="url(#between-{id}-mask)"
             marker-start="url(#between-bulb-{id})" marker-end="url(#between-bulb-{id})" />
     {/each}

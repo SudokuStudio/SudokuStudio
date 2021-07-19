@@ -35,3 +35,51 @@ export const betweenInfo: ElementInfo = {
         icon: 'between',
     },
 };
+
+export const palindromeInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getLineInputHandler(ref, grid, svg, {
+            deletePrioritizeHead: false,
+            deletePrioritizeTail: false,
+        });
+    },
+    order: 60,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Palindrome',
+        icon: 'palindrome',
+    },
+};
+
+export const whisperInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getLineInputHandler(ref, grid, svg, {
+            deletePrioritizeHead: false,
+            deletePrioritizeTail: false,
+        });
+    },
+    order: 70,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Whisper',
+        icon: 'whisper',
+    },
+};
+
+export const renbanInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getLineInputHandler(ref, grid, svg, {
+            deletePrioritizeHead: false,
+            deletePrioritizeTail: false,
+        });
+    },
+    order: 80,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Renban',
+        icon: 'renban',
+    },
+};

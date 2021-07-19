@@ -1,7 +1,7 @@
 import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
-import { betweenInfo, thermoInfo } from "./element/lines";
+import { betweenInfo, palindromeInfo, renbanInfo, thermoInfo, whisperInfo } from "./element/lines";
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo, selfTaxicabInfo } from "./element/toggles";
 import { evenInfo, maxInfo, minInfo, oddInfo } from "./element/region";
 import { quadrupleInfo } from "./element/quadruple";
@@ -22,7 +22,9 @@ export const ELEMENT_HANDLERS = {
 
     ['thermo']: thermoInfo,
     ['between']: betweenInfo,
-    ['diagonal']: diagonalInfo,
+    ['palindrome']: palindromeInfo,
+    ['whisper']: whisperInfo,
+    ['renban']: renbanInfo,
     ['arrow']: arrowInfo,
 
     ['min']: minInfo,
@@ -40,6 +42,7 @@ export const ELEMENT_HANDLERS = {
     ['skyscraper']: skyscraperInfo,
     ['xsums']: xsumsInfo,
 
+    ['diagonal']: diagonalInfo,
     ['knight']: knightInfo,
     ['king']: kingInfo,
     ['disjointGroups']: disjointGroupsInfo,

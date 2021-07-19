@@ -149,7 +149,7 @@ export declare namespace schema {
         }>,
     }
     export interface LineElement extends AbstractElement {
-        type: 'thermo' | 'between',
+        type: 'thermo' | 'between' | 'palindrome' | 'whisper' | 'renban',
         value: {
             [K: string]: ArrayObj<Idx<Geometry.CELL>>,
         },
