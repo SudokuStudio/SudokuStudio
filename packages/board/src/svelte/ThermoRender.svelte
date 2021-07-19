@@ -15,7 +15,7 @@
             const idxArr = arrayObj2array(idxArrObj);
             out.push({
                 thermoId,
-                d: makePath(idxArr, grid, 0.25),
+                d: makePath(idxArr, grid, { shortenTail: 0.25 }),
                 invalid: idxArr.length > grid.width,
             });
         }

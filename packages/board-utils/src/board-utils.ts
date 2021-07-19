@@ -134,9 +134,13 @@ export function getRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells:
 }
 
 
-
-export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, shortenEnd: number = 0): string {
+export type MakePathOptions = {
+    shortenHead?: number,
+    shortenTail?: number,
+};
+export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, { shortenHead, shortenTail }: MakePathOptions = {}): string {
     if (0 >= idxArr.length) return '';
+
 
     const points: [ number, number ][] = [];
 
@@ -146,15 +150,35 @@ export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, shortenEnd: n
     }
     if (1 === points.length) points.push(points[0]); // Double up.
 
-    if (0 < shortenEnd) {
+    if (shortenHead) {
+        const vec = [
+            points[1][0] - points[0][0],
+            points[1][1] - points[0][1],
+        ] as [ number, number ];
+        normalize2d(vec);
+
+        points[0][0] += vec[0] * shortenHead;
+        points[0][1] += vec[1] * shortenHead;
+    }
+    if (shortenTail) {
         const len = points.length;
-        const dx = points[len - 1][0] - points[len - 2][0];
-        const dy = points[len - 1][1] - points[len - 2][1];
-        points[len - 1][0] += -dx * shortenEnd;
-        points[len - 1][1] += -dy * shortenEnd;
+        const vec = [
+            points[len - 2][0] - points[len - 1][0],
+            points[len - 2][1] - points[len - 1][1],
+        ] as [ number, number ];
+        normalize2d(vec);
+
+        points[len - 1][0] += vec[0] * shortenTail;
+        points[len - 1][1] += vec[1] * shortenTail;
     }
 
     return 'M' + points.map(xy => xy.join(',')).join('L');
+}
+
+export function normalize2d(vec: [ number, number ]): void {
+    const dist = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+    vec[0] /= dist;
+    vec[1] /= dist;
 }
 
 

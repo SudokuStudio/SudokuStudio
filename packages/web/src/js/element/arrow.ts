@@ -96,9 +96,15 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         if (null == arrowRef) throw 'UNREACHABLE';
 
         const lineCells = (Mode.BULB === mode) ? bulbCells : bodyCells;
-        const selfHit = lineCells.indexOf(idx);
+        const selfHit = lineCells.lastIndexOf(idx);
         if (0 <= selfHit) {
-            lineCells.length = selfHit + 1;
+            if (Mode.BODY === mode && 0 === selfHit && 2 < lineCells.length) {
+                // Allow crossing the start of the line in special situations.
+                lineCells.push(idx);
+            }
+            else {
+                lineCells.length = selfHit + 1;
+            }
         }
         else {
             lineCells.push(idx);

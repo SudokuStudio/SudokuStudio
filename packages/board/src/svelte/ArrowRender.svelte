@@ -17,7 +17,7 @@
         const out: Item[] = [];
         for (const [ arrowId, { bulb, body } ] of Object.entries(value)) {
             const dBulb = makePath(arrayObj2array(bulb || {}), grid);
-            const dBody = makePath(arrayObj2array(body || {}), grid);
+            const dBody = makePath(arrayObj2array(body || {}), grid, { shortenHead: bulbRadius, shortenTail: 0.2 });
             out.push({ arrowId, dBulb, dBody });
         }
         return out;
@@ -42,6 +42,6 @@
         <path d={dBulb} fill="none" stroke="#000" stroke-width={2 * bulbRadius + outlineWidth}
             mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
         <path d={dBody} fill="none" stroke="#000" stroke-width={strokeWidth}
-            mask="url(#arrow-{id}-mask-{arrowId})" stroke-miterlimit="1.5" marker-end="url(#arrow-bulb-{id})" />
+            stroke-miterlimit="1.5" marker-end="url(#arrow-bulb-{id})" />
     {/each}
 </g>
