@@ -119,6 +119,71 @@ export function seriesIdx2seriesCoord(idx: Idx<Geometry.SERIES>, { width, height
 }
 
 
+export function svgCoord2diagonalIdx([ xf, yf ]: Coord<Geometry.SVG>, grid: Grid): null | Idx<Geometry.DIAGONAL> {
+    const { width, height } = grid;
+
+    const left  = xf < 0;
+    const right = width <= xf;
+    const top   = yf < 0;
+    const bot   = height <= yf;
+    if (!left && !right && !top && !bot) return null;
+
+    xf = Math.max(-0.5, Math.min(width,  xf));
+    yf = Math.max(-0.5, Math.min(height, yf));
+    // Positive or negative diagonal.
+    const positive = 0b1 & (Math.floor(2 * xf) + Math.floor(2 * yf));
+
+    let dir: number;
+    if (top) {//yx
+        dir = 0b00 | positive;
+    }
+    else if (bot) {
+        dir = 0b10 | (1 - positive);
+    }
+    else if (left) {
+        dir = positive << 1 | 0b0;
+    }
+    else { // right
+        dir = (1 - positive) << 1 | 0b1;
+    }
+
+    const x = Math.floor(xf) + 1 - 2 * (0b01 & dir)
+    const y = Math.floor(yf) + 1 -     (0b10 & dir);
+    if (x < 0 || width <= x || y < 0 || height <= y) return null;
+
+    if (top || bot)
+        return (x << 2) | dir;
+    else {
+        return ((width + height - y - 1 - (0b1 & dir >> 1)) << 2) | dir;
+    }
+}
+export function diagonalIdx2svgCoord(idx: Idx<Geometry.DIAGONAL>, { width, height }: Grid): Coord<Geometry.SVG> {
+    const [ x, y ] = diagonalIdx2startingCellCoord(idx, { width, height });
+    const dy = 0b1 & (idx >> 1);
+    const dx = 0b1 & (idx >> 0);
+    // return [  0.25 + x + 0.5 * dx,  0.25 + y + 0.5 * dy ];
+    return [ -0.25 + x + 1.5 * dx, -0.25 + y + 1.5 * dy ];
+}
+export function diagonalIdx2dirVec(idx: Idx<Geometry.DIAGONAL>): [ -1 | 1, -1 | 1 ] {
+    return [
+        (0b01 & idx) ? -1 : 1,
+        (0b10 & idx) ? -1 : 1,
+    ];
+}
+export function diagonalIdx2startingCellCoord(idx: Idx<Geometry.DIAGONAL>, { width, height }: Grid): Coord<Geometry.CELL> {
+    const z = idx >> 2;
+    const b = 0b1 & (idx >> 1);
+    const w = 0b1 & idx;
+    if (z < width) {
+        return [ z, b * (height - 1) ]
+    }
+    else {
+        const y = z - width;
+        return [ w * (width - 1), height - y - 1 - b ];
+    }
+}
+
+
 
 // Bitset functions.
 export function getFirstFromBitset<TAG extends Geometry>(idxBitset: IdxBitset<TAG>, grid: Grid): null | Idx<TAG> {

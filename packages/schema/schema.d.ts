@@ -24,6 +24,10 @@ export declare module Geometry {
     /** A row or column, from the top or bottom, Coord<SERIES> will correspond to a point outside the grid. */
     export type SERIES = typeof SERIES;
 
+    const DIAGONAL: unique symbol;
+    /** A diagonal from outside the grid. */
+    export type DIAGONAL = typeof DIAGONAL;
+
     const SVG: unique symbol;
     /** SVG unit space (only useful for Coord) - values can have decimals. */
     export type SVG = typeof SVG;
