@@ -3,7 +3,7 @@ import type { ElementInfo } from "./element/element";
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
 import { betweenInfo, thermoInfo } from "./element/lines";
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo, selfTaxicabInfo } from "./element/toggles";
-import { maxInfo, minInfo } from "./element/minMax";
+import { evenInfo, maxInfo, minInfo, oddInfo } from "./element/region";
 import { quadrupleInfo } from "./element/quadruple";
 import { differenceInfo, ratioInfo, xvInfo, sandwichInfo, skyscraperInfo, xsumsInfo } from "./element/positionNumbers";
 import type { schema } from "@sudoku-studio/schema";
@@ -24,13 +24,18 @@ export const ELEMENT_HANDLERS = {
     ['between']: betweenInfo,
     ['diagonal']: diagonalInfo,
     ['arrow']: arrowInfo,
+
     ['min']: minInfo,
     ['max']: maxInfo,
+    ['odd']: oddInfo,
+    ['even']: evenInfo,
+
     ['killer']: null,
     ['quadruple']: quadrupleInfo,
     ['difference']: differenceInfo,
     ['ratio']: ratioInfo,
     ['xv']: xvInfo,
+
     ['sandwich']: sandwichInfo,
     ['skyscraper']: skyscraperInfo,
     ['xsums']: xsumsInfo,

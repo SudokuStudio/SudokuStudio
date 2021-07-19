@@ -69,7 +69,7 @@ export declare namespace schema {
         GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
         | BooleanElement | ConsecutiveElement | DiagonalElement | KillerElement
         | KillerElement | QuadrupleElement | LineElement | ArrowElement | EdgeNumberElement
-        | SeriesNumberElement | CellSetElement | TODO_ELEMENTS;
+        | SeriesNumberElement | RegionElement | TODO_ELEMENTS;
     export type ElementType = Element['type'];
 
     export interface AbstractElement {
@@ -173,8 +173,8 @@ export declare namespace schema {
         value: IdxMap<Geometry.SERIES, true | number>,
     }
 
-    export interface CellSetElement extends AbstractElement {
-        type: 'min' | 'max',
+    export interface RegionElement extends AbstractElement {
+        type: 'min' | 'max' | 'odd' | 'even',
         value: IdxMap<Geometry.CELL, true>,
     }
 

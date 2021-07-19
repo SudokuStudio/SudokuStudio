@@ -11,8 +11,12 @@
     import ThermoRender from './svelte/ThermoRender.svelte';
     import BetweenRender from './svelte/BetweenRender.svelte';
     import ArrowRender from './svelte/ArrowRender.svelte';
+
     import MinRender from './svelte/MinRender.svelte';
     import MaxRender from './svelte/MaxRender.svelte';
+    import OddRender from "./svelte/OddRender.svelte";
+    import EvenRender from "./svelte/EvenRender.svelte";
+
     import KillerRender from './svelte/KillerRender.svelte';
     import QuadrupleRender from './svelte/QuadrupleRender.svelte';
     import DiagonalRender from './svelte/DiagonalRender.svelte';
@@ -20,8 +24,8 @@
     import CornerRender from './svelte/CornerRender.svelte';
     import CenterRender from './svelte/CenterRender.svelte';
     import ColorsRender from './svelte/ColorsRender.svelte';
-    import NullRender from './svelte/NullRender.svelte';
     import PositionNumberRender from './svelte/PositionNumberRender.svelte';
+    import NullRender from './svelte/NullRender.svelte';
 
     function FilledRender(args: any) {
         args.props.color = '#4e72b0';
@@ -94,13 +98,18 @@
         ['thermo']: ThermoRender,
         ['between']: BetweenRender,
         ['arrow']: ArrowRender,
+
         ['min']: MinRender,
         ['max']: MaxRender,
+        ['odd']: OddRender,
+        ['even']: EvenRender,
+
         ['killer']: KillerRender,
         ['quadruple']: QuadrupleRender,
         ['difference']: DifferenceRender,
         ['ratio']: RatioRender,
         ['xv']: XVRender,
+
         ['sandwich']: SeriesRender,
         ['xsums']: SeriesRender,
         ['skyscraper']: SeriesRender,

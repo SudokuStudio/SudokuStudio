@@ -29,6 +29,28 @@ export const maxInfo: ElementInfo = {
     },
 };
 
+export const evenInfo: ElementInfo = {
+    getInputHandler,
+    order: 40,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Even',
+        icon: 'odd-even',
+    },
+};
+
+export const oddInfo: ElementInfo = {
+    getInputHandler,
+    order: 41,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Odd',
+        icon: 'odd-even',
+    },
+};
+
 function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 

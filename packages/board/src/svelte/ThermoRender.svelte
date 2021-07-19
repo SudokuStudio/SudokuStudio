@@ -30,11 +30,11 @@
     markerWidth="1" markerHeight="1"
     orient="auto"
 >
-    <circle cx="0.5" cy="0.5" r={bulbRadius} fill="#666" />
+    <circle cx="0.5" cy="0.5" r={bulbRadius} fill="#444" />
 </marker>
 <mask id="thermo-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
     {#each getThermos($ref || {}) as { thermoId, d, invalid } (thermoId)}
-        <path {d} fill="none" stroke={invalid ? '#333' : '#666'} stroke-width="0.2"
+        <path {d} fill="none" stroke={invalid ? '#fff' : '#444'} stroke-width="0.2"
             marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
     {/each}
 </mask>
