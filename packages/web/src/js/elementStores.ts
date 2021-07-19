@@ -76,6 +76,10 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
                 // Do nothing.
             }
         }
+        list.sort((a, b) =>
+            (+(b.info.permanent || 0) - +(a.info.permanent || 0))
+            || a.info.order - b.info.order);
+
         set(list);
     }, true);
 });
