@@ -6,7 +6,7 @@
     export let ref: StateRef;
     export let grid: { width: number, height: number };
 
-    export let idx2coord: (idx: Idx<any>, grid: Grid) => Coord<any>;
+    export let idx2coord: (idx: Idx<Geometry>, grid: Grid) => Coord<any>;
 
     export let stroke: string = "#242424";
     export let fill: string = "#fff";
@@ -20,14 +20,14 @@
     export let mapDigits = (num: true | number): string => true !== num ? `${num}` : '';
 
 
-    type Item = { idx: Idx<Geometry.EDGE>, x: number, y: number, text: string };
+    type Item = { idx: Idx<Geometry>, x: number, y: number, text: string };
     function each(value: schema.SeriesNumberElement['value']): Item[] {
         const out: Item[] = [];
-        for (const [ seriesIdx, digitOrTrue ] of Object.entries(value)) {
+        for (const [ idx, digitOrTrue ] of Object.entries(value)) {
             const text = mapDigits(digitOrTrue!);
-            const [ x, y ] = idx2coord(+seriesIdx, grid);
+            const [ x, y ] = idx2coord(+idx, grid);
             out.push({
-                idx: +seriesIdx,
+                idx: +idx,
                 x, y, text,
             });
         }

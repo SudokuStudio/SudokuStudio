@@ -73,7 +73,7 @@ export declare namespace schema {
         GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
         | BooleanElement | ConsecutiveElement | DiagonalElement | KillerElement
         | KillerElement | QuadrupleElement | LineElement | ArrowElement | EdgeNumberElement
-        | SeriesNumberElement | RegionElement | TODO_ELEMENTS;
+        | SeriesNumberElement | LittleKillerElement | RegionElement | TODO_ELEMENTS;
     export type ElementType = Element['type'];
 
     export interface AbstractElement {
@@ -175,6 +175,10 @@ export declare namespace schema {
     export interface SeriesNumberElement extends AbstractElement {
         type: 'sandwich' | 'xsums' | 'skyscraper',
         value: IdxMap<Geometry.SERIES, true | number>,
+    }
+    export interface LittleKillerElement extends AbstractElement {
+        type: 'littleKiller',
+        value: IdxMap<Geometry.DIAGONAL, true | number>,
     }
 
     export interface RegionElement extends AbstractElement {

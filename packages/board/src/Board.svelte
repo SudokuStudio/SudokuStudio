@@ -27,6 +27,7 @@
     import CenterRender from './svelte/CenterRender.svelte';
     import ColorsRender from './svelte/ColorsRender.svelte';
     import PositionNumberRender from './svelte/PositionNumberRender.svelte';
+    import LittleKillerRender from "./svelte/LittleKillerRender.svelte";
     import NullRender from './svelte/NullRender.svelte';
 
     function FilledRender(args: any) {
@@ -139,6 +140,7 @@
         ['ratio']: RatioRender,
         ['xv']: XVRender,
 
+        ['littleKiller']: LittleKillerRender,
         ['sandwich']: SeriesRender,
         ['xsums']: SeriesRender,
         ['skyscraper']: SeriesRender,
@@ -161,6 +163,7 @@
         ['sandwich']: 1,
         ['xsums']: 1,
         ['skyscraper']: 1,
+        ['littleKiller']: 0.5,
     } as { [K in keyof typeof ELEMENT_RENDERERS]?: number };
 
 </script>

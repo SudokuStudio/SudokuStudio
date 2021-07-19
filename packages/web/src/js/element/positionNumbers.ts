@@ -1,6 +1,6 @@
 import type { Coord, Geometry, Grid, Idx } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { click2svgCoord, svgCoord2edgeIdx, svgCoord2seriesIdx } from "@sudoku-studio/board-utils";
+import { click2svgCoord, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
@@ -56,6 +56,22 @@ export const xvInfo: ElementInfo = {
         type: 'select',
         name: 'XV Sum',
         icon: 'xv',
+    },
+};
+
+export const littleKillerInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, {
+            svgCoord2idx: svgCoord2diagonalIdx,
+            max: 100,
+        });
+    },
+    order: 160,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Little Killer',
+        icon: 'little-killer',
     },
 };
 

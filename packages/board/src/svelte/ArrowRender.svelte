@@ -26,7 +26,7 @@
 </script>
 
 
-<marker id="arrow-bulb-{id}"
+<marker id="arrow-point-{id}"
     viewBox="0 0 1 1" refX="0.5" refY="0.5"
     markerUnits="userSpaceOnUse"
     markerWidth="1" markerHeight="1"
@@ -43,6 +43,6 @@
         <path d={dBulb} fill="none" stroke={color} stroke-width={2 * bulbRadius + outlineWidth}
             mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
         <path d={dBody} fill="none" stroke={color} stroke-width={strokeWidth}
-            stroke-miterlimit="1.5" marker-end="url(#arrow-bulb-{id})" />
+            stroke-miterlimit="1.5" marker-end="url(#arrow-point-{id})" />
     {/each}
 </g>

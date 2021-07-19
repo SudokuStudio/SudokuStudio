@@ -157,12 +157,11 @@ export function svgCoord2diagonalIdx([ xf, yf ]: Coord<Geometry.SVG>, grid: Grid
         return ((width + height - y - 1 - (0b1 & dir >> 1)) << 2) | dir;
     }
 }
-export function diagonalIdx2svgCoord(idx: Idx<Geometry.DIAGONAL>, { width, height }: Grid): Coord<Geometry.SVG> {
+export function diagonalIdx2svgCoord(idx: Idx<Geometry.DIAGONAL>, { width, height }: Grid, offset: number = -0.75): Coord<Geometry.SVG> {
     const [ x, y ] = diagonalIdx2startingCellCoord(idx, { width, height });
-    const dy = 0b1 & (idx >> 1);
-    const dx = 0b1 & (idx >> 0);
-    // return [  0.25 + x + 0.5 * dx,  0.25 + y + 0.5 * dy ];
-    return [ -0.25 + x + 1.5 * dx, -0.25 + y + 1.5 * dy ];
+    const dy = 1 - 2 * (0b1 & (idx >> 1));
+    const dx = 1 - 2 * (0b1 & (idx >> 0));
+    return [ 0.5 + x + offset * dx, 0.5 + y + offset * dy ];
 }
 export function diagonalIdx2dirVec(idx: Idx<Geometry.DIAGONAL>): [ -1 | 1, -1 | 1 ] {
     return [

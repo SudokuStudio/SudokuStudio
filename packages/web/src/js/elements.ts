@@ -5,7 +5,7 @@ import { betweenInfo, palindromeInfo, renbanInfo, thermoInfo, whisperInfo } from
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo, selfTaxicabInfo } from "./element/toggles";
 import { evenInfo, maxInfo, minInfo, oddInfo } from "./element/region";
 import { quadrupleInfo } from "./element/quadruple";
-import { differenceInfo, ratioInfo, xvInfo, sandwichInfo, skyscraperInfo, xsumsInfo } from "./element/positionNumbers";
+import { differenceInfo, ratioInfo, xvInfo, sandwichInfo, skyscraperInfo, xsumsInfo, littleKillerInfo } from "./element/positionNumbers";
 import type { schema } from "@sudoku-studio/schema";
 import { boxInfo, gridInfo } from "./element/basic";
 import { arrowInfo } from "./element/arrow";
@@ -38,6 +38,7 @@ export const ELEMENT_HANDLERS = {
     ['ratio']: ratioInfo,
     ['xv']: xvInfo,
 
+    ['littleKiller']: littleKillerInfo,
     ['sandwich']: sandwichInfo,
     ['skyscraper']: skyscraperInfo,
     ['xsums']: xsumsInfo,
