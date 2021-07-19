@@ -79,7 +79,7 @@ export const skyscraperInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, {
             svgCoord2idx: svgCoord2seriesIdx,
-            max: 100,
+            max: Math.max(grid.width, grid.height),
         });
     },
     order: 151,
