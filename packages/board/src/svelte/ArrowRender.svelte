@@ -11,6 +11,7 @@
     const outlineWidth = 0.025;
     const strokeWidth = 0.025;
 
+    const color = "#222";
 
     type Item = { arrowId: string, dBulb: string, dBody: string };
     function each(value: schema.ArrowElement['value']): Item[] {
@@ -31,7 +32,7 @@
     markerWidth="1" markerHeight="1"
     orient="auto"
 >
-    <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke="#000" stroke-width={strokeWidth} />
+    <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke={color} stroke-width={strokeWidth} />
 </marker>
 <g {id}>
     {#each each($ref || {}) as { arrowId, dBulb, dBody } (arrowId)}
@@ -39,9 +40,9 @@
             <rect width={grid.width} height={grid.height} fill="#fff" />
             <path d={dBulb} fill="none" stroke="#000" stroke-width={2 * bulbRadius - outlineWidth} stroke-linejoin="round" stroke-linecap="round" />
         </mask>
-        <path d={dBulb} fill="none" stroke="#000" stroke-width={2 * bulbRadius + outlineWidth}
+        <path d={dBulb} fill="none" stroke={color} stroke-width={2 * bulbRadius + outlineWidth}
             mask="url(#arrow-{id}-mask-{arrowId})" stroke-linejoin="round" stroke-linecap="round" />
-        <path d={dBody} fill="none" stroke="#000" stroke-width={strokeWidth}
+        <path d={dBody} fill="none" stroke={color} stroke-width={strokeWidth}
             stroke-miterlimit="1.5" marker-end="url(#arrow-bulb-{id})" />
     {/each}
 </g>
