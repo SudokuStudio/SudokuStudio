@@ -1,7 +1,7 @@
 <script lang="ts">
     import { derived } from "svelte/store";
 
-    import { getEdges, bitsetToList, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
+    import { getEdges, idxMapToKeysArray, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
@@ -24,8 +24,8 @@
     });
 
     const selectRef = ref.ref('select');
-    const dMask = derived(selectRef, select => getEdges(bitsetToList(select), grid, inset) || undefined);
-    const dFill = derived(selectRef, select => getEdges(bitsetToList(select), grid, 0) || undefined);
+    const dMask = derived(selectRef, select => getEdges(idxMapToKeysArray(select), grid, inset) || undefined);
+    const dFill = derived(selectRef, select => getEdges(idxMapToKeysArray(select), grid, 0) || undefined);
 </script>
 
 <filter id="select-{id}-blur">

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { bitsetToList } from "@sudoku-studio/board-utils";
+    import { idxMapToKeysArray } from "@sudoku-studio/board-utils";
     import { cellIdx2cellCoord } from "@sudoku-studio/board-utils";
 
     import type { Idx, Geometry, schema } from "@sudoku-studio/schema";
@@ -12,7 +12,7 @@
     type Item = { idx: Idx<Geometry.CELL>, cx: number, cy: number };
     function each(value: schema.RegionElement['value']): Item[] {
         const out: Item[] = [];
-        for (const cellIdx of bitsetToList(value)) {
+        for (const cellIdx of idxMapToKeysArray(value)) {
             const [ x, y ] = cellIdx2cellCoord(cellIdx, grid);
             out.push({
                 idx: +cellIdx,

@@ -1,4 +1,4 @@
-import { bitsetToList, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
+import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
 import type { Geometry, Grid, IdxBitset } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
 import { boardState, getDigits } from "../board";
@@ -50,7 +50,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         // Keep track of if all marks are already set, and if so delete them instead of adding them.
         let allAlreadySet = true;
 
-        for (const cellIdx of bitsetToList(userSelectState.get<IdxBitset<Geometry.CELL>>())) {
+        for (const cellIdx of idxMapToKeysArray(userSelectState.get<IdxBitset<Geometry.CELL>>())) {
             // Ignore filled/given digits as needed.
             if (null != blockingDigits[cellIdx]) continue;
 

@@ -80,5 +80,5 @@ export const colorsInfo: ElementInfo = {
             ],
         });
     },
-    order: 15,
+    order: 10,
 } as const;

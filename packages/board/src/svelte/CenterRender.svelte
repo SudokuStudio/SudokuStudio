@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Geometry, Idx, IdxMap } from "@sudoku-studio/schema";
-    import { bitsetToList, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
+    import { idxMapToKeysArray, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
@@ -13,7 +13,7 @@
             const [ x, y ] = cellIdx2cellCoord(+idx, grid).map(x => x + 0.5);
             out.push({
                 idx: +idx, x, y,
-                nums: bitsetToList(nums),
+                nums: idxMapToKeysArray(nums),
             })
         }
 

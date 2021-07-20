@@ -72,8 +72,9 @@ export declare namespace schema {
     export type Element =
         GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
         | BooleanElement | ConsecutiveElement | DiagonalElement | KillerElement
-        | KillerElement | QuadrupleElement | LineElement | ArrowElement | EdgeNumberElement
-        | SeriesNumberElement | LittleKillerElement | RegionElement | TODO_ELEMENTS;
+        | KillerElement | CloneElement | QuadrupleElement | LineElement | ArrowElement
+        | EdgeNumberElement | SeriesNumberElement | LittleKillerElement | RegionElement
+        | TODO_ELEMENTS;
     export type ElementType = Element['type'];
 
     export interface AbstractElement {
@@ -139,6 +140,16 @@ export declare namespace schema {
             [K: string]: {
                 sum?: number,
                 cells: IdxBitset<Geometry.CELL>,
+            },
+        },
+    }
+    export interface CloneElement extends AbstractElement {
+        type: 'clone',
+        value: {
+            [K: string]: {
+                label: string,
+                a: ArrayObj<Idx<Geometry.CELL>>,
+                b: ArrayObj<Idx<Geometry.CELL>>,
             },
         },
     }

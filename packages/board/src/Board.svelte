@@ -2,7 +2,7 @@
     import type { Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
     import type { StateManager, StateRef } from "@sudoku-studio/state-manager";
 
-    import { bitsetToList, BOX_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getEdges, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils";
+    import { idxMapToKeysArray, BOX_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getEdges, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils";
     import { derived, readable } from "svelte/store";
 
     import GridRender from './svelte/GridRender.svelte';
@@ -29,6 +29,7 @@
     import PositionNumberRender from './svelte/PositionNumberRender.svelte';
     import LittleKillerRender from "./svelte/LittleKillerRender.svelte";
     import NullRender from './svelte/NullRender.svelte';
+import CloneRender from "./svelte/CloneRender.svelte";
 
     function FilledRender(args: any) {
         args.props.color = '#4e72b0';
@@ -135,6 +136,8 @@
         ['even']: EvenRender,
 
         ['killer']: KillerRender,
+        ['clone']: CloneRender,
+
         ['quadruple']: QuadrupleRender,
         ['difference']: DifferenceRender,
         ['ratio']: RatioRender,
@@ -177,9 +180,9 @@
 
     const elementsRef = boardState.ref('elements');
     const givensMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
-        getEdges(bitsetToList(getDigits(elements || {}, true, false)), grid, 0) || undefined);
+        getEdges(idxMapToKeysArray(getDigits(elements || {}, true, false)), grid, 0) || undefined);
     const givensFilledMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
-        getEdges(bitsetToList(getDigits(elements || {}, true, true)), grid, 0) || undefined);
+        getEdges(idxMapToKeysArray(getDigits(elements || {}, true, true)), grid, 0) || undefined);
 
     type ElementList = {
         id: string,

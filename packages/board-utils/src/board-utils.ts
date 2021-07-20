@@ -1,4 +1,4 @@
-import type { Grid, Idx, Coord, IdxBitset, Geometry, ArrayObj, IdxMap, schema } from "@sudoku-studio/schema";
+import type { Grid, Idx, Coord, Geometry, ArrayObj, IdxMap, schema } from "@sudoku-studio/schema";
 
 // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
 export function any(x: any): any {
@@ -182,22 +182,10 @@ export function diagonalIdx2startingCellCoord(idx: Idx<Geometry.DIAGONAL>, { wid
     }
 }
 
-
-
-// Bitset functions.
-export function getFirstFromBitset<TAG extends Geometry>(idxBitset: IdxBitset<TAG>, grid: Grid): null | Idx<TAG> {
-    const len = grid.width * grid.height;
-    for (let idx: Idx<TAG> = 0; idx < len; idx++) {
-        if (idxBitset[idx]) return idx;
-    }
-    return null;
+export function idxMapToKeysArray<TAG extends Geometry>(map: null | undefined | IdxMap<TAG, any>): Idx<TAG>[] {
+    if (null == map) return [];
+    return Object.keys(map).filter(k => null != map[k] && false != map[k]).map(Number).sort();
 }
-export function bitsetToList<TAG extends Geometry>(bitset: null | undefined | IdxMap<TAG, any>): Idx<TAG>[] {
-    if (null == bitset) return [];
-    return Object.keys(bitset).filter(k => null != bitset[k] && false != bitset[k]).map(Number).sort();
-}
-
-
 
 export function getMajorDiagonal(positive: boolean, grid: Grid): Idx<Geometry.CELL>[] {
     return Array(grid.width).fill(null)
