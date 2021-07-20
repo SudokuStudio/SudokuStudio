@@ -9,6 +9,7 @@ import { differenceInfo, ratioInfo, xvInfo, sandwichInfo, skyscraperInfo, xsumsI
 import type { schema } from "@sudoku-studio/schema";
 import { boxInfo, gridInfo } from "./element/basic";
 import { arrowInfo } from "./element/arrow";
+import { killerInfo } from "./element/killer";
 
 export const ELEMENT_HANDLERS = {
     ['givens']: givensInfo,
@@ -32,7 +33,7 @@ export const ELEMENT_HANDLERS = {
     ['odd']: oddInfo,
     ['even']: evenInfo,
 
-    ['killer']: null,
+    ['killer']: killerInfo,
     ['quadruple']: quadrupleInfo,
     ['difference']: differenceInfo,
     ['ratio']: ratioInfo,

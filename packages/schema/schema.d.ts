@@ -137,7 +137,7 @@ export declare namespace schema {
         type: 'killer',
         value: {
             [K: string]: {
-                sum: number,
+                sum?: number,
                 cells: IdxBitset<Geometry.CELL>,
             },
         },
@@ -163,7 +163,7 @@ export declare namespace schema {
         value: {
             [K: string]: {
                 bulb: ArrayObj<Idx<Geometry.CELL>>,
-                /** The first cell of the body is the bulb origin and should not be considered for the sum. */
+                /** The first cell of the body is within the bulb and should not be considered for the sum. */
                 body: ArrayObj<Idx<Geometry.CELL>>,
             },
         },
