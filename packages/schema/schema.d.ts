@@ -96,9 +96,7 @@ export declare namespace schema {
     }
     export interface DigitElement extends AbstractElement {
         type: 'givens' | 'filled',
-        value: {
-            [K in Idx<Geometry.CELL>]: number
-        },
+        value: IdxMap<Geometry.CELL, number>,
     }
     export interface PencilMarksElement extends AbstractElement {
         type: 'corner' | 'center',

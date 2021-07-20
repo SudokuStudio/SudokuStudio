@@ -3,7 +3,6 @@ import { StateManager } from '@sudoku-studio/state-manager';
 import { getDigits as getDigitsHelper } from '@sudoku-studio/board-utils';
 import { writable } from "svelte/store";
 
-
 export const boardSvg = writable<SVGSVGElement>();
 export const boardDiv = writable<HTMLDivElement>();
 
