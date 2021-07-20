@@ -91,6 +91,7 @@
         "skyscraper": "svg/16px/local-constraints/skyscraper-constraint.svg",
         "killer": "svg/16px/local-constraints/killer-constraint.svg",
         "little-killer": "svg/16px/local-constraints/little-killer-constraint.svg",
+        "clone": "svg/16px/local-constraints/clone-constraint.svg",
     );
 
     @each $name, $path in $icons {

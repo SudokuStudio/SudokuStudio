@@ -14,10 +14,12 @@
     type Item = { cloneAbId: string, label: string, labelPos: { x: number, y: number }, d: string, color: string };
     function each(value: schema.CloneElement['value']): Item[] {
         const out: Item[] = [];
-        for (const [ cloneColor, { label, a, b } ] of Object.entries(value)) {
+        for (const [ cloneId, { label, color, a, b } ] of Object.entries(value)) {
             for (let i = 0; i < 2; i++) {
                 const cells = [ a, b ][i];
+                if (null == cells) continue;
                 const cellsArr = arrayObj2array(cells);
+                cellsArr.sort((a, b) => a - b);
                 if (0 >= cellsArr.length) continue;
                 const lastIdx = cellsArr[cellsArr.length - 1];
                 const d = getEdges(cellsArr, grid, inset);
@@ -27,9 +29,12 @@
                     x: lastCoord[0] + 1 - inset - strokeWidth,
                     y: lastCoord[1] + 1 - inset - strokeWidth,
                 };
-                const cloneAbId = `${cloneColor}_${i}`;
-                const color = cloneColor.startsWith('#') ? cloneColor : '#222';
-                out.push({ cloneAbId, label, labelPos, d, color });
+                const cloneAbId = `${cloneId}_${i}`;
+                out.push({
+                    cloneAbId, labelPos, d,
+                    label: label || '',
+                    color: color || '#222',
+                });
             }
         }
         return out;

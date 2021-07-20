@@ -147,7 +147,8 @@ export declare namespace schema {
         type: 'clone',
         value: {
             [K: string]: {
-                label: string,
+                label?: string,
+                color?: string,
                 a: ArrayObj<Idx<Geometry.CELL>>,
                 b: ArrayObj<Idx<Geometry.CELL>>,
             },

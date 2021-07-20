@@ -10,6 +10,7 @@ import type { schema } from "@sudoku-studio/schema";
 import { boxInfo, gridInfo } from "./element/basic";
 import { arrowInfo } from "./element/arrow";
 import { killerInfo } from "./element/killer";
+import { cloneInfo } from "./element/clone";
 
 export const ELEMENT_HANDLERS = {
     ['givens']: givensInfo,
@@ -33,8 +34,10 @@ export const ELEMENT_HANDLERS = {
     ['odd']: oddInfo,
     ['even']: evenInfo,
 
-    ['killer']: killerInfo,
     ['quadruple']: quadrupleInfo,
+    ['killer']: killerInfo,
+    ['clone']: cloneInfo,
+
     ['difference']: differenceInfo,
     ['ratio']: ratioInfo,
     ['xv']: xvInfo,
