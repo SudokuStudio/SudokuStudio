@@ -10,10 +10,11 @@ import type { InputHandler } from "./inputHandler";
 export type LineInputHandlerOptions = {
     deletePrioritizeHead: boolean,
     deletePrioritizeTail: boolean,
+    allowSelfIntersection: boolean,
 };
 
 export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, options: LineInputHandlerOptions): InputHandler {
-    const { deletePrioritizeHead, deletePrioritizeTail } = options;
+    const { deletePrioritizeHead, deletePrioritizeTail, allowSelfIntersection } = options;
 
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
@@ -31,7 +32,7 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
-        const selfHit = lineCells.indexOf(idx);
+        const selfHit = lineCells.indexOf(idx, allowSelfIntersection ? lineCells.length - 2 : 0);
         if (0 <= selfHit) {
             lineCells.length = selfHit + 1;
         }

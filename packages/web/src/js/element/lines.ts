@@ -9,6 +9,7 @@ export const thermoInfo: ElementInfo = {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: true,
             deletePrioritizeTail: false,
+            allowSelfIntersection: false,
         });
     },
     order: 30,
@@ -25,6 +26,7 @@ export const betweenInfo: ElementInfo = {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: true,
             deletePrioritizeTail: true,
+            allowSelfIntersection: true,
         });
     },
     order: 50,
@@ -41,6 +43,7 @@ export const palindromeInfo: ElementInfo = {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,
+            allowSelfIntersection: true,
         });
     },
     order: 60,
@@ -57,6 +60,7 @@ export const whisperInfo: ElementInfo = {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,
+            allowSelfIntersection: true,
         });
     },
     order: 70,
@@ -73,6 +77,7 @@ export const renbanInfo: ElementInfo = {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,
+            allowSelfIntersection: false,
         });
     },
     order: 80,

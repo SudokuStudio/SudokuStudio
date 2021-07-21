@@ -101,7 +101,7 @@ import CloneRender from "./svelte/CloneRender.svelte";
             pathOptions: {
                 shortenHead: 0,
                 shortenTail: 0,
-                bezierRounding: 0.2,
+                bezierRounding: 0.1,
             },
         });
         return new LineRender(args);
