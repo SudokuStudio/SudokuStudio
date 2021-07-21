@@ -1,8 +1,9 @@
 import LZString from "lz-string";
-import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
-import type { Coord, Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
+import { cellCoord2CellIdx, svgCoord2diagonalIdx, svgCoord2edgeIdx, roman2num, svgCoord2seriesIdx, cellIdx2cellCoord, svgCoord2cornerCoord, cornerCoord2cornerIdx } from "@sudoku-studio/board-utils";
+import type { Coord, Geometry, Grid, Idx, IdxBitset, schema } from "@sudoku-studio/schema";
 import { makeUid } from "./util";
 import { createElement, createNewBoard } from "./elements";
+import { hexToHsluv, hsluvToHex } from "hsluv";
 
 type FPuzzlesBoard = {
     size: number,
@@ -18,7 +19,7 @@ type FPuzzlesBoard = {
     nonconsecutive?: boolean,
     negative?: string[],
     arrow?: FPuzzlesArrowEntry[],
-    killercage?: FPuzzlesKillerCageEntry[],
+    killercage?: FPuzzlesCells[],
     littlekillersum?: FPuzzlesLittleKillerSumEntry[],
     odd?: FPuzzlesCell[],
     even?: FPuzzlesCell[],
@@ -36,8 +37,8 @@ type FPuzzlesBoard = {
     quadruple?: FPuzzlesQuadruple[],
     betweenline?: FPuzzlesLines[],
     sandwichsum?: FPuzzlesCell[],
-    disabledlogic?: string[],
-    truecandidatesoptions?: string[],
+    // disabledlogic?: string[],
+    // truecandidatesoptions?: string[],
 };
 
 type FPuzzlesGridEntry = {
@@ -46,6 +47,7 @@ type FPuzzlesGridEntry = {
     centerPencilMarks?: number[],
     cornerPencilMarks?: number[], // TODO CHECK IF THIS IS RIGHT.
     givenPencilMarks?: number[],
+    c?: string,
     region?: number,
 }
 
@@ -54,39 +56,35 @@ type FPuzzlesArrowEntry = {
     lines?: string[][],
 };
 
-type FPuzzlesKillerCageEntry = {
-    cells?: string[],
-    value?: string,
-};
-
 type FPuzzlesLittleKillerSumEntry = {
-    cell?: string,
-    direction?: string,
+    cell: string,
+    direction: string,
+    cells?: string[],
     value?: string,
 };
 
 type FPuzzlesCell = {
-    cell?: string,
-    value?: string
+    cell: string,
+    value?: string,
 };
 
 type FPuzzlesCells = {
-    cells?: string[],
-    value?: string
+    cells: string[],
+    value?: string,
 };
 
 type FPuzzlesLines = {
-    lines: string[][]
+    lines: string[][],
 };
 
 type FPuzzlesClone = {
-    cells?: string[],
-    cloneCells?: string[]
+    cells: string[],
+    cloneCells: string[],
 };
 
 type FPuzzlesQuadruple = {
-    cells?: string[],
-    values?: number[]
+    cells: string[],
+    values?: [ number?, number?, number?, number? ],
 };
 
 
@@ -120,21 +118,8 @@ function parseRCNotation(rc: string): Coord<Geometry.CELL> {
 }
 
 
-function findOrAddElement<E extends schema.Element>(board: schema.Board, type: E['type'], value: E['value']): E {
-    if (null == board.elements) board.elements  = {};
-    for (const elem of Object.values(board.elements)) {
-        if (type === elem.type)
-            return elem as E;
-    }
-    const elem = createElement<E>(type, value);
-    board.elements[makeUid()] = elem;
-    return elem;
-}
-
-
 export function parseFpuzzles(b64: string): schema.Board {
     (window as any).LZString = LZString;
-    console.log(b64);
     const json = LZString.decompressFromBase64(b64);
     if (null == json) throw Error('Failed to LZString decompress fpuzzles board.');
     const fBoard: FPuzzlesBoard = JSON.parse(json);
@@ -145,6 +130,97 @@ export function parseFpuzzles(b64: string): schema.Board {
     const board = createNewBoard(...fpuzzlesSizes[size]);
     const grid: Grid = { width: size, height: size };
 
+
+    function findOrAddElement<E extends schema.Element>(type: E['type'], value: E['value']): E {
+        if (null == board.elements) board.elements  = {};
+        for (const elem of Object.values(board.elements)) {
+            if (type === elem.type) {
+                Object.assign(elem.value, value);
+                return elem as E;
+            }
+        }
+        const elem = createElement<E>(type, value);
+        board.elements[makeUid()] = elem;
+        return elem;
+    }
+    function addRegionElement(type: schema.RegionElement['type'], fRegionConstraint: FPuzzlesCell[]): void {
+        const elem: schema.RegionElement = findOrAddElement(type, {});
+        for (const fRegionObj of fRegionConstraint) {
+            const cellIdx = cellCoord2CellIdx(parseRCNotation(fRegionObj.cell), grid);
+            elem.value[cellIdx] = true;
+        }
+    }
+    function addLineElement(type: schema.LineElement['type'], fLinesConstraint: FPuzzlesLines[]): void {
+        const elem: schema.LineElement = findOrAddElement(type, {});
+        for (const fLinesObj of fLinesConstraint) {
+            const cellArr: Idx<Geometry.CELL>[] = elem.value[makeUid()] = [];
+            for (const fLine of fLinesObj.lines) {
+                for (const rc of fLine) {
+                    const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
+                    cellArr.push(cellIdx);
+                }
+            }
+        }
+    }
+    function addEdgeElement(
+        type: schema.EdgeNumberElement['type'],
+        fLinesConstraint: FPuzzlesCells[],
+        parse: (val: string) => null |number = Number): void
+    {
+        const elem: schema.EdgeNumberElement = findOrAddElement(type, {});
+        for (const fCellsObj of fLinesConstraint) {
+            if (2 !== fCellsObj.cells.length) {
+                console.error('Cannot parse difference not between two cells.');
+                continue;
+            }
+            const coordA = parseRCNotation(fCellsObj.cells[0]);
+            const coordB = parseRCNotation(fCellsObj.cells[1]);
+            const average = [
+                0.5 * (coordA[0] + coordB[0] + 1),
+                0.5 * (coordA[1] + coordB[1] + 1),
+            ] as [ number, number ];
+            const edgeIdx = svgCoord2edgeIdx(average, grid);
+
+            if (null == edgeIdx) {
+                console.error(`Cannot parse difference between two nonadjacent cells: ${fCellsObj.cells.join(', ')}.`);
+                continue;
+            }
+
+            const val = (null != fCellsObj.value) ? parse(fCellsObj.value) : null;
+            elem.value[edgeIdx] = (null != val) ? val : true;
+        }
+    }
+    function addSeriesElement(type: schema.SeriesNumberElement['type'], fConstraint: FPuzzlesCell[]):void {
+        const elem: schema.SeriesNumberElement = findOrAddElement(type, {});
+        for (const fCellValue of fConstraint) {
+            // Find the equivalent click location.
+            // Cell is outside the grid.
+            const coord = parseRCNotation(fCellValue.cell) as [ number, number ];
+            coord[0] += 0.5;
+            coord[1] += 0.5;
+
+            const seriesIdx = svgCoord2seriesIdx(coord, grid);
+            if (null == seriesIdx) {
+                console.error('Cannot handle this series.', fCellValue);
+                continue;
+            }
+            elem.value[seriesIdx] = (null != fCellValue.value) ? Number(fCellValue.value) : true;
+        }
+    }
+    function addKillerElement(fConstraint: FPuzzlesCells[]): void {
+        const elem: schema.KillerElement = findOrAddElement('killer', {});
+        for (const fKillerEntry of fConstraint) {
+            const killerItem = elem.value[makeUid()] = {
+                cells: {} as IdxBitset<Geometry.CELL>,
+                sum: (null != fKillerEntry.value) ? Number(fKillerEntry.value) : undefined,
+            };
+            for (const rc of fKillerEntry.cells) {
+                const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
+                killerItem.cells[cellIdx] = true;
+            }
+        }
+    }
+
     if (fBoard.title) board.meta.title = fBoard.title;
     if (fBoard.author) board.meta.author = fBoard.author;
     if (fBoard.ruleset) board.meta.description = fBoard.ruleset;
@@ -153,16 +229,20 @@ export function parseFpuzzles(b64: string): schema.Board {
         const gridRow = fBoard.grid[y];
         for (let x = 0; x < size; x++) {
             const gridEntry = gridRow[x];
-
             const cellIdx = cellCoord2CellIdx([ x, y ], grid);
+
+            if (null != gridEntry.region) {
+                // TODO
+                console.error('Cannot handle f-puzzles regions.');
+            }
 
             if (null != gridEntry.value) {
                 let elem: schema.DigitElement;
                 if (gridEntry.given) {
-                    elem = findOrAddElement(board, 'givens', {});
+                    elem = findOrAddElement('givens', {});
                 }
                 else {
-                    elem = findOrAddElement(board, 'filled', {});
+                    elem = findOrAddElement('filled', {});
                 }
                 console.log(elem);
                 elem.value[cellIdx] = gridEntry.value;
@@ -170,25 +250,21 @@ export function parseFpuzzles(b64: string): schema.Board {
         }
     }
 
-    if (fBoard.antiking) {
-        findOrAddElement(board, 'king', true);
-    }
+    if (fBoard['diagonal+']) findOrAddElement('diagonal', { positive: true });
+    if (fBoard['diagonal-']) findOrAddElement('diagonal', { negative: true });
+    if (fBoard.antiknight) findOrAddElement('knight', true);
+    if (fBoard.antiking) findOrAddElement('king', true);
+    if (fBoard.disjointgroups) findOrAddElement('disjointGroups', true);
+    if (fBoard.nonconsecutive) findOrAddElement('consecutive', { orth: true });
 
-    if (fBoard.thermometer) {
-        const elem: schema.LineElement = findOrAddElement(board, 'thermo', {});
-        for (const fLinesObj of fBoard.thermometer) {
-            const thermoArr: Idx<Geometry.CELL>[] = elem.value[makeUid()] = [];
-            for (const fLine of fLinesObj.lines) {
-                for (const rc of fLine) {
-                    const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
-                    thermoArr.push(cellIdx);
-                }
-            }
-        }
-    }
+    if (fBoard.thermometer) addLineElement('thermo', fBoard.thermometer);
+    if (fBoard.betweenline) addLineElement('between', fBoard.betweenline);
+    if (fBoard.whispers) addLineElement('whisper', fBoard.whispers);
+    if (fBoard.renban) addLineElement('renban', fBoard.renban);
+    if (fBoard.palindrome) addLineElement('palindrome', fBoard.palindrome);
 
     if (fBoard.arrow) {
-        const elem: schema.ArrowElement = findOrAddElement(board, 'arrow', {});
+        const elem: schema.ArrowElement = findOrAddElement('arrow', {});
         for (const fArrowEntry of fBoard.arrow) {
             const arrowItem = elem.value[makeUid()] = {
                 bulb: [] as Idx<Geometry.CELL>[],
@@ -205,6 +281,103 @@ export function parseFpuzzles(b64: string): schema.Board {
                 }
             }
         }
+    }
+
+    if (fBoard.sandwichsum) addSeriesElement('sandwich', fBoard.sandwichsum);
+
+    if (fBoard.killercage) addKillerElement(fBoard.killercage);
+    if (fBoard.extraregion) {
+        // TODO: this uses killer cages for now.
+        console.warn('Extra region import uses killer cage.');
+        addKillerElement(fBoard.extraregion);
+    }
+
+    if (fBoard.littlekillersum) {
+        const elem: schema.LittleKillerElement = findOrAddElement('littleKiller', {});
+        for (const fLkEntry of fBoard.littlekillersum) {
+            // Find the equivalent click location.
+            // Cell is outside the grid.
+            const coord = parseRCNotation(fLkEntry.cell) as [ number, number ];
+            if      ('DR' === fLkEntry.direction) { coord[0] += 0.75; coord[1] += 0.75 }
+            else if ('DL' === fLkEntry.direction) { coord[0] += 0.25; coord[1] += 0.75 }
+            else if ('UR' === fLkEntry.direction) { coord[0] += 0.75; coord[1] += 0.25 }
+            else if ('UL' === fLkEntry.direction) { coord[0] += 0.25; coord[1] += 0.25 }
+
+            const diagIdx = svgCoord2diagonalIdx(coord, grid);
+            if (null == diagIdx) {
+                console.error('Cannot handle this diagonal.', fLkEntry);
+                continue;
+            }
+            elem.value[diagIdx] = (null != fLkEntry.value) ? Number(fLkEntry.value) : true;
+        }
+    }
+
+    if (fBoard.difference) addEdgeElement('difference', fBoard.difference);
+    if (fBoard.ratio) addEdgeElement('ratio', fBoard.ratio);
+    if (fBoard.xv) addEdgeElement('xv', fBoard.xv, roman2num);
+
+    if (fBoard.odd) addRegionElement('odd', fBoard.odd);
+    if (fBoard.even) addRegionElement('even', fBoard.even);
+    if (fBoard.minimum) addRegionElement('min', fBoard.minimum);
+    if (fBoard.maximum) addRegionElement('max', fBoard.maximum);
+
+    if (fBoard.quadruple) {
+        console.log('QUADRUPLE!');
+        const elem: schema.QuadrupleElement = findOrAddElement('quadruple', {});
+        for (const fQuadEntry of fBoard.quadruple) {
+            if (4 !== fQuadEntry.cells.length) {
+                // Luckily, f-puzzles doesn't allow quadruples on edges.
+                console.error('Cannot parse quadruple not between four cells.');
+                continue;
+            }
+            const coord = fQuadEntry.cells
+                .map(parseRCNotation)
+                .reduce<[ number, number ]>(([ x0, y0 ], [ x1, y1 ]) => [ x0 + x1, y0 + y1 ], [ 0, 0 ]);
+            coord[0] *= 0.25;
+            coord[1] *= 0.25;
+
+            const cornerCoord = svgCoord2cornerCoord(coord, grid);
+            if (null == cornerCoord) {
+                console.error('Cannot handle this quadruple.', fQuadEntry);
+                continue;
+            }
+
+            const cornerIdx = cornerCoord2cornerIdx(cornerCoord, grid);
+            elem.value[cornerIdx] = (null != fQuadEntry.values) ? fQuadEntry.values : true;
+        }
+    }
+
+    if (fBoard.clone) {
+        const elem: schema.CloneElement = findOrAddElement('clone', {});
+        outer:
+        for (const fCloneEntry of fBoard.clone) {
+            const cloneItem = elem.value[makeUid()] = {
+                color: undefined as undefined | string,
+                a: fCloneEntry.cells     .map (rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),
+                b: fCloneEntry.cloneCells.map(rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),
+            };
+
+            // Try to find color from cells.
+            let color = null;
+            for (const idx of cloneItem.a.concat(cloneItem.b)) {
+                const [ x, y ] = cellIdx2cellCoord(idx, grid);
+                const { c } = fBoard.grid[y][x];
+                if (null == c) continue outer;
+                if (!c.startsWith('#')) continue outer;
+
+                if (null == color) color = c;
+                else if (color !== c) continue outer;
+            }
+            if (null == color) continue;
+            // All have same color.
+            const [ h, s, l ] = hexToHsluv(color);
+            cloneItem.color = hsluvToHex([ h, s, 0.5 * l ]);
+        }
+    }
+
+    if (fBoard.negative) {
+        // TODO
+        console.error(`Cannot handle f-puzzles negative constraints: ${fBoard.negative.join(', ')}.`);
     }
 
     return board;

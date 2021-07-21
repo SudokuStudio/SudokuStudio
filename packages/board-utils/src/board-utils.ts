@@ -537,3 +537,41 @@ export const num2roman = (() => {
         return str;
     }
 })();
+
+export const roman2num = (() => {
+    // https://blog.stevenlevithan.com/archives/javascript-roman-numeral-converter
+    /*
+    Copyright <YEAR> <COPYRIGHT HOLDER>
+
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the "Software"),
+    to deal in the Software without restriction, including without limitation
+    the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE SOFTWARE.
+    */
+    const validator = /^M*(?:D?C{0,3}|C[MD])(?:L?X{0,3}|X[CL])(?:V?I{0,3}|I[XV])$/;
+    const token = /[MDLV]|C[MD]?|X[CL]?|I[XV]?/g;
+    const key = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1} as const;
+    return function deromanize(str: string): null | number {
+        str = str.toUpperCase();
+        let num = 0;
+        let m: null | RegExpExecArray;
+        if (!(str && validator.test(str)))
+            return null;
+        while (m = token.exec(str))
+            num += key[m[0] as keyof typeof key];
+        return num;
+    }
+})();
