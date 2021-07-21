@@ -184,7 +184,7 @@ export function diagonalIdx2startingCellCoord(idx: Idx<Geometry.DIAGONAL>, { wid
 
 export function idxMapToKeysArray<TAG extends Geometry>(map: null | undefined | IdxMap<TAG, any>): Idx<TAG>[] {
     if (null == map) return [];
-    return Object.keys(map).filter(k => null != map[k] && false != map[k]).map(Number).sort();
+    return Object.keys(map).filter(k => null != map[k] && false != map[k]).map(Number).sort((a, b) => a - b);
 }
 
 export function getMajorDiagonal(positive: boolean, grid: Grid): Idx<Geometry.CELL>[] {
