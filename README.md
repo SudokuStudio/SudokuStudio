@@ -16,7 +16,13 @@ If your `npm --version` is below 7.0.0 you can update it. You may need to use `s
 npm i -g npm@^7.0.0
 ```
 
-Clone the project, `cd` inside, then to install the dependencies run:
+Clone the project with submodules, and `cd` inside.
+```
+git clone --recurse-submodules https://github.com/SudokuStudio/SudokuStudio.git
+cd SudokuStudio
+```
+
+To install the dependencies run:
 ```
 npm ci
 ```

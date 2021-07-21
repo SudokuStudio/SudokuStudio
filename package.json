@@ -27,6 +27,7 @@
     "packages/board-utils",
     "packages/board",
     "packages/board-svg",
-    "packages/web"
+    "packages/web",
+    "packages\\solver-ilp"
   ]
 }

@@ -53,9 +53,7 @@ export default {
             preventAssignment: true,
             // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
             values: {
-                process: JSON.stringify({
-                    env: process.env,
-                }),
+                'process.env.SUDOKU_STUDIO_VERSION': process.env.SUDOKU_STUDIO_VERSION,
             },
         }),
         svelte({
