@@ -45,8 +45,9 @@ type FPuzzlesGridEntry = {
     value?: number,
     given?: boolean,
     centerPencilMarks?: number[],
-    cornerPencilMarks?: number[], // TODO CHECK IF THIS IS RIGHT.
+    cornerPencilMarks?: number[],
     givenPencilMarks?: number[],
+    highlight?: string,
     c?: string,
     region?: number,
 }
@@ -246,6 +247,22 @@ export function parseFpuzzles(b64: string): schema.Board {
                 }
                 console.log(elem);
                 elem.value[cellIdx] = gridEntry.value;
+            }
+
+            if (gridEntry.cornerPencilMarks) {
+                const elem = findOrAddElement<schema.PencilMarksElement>('corner', {});
+                const cellMarks = elem.value[cellIdx] = {} as Record<number, true>;
+                gridEntry.cornerPencilMarks.forEach(x => cellMarks[x] = true);
+            }
+            if (gridEntry.centerPencilMarks) {
+                const elem = findOrAddElement<schema.PencilMarksElement>('center', {});
+                const cellMarks = elem.value[cellIdx] = {} as Record<number, true>;
+                gridEntry.centerPencilMarks.forEach(x => cellMarks[x] = true);
+            }
+            if (gridEntry.highlight) {
+                const elem = findOrAddElement<schema.ColorsElement>('colors', {});
+                const cellMarks = elem.value[cellIdx] = {} as Record<string, true>;
+                cellMarks[gridEntry.highlight] = true;
             }
         }
     }
