@@ -213,10 +213,10 @@ export function getRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells:
 export type MakePathOptions = {
     shortenHead?: number,
     shortenTail?: number,
+    bezierRounding?: number,
 };
-export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, { shortenHead, shortenTail }: MakePathOptions = {}): string {
+export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, { shortenHead, shortenTail, bezierRounding }: MakePathOptions = {}): string {
     if (0 >= idxArr.length) return '';
-
 
     const points: [ number, number ][] = [];
 
@@ -246,6 +246,35 @@ export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, { shortenHead
 
         points[len - 1][0] += vec[0] * shortenTail;
         points[len - 1][1] += vec[1] * shortenTail;
+    }
+
+    if (bezierRounding) {
+        const out = [ 'M', points[0].join(',') ];
+        for (let i = 2; i < points.length; i++) {
+            const a = points[i - 2];
+            const b = points[i - 1];
+            const c = points[i];
+
+            const ba = [ a[0] - b[0], a[1] - b[1] ] as [ number, number ];
+            const bc = [ c[0] - b[0], c[1] - b[1] ] as [ number, number ];
+            normalize2d(ba);
+            normalize2d(bc);
+
+            ba[0] *= bezierRounding;
+            ba[1] *= bezierRounding;
+            bc[0] *= bezierRounding;
+            bc[1] *= bezierRounding;
+
+            ba[0] += b[0];
+            ba[1] += b[1];
+            bc[0] += b[0];
+            bc[1] += b[1];
+
+            out.push('L', ba.join(','), 'Q', b.join(','), bc.join(','));
+        }
+        out.push('L', points[points.length - 1].join(','));
+
+        return out.join(' ');
     }
 
     return 'M' + points.map(xy => xy.join(',')).join('L');

@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ArrayObj, Geometry, Idx } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
+    import type { MakePathOptions } from "@sudoku-studio/board-utils";
     import { makePath, arrayObj2array } from "@sudoku-studio/board-utils";
 
     export let id: string;
@@ -10,6 +11,12 @@
     export let stroke = '#c7855c';
     export let strokeWidth = 0.125;
 
+    export let pathOptions: MakePathOptions = {
+        shortenHead: 0.2,
+        shortenTail: 0.2,
+        bezierRounding: 0.3,
+    };
+
     type Item = { itemId: string, d: string };
     function each(items: null | Record<string, ArrayObj<Idx<Geometry.CELL>>>): Item[] {
         if (null == items) return [];
@@ -18,7 +25,7 @@
             const idxArr = arrayObj2array(idxArrObj);
             out.push({
                 itemId,
-                d: makePath(idxArr, grid, { shortenHead: 0.2, shortenTail: 0.2 }),
+                d: makePath(idxArr, grid, pathOptions),
             });
         }
         return out;

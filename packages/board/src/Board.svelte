@@ -98,6 +98,11 @@ import CloneRender from "./svelte/CloneRender.svelte";
         Object.assign(args.props, {
             stroke: '#8fcbcf',
             strokeWidth: 0.1,
+            pathOptions: {
+                shortenHead: 0,
+                shortenTail: 0,
+                bezierRounding: 0.2,
+            },
         });
         return new LineRender(args);
     }
@@ -106,6 +111,11 @@ import CloneRender from "./svelte/CloneRender.svelte";
         Object.assign(args.props, {
             stroke: '#cfd184',
             strokeWidth: 0.075,
+            pathOptions: {
+                shortenHead: 0.15,
+                shortenTail: 0.15,
+                bezierRounding: 0.15,
+            },
         });
         return new LineRender(args);
     }
