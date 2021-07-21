@@ -153,8 +153,8 @@ export function parseFpuzzles(b64: string): schema.Board {
     function addLineElement(type: schema.LineElement['type'], fLinesConstraint: FPuzzlesLines[]): void {
         const elem: schema.LineElement = findOrAddElement(type, {});
         for (const fLinesObj of fLinesConstraint) {
-            const cellArr: Idx<Geometry.CELL>[] = elem.value[makeUid()] = [];
             for (const fLine of fLinesObj.lines) {
+                const cellArr: Idx<Geometry.CELL>[] = elem.value[makeUid()] = [];
                 for (const rc of fLine) {
                     const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
                     cellArr.push(cellIdx);
@@ -266,15 +266,15 @@ export function parseFpuzzles(b64: string): schema.Board {
     if (fBoard.arrow) {
         const elem: schema.ArrowElement = findOrAddElement('arrow', {});
         for (const fArrowEntry of fBoard.arrow) {
-            const arrowItem = elem.value[makeUid()] = {
-                bulb: [] as Idx<Geometry.CELL>[],
-                body: [] as Idx<Geometry.CELL>[],
-            };
-            for (const rc of fArrowEntry.cells) {
-                const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
-                arrowItem.bulb.push(cellIdx);
-            }
             for (const fLine of fArrowEntry.lines || []) {
+                const arrowItem = elem.value[makeUid()] = {
+                    bulb: [] as Idx<Geometry.CELL>[],
+                    body: [] as Idx<Geometry.CELL>[],
+                };
+                for (const rc of fArrowEntry.cells) {
+                    const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
+                    arrowItem.bulb.push(cellIdx);
+                }
                 for (const rc of fLine) {
                     const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
                     arrowItem.body.push(cellIdx);
