@@ -4,15 +4,19 @@ import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import copy from 'rollup-plugin-copy';
 
+const bannerFix = 'self.document = self.document || {};';
+
 export default {
     input: 'src/solver-ilp.ts',
     output: [
-        // {
-        //     sourcemap: true,
-        //     format: 'es',
-        //     dir: 'lib',
-        // },
         {
+            banner: bannerFix,
+            sourcemap: true,
+            format: 'es',
+            dir: 'lib',
+        },
+        {
+            banner: bannerFix,
             sourcemap: true,
             format: 'iife',
             name: 'solverIlp',
@@ -35,11 +39,11 @@ export default {
             preventAssignment: true,
             // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
             values: {
-                // "Module['ENVIRONMENT']": false,
-                ENVIRONMENT_IS_WEB: true,
-                ENVIRONMENT_IS_WORKER: false,
-                ENVIRONMENT_IS_NODE: false,
-                ENVIRONMENT_IS_SHELL: false,
+                ENVIRONMENT_IS_WEB: 'false',
+                ENVIRONMENT_IS_WORKER: 'true',
+                ENVIRONMENT_IS_NODE: 'false',
+                ENVIRONMENT_IS_SHELL: 'false',
+                'import.meta.url': 'self.location.href',
             },
         }),
 

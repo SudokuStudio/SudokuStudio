@@ -1,7 +1,8 @@
 {
   "name": "@sudoku-studio/solver-ilp",
   "version": "0.0.0",
-  "main": "index.js",
+  "main": "lib/solver-ilp.js",
+  "types": "lib/solver-ilp.d.ts",
   "scripts": {
     "clean": "rm -r lib",
     "build": "rollup -c"

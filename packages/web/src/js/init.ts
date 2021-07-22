@@ -6,6 +6,11 @@ import { MARK_TYPES, userState } from "./user";
 import { parseFpuzzles } from "./f-puzzles";
 import { createNewBoard } from "./elements";
 
+// TODO
+import { IlpSolver } from "./solver/ilpSolver";
+(window as any).IlpSolver = IlpSolver;
+// TODO
+
 /** Load tools and pencil marks for the user. */
 function setupUserState(board: schema.Board) {
     for (const [ id, { type }] of Object.entries(board.elements)) {

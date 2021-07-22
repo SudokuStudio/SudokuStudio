@@ -1,5 +1,5 @@
 import * as sat from './cryptominisat';
-// import * as pblib from './pblib';
+import { loadPbLib } from './pblib';
 
 export const N = 9;
 
@@ -18,11 +18,9 @@ export function* product(...args: number[]): Generator<number[], void, void> {
 }
 
 export async function findSudokuSolution() {
-    console.log('a');
-    const { solve } = await sat.load;
-    console.log('b');
+    await sat.load;
 
-    solve(`
+    sat.solve(`
 c ---------------------------
 c This is a very simply example CNF.
 c It encodes that:
@@ -40,11 +38,12 @@ c
 -1 2 0
 -1 -2 0
 `);
-    console.log('hello world');
 
-    // const f: number[][] = [];
-    // pblib.encodeBoth([ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], 23, 23, f, 100);
-    // console.log(f);
+    const pblib = await loadPbLib;
+
+    console.log(pblib);
+
+    const f: number[][] = [];
+    pblib.encodeBoth([ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], 23, 23, f, 100);
+    console.log(f);
 }
-
-findSudokuSolution();

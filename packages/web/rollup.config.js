@@ -10,6 +10,8 @@ import typescript from '@rollup/plugin-typescript';
 // import css from 'rollup-plugin-css-only';
 import scss from 'rollup-plugin-scss';
 import replace from '@rollup/plugin-replace';
+import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+import copy from 'rollup-plugin-copy';
 
 import inlineSvg from './inlineSvg';
 
@@ -49,6 +51,17 @@ export default {
         file: 'public/build/bundle.js'
     },
     plugins: [
+        copy({
+            targets: [
+                {
+                    src: [
+                        '../solver-ilp/lib/cryptominisat5_simple.wasm',
+                        '../solver-ilp/lib/pblib.wasm',
+                    ],
+                    dest: 'public/build',
+                },
+            ],
+        }),
         replace({
             preventAssignment: true,
             // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
@@ -85,9 +98,16 @@ export default {
         // https://github.com/rollup/plugins/tree/master/packages/commonjs
         resolve({
             browser: true,
-            dedupe: ['svelte']
+            dedupe: ['svelte'],
+            extension: [ '.js', '.ts' ]
         }),
         commonjs(),
+        webWorkerLoader({
+            targetPlatform: 'browser',
+            inline: false,
+            preserveFileNames: true,
+            loadPath: 'build',
+        }),
         typescript({
             sourceMap: true, //!production,
             inlineSources: true, //!production
