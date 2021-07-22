@@ -27,7 +27,7 @@ export default {
             targets: [
                 {
                     src: [
-                        'external/cryptominisat_web/cryptominisat5_simple.wasm',
+                        'external/cryptominisat_web/lib/cryptominisat5_simple.wasm',
                         'external/pblib-wasm/dist/pblib.wasm',
                     ],
                     dest: 'lib',
