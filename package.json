@@ -28,6 +28,6 @@
     "packages/board",
     "packages/board-svg",
     "packages/web",
-    "packages\\solver-ilp"
+    "packages/solver-ilp"
   ]
 }

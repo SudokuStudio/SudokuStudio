@@ -8,7 +8,7 @@
       "ES2017"
     ],
     "outDir": "lib",
-    "module": "CommonJS",
+    "module": "esnext",
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
