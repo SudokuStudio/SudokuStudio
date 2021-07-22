@@ -72,7 +72,7 @@ export default {
             preventAssignment: true,
             // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
             values: {
-                'process.env.SUDOKU_STUDIO_VERSION': process.env.SUDOKU_STUDIO_VERSION,
+                'process.env.SUDOKU_STUDIO_VERSION': JSON.stringify(process.env.SUDOKU_STUDIO_VERSION),
 
                 // Emscripten glue cleanup.
                 ENVIRONMENT_IS_WEB: 'false',
