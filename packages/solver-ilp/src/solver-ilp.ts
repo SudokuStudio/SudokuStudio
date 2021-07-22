@@ -1,4 +1,4 @@
-import * as sat from './cryptominisat';
+import { loadCms } from './cryptominisat';
 import { loadPbLib } from './pblib';
 
 export const N = 9;
@@ -18,7 +18,7 @@ export function* product(...args: number[]): Generator<number[], void, void> {
 }
 
 export async function findSudokuSolution() {
-    await sat.load;
+    const sat = await loadCms;
 
     sat.solve(`
 c ---------------------------
