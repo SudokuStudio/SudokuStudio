@@ -51,12 +51,18 @@ export default {
         file: 'public/build/bundle.js'
     },
     plugins: [
+        webWorkerLoader({
+            targetPlatform: 'browser',
+            inline: false,
+            preserveFileNames: true,
+            loadPath: 'build',
+        }),
         copy({
             targets: [
                 {
                     src: [
                         '../solver-ilp/lib/cryptominisat5_simple.wasm',
-                        '../solver-ilp/lib/external/pblib.wasm',
+                        '../solver-ilp/lib/pblib.wasm',
                     ],
                     dest: 'public/build',
                 },
@@ -92,6 +98,9 @@ export default {
             functions: {
                 'inline-svg($filename)': inlineSvg
             },
+            output: 'public/build/bundle.css',
+            sourceMap: true,
+            watch: 'src/css',
             includePaths: [ NODE_MODULES ],
         }),
         // // we'll extract any component CSS out into
@@ -109,12 +118,6 @@ export default {
             extension: [ '.js', '.ts' ]
         }),
         commonjs(),
-        webWorkerLoader({
-            targetPlatform: 'browser',
-            inline: false,
-            preserveFileNames: true,
-            loadPath: 'build',
-        }),
         typescript({
             sourceMap: true, //!production,
             inlineSources: true, //!production
