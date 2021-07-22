@@ -1,7 +1,6 @@
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
-import replace from '@rollup/plugin-replace';
 import copy from 'rollup-plugin-copy';
 
 const bannerFix = 'self.document = self.document || {};';
@@ -34,17 +33,6 @@ export default {
                     dest: 'lib',
                 },
             ],
-        }),
-        replace({
-            preventAssignment: true,
-            // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
-            values: {
-                ENVIRONMENT_IS_WEB: 'false',
-                ENVIRONMENT_IS_WORKER: 'true',
-                ENVIRONMENT_IS_NODE: 'false',
-                ENVIRONMENT_IS_SHELL: 'false',
-                'import.meta.url': 'self.location.href',
-            },
         }),
 
         // If you have external dependencies installed from

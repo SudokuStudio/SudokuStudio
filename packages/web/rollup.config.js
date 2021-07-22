@@ -56,7 +56,7 @@ export default {
                 {
                     src: [
                         '../solver-ilp/lib/cryptominisat5_simple.wasm',
-                        '../solver-ilp/lib/pblib.wasm',
+                        '../solver-ilp/lib/external/pblib.wasm',
                     ],
                     dest: 'public/build',
                 },
@@ -67,6 +67,13 @@ export default {
             // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
             values: {
                 'process.env.SUDOKU_STUDIO_VERSION': process.env.SUDOKU_STUDIO_VERSION,
+
+                // Emscripten glue cleanup.
+                ENVIRONMENT_IS_WEB: 'false',
+                ENVIRONMENT_IS_WORKER: 'true',
+                ENVIRONMENT_IS_NODE: 'false',
+                ENVIRONMENT_IS_SHELL: 'false',
+                'import.meta.url': 'self.location.href',
             },
         }),
         svelte({
