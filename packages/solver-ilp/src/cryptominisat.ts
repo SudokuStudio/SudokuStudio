@@ -1,16 +1,9 @@
 import CryptoMiniSatLoader from '../external/cryptominisat_web/cryptominisat5_simple';
 
-
 export type Module = {
-    solve: (cnf: string) => number,
-    resume: () => number,
+    start_solve: (cnf: string) => number,
+    continue_solve: () => number,
+    get_num_conflicts: () => number,
 };
 
-
-export const loadCms: Promise<Module> = CryptoMiniSatLoader()
-    .then((Module: any) => {
-        return {
-            solve: Module.cwrap('cstart_solve', 'number', ['string']),
-            resume: Module.cwrap('ccontinue_solve', 'number'),
-        };
-    });
+export const loadCms: Promise<Module> = CryptoMiniSatLoader();

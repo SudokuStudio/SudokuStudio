@@ -20,7 +20,9 @@ export function* product(...args: number[]): Generator<number[], void, void> {
 export async function findSudokuSolution() {
     const sat = await loadCms;
 
-    sat.solve(`
+    console.log({ sat });
+
+    sat.start_solve(`
 c ---------------------------
 c This is a very simply example CNF.
 c It encodes that:
