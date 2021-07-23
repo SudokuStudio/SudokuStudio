@@ -183,12 +183,11 @@ export const ELEMENT_HANDLERS = {
 
     givens(numVars: number, element: schema.DigitElement, context: Context): number {
         for (const [ cellIdx, value1 ] of Object.entries(element.value || {})) {
-            const value = value1! - 1;
+            const v = value1! - 1;
             const [ x, y ] = cellIdx2cellCoord(+cellIdx, context.grid);
-            for (const [ v ] of product(context.size)) {
-                const literal = context.getLiteral(y, x, v);
-                context.clauses.push([ (value === v) ? literal : -literal ]);
-            }
+
+            const literal = context.getLiteral(y, x, v);
+            context.clauses.push([ literal ]);
         }
         return numVars;
     },
