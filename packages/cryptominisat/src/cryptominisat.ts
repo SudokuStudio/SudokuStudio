@@ -1,12 +1,16 @@
 import loadWasm from './cryptominisat5_simple';
 
-type c_Lit = number; // u32
-type c_lbool = number; // u8
+export type c_Lit = number; // u32
+export const enum lbool { // u8
+    TRUE = 0,
+    FALSE = 1,
+    UNDEF = 2,
+}
 
-type slice_Lit = Uint32Array;
-type slice_lbool = Uint8Array;
+export type slice_Lit = Uint32Array;
+export type slice_lbool = Uint8Array;
 
-type SATSolverPtr = number;
+export type SATSolverPtr = number;
 
 type RawModule = {
     HEAPU8: Uint8Array,
@@ -17,11 +21,12 @@ type RawModule = {
     _malloc(bytes: number): number,
     _free(offset: number): void,
 };
+export type Module = RawModule & ReturnType<typeof bind>;
 
-export default function load(): Promise<{ Module: RawModule & ReturnType<typeof bind> }> {
-    return loadWasm().then((Module: RawModule) => {
-        Object.assign(Module, bind(Module));
-        return { Module };
+export function load(): Promise<Module> {
+    return loadWasm().then((rawModule: RawModule) => {
+        const module: Module = Object.assign(rawModule, bind(rawModule));
+        return module;
     });
 }
 
@@ -59,10 +64,10 @@ function bind(Module: RawModule) {
         cmsat_new_vars(self: SATSolverPtr, n: number): number {
             return Module.ccall('cmsat_new_vars', 'number', [ 'number', 'number' ], [ self, n ]);
         },
-        cmsat_solve(self: SATSolverPtr): c_lbool {
+        cmsat_solve(self: SATSolverPtr): lbool {
             return Module.ccall('cmsat_solve', 'number', [ 'number' ], [ self ]);
         },
-        cmsat_solve_with_assumptions(self: SATSolverPtr, assumptions: c_Lit[]): c_lbool {
+        cmsat_solve_with_assumptions(self: SATSolverPtr, assumptions: c_Lit[]): lbool {
             const ptr = Module._malloc(assumptions.length << 2);
             try {
                 Module.HEAPU32.set(assumptions, ptr >> 2);
@@ -132,7 +137,7 @@ function bind(Module: RawModule) {
         cmsat_set_yes_comphandler(self: SATSolverPtr): void {
             return Module.ccall('cmsat_set_yes_comphandler', null, [ 'number' ], [ self ]);
         },
-        cmsat_simplify(self: SATSolverPtr, assumptions: c_Lit[]): c_lbool {
+        cmsat_simplify(self: SATSolverPtr, assumptions: c_Lit[]): lbool {
             const ptr = Module._malloc(assumptions.length << 2);
             try {
                 Module.HEAPU32.set(assumptions, ptr >> 2);
