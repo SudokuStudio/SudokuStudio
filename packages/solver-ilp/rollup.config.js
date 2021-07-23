@@ -7,21 +7,12 @@ const bannerFix = 'self.document = self.document || {};';
 
 export default {
     input: 'src/solver-ilp.ts',
-    output: [
-        {
-            banner: bannerFix,
-            sourcemap: true,
-            format: 'es',
-            dir: 'lib',
-        },
-        {
-            banner: bannerFix,
-            sourcemap: true,
-            format: 'iife',
-            name: 'solverIlp',
-            file: 'lib/solver-ilp.iife.js',
-        }
-    ],
+    output: {
+        banner: bannerFix,
+        sourcemap: true,
+        format: 'es',
+        dir: 'lib',
+    },
     plugins: [
         copy({
             targets: [

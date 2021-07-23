@@ -201,3 +201,9 @@ export declare namespace schema {
         value: unknown,
     }
 }
+
+export interface Solver {
+    canAttempt(board: schema.Board): boolean;
+    solve(board: schema.Board, maxSolutions: number,
+        onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): (cancellationReason: string) => void;
+}

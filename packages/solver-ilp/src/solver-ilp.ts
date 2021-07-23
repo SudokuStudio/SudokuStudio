@@ -1,11 +1,13 @@
-import { load as loadCryptoMiniSat } from 'cryptominisat';
+import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
+import { cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils';
+import { Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
 
-export const N = 9;
+const asyncYield = () => new Promise<void>(resolve => setTimeout(resolve, 0));
 
-export function* product(...args: number[]): Generator<number[], void, void> {
+function* product(...args: number[]): Generator<number[], void, void> {
     if (0 === args.length) {
         yield [];
     }
@@ -19,157 +21,210 @@ export function* product(...args: number[]): Generator<number[], void, void> {
     }
 }
 
-export async function findSudokuSolution() {
+/**
+ * CryptoMiniSat uses unsigned u32s with the lowest bit representing negation.
+ * This converts from standard negative/positive literal representation to CMS's representation.
+ * @param literal negative/positive literal.
+ * @returns CMS literal.
+ */
+function literalToCms(literal: number): number {
+    return 2 * (Math.abs(literal) - 1) + (+(literal < 0));
+}
+
+export type CancellationToken = {
+    cancelled?: true
+};
+
+export function canSolve(board: schema.Board): boolean {
+    if (board.grid.width !== board.grid.height) {
+        return false;
+    }
+
+    for (const { type } of Object.values(board.elements)) {
+        if (!(type in ELEMENT_HANDLERS)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+export async function solve(board: schema.Board, maxSolutions: number,
+    onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void,
+    cancellationToken: CancellationToken = {}): Promise<boolean>
+{
+    const pbLib = await loadPbLib;
+
+    const size = board.grid.width;
+    const context: Context = {
+        clauses: [],
+        size,
+        grid: board.grid,
+        getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
+        pbLib,
+    }
+
+    const baseVars = Math.pow(context.size, 3);
+    let numVars = 1 + baseVars;
+
+    for (const element of Object.values(board.elements)) {
+        if (cancellationToken.cancelled) return false;
+
+        const handler: null | ((numVars: number, element: schema.Element, context: Context) => number) =
+            ELEMENT_HANDLERS[element.type as keyof typeof ELEMENT_HANDLERS] as any;
+        if (undefined === handler) console.warn(`Ignoring constraint: ${element.type}`);
+        if (null != handler) {
+            numVars = handler(numVars, element, context);
+        }
+    }
+
+    // Create solver instance.
     const sat = await cryptoMiniSatPromise;
-    const pblib = await loadPbLib;
+    const satSolverPtr = sat.cmsat_new();
+    try {
+        console.log(`Running SAT Solver: ${numVars} vars (${baseVars} base), ${context.clauses.length} clauses.`);
 
-    console.log({ sat });
+        sat.cmsat_set_verbosity(satSolverPtr, 1);
+        sat.cmsat_new_vars(satSolverPtr, numVars);
 
-    const START = Date.now();
+        // Add clauses.
+        for (const clause of context.clauses) {
+            sat.cmsat_add_clause(satSolverPtr, clause.map(literalToCms));
+        }
+        context.clauses.length = 0; // Let the giant clause list be GC'd.
 
+        // TODO? Call simplify.
+        // sat.cmsat_set_max_time(satSolverPtr, 0.1);
+        // sat.cmsat_simplify(satSolverPtr);
 
-    function getVar(y: number, x: number, v: number): number {
-        return 1 + 81 * y + 9 * x + v;
+        let status;
+        for (let _i = 0; _i < maxSolutions; _i++) {
+            do {
+                await asyncYield();
+                if (cancellationToken.cancelled) return false;
+
+                sat.cmsat_set_max_time(satSolverPtr, 0.1);
+                status = sat.cmsat_solve(satSolverPtr);
+            } while (lbool.UNDEF === status);
+
+            if (lbool.FALSE === status)
+                break;
+
+            // SOLVED!
+            const model = sat.cmsat_get_model(satSolverPtr);
+            const solution: IdxMap<Geometry.CELL, number> = {};
+            const excludeSolutionClause: number[] = [];
+            for (const [ y, x, v ] of product(size, size, size)) {
+                const literal = context.getLiteral(y, x, v);
+                const litVal = model[literal - 1];
+                if (lbool.TRUE === litVal) {
+                    const cellIdx = cellCoord2CellIdx([ x, y ], context.grid);
+                    if (undefined !== solution[cellIdx]) throw 'INVALID';
+
+                    excludeSolutionClause.push(-literal);
+                    solution[cellIdx] = 1 + v;
+                }
+            }
+            onSolutionFoundOrComplete(solution);
+
+            sat.cmsat_add_clause(satSolverPtr, excludeSolutionClause);
+        }
+
+        // Complete.
+        onSolutionFoundOrComplete(null);
+        return true;
     }
-    // function lit(x: number, negate: boolean): number {
-    //     return ((x - 1) << 1) + (+negate);
-    // }
-    function cmsLit(x: number): number {
-        return ((Math.abs(x) - 1) << 1) + (+(x < 0));
+    finally {
+        sat.cmsat_free(satSolverPtr);
     }
+}
 
-    const clauses: number[][] = [];
-    let n = 1 + 9 * 9 * 9;
+type Context = {
+    clauses: number[][],
+    size: number,
+    grid: Grid,
+    getLiteral: (y: number, x: number, v: number) => number,
+    pbLib: (typeof loadPbLib) extends Promise<infer T> ? T : never,
+};
 
-    for (let a = 0; a < 9; a++) {
-        for (let b = 0; b < 9; b++) {
+export const ELEMENT_HANDLERS = {
+    grid(numVars: number, _element: schema.GridElement, context: Context): number {
+        const ones = Array(context.size).fill(1);
+        for (const [ a, b ] of product(context.size, context.size)) {
             const cel: number[] = [];
             const row: number[] = [];
             const col: number[] = [];
+            for (const [ c ] of product(context.size)) {
+                cel.push(context.getLiteral(a, b, c));
+                row.push(context.getLiteral(a, c, b));
+                col.push(context.getLiteral(c, a, b));
+            }
+            numVars = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, numVars);
+            numVars = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, numVars);
+            numVars = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, numVars);
+        }
+
+        return numVars;
+    },
+
+    box(numVars: number, _element: schema.BoxElement, context: Context): number {
+        // TODO: ELEMENT IS UNUSED.
+        const ones = Array(context.size).fill(1);
+        for (const [ val, bx ] of product(context.size, context.size)) {
             const box: number[] = [];
-
-            for (let c = 0; c < 9; c++) {
-                cel.push(getVar(a, b, c));
-                row.push(getVar(a, c, b));
-                col.push(getVar(c, a, b));
-                box.push(getVar(Math.floor(b / 3) * 3 + Math.floor(c / 3), (b % 3) * 3 + (c % 3), a));
+            for (const [ i ] of product(context.size)) {
+                box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(i / 3), (bx % 3) * 3 + (i % 3), val));
             }
-
-            const ones = Array(9).fill(1);
-            n = pblib.encodeBoth(ones, cel, 1, 1, clauses, n);
-            n = pblib.encodeBoth(ones, row, 1, 1, clauses, n);
-            n = pblib.encodeBoth(ones, col, 1, 1, clauses, n);
-            n = pblib.encodeBoth(ones, box, 1, 1, clauses, n);
-        }
-    }
-
-    const littleKillers = [
-        [ 51, [ 2, 0 ], [  1,  1 ] ],
-        [ 15, [ 6, 0 ], [  1,  1 ] ],
-        [ 40, [ 0, 4 ], [  1, -1 ] ],
-        [ 43, [ 0, 6 ], [  1, -1 ] ],
-        [ 13, [ 8, 2 ], [ -1,  1 ] ],
-        [ 25, [ 8, 4 ], [ -1,  1 ] ],
-        [ 28, [ 3, 8 ], [ -1, -1 ] ],
-        [ 10, [ 4, 8 ], [ -1, -1 ] ],
-    ] as const;
-
-    for (let [ sum, [ y, x ], [ dy, dx ] ] of littleKillers) {
-        const vars: number[] = [];
-        const weights: number[] = [];
-
-        while (0 <= y && y < 9 && 0 <= x && x < 9) {
-            for (let v = 0; v < 9; v++) {
-                vars.push(getVar(y, x, v));
-                weights.push(1 + v);
-            }
-            y += dy;
-            x += dx;
+            numVars = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numVars);
         }
 
-        n = pblib.encodeBoth(weights, vars, sum, sum, clauses, n);
-    }
+        return numVars;
+    },
 
-    console.log(`${n} vars, ${clauses.length} clauses.`);
-
-    const satSolverPtr = sat.cmsat_new();
-    sat.cmsat_set_verbosity(satSolverPtr, 1);
-    sat.cmsat_new_vars(satSolverPtr, n);
-
-    for (const clause of clauses) {
-        sat.cmsat_add_clause(satSolverPtr, clause.map(cmsLit));
-    }
-
-    sat.cmsat_simplify(satSolverPtr, [])
-
-    let status;
-    do {
-        await new Promise<void>(resolve => setTimeout(resolve, 0));
-
-        sat.cmsat_set_max_time(satSolverPtr, 0.1);
-        status = sat.cmsat_solve(satSolverPtr);
-
-        console.log(status, Date.now());
-    } while (2 === status);
-
-    if (0 === status) {
-        const model = sat.cmsat_get_model(satSolverPtr);
-        console.log({ model });
-
-        const str: string[] = [];
-        for (let y = 0; y < 9; y++) {
-            for (let x = 0; x < 9; x++) {
-                for (let v = 0; v < 9; v++) {
-                    const val = model[getVar(y, x, v) - 1];
-                    if (0 === val /* TRUE */) {
-                        str.push(`${1 + v}`);
-                    }
-                }
+    givens(numVars: number, element: schema.DigitElement, context: Context): number {
+        for (const [ cellIdx, value1 ] of Object.entries(element.value || {})) {
+            const value = value1! - 1;
+            const [ x, y ] = cellIdx2cellCoord(+cellIdx, context.grid);
+            for (const [ v ] of product(context.size)) {
+                const literal = context.getLiteral(y, x, v);
+                context.clauses.push([ (value === v) ? literal : -literal ]);
             }
-            str.push('\n');
         }
-        console.log(str.join(''));
-    }
-    console.log('TIME', Date.now() - START);
+        return numVars;
+    },
 
+    filled(numVars: number, element: schema.DigitElement, context: Context): number {
+        // Treat filled same as givens (TODO? Make configurable).
+        return ELEMENT_HANDLERS.givens(numVars, element, context);
+    },
 
-    // {
-    //     const pblib = await loadPbLib;
+    corner: null,
+    center: null,
 
-    //     console.log(pblib);
+} as const;
 
-    //     const f: number[][] = [];
-    //     pblib.encodeBoth([ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], 23, 23, f, 100);
-    //     console.log(f);
-    // }
-}
+//     const littleKillers = [
+//         [ 51, [ 2, 0 ], [  1,  1 ] ],
+//         [ 15, [ 6, 0 ], [  1,  1 ] ],
+//         [ 40, [ 0, 4 ], [  1, -1 ] ],
+//         [ 43, [ 0, 6 ], [  1, -1 ] ],
+//         [ 13, [ 8, 2 ], [ -1,  1 ] ],
+//         [ 25, [ 8, 4 ], [ -1,  1 ] ],
+//         [ 28, [ 3, 8 ], [ -1, -1 ] ],
+//         [ 10, [ 4, 8 ], [ -1, -1 ] ],
+//     ] as const;
 
-    // sat.cmsat_new_vars(satSolverPtr, 2);
-    // const nvars = sat.cmsat_nvars(satSolverPtr);
-    // console.log({ nvars });
+//     for (let [ sum, [ y, x ], [ dy, dx ] ] of littleKillers) {
+//         const vars: number[] = [];
+//         const weights: number[] = [];
 
-    // sat.cmsat_add_clause(satSolverPtr, [ lit(0, false), lit(1,  true) ]);
-    // sat.cmsat_add_clause(satSolverPtr, [ lit(0,  true), lit(1, false) ]);
+//         while (0 <= y && y < 9 && 0 <= x && x < 9) {
+//             for (let v = 0; v < 9; v++) {
+//                 vars.push(getVar(y, x, v));
+//                 weights.push(1 + v);
+//             }
+//             y += dy;
+//             x += dx;
+//         }
 
-    // sat.cmsat_add_clause(satSolverPtr, [ lit(0, false), lit(1, false) ]);
-    // sat.cmsat_add_clause(satSolverPtr, [ lit(0, false), lit(1,  true) ]);
-    // sat.cmsat_add_clause(satSolverPtr, [ lit(0,  true), lit(1, false) ]);
-    // sat.cmsat_add_clause(satSolverPtr, [ lit(0,  true), lit(1,  true) ]);
-    // /*
-    //     c ---------------------------
-    //     c This is a very simply example CNF.
-    //     c It encodes that:
-    //     c    v1 OR  v2 = True
-    //     c    v1 OR -v2 = True
-    //     c   -v1 OR  v2 = True
-    //     c   -v1 OR -v2 = True
-    //     c
-    //     c  Which cannot be satisfied. The solution should therefore be UNSATISFIABLE
-    //     c  Note that this problem is solved with Strongly Connected Component analysis (scc)
-    //     c ---------------------------
-    //     c
-    //     1 2 0
-    //     1 -2 0
-    //     -1 2 0
-    //     -1 -2 0
-    // */
+//         n = pblib.encodeBoth(weights, vars, sum, sum, clauses, n);
+//     }
