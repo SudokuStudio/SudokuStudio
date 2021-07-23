@@ -6,7 +6,7 @@ import copy from 'rollup-plugin-copy';
 const bannerFix = 'self.document = self.document || {};';
 
 export default {
-    input: 'src/solver-ilp.ts',
+    input: 'src/solver-sat.ts',
     output: {
         banner: bannerFix,
         sourcemap: true,

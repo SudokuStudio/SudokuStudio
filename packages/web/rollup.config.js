@@ -61,8 +61,8 @@ export default {
             targets: [
                 {
                     src: [
-                        '../solver-ilp/lib/cryptominisat5_simple.wasm',
-                        '../solver-ilp/lib/pblib.wasm',
+                        '../solver-sat/lib/cryptominisat5_simple.wasm',
+                        '../solver-sat/lib/pblib.wasm',
                     ],
                     dest: 'public/build',
                 },

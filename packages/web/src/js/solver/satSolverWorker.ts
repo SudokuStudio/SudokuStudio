@@ -1,6 +1,6 @@
 import * as Comlink from "comlink";
-import type { CancellationToken } from "@sudoku-studio/solver-ilp";
-import { cantAttempt, solve } from "@sudoku-studio/solver-ilp";
+import type { CancellationToken } from "@sudoku-studio/solver-sat";
+import { cantAttempt, solve } from "@sudoku-studio/solver-sat";
 import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
 import { makeUid } from "../util";
 

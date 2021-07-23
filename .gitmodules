@@ -1,6 +1,4 @@
-[submodule "packages/solver-ilp/external/pblib-wasm"]
-	path = packages/solver-ilp/external/pblib-wasm
+[submodule "packages/solver-sat/external/pblib-wasm"]
+	path = packages/solver-sat/external/pblib-wasm
 	url = https://github.com/MingweiSamuel/pblib-wasm.git
-# [submodule "packages/solver-ilp/external/cryptominisat_web"]
-# 	path = packages/solver-ilp/external/cryptominisat_web
-# 	url = https://github.com/msoos/cryptominisat_web.git
+

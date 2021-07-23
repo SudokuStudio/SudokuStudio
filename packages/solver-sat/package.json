@@ -1,8 +1,8 @@
 {
-  "name": "@sudoku-studio/solver-ilp",
+  "name": "@sudoku-studio/solver-sat",
   "version": "0.0.0",
-  "main": "lib/solver-ilp.js",
-  "types": "lib/solver-ilp.d.ts",
+  "main": "lib/solver-sat.js",
+  "types": "lib/solver-sat.d.ts",
   "scripts": {
     "clean": "rm -r lib",
     "build": "rollup -c"
