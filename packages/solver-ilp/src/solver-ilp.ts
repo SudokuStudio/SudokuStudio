@@ -1,4 +1,4 @@
-import loadCryptoMiniSat from '../external/cryptominisat_web';
+import loadCryptoMiniSat from 'cryptominisat';
 import { loadPbLib } from './pblib';
 
 const cryptoMiniSat = loadCryptoMiniSat();

@@ -1,7 +1,0 @@
-{
-  "name": "cryptominisat",
-  "version": "0.0.0",
-  "description": "",
-  "main": "lib/cryptominisat.js",
-  "types": "lib/cryptominisat.d.ts"
-}

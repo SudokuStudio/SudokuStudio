@@ -27,7 +27,7 @@ export default {
             targets: [
                 {
                     src: [
-                        'external/cryptominisat_web/lib/cryptominisat5_simple.wasm',
+                        '../cryptominisat/lib/cryptominisat5_simple.wasm',
                         'external/pblib-wasm/dist/pblib.wasm',
                     ],
                     dest: 'lib',
@@ -40,9 +40,7 @@ export default {
         // some cases you'll need additional configuration -
         // consult the documentation for details:
         // https://github.com/rollup/plugins/tree/master/packages/commonjs
-        resolve({
-            browser: true,
-        }),
+        resolve(),
         commonjs(),
         typescript({ tsconfig: './tsconfig.json' }),
     ],

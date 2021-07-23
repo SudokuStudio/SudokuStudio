@@ -1,0 +1,17 @@
+{
+  "name": "cryptominisat",
+  "version": "0.0.0",
+  "description": "",
+  "main": "lib/cryptominisat.js",
+  "types": "lib/cryptominisat.d.ts",
+  "scripts": {
+    "clean": "rm -r lib",
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.3",
+    "rollup": "^2.53.3",
+    "rollup-plugin-copy": "^3.4.0",
+    "typescript": "^4.3.5"
+  }
+}
