@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
-import { cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils';
+import { cellCoord2CellIdx, cellIdx2cellCoord, diagonalIdx2diagonalCellCoords } from '@sudoku-studio/board-utils';
 import { Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
@@ -147,6 +147,10 @@ type Context = {
 };
 
 export const ELEMENT_HANDLERS = {
+    corner: null,
+    center: null,
+    colors: null,
+
     grid(numVars: number, _element: schema.GridElement, context: Context): number {
         const ones = Array(context.size).fill(1);
         for (const [ a, b ] of product(context.size, context.size)) {
@@ -197,10 +201,22 @@ export const ELEMENT_HANDLERS = {
         return ELEMENT_HANDLERS.givens(numVars, element, context);
     },
 
-    corner: null,
-    center: null,
-    colors: null,
+    littleKiller(numVars: number, element: schema.LittleKillerElement, context: Context): number {
+        for (const [ diagIdx, sum ] of Object.entries(element.value || {})) {
+            if ('number' !== typeof sum) continue;
 
+            const lits = [];
+            const weights = [];
+            for (const [ x, y ] of diagonalIdx2diagonalCellCoords(+diagIdx, context.grid)) {
+                for (const [ v ] of product(context.size)) {
+                    lits.push(context.getLiteral(y, x, v));
+                    weights.push(1 + v);
+                }
+            }
+            numVars = context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numVars);
+        }
+        return numVars;
+    },
 } as const;
 
 //     const littleKillers = [

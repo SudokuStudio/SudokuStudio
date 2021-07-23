@@ -194,6 +194,20 @@ export function diagonalIdx2startingCellCoord(idx: Idx<Geometry.DIAGONAL>, { wid
         return [ w * (width - 1), height - y - 1 - b ];
     }
 }
+export function diagonalIdx2diagonalCellCoords(idx: Idx<Geometry.DIAGONAL>, grid: Grid): Coord<Geometry.CELL>[] {
+    let [ x, y ] = diagonalIdx2startingCellCoord(idx, grid);
+    const [ dx, dy ] = diagonalIdx2dirVec(idx);
+
+    const out: Coord<Geometry.CELL>[] = [];
+    do {
+        out.push([ x, y ]);
+        x += dx;
+        y += dy;
+    } while (0 <= x && x < grid.width && 0 <= y && y < grid.height);
+    return out;
+}
+
+
 
 export function idxMapToKeysArray<TAG extends Geometry>(map: null | undefined | IdxMap<TAG, any>): Idx<TAG>[] {
     if (null == map) return [];

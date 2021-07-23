@@ -10,7 +10,7 @@ import { IlpSolver } from "./solver/satSolver";
 import { solutionToString } from "@sudoku-studio/board-utils";
 
 // TODO SOMETHING PROPER
-(window as any).solve = async function(maxSolutions = 10, maxTime = 10 * 1000): Promise<() => void> {
+(window as any).solve = async function(maxSolutions = 10, maxTimeMillis = 10 * 1000): Promise<() => void> {
     const START = Date.now();
 
     const board = boardState.get<schema.Board>()!;
@@ -19,7 +19,7 @@ import { solutionToString } from "@sudoku-studio/board-utils";
         throw Error('Solver cannot attempt this puzzle: ' + canAttempt);
     }
 
-    console.log(`SOLVING: maxSolutions=${maxSolutions} maxTime=${maxTime}`);
+    console.log(`SOLVING: maxSolutions=${maxSolutions} maxTimeMillis=${maxTimeMillis}`);
 
     let count = 0;
     let timeout: number;
@@ -38,7 +38,7 @@ import { solutionToString } from "@sudoku-studio/board-utils";
         if (await cancel()) {
             console.log(`TIMED OUT. Found ${count} solutions in ${Date.now() - START} ms.`);
         }
-    }, maxTime);
+    }, maxTimeMillis);
 
     return cancel;
 }
