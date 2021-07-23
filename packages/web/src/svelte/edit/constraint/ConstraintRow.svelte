@@ -12,7 +12,7 @@
 
     export let isLocal: boolean = false;
     export let onClick: svelte.JSX.MouseEventHandler<HTMLDivElement> | undefined =
-        isLocal ? (() => $userToolState = id) : undefined;
+        isLocal ? (() => $userPrevToolState = $userToolState = id) : undefined;
 
     export let onTrash: svelte.JSX.MouseEventHandler<HTMLButtonElement> | undefined = undefined;
 </script>
@@ -20,7 +20,7 @@
 <div class="constraint-row-container">
     {#if isLocal}
         <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={TOOL_INPUT_NAME}
-            bind:group={$userToolState} on:change={() => userPrevToolState.set(userToolState.get())} />
+            bind:group={$userToolState} />
         <button class="nobutton focus-skip" on:click={() => $boardDiv && $boardDiv.focus()}>Jump To Board</button>
     {/if}
     <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
