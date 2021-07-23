@@ -41,7 +41,9 @@ function bind(Module: RawModule) {
         cmsat_nvars(self: SATSolverPtr): number {
             return Module.ccall('cmsat_nvars', 'number', [ 'number' ], [ self ]);
         },
-        cmsat_add_clause(self: SATSolverPtr, lits: c_Lit[]): number {
+        cmsat_add_clause(self: SATSolverPtr, lits: c_Lit[]): boolean {
+            if (0 >= lits.length) return false;
+
             const ptr = Module._malloc(lits.length << 2);
             try {
                 Module.HEAPU32.set(lits, ptr >> 2);
@@ -51,7 +53,9 @@ function bind(Module: RawModule) {
                 Module._free(ptr);
             }
         },
-        cmsat_add_xor_clause(self: SATSolverPtr, lits: c_Lit[], rhs: boolean): number {
+        cmsat_add_xor_clause(self: SATSolverPtr, lits: c_Lit[], rhs: boolean): boolean {
+            if (0 >= lits.length) return false;
+
             const ptr = Module._malloc(lits.length << 2);
             try {
                 Module.HEAPU32.set(lits, ptr >> 2);
@@ -68,6 +72,8 @@ function bind(Module: RawModule) {
             return Module.ccall('cmsat_solve', 'number', [ 'number' ], [ self ]);
         },
         cmsat_solve_with_assumptions(self: SATSolverPtr, assumptions: c_Lit[]): lbool {
+            if (0 >= assumptions.length) return this.cmsat_solve(self);
+
             const ptr = Module._malloc(assumptions.length << 2);
             try {
                 Module.HEAPU32.set(assumptions, ptr >> 2);
@@ -137,14 +143,15 @@ function bind(Module: RawModule) {
         cmsat_set_yes_comphandler(self: SATSolverPtr): void {
             return Module.ccall('cmsat_set_yes_comphandler', null, [ 'number' ], [ self ]);
         },
-        cmsat_simplify(self: SATSolverPtr, assumptions: c_Lit[]): lbool {
-            const ptr = Module._malloc(assumptions.length << 2);
+        cmsat_simplify(self: SATSolverPtr, assumptions: c_Lit[] = []): lbool {
+            const ptr = assumptions.length && Module._malloc(assumptions.length << 2);
             try {
                 Module.HEAPU32.set(assumptions, ptr >> 2);
                 return Module.ccall('cmsat_simplify', 'number', [ 'number', 'number', 'number' ], [ self, ptr, assumptions.length ]);
             }
             finally {
-                Module._free(ptr);
+                if (0 !== ptr)
+                    Module._free(ptr);
             }
         },
         cmsat_set_max_time(self: SATSolverPtr, max_time: number): void {

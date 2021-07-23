@@ -1,7 +1,7 @@
-import loadCryptoMiniSat from 'cryptominisat';
+import { load as loadCryptoMiniSat } from 'cryptominisat';
 import { loadPbLib } from './pblib';
 
-const cryptoMiniSat = loadCryptoMiniSat();
+const cryptoMiniSatPromise = loadCryptoMiniSat();
 
 export const N = 9;
 
@@ -20,7 +20,7 @@ export function* product(...args: number[]): Generator<number[], void, void> {
 }
 
 export async function findSudokuSolution() {
-    const { Module: sat } = await cryptoMiniSat;
+    const sat = await cryptoMiniSatPromise;
     const pblib = await loadPbLib;
 
     console.log({ sat });
@@ -93,11 +93,14 @@ export async function findSudokuSolution() {
     console.log(`${n} vars, ${clauses.length} clauses.`);
 
     const satSolverPtr = sat.cmsat_new();
+    sat.cmsat_set_verbosity(satSolverPtr, 1);
     sat.cmsat_new_vars(satSolverPtr, n);
 
     for (const clause of clauses) {
         sat.cmsat_add_clause(satSolverPtr, clause.map(cmsLit));
     }
+
+    sat.cmsat_simplify(satSolverPtr, [])
 
     let status;
     do {
