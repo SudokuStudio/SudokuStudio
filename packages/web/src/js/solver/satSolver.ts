@@ -22,7 +22,7 @@ export const IlpSolver: Solver = {
     },
 
     solve(board: schema.Board, maxSolutions: number,
-        onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): () => void
+        onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): () => Promise<boolean>
     {
         const taskIdPromise = getSolverWorker()
             .solveAsync(board, maxSolutions, Comlink.proxy(onSolutionFoundOrComplete));

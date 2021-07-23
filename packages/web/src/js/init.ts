@@ -34,9 +34,10 @@ import { solutionToString } from "@sudoku-studio/board-utils";
         }
     });
 
-    timeout = window.setTimeout(() => {
-        cancel();
-        console.log(`TIMED OUT. Found ${count} solutions in ${Date.now() - START} ms.`);
+    timeout = window.setTimeout(async () => {
+        if (await cancel()) {
+            console.log(`TIMED OUT. Found ${count} solutions in ${Date.now() - START} ms.`);
+        }
     }, maxTime);
 
     return cancel;

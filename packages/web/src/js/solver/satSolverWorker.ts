@@ -19,10 +19,12 @@ function solveAsync(board: schema.Board, maxSolutions: number,
     return taskId;
 }
 
-function cancel(taskId: string): void {
+function cancel(taskId: string): boolean {
     if (taskId in CANCELLATION_TABLE) {
         CANCELLATION_TABLE[taskId].cancelled = true;
+        return true;
     }
+    return false;
 }
 
 const DEFAULT = {
