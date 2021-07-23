@@ -11,8 +11,6 @@ import { solutionToString } from "@sudoku-studio/board-utils";
 
 // TODO SOMETHING PROPER
 (window as any).solve = async function(maxSolutions = 10, maxTimeMillis = 10 * 1000): Promise<() => Promise<void>> {
-    maxTimeMillis = Math.min(0x0FFFFFF, maxTimeMillis);
-
     const START = Date.now();
 
     const board = boardState.get<schema.Board>()!;
@@ -24,7 +22,7 @@ import { solutionToString } from "@sudoku-studio/board-utils";
     console.log(`SOLVING: maxSolutions=${maxSolutions} maxTimeMillis=${maxTimeMillis}`);
 
     let count = 0;
-    let timeout: number;
+    let timeout: number = -1;
     const cancel = IlpSolver.solve(board, maxSolutions, solution => {
         if (null == solution) {
             clearTimeout(timeout);
@@ -43,7 +41,8 @@ import { solutionToString } from "@sudoku-studio/board-utils";
         }
     }
 
-    timeout = window.setTimeout(cancelLog, maxTimeMillis, 'TIMED OUT');
+    if (isFinite(maxTimeMillis))
+        timeout = window.setTimeout(cancelLog, maxTimeMillis, 'TIMED OUT');
 
     return () => cancelLog('CANCELLED');
 }
