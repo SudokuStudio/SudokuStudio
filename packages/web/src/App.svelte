@@ -2,7 +2,7 @@
 import { debounce } from "debounce";
 
     import { boardDiv } from "./js/board";
-    import { SUDOKU_STUDIO_VERSION, URL_REQUEST_FEATURE, URL_REPORT_BUG } from "./js/github";
+    import { URL_REQUEST_FEATURE, URL_REPORT_BUG } from "./js/github";
     import BoardContainer from "./svelte/board/BoardContainer.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
@@ -10,7 +10,7 @@ import { debounce } from "debounce";
 
     function updateBugReportUrl(event: MouseEvent & { currentTarget: EventTarget & HTMLAnchorElement}): void {
         const url = new URL(URL_REPORT_BUG);
-        url.searchParams.append('version', SUDOKU_STUDIO_VERSION);
+        url.searchParams.append('version', __replace.SUDOKU_STUDIO_VERSION);
         url.searchParams.append('browser', window.navigator.userAgent);
         url.searchParams.append('os', window.navigator.platform);
         url.searchParams.append('url', window.location.href);
@@ -44,7 +44,7 @@ import { debounce } from "debounce";
 <footer>
     <div class="footer-text">
         <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio">
-            Sudoku Studio v.{SUDOKU_STUDIO_VERSION}
+            Sudoku Studio v.{__replace.SUDOKU_STUDIO_VERSION}
         </a>
         <a target="_blank" href={URL_REPORT_BUG} on:mouseover={debounce(updateBugReportUrl, 500, true)}>
             Bug Report

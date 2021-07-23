@@ -33,8 +33,7 @@ npm run dev
 ```
 This will reload on any changes in the Svelte packages: `packages/web` and `packages/board`.
 If you change other packages you'll need to run e.g. `npm run -w packages/board-utils build`
-to rebuild -- you can do this while the dev server is running. For unknown reasons some of the
-solver web-worker files don't seem to reload properly.
+to rebuild -- you can do this while the dev server is running.
 
 If you are using VSCode (recommended):
 * Install "Svelte for VS Code" extension.

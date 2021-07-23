@@ -1,5 +1,3 @@
-export const SUDOKU_STUDIO_VERSION = process.env.SUDOKU_STUDIO_VERSION || 'DEV';
-
 export const URL_NEW_ISSUE = 'https://github.com/SudokuStudio/SudokuStudio/issues/new';
 export const URL_REPORT_BUG = URL_NEW_ISSUE
     + '?labels=bug&template=bug_report.yml&title=%F0%9F%90%9E+Bug%3A+';

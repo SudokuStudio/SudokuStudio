@@ -1,5 +1,7 @@
 import path from 'path';
 
+// We can't use rollup-plugin-typescript2 since it doesn't work well with svelte imports.
+// We can't use rollup-plugin-web-worker-loader since it doesn't work with @rollup/plugin-typescript.
 import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
@@ -7,10 +9,8 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
-// import css from 'rollup-plugin-css-only';
 import scss from 'rollup-plugin-scss';
 import replace from '@rollup/plugin-replace';
-import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import copy from 'rollup-plugin-copy';
 
 import inlineSvg from './inlineSvg';
@@ -19,67 +19,26 @@ import inlineSvg from './inlineSvg';
 const NODE_MODULES = path.resolve('../../node_modules');
 const production = !process.env.ROLLUP_WATCH;
 
-function serve() {
-    let server;
+const PATH_PUBLIC = path.resolve('public');
+const PATH_OUTPUT = path.join(PATH_PUBLIC, 'build');
 
-    function toExit() {
-        if (server) server.kill(0);
-    }
+const FILE_WORKER_SATSOLVER = path.join(PATH_OUTPUT, 'satSolverWorker.js');
 
-    return {
-        writeBundle() {
-            if (server) return;
-            server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
-                stdio: ['ignore', 'inherit', 'inherit'],
-                shell: true
-            });
-
-            process.on('SIGTERM', toExit);
-            process.on('exit', toExit);
-        }
-    };
-}
-
-
-
-export default {
+// Main bundle.
+const configMain = {
     input: 'src/main.ts',
     output: {
         sourcemap: true,
         format: 'iife',
-        name: 'sudoku_studio_web',
-        file: 'public/build/bundle.js'
+        name: 'bundle',
+        file: path.join(PATH_OUTPUT, 'bundle.js'),
     },
     plugins: [
-        webWorkerLoader({
-            targetPlatform: 'browser',
-            inline: false,
-            preserveFileNames: true,
-            loadPath: 'build',
-        }),
-        copy({
-            targets: [
-                {
-                    src: [
-                        '../solver-sat/lib/cryptominisat5_simple.wasm',
-                        '../solver-sat/lib/pblib.wasm',
-                    ],
-                    dest: 'public/build',
-                },
-            ],
-        }),
         replace({
             preventAssignment: true,
-            // https://linguinecode.com/post/how-to-add-environment-variables-to-your-svelte-js-app
             values: {
-                'process.env.SUDOKU_STUDIO_VERSION': JSON.stringify(process.env.SUDOKU_STUDIO_VERSION),
-
-                // Emscripten glue cleanup.
-                ENVIRONMENT_IS_WEB: 'false',
-                ENVIRONMENT_IS_WORKER: 'true',
-                ENVIRONMENT_IS_NODE: 'false',
-                ENVIRONMENT_IS_SHELL: 'false',
-                'import.meta.url': 'self.location.href',
+                '__replace.SUDOKU_STUDIO_VERSION': JSON.stringify(process.env.SUDOKU_STUDIO_VERSION || 'DEV'),
+                '__replace.WORKER_SATSOLVER_SCRIPT': JSON.stringify(path.relative(PATH_PUBLIC, FILE_WORKER_SATSOLVER)),
             },
         }),
         svelte({
@@ -103,9 +62,6 @@ export default {
             watch: 'src/css',
             includePaths: [ NODE_MODULES ],
         }),
-        // // we'll extract any component CSS out into
-        // // a separate file - better for performance
-        // css({ output: 'bundle.css' }),
 
         // If you have external dependencies installed from
         // npm, you'll most likely need these plugins. In
@@ -118,10 +74,7 @@ export default {
             extension: [ '.js', '.ts' ]
         }),
         commonjs(),
-        typescript({
-            sourceMap: true, //!production,
-            inlineSources: true, //!production
-        }),
+        typescript(),
 
         // In dev mode, call `npm run start` once
         // the bundle has been generated
@@ -137,5 +90,73 @@ export default {
     ],
     watch: {
         clearScreen: false
-    }
+    },
 };
+
+const configSatSolverWorker = {
+    input: 'src/js/solver/satSolverWorker.ts',
+    output: {
+        sourcemap: true,
+        format: 'iife',
+        name: 'satSolverWorker',
+        file: FILE_WORKER_SATSOLVER,
+    },
+    plugins: [
+        copy({
+            targets: [
+                {
+                    src: [
+                        '../solver-sat/lib/cryptominisat5_simple.wasm',
+                        '../solver-sat/lib/pblib.wasm',
+                    ],
+                    dest: 'public/build',
+                },
+            ],
+        }),
+        replace({
+            preventAssignment: true,
+            values: {
+                // Emscripten glue cleanup.
+                ENVIRONMENT_IS_WEB: 'false',
+                ENVIRONMENT_IS_WORKER: 'true',
+                ENVIRONMENT_IS_NODE: 'false',
+                ENVIRONMENT_IS_SHELL: 'false',
+                'import.meta.url': 'self.location.href',
+            },
+        }),
+
+        resolve({
+            browser: true,
+            extension: [ '.js', '.ts' ]
+        }),
+        commonjs(),
+        typescript(),
+    ],
+};
+
+const configs = [
+    configSatSolverWorker,
+    configMain,
+];
+export default configs;
+
+function serve() {
+    let server;
+
+    function toExit() {
+        if (server) server.kill(0);
+    }
+
+    return {
+        writeBundle() {
+            if (server) return;
+            server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
+                stdio: ['ignore', 'inherit', 'inherit'],
+                shell: true
+            });
+
+            process.on('SIGTERM', toExit);
+            process.on('exit', toExit);
+        }
+    };
+}

@@ -1,16 +1,13 @@
-// THIS FILE DOESN'T LIVE-RELOAD FOR SOME REASON. (something will web-worker: rollup magic).
-
 import * as Comlink from "comlink";
 
 import type { Geometry, IdxMap, schema, Solver } from "@sudoku-studio/schema";
-import IlpSolverWorker from "web-worker:./satSolverWorker.ts";
 import type IlpSolverWorkerNamespace from "./satSolverWorker";
 
 const getSolverWorker = (() => {
     let solverWorker: null | Comlink.Remote<typeof IlpSolverWorkerNamespace> = null;
     return function() {
         if (null == solverWorker) {
-            solverWorker = Comlink.wrap<typeof IlpSolverWorkerNamespace>(new IlpSolverWorker());
+            solverWorker = Comlink.wrap<typeof IlpSolverWorkerNamespace>(new Worker(__replace.WORKER_SATSOLVER_SCRIPT));
         }
         return solverWorker;
     }
