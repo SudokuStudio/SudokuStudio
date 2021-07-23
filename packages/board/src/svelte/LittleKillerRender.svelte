@@ -1,7 +1,7 @@
 <script lang="ts">
 import { diagonalIdx2dirVec, diagonalIdx2svgCoord } from "@sudoku-studio/board-utils";
 
-    import type { Idx, Geometry, schema, IdxMap } from "@sudoku-studio/schema";
+    import type { Idx, Geometry, schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
