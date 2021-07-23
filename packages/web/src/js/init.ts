@@ -10,7 +10,7 @@ import { IlpSolver } from "./solver/satSolver";
 import { solutionToString } from "@sudoku-studio/board-utils";
 
 // TODO SOMETHING PROPER
-(window as any).solve = async function(maxSolutions = 10, maxTimeMillis = 10 * 1000): Promise<() => void> {
+(window as any).solve = async function(maxSolutions = 10, maxTimeMillis = 10 * 1000): Promise<() => Promise<void>> {
     maxTimeMillis = Math.min(0x0FFFFFF, maxTimeMillis);
 
     const START = Date.now();
@@ -36,13 +36,16 @@ import { solutionToString } from "@sudoku-studio/board-utils";
         }
     });
 
-    timeout = window.setTimeout(async () => {
+    async function cancelLog(reason: string): Promise<void> {
+        clearTimeout(timeout);
         if (await cancel()) {
-            console.log(`TIMED OUT. Found ${count} solutions in ${Date.now() - START} ms.`);
+            console.log(`${reason}. Found ${count} solutions in ${Date.now() - START} ms.`);
         }
-    }, maxTimeMillis);
+    }
 
-    return cancel;
+    timeout = window.setTimeout(cancelLog, maxTimeMillis, 'TIMED OUT');
+
+    return () => cancelLog('CANCELLED');
 }
 
 /** Load tools and pencil marks for the user. */
