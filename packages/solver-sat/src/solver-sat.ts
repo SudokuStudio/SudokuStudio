@@ -176,12 +176,26 @@ export const ELEMENT_HANDLERS = {
         const ones = Array(context.size).fill(1);
         for (const [ val, bx ] of product(context.size, context.size)) {
             const box: number[] = [];
-            for (const [ i ] of product(context.size)) {
-                box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(i / 3), (bx % 3) * 3 + (i % 3), val));
+            for (const [ pos ] of product(context.size)) {
+                box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
             }
             numVars = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numVars);
         }
 
+        return numVars;
+    },
+
+    disjointGroups(numVars: number, element: schema.BoxElement, context: Context): number {
+        if (element.value) {
+            const ones = Array(context.size).fill(1);
+            for (const [ val, pos ] of product(context.size, context.size)) {
+                const box: number[] = [];
+                for (const [ bx ] of product(context.size)) {
+                    box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
+                }
+                numVars = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numVars);
+            }
+        }
         return numVars;
     },
 
@@ -218,30 +232,3 @@ export const ELEMENT_HANDLERS = {
         return numVars;
     },
 } as const;
-
-//     const littleKillers = [
-//         [ 51, [ 2, 0 ], [  1,  1 ] ],
-//         [ 15, [ 6, 0 ], [  1,  1 ] ],
-//         [ 40, [ 0, 4 ], [  1, -1 ] ],
-//         [ 43, [ 0, 6 ], [  1, -1 ] ],
-//         [ 13, [ 8, 2 ], [ -1,  1 ] ],
-//         [ 25, [ 8, 4 ], [ -1,  1 ] ],
-//         [ 28, [ 3, 8 ], [ -1, -1 ] ],
-//         [ 10, [ 4, 8 ], [ -1, -1 ] ],
-//     ] as const;
-
-//     for (let [ sum, [ y, x ], [ dy, dx ] ] of littleKillers) {
-//         const vars: number[] = [];
-//         const weights: number[] = [];
-
-//         while (0 <= y && y < 9 && 0 <= x && x < 9) {
-//             for (let v = 0; v < 9; v++) {
-//                 vars.push(getVar(y, x, v));
-//                 weights.push(1 + v);
-//             }
-//             y += dy;
-//             x += dx;
-//         }
-
-//         n = pblib.encodeBoth(weights, vars, sum, sum, clauses, n);
-//     }

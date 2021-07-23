@@ -11,6 +11,8 @@ import { solutionToString } from "@sudoku-studio/board-utils";
 
 // TODO SOMETHING PROPER
 (window as any).solve = async function(maxSolutions = 10, maxTimeMillis = 10 * 1000): Promise<() => void> {
+    maxTimeMillis = Math.min(0x0FFFFFF, maxTimeMillis);
+
     const START = Date.now();
 
     const board = boardState.get<schema.Board>()!;
