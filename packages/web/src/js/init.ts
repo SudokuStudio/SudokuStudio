@@ -6,10 +6,41 @@ import { MARK_TYPES, userState } from "./user";
 import { parseFpuzzles } from "./f-puzzles";
 import { createNewBoard } from "./elements";
 
-// TODO
-import { IlpSolver } from "./solver/ilpSolver";
-(window as any).IlpSolver = IlpSolver;
-// TODO
+import { IlpSolver } from "./solver/satSolver";
+import { solutionToString } from "../../../board-utils/lib/board-utils";
+
+// TODO SOMETHING PROPER
+(window as any).solve = async function(maxSolutions = 10, maxTime = 10 * 1000): Promise<() => void> {
+    const START = Date.now();
+
+    const board = boardState.get<schema.Board>()!;
+    const canAttempt = await IlpSolver.cantAttempt(board);
+    if (canAttempt) {
+        throw Error('Solver cannot attempt this puzzle: ' + canAttempt);
+    }
+
+    console.log(`SOLVING: maxSolutions=${maxSolutions} maxTime=${maxTime}`);
+
+    let count = 0;
+    let timeout: number;
+    const cancel = IlpSolver.solve(board, maxSolutions, solution => {
+        if (null == solution) {
+            clearTimeout(timeout);
+            console.log(`DONE. Found ${(count < maxSolutions) ? 'ALL ' : ''}${count} solutions in ${Date.now() - START} ms.`);
+        }
+        else {
+            count++;
+            console.log(`FOUND ${count}:\n${solutionToString(solution, board.grid)}`);
+        }
+    });
+
+    timeout = window.setTimeout(() => {
+        cancel();
+        console.log(`TIMED OUT. Found ${count} solutions in ${Date.now() - START} ms.`);
+    }, maxTime);
+
+    return cancel;
+}
 
 /** Load tools and pencil marks for the user. */
 function setupUserState(board: schema.Board) {

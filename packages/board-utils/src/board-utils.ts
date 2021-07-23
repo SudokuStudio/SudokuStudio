@@ -5,6 +5,19 @@ export function any(x: any): any {
     return x;
 }
 
+export function solutionToString(solution: IdxMap<Geometry.CELL, number>, grid: Grid): string {
+    const rows: string[] = [];
+    for (let y = 0; y < grid.height; y++) {
+        const row: string[] = [];
+        for (let x = 0; x < grid.width; x++) {
+            const idx = cellCoord2CellIdx([ x, y ], grid);
+            row.push(`${solution[idx] || '_'}`);
+        }
+        rows.push(row.join(' '));
+    }
+    return rows.join('\n');
+}
+
 export const GRID_THICKNESS = 0.01;
 export const GRID_THICKNESS_HALF = 0.5 * GRID_THICKNESS;
 
@@ -525,7 +538,7 @@ export function getDigits(elements: schema.Board['elements'], includeGivens: boo
             }
             else {
                 // Ensure occluded filled are ignored.
-                for (const cellIdx of Object.keys(element.value)) {
+                for (const cellIdx of Object.keys(element.value || {})) {
                     delete out[cellIdx];
                 }
             }

@@ -35,17 +35,17 @@ export type CancellationToken = {
     cancelled?: true
 };
 
-export function canSolve(board: schema.Board): boolean {
+export function cantAttempt(board: schema.Board): null | string {
     if (board.grid.width !== board.grid.height) {
-        return false;
+        return 'Grid is not square.';
     }
 
     for (const { type } of Object.values(board.elements)) {
         if (!(type in ELEMENT_HANDLERS)) {
-            return false;
+            return `Cannot handle ${JSON.stringify(type)} element.`;
         }
     }
-    return true;
+    return null;
 }
 
 export async function solve(board: schema.Board, maxSolutions: number,
@@ -83,7 +83,7 @@ export async function solve(board: schema.Board, maxSolutions: number,
     try {
         console.log(`Running SAT Solver: ${numVars} vars (${baseVars} base), ${context.clauses.length} clauses.`);
 
-        sat.cmsat_set_verbosity(satSolverPtr, 1);
+        // sat.cmsat_set_verbosity(satSolverPtr, 1);
         sat.cmsat_new_vars(satSolverPtr, numVars);
 
         // Add clauses.
@@ -126,7 +126,7 @@ export async function solve(board: schema.Board, maxSolutions: number,
             }
             onSolutionFoundOrComplete(solution);
 
-            sat.cmsat_add_clause(satSolverPtr, excludeSolutionClause);
+            sat.cmsat_add_clause(satSolverPtr, excludeSolutionClause.map(literalToCms));
         }
 
         // Complete.
@@ -167,7 +167,8 @@ export const ELEMENT_HANDLERS = {
     },
 
     box(numVars: number, _element: schema.BoxElement, context: Context): number {
-        // TODO: ELEMENT IS UNUSED.
+        // TODO: ELEMENT VALUE IS UNUSED.
+
         const ones = Array(context.size).fill(1);
         for (const [ val, bx ] of product(context.size, context.size)) {
             const box: number[] = [];
@@ -199,6 +200,7 @@ export const ELEMENT_HANDLERS = {
 
     corner: null,
     center: null,
+    colors: null,
 
 } as const;
 
