@@ -29,7 +29,7 @@
     import PositionNumberRender from './svelte/PositionNumberRender.svelte';
     import LittleKillerRender from "./svelte/LittleKillerRender.svelte";
     import NullRender from './svelte/NullRender.svelte';
-import CloneRender from "./svelte/CloneRender.svelte";
+    import CloneRender from "./svelte/CloneRender.svelte";
 
     function FilledRender(args: any) {
         args.props.color = '#4e72b0';
@@ -176,7 +176,7 @@ import CloneRender from "./svelte/CloneRender.svelte";
         ['sandwich']: 1,
         ['xsums']: 1,
         ['skyscraper']: 1,
-        ['littleKiller']: 0.5,
+        ['littleKiller']: 0.9,
     } as { [K in keyof typeof ELEMENT_RENDERERS]?: number };
 
 </script>

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { diagonalIdx2dirVec, diagonalIdx2svgCoord } from "@sudoku-studio/board-utils";
 
-    import type { Idx, Geometry, schema } from "@sudoku-studio/schema";
+    import type { Idx, Geometry, schema, IdxMap } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
@@ -9,21 +9,24 @@ import { diagonalIdx2dirVec, diagonalIdx2svgCoord } from "@sudoku-studio/board-u
     export let grid: { width: number, height: number };
 
     const color: string = "#000";
-    const fontSize = 0.275;
+    const fontSize = 0.4;
     const fontWeight = 800;
     const strokeWidth = 0.025;
+
+    const arrowStart = 0.4 * fontSize;
+    const arrowEnd = arrowStart + 0.2;
 
     type Item = { idx: Idx<Geometry.EDGE>, x: number, y: number, text: string, d: string };
     function each(value: schema.SeriesNumberElement['value']): Item[] {
         const out: Item[] = [];
-        for (const [ diagIdx, digitOrTrue ] of Object.entries(value)) {
+        for (const [ diagIdx, digitOrTrue ] of Object.entries(value || {})) {
             const text = true !== digitOrTrue ? `${digitOrTrue}` : '_';
-            const [ x, y ] = diagonalIdx2svgCoord(+diagIdx, grid, -0.8);
+            const [ x, y ] = diagonalIdx2svgCoord(+diagIdx, grid, -0.9);
             const vec = diagonalIdx2dirVec(+diagIdx);
             out.push({
                 idx: +diagIdx,
                 x, y, text,
-                d: `M${x + 0.125 * vec[0]},${y + 0.125 * vec[1]}L${x + 0.25 * vec[0]},${y + 0.25 * vec[1]}`,
+                d: `M${x + arrowStart * vec[0]},${y + arrowStart * vec[1]}L${x + arrowEnd * vec[0]},${y + arrowEnd * vec[1]}`,
             });
         }
         return out;
