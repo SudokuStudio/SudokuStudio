@@ -1,13 +1,13 @@
 import { debounce } from "debounce";
 import LZString from "lz-string";
-import type { schema } from "@sudoku-studio/schema";
+import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
 import { boardState } from "./board";
 import { MARK_TYPES, userState } from "./user";
 import { parseFpuzzles } from "./f-puzzles";
 import { createNewBoard } from "./elements";
 
 import { IlpSolver } from "./solver/satSolver";
-import { solutionToString } from "../../../board-utils/lib/board-utils";
+import { solutionToString } from "@sudoku-studio/board-utils";
 
 // TODO SOMETHING PROPER
 (window as any).solve = async function(maxSolutions = 10, maxTime = 10 * 1000): Promise<() => void> {
@@ -78,6 +78,29 @@ export function initUserAndBoard(): void {
         }
         catch (e) {
             console.error('Failed to parse f-puzzles board', e);
+        }
+    }
+
+    if (thisUrl.searchParams.has('c')) {
+        const DIGIT_REGEX = /[1-9]/;
+        const digitsString = thisUrl.searchParams.get('c')!;
+        if (81 === digitsString.length) {
+            const digits = Array.from(digitsString).map(char => DIGIT_REGEX.test(char) ? +char : undefined);
+
+            const newBoardState = createNewBoard();
+            setupUserState(newBoardState);
+
+            for (const element of Object.values(newBoardState.elements)) {
+                if ('givens' === element.type) {
+                    element.value = digits as unknown as IdxMap<Geometry.CELL, number>;
+                }
+            }
+            boardState.update(newBoardState as any);
+
+            thisUrl.searchParams.delete('c');
+            window.history.replaceState(null, '', thisUrl.href);
+
+            return;
         }
     }
 

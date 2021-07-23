@@ -148,14 +148,14 @@ export function parseFpuzzles(b64: string): schema.Board {
         const elem: schema.RegionElement = findOrAddElement(type, {});
         for (const fRegionObj of fRegionConstraint) {
             const cellIdx = cellCoord2CellIdx(parseRCNotation(fRegionObj.cell), grid);
-            elem.value[cellIdx] = true;
+            elem.value![cellIdx] = true;
         }
     }
     function addLineElement(type: schema.LineElement['type'], fLinesConstraint: FPuzzlesLines[]): void {
         const elem: schema.LineElement = findOrAddElement(type, {});
         for (const fLinesObj of fLinesConstraint) {
             for (const fLine of fLinesObj.lines) {
-                const cellArr: Idx<Geometry.CELL>[] = elem.value[makeUid()] = [];
+                const cellArr: Idx<Geometry.CELL>[] = elem.value![makeUid()] = [];
                 for (const rc of fLine) {
                     const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
                     cellArr.push(cellIdx);
@@ -188,7 +188,7 @@ export function parseFpuzzles(b64: string): schema.Board {
             }
 
             const val = (null != fCellsObj.value) ? parse(fCellsObj.value) : null;
-            elem.value[edgeIdx] = (null != val) ? val : true;
+            elem.value![edgeIdx] = (null != val) ? val : true;
         }
     }
     function addSeriesElement(type: schema.SeriesNumberElement['type'], fConstraint: FPuzzlesCell[]):void {
@@ -205,13 +205,13 @@ export function parseFpuzzles(b64: string): schema.Board {
                 console.error('Cannot handle this series.', fCellValue);
                 continue;
             }
-            elem.value[seriesIdx] = (null != fCellValue.value) ? Number(fCellValue.value) : true;
+            elem.value![seriesIdx] = (null != fCellValue.value) ? Number(fCellValue.value) : true;
         }
     }
     function addKillerElement(fConstraint: FPuzzlesCells[]): void {
         const elem: schema.KillerElement = findOrAddElement('killer', {});
         for (const fKillerEntry of fConstraint) {
-            const killerItem = elem.value[makeUid()] = {
+            const killerItem = elem.value![makeUid()] = {
                 cells: {} as IdxBitset<Geometry.CELL>,
                 sum: (null != fKillerEntry.value) ? Number(fKillerEntry.value) : undefined,
             };
@@ -246,22 +246,22 @@ export function parseFpuzzles(b64: string): schema.Board {
                     elem = findOrAddElement('filled', {});
                 }
                 console.log(elem);
-                elem.value[cellIdx] = gridEntry.value;
+                elem.value![cellIdx] = gridEntry.value;
             }
 
             if (gridEntry.cornerPencilMarks) {
                 const elem = findOrAddElement<schema.PencilMarksElement>('corner', {});
-                const cellMarks = elem.value[cellIdx] = {} as Record<number, true>;
+                const cellMarks = elem.value![cellIdx] = {} as Record<number, true>;
                 gridEntry.cornerPencilMarks.forEach(x => cellMarks[x] = true);
             }
             if (gridEntry.centerPencilMarks) {
                 const elem = findOrAddElement<schema.PencilMarksElement>('center', {});
-                const cellMarks = elem.value[cellIdx] = {} as Record<number, true>;
+                const cellMarks = elem.value![cellIdx] = {} as Record<number, true>;
                 gridEntry.centerPencilMarks.forEach(x => cellMarks[x] = true);
             }
             if (gridEntry.highlight) {
                 const elem = findOrAddElement<schema.ColorsElement>('colors', {});
-                const cellMarks = elem.value[cellIdx] = {} as Record<string, true>;
+                const cellMarks = elem.value![cellIdx] = {} as Record<string, true>;
                 cellMarks[gridEntry.highlight] = true;
             }
         }
@@ -284,7 +284,7 @@ export function parseFpuzzles(b64: string): schema.Board {
         const elem: schema.ArrowElement = findOrAddElement('arrow', {});
         for (const fArrowEntry of fBoard.arrow) {
             for (const fLine of fArrowEntry.lines || []) {
-                const arrowItem = elem.value[makeUid()] = {
+                const arrowItem = elem.value![makeUid()] = {
                     bulb: [] as Idx<Geometry.CELL>[],
                     body: [] as Idx<Geometry.CELL>[],
                 };
@@ -325,7 +325,7 @@ export function parseFpuzzles(b64: string): schema.Board {
                 console.error('Cannot handle this diagonal.', fLkEntry);
                 continue;
             }
-            elem.value[diagIdx] = (null != fLkEntry.value) ? Number(fLkEntry.value) : true;
+            elem.value![diagIdx] = (null != fLkEntry.value) ? Number(fLkEntry.value) : true;
         }
     }
 
@@ -360,7 +360,7 @@ export function parseFpuzzles(b64: string): schema.Board {
             }
 
             const cornerIdx = cornerCoord2cornerIdx(cornerCoord, grid);
-            elem.value[cornerIdx] = (null != fQuadEntry.values) ? fQuadEntry.values : true;
+            elem.value![cornerIdx] = (null != fQuadEntry.values) ? fQuadEntry.values : true;
         }
     }
 
@@ -368,7 +368,7 @@ export function parseFpuzzles(b64: string): schema.Board {
         const elem: schema.CloneElement = findOrAddElement('clone', {});
         outer:
         for (const fCloneEntry of fBoard.clone) {
-            const cloneItem = elem.value[makeUid()] = {
+            const cloneItem = elem.value![makeUid()] = {
                 color: undefined as undefined | string,
                 a: fCloneEntry.cells     .map (rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),
                 b: fCloneEntry.cloneCells.map(rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),
