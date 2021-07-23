@@ -1312,11 +1312,6 @@ line.svelte-1qd4hgf {
   stroke-width: 0.02;
 }
 
-.constraint-checkbox.svelte-1ns67sk {
-  margin-left: 0.5em;
-  display: inline-block;
-}
-
 .unused.svelte-1yj5trp.svelte-1yj5trp {
   opacity: 0.5;
 }
@@ -1387,6 +1382,11 @@ line.svelte-1qd4hgf {
   height: 100%;
   pointer-events: none;
   border-radius: 0.3rem;
+}
+
+.constraint-checkbox.svelte-1ns67sk {
+  margin-left: 0.5em;
+  display: inline-block;
 }
 
 /*# sourceMappingURL=bundle.css.map */
