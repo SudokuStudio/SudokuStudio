@@ -32,7 +32,7 @@ import { solutionToString } from "@sudoku-studio/board-utils";
         }
         else {
             count++;
-            console.log(`FOUND ${count}:\n${solutionToString(solution, board.grid)}`);
+            console.log(`FOUND ${count} in ${Date.now() - START} ms:\n${solutionToString(solution, board.grid)}`);
         }
     });
 

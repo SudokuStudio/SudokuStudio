@@ -92,12 +92,8 @@ export async function solve(board: schema.Board, maxSolutions: number,
         }
         context.clauses.length = 0; // Let the giant clause list be GC'd.
 
-        // TODO? Call simplify.
-        // sat.cmsat_set_max_time(satSolverPtr, 0.1);
-        // sat.cmsat_simplify(satSolverPtr);
-
-        let status;
         for (let _i = 0; _i < maxSolutions; _i++) {
+            let status = sat.cmsat_simplify(satSolverPtr);
             do {
                 await asyncYield();
                 if (cancellationToken.cancelled) return false;
