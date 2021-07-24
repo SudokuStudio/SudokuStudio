@@ -10934,6 +10934,33 @@ var satSolverWorker = (function () {
             }
             return numLits;
         },
+        between(numLits, element, context) {
+            for (const cells of Object.values(element.value || {})) {
+                const betweenCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+                if (3 > betweenCells.length)
+                    continue;
+                const isAscendingLit = ++numLits;
+                const [headX, headY] = betweenCells.shift();
+                const [tailX, tailY] = betweenCells.pop();
+                for (const [betwX, betwY] of betweenCells) {
+                    for (let large = 0; large < context.size; large++) {
+                        for (let small = 0; small <= large; small++) {
+                            // Using De Morgan's law.
+                            context.clauses.push(
+                            // Cannot be ASCENDING  & HEAD > BETW
+                            [-isAscendingLit, -context.getLiteral(headY, headX, large), -context.getLiteral(betwY, betwX, small)], 
+                            // Cannot be ASCENDING  & BETW > TAIL
+                            [-isAscendingLit, -context.getLiteral(betwY, betwX, large), -context.getLiteral(tailY, tailX, small)], 
+                            // Cannot be DESCENDING & HEAD < BETW.
+                            [isAscendingLit, -context.getLiteral(headY, headX, small), -context.getLiteral(betwY, betwX, large)], 
+                            // Cannot be DESCENDING & BETW < TAIL.
+                            [isAscendingLit, -context.getLiteral(betwY, betwX, small), -context.getLiteral(tailY, tailX, large)]);
+                        }
+                    }
+                }
+            }
+            return numLits;
+        },
         arrow(numLits, element, context) {
             for (const { bulb, body } of Object.values(element.value || {})) {
                 // Reverse so least significant digit first.
@@ -10987,7 +11014,7 @@ var satSolverWorker = (function () {
         for (let i = 1; i < cells.length; i++) {
             const [prevX, prevY] = cells[i - 1];
             const [nextX, nextY] = cells[i];
-            for (let large = 1; large < context.size; large++) {
+            for (let large = 0; large < context.size; large++) {
                 for (let small = 0; small <= large; small++) {
                     // Dont add exclusion of equality if we're not strict.
                     if (!strict && small === large)
