@@ -248,6 +248,16 @@ export const ELEMENT_HANDLERS = {
         return encodeMoves(numLits, element, context, kingMoves);
     },
 
+    even(numLits: number, element: schema.RegionElement, context: Context): number {
+        const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+        return encodeExcludeValues(numLits, cellCoords, v => 1 === (v + 1) % 2, context);
+    },
+
+    odd(numLits: number, element: schema.RegionElement, context: Context): number {
+        const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+        return encodeExcludeValues(numLits, cellCoords, v => 0 === (v + 1) % 2, context);
+    },
+
     killer(numLits: number, element: schema.KillerElement, context: Context): number {
         for (const { sum, cells } of Object.values(element.value || {})) {
             const cellCoords = idxMapToKeysArray(cells || {}).map(idx => cellIdx2cellCoord(+idx, context.grid));
@@ -389,6 +399,18 @@ function encodeMoves(numLits: number, element: schema.BooleanElement, context: C
                 const aLit = context.getLiteral(y0, x0, v);
                 const bLit = context.getLiteral(y1, x1, v);
                 context.clauses.push([ -aLit, -bLit ]); // Cannot both be true.
+            }
+        }
+    }
+    return numLits;
+}
+
+function encodeExcludeValues(numLits: number, cells: Coord<Geometry.CELL>[], excludeValues: (v: number) => boolean, context: Context): number {
+    for (const [ x, y ] of cells) {
+        for (const [ v ] of product(context.size)) {
+            if (excludeValues(v)) {
+                const literal = context.getLiteral(y, x, v);
+                context.clauses.push([ -literal ]);
             }
         }
     }
