@@ -93,16 +93,16 @@ export async function solve(board: schema.Board, maxSolutions: number,
     }
 
     const baseVars = Math.pow(context.size, 3);
-    let numVars = 1 + baseVars;
+    let numLits = 1 + baseVars;
 
     for (const element of Object.values(board.elements)) {
         if (cancellationToken.cancelled) return false;
 
-        const handler: null | ((numVars: number, element: schema.Element, context: Context) => number) =
+        const handler: null | ((numLits: number, element: schema.Element, context: Context) => number) =
             ELEMENT_HANDLERS[element.type as keyof typeof ELEMENT_HANDLERS] as any;
         if (undefined === handler) console.warn(`Ignoring constraint: ${element.type}`);
         if (null != handler) {
-            numVars = handler(numVars, element, context);
+            numLits = handler(numLits, element, context);
         }
     }
 
@@ -110,10 +110,10 @@ export async function solve(board: schema.Board, maxSolutions: number,
     const sat = await cryptoMiniSatPromise;
     const satSolverPtr = sat.cmsat_new();
     try {
-        console.log(`Running SAT Solver: ${numVars} vars (${baseVars} base), ${context.clauses.length} clauses.`);
+        console.log(`Running SAT Solver: ${numLits} vars (${baseVars} base), ${context.clauses.length} clauses.`);
 
         // sat.cmsat_set_verbosity(satSolverPtr, 1);
-        sat.cmsat_new_vars(satSolverPtr, numVars);
+        sat.cmsat_new_vars(satSolverPtr, numLits);
 
         // Add clauses.
         for (const clause of context.clauses) {
@@ -176,7 +176,7 @@ export const ELEMENT_HANDLERS = {
     center: null,
     colors: null,
 
-    grid(numVars: number, _element: schema.GridElement, context: Context): number {
+    grid(numLits: number, _element: schema.GridElement, context: Context): number {
         const ones = Array(context.size).fill(1);
         for (const [ a, b ] of product(context.size, context.size)) {
             const cel: number[] = [];
@@ -187,15 +187,15 @@ export const ELEMENT_HANDLERS = {
                 row.push(context.getLiteral(a, c, b));
                 col.push(context.getLiteral(c, a, b));
             }
-            numVars = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, numVars);
-            numVars = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, numVars);
-            numVars = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, numVars);
+            numLits = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, numLits);
+            numLits = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, numLits);
+            numLits = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, numLits);
         }
 
-        return numVars;
+        return numLits;
     },
 
-    box(numVars: number, _element: schema.BoxElement, context: Context): number {
+    box(numLits: number, _element: schema.BoxElement, context: Context): number {
         // TODO: ELEMENT VALUE IS UNUSED.
 
         const ones = Array(context.size).fill(1);
@@ -204,13 +204,13 @@ export const ELEMENT_HANDLERS = {
             for (const [ pos ] of product(context.size)) {
                 box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
             }
-            numVars = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numVars);
+            numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
         }
 
-        return numVars;
+        return numLits;
     },
 
-    disjointGroups(numVars: number, element: schema.BoxElement, context: Context): number {
+    disjointGroups(numLits: number, element: schema.BoxElement, context: Context): number {
         if (element.value) {
             const ones = Array(context.size).fill(1);
             for (const [ val, pos ] of product(context.size, context.size)) {
@@ -218,13 +218,13 @@ export const ELEMENT_HANDLERS = {
                 for (const [ bx ] of product(context.size)) {
                     box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
                 }
-                numVars = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numVars);
+                numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
             }
         }
-        return numVars;
+        return numLits;
     },
 
-    givens(numVars: number, element: schema.DigitElement, context: Context): number {
+    givens(numLits: number, element: schema.DigitElement, context: Context): number {
         for (const [ cellIdx, value1 ] of Object.entries(element.value || {})) {
             const v = value1! - 1;
             const [ x, y ] = cellIdx2cellCoord(+cellIdx, context.grid);
@@ -232,75 +232,49 @@ export const ELEMENT_HANDLERS = {
             const literal = context.getLiteral(y, x, v);
             context.clauses.push([ literal ]);
         }
-        return numVars;
+        return numLits;
     },
 
-    filled(numVars: number, element: schema.DigitElement, context: Context): number {
+    filled(numLits: number, element: schema.DigitElement, context: Context): number {
         // Treat filled same as givens (TODO? Make configurable).
-        return ELEMENT_HANDLERS.givens(numVars, element, context);
+        return ELEMENT_HANDLERS.givens(numLits, element, context);
     },
 
-    knight(numVars: number, element: schema.BooleanElement, context: Context): number {
-        return handleMoves(numVars, element, context, knightMoves);
+    knight(numLits: number, element: schema.BooleanElement, context: Context): number {
+        return encodeMoves(numLits, element, context, knightMoves);
     },
 
-    king(numVars: number, element: schema.BooleanElement, context: Context): number {
-        console.log(context.clauses.length);
-        numVars = handleMoves(numVars, element, context, kingMoves);
-        console.log(context.clauses.length);
-        return numVars;
+    king(numLits: number, element: schema.BooleanElement, context: Context): number {
+        numLits = encodeMoves(numLits, element, context, kingMoves);
+        return numLits;
     },
 
-    killer(numVars: number, element: schema.KillerElement, context: Context): number {
+    killer(numLits: number, element: schema.KillerElement, context: Context): number {
         for (const { sum, cells } of Object.values(element.value || {})) {
+            const cellCoords = idxMapToKeysArray(cells || {}).map(idx => cellIdx2cellCoord(+idx, context.grid));
+
             // Cage no repeats.
-            for (const [ v ] of product(context.size)) {
-                const lits = [];
-                for (const cellIdx of idxMapToKeysArray(cells || {})) {
-                    const [ x, y ] = cellIdx2cellCoord(+cellIdx, context.grid);
-                    lits.push(context.getLiteral(y, x, v));
-                }
-                const ones = Array(lits.length).fill(1);
-                numVars = context.pbLib.encodeBoth(ones, lits, 1, 1, context.clauses, numVars);
-            }
+            numLits = encodeNoRepeats(numLits, cellCoords, context);
 
             // Cage sum.
             if ('number' === typeof sum) {
-                const lits = [];
-                const weights = [];
-                for (const cellIdx of idxMapToKeysArray(cells || {})) {
-                    const [ x, y ] = cellIdx2cellCoord(+cellIdx, context.grid);
-                    for (const [ v ] of product(context.size)) {
-                        const value = 1 + v;
-                        lits.push(context.getLiteral(y, x, v));
-                        weights.push(value);
-                    }
-                }
-                numVars = context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numVars);
+                numLits = encodeSum(numLits, sum, cellCoords, context);
             }
         }
-        return numVars;
+        return numLits;
     },
 
-    littleKiller(numVars: number, element: schema.LittleKillerElement, context: Context): number {
+    littleKiller(numLits: number, element: schema.LittleKillerElement, context: Context): number {
         for (const [ diagIdx, sum ] of Object.entries(element.value || {})) {
             if ('number' !== typeof sum) continue;
 
-            const lits = [];
-            const weights = [];
-            for (const [ x, y ] of diagonalIdx2diagonalCellCoords(+diagIdx, context.grid)) {
-                for (const [ v ] of product(context.size)) {
-                    const value = 1 + v;
-                    lits.push(context.getLiteral(y, x, v));
-                    weights.push(value);
-                }
-            }
-            numVars = context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numVars);
+            const cellCoords = diagonalIdx2diagonalCellCoords(+diagIdx, context.grid);
+            numLits = encodeSum(numLits, sum, cellCoords, context);
         }
-        return numVars;
+        return numLits;
     },
 
-    thermo(numVars: number, element: schema.LineElement, context: Context): number {
+    thermo(numLits: number, element: schema.LineElement, context: Context): number {
         for (const thermoCells of Object.values(element.value || {})) {
             const thermoCellsArr = arrayObj2array(thermoCells);
             for (let i = 1; i < thermoCellsArr.length; i++) {
@@ -316,10 +290,10 @@ export const ELEMENT_HANDLERS = {
                 }
             }
         }
-        return numVars;
+        return numLits;
     },
 
-    arrow(numVars: number, element: schema.ArrowElement, context: Context): number {
+    arrow(numLits: number, element: schema.ArrowElement, context: Context): number {
         for (const { bulb, body } of Object.values(element.value || {})) {
             // Reverse so least significant digit first.
             const bulbArrReversed = arrayObj2array(bulb);
@@ -331,7 +305,7 @@ export const ELEMENT_HANDLERS = {
             const weights: number[] = [];
             const lits: number[] = [];
 
-            // Bulb -- do in reverse order to handle ones place first.
+            // Arrow bulb -- do in reverse order to handle ones place first.
             {
                 let power = 1;
                 for (const bulbCellIdx of bulbArrReversed) {
@@ -339,34 +313,56 @@ export const ELEMENT_HANDLERS = {
                     for (const [ v ] of product(context.size)) {
                         const bulbDigitLiteral = context.getLiteral(y, x, v);
                         const value = 1 + v;
-                        weights.push(power * value);
+                        weights.push(-1 * power * value);
                         lits.push(bulbDigitLiteral);
                     }
                     power *= 10;
                 }
             }
 
-            // Arrow.
+            // Arrow body.
             {
-                for (const bodyCellIdx of bodyArrRest) {
-                    const [ x, y ]  = cellIdx2cellCoord(bodyCellIdx, context.grid);
-                    for (const [ v ] of product(context.size)) {
-                        const bodyLiteral = context.getLiteral(y, x, v);
-                        const value = 1 + v;
-                        weights.push(-value); // Body subtracts from the head.
-                        lits.push(bodyLiteral);
-                    }
-                }
+                const cellCoords = bodyArrRest.map(idx => cellIdx2cellCoord(idx, context.grid));
+                writeSum(cellCoords, context, weights, lits); // Write weights into existing arrays.
             }
 
-            // Set HEAD - BODY = 0;
-            numVars = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, numVars);
+            // Set -HEAD + BODY = 0;
+            numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, numLits);
         }
-        return numVars;
+        return numLits;
     },
 } as const;
 
-function handleMoves(numVars: number, element: schema.BooleanElement, context: Context, func: typeof knightMoves): number {
+function encodeNoRepeats(numLits: number, cells: Coord<Geometry.CELL>[], context: Context): number {
+    for (const [ v ] of product(context.size)) {
+        const literals = [];
+        for (const [ x, y ] of cells) {
+            const literal = context.getLiteral(y, x, v);
+            literals.push(literal);
+        }
+        numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, numLits);
+    }
+    return numLits;
+}
+
+function encodeSum(numLits: number, sum: number, cells: Coord<Geometry.CELL>[], context: Context): number {
+    const [ weights, lits ] = writeSum(cells, context);
+    return context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numLits);
+}
+
+function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: number[] = [], literals: number[] = []): [ weights: number[], literals: number[] ] {
+    for (const [ x, y ] of cells) {
+        for (const [ v ] of product(context.size)) {
+            const value = 1 + v;
+            const literal = context.getLiteral(y, x, v);
+            weights.push(value);
+            literals.push(literal);
+        }
+    }
+    return [ weights, literals ];
+}
+
+function encodeMoves(numLits: number, element: schema.BooleanElement, context: Context, func: typeof knightMoves): number {
     if (element.value) {
         for (const [[ x0, y0 ], [ x1, y1 ]] of func(context.size)) {
             for (const [ v ] of product(context.size)) {
@@ -376,5 +372,5 @@ function handleMoves(numVars: number, element: schema.BooleanElement, context: C
             }
         }
     }
-    return numVars;
+    return numLits;
 }
