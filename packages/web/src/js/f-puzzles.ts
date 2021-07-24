@@ -245,7 +245,6 @@ export function parseFpuzzles(b64: string): schema.Board {
                 else {
                     elem = findOrAddElement('filled', {});
                 }
-                console.log(elem);
                 elem.value![cellIdx] = gridEntry.value;
             }
 

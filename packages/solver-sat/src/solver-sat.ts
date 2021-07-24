@@ -1,7 +1,7 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
 import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, diagonalIdx2diagonalCellCoords } from '@sudoku-studio/board-utils';
-import { Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
+import { Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
 
@@ -18,6 +18,35 @@ function* product(...args: number[]): Generator<number[], void, void> {
                 yield x;
             }
         }
+    }
+}
+
+function *knightMoves(N: number): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
+    for (const [ y0, x0, y1, x1 ] of product(N, N, N, N)) {
+        if (y0 >= y1) continue; // Don't double-count.
+        const dy = Math.abs(y0 - y1);
+        const dx = Math.abs(x0 - x1);
+        if (3 !== dy + dx) continue;
+        if (1 !== Math.abs(dy - dx)) continue;
+        yield [
+            [ x0, y0 ],
+            [ x1, y1 ],
+        ];
+    }
+}
+
+function* kingMoves(N: number): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
+    for (const [ y0, x0, y1, x1 ] of product(N, N, N, N)) {
+        if (y0 >= y1) continue; // Don't double-count.
+        const dy = Math.abs(y0 - y1);
+        if (1 !== dy) continue;
+        const dx = Math.abs(x0 - x1);
+        if (1 !== dx) continue;
+
+        yield [
+            [ x0, y0 ],
+            [ x1, y1 ],
+        ];
     }
 }
 
@@ -211,6 +240,17 @@ export const ELEMENT_HANDLERS = {
         return ELEMENT_HANDLERS.givens(numVars, element, context);
     },
 
+    knight(numVars: number, element: schema.BooleanElement, context: Context): number {
+        return handleMoves(numVars, element, context, knightMoves);
+    },
+
+    king(numVars: number, element: schema.BooleanElement, context: Context): number {
+        console.log(context.clauses.length);
+        numVars = handleMoves(numVars, element, context, kingMoves);
+        console.log(context.clauses.length);
+        return numVars;
+    },
+
     littleKiller(numVars: number, element: schema.LittleKillerElement, context: Context): number {
         for (const [ diagIdx, sum ] of Object.entries(element.value || {})) {
             if ('number' !== typeof sum) continue;
@@ -246,4 +286,63 @@ export const ELEMENT_HANDLERS = {
         }
         return numVars;
     },
+
+    arrow(numVars: number, element: schema.ArrowElement, context: Context): number {
+        for (const { bulb, body } of Object.values(element.value || {})) {
+            // Reverse so least significant digit first.
+            const bulbArrReversed = arrayObj2array(bulb);
+            bulbArrReversed.reverse();
+            // Discard start (which is on cell head).
+            const [ _bodyStart, ...bodyArrRest ] = arrayObj2array(body);
+            if (0 >= bulbArrReversed.length || 1 >= bodyArrRest.length) continue;
+
+            const weights: number[] = [];
+            const lits: number[] = [];
+
+            // Bulb -- do in reverse order to handle ones place first.
+            {
+                let power = 1;
+                for (const bulbCellIdx of bulbArrReversed) {
+                    const [ x, y ] = cellIdx2cellCoord(bulbCellIdx, context.grid);
+                    for (const [ v ] of product(context.size)) {
+                        const bulbDigitLiteral = context.getLiteral(y, x, v);
+                        const value = 1 + v;
+                        weights.push(power * value);
+                        lits.push(bulbDigitLiteral);
+                    }
+                    power *= 10;
+                }
+            }
+
+            // Arrow.
+            {
+                for (const bodyCellIdx of bodyArrRest) {
+                    const [ x, y ]  = cellIdx2cellCoord(bodyCellIdx, context.grid);
+                    for (const [ v ] of product(context.size)) {
+                        const bodyLiteral = context.getLiteral(y, x, v);
+                        const value = 1 + v;
+                        weights.push(-value); // Body subtracts from the head.
+                        lits.push(bodyLiteral);
+                    }
+                }
+            }
+
+            // Set HEAD - BODY = 0;
+            numVars = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, numVars);
+        }
+        return numVars;
+    },
 } as const;
+
+function handleMoves(numVars: number, element: schema.BooleanElement, context: Context, func: typeof knightMoves): number {
+    if (element.value) {
+        for (const [[ x0, y0 ], [ x1, y1 ]] of func(context.size)) {
+            for (const [ v ] of product(context.size)) {
+                const aLit = context.getLiteral(y0, x0, v);
+                const bLit = context.getLiteral(y1, x1, v);
+                context.clauses.push([ -aLit, -bLit ]); // Cannot both be true.
+            }
+        }
+    }
+    return numVars;
+}
