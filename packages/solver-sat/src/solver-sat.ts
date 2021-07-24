@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, diagonalIdx2diagonalCellCoords } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, diagonalIdx2diagonalCellCoords, idxMapToKeysArray } from '@sudoku-studio/board-utils';
 import { Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
@@ -251,6 +251,37 @@ export const ELEMENT_HANDLERS = {
         return numVars;
     },
 
+    killer(numVars: number, element: schema.KillerElement, context: Context): number {
+        for (const { sum, cells } of Object.values(element.value || {})) {
+            // Cage no repeats.
+            for (const [ v ] of product(context.size)) {
+                const lits = [];
+                for (const cellIdx of idxMapToKeysArray(cells || {})) {
+                    const [ x, y ] = cellIdx2cellCoord(+cellIdx, context.grid);
+                    lits.push(context.getLiteral(y, x, v));
+                }
+                const ones = Array(lits.length).fill(1);
+                numVars = context.pbLib.encodeBoth(ones, lits, 1, 1, context.clauses, numVars);
+            }
+
+            // Cage sum.
+            if ('number' === typeof sum) {
+                const lits = [];
+                const weights = [];
+                for (const cellIdx of idxMapToKeysArray(cells || {})) {
+                    const [ x, y ] = cellIdx2cellCoord(+cellIdx, context.grid);
+                    for (const [ v ] of product(context.size)) {
+                        const value = 1 + v;
+                        lits.push(context.getLiteral(y, x, v));
+                        weights.push(value);
+                    }
+                }
+                numVars = context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numVars);
+            }
+        }
+        return numVars;
+    },
+
     littleKiller(numVars: number, element: schema.LittleKillerElement, context: Context): number {
         for (const [ diagIdx, sum ] of Object.entries(element.value || {})) {
             if ('number' !== typeof sum) continue;
@@ -259,8 +290,9 @@ export const ELEMENT_HANDLERS = {
             const weights = [];
             for (const [ x, y ] of diagonalIdx2diagonalCellCoords(+diagIdx, context.grid)) {
                 for (const [ v ] of product(context.size)) {
+                    const value = 1 + v;
                     lits.push(context.getLiteral(y, x, v));
-                    weights.push(1 + v);
+                    weights.push(value);
                 }
             }
             numVars = context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numVars);
