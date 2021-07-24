@@ -10600,6 +10600,13 @@ var satSolverWorker = (function () {
     const loadPbLib = Module();
 
     // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
+    function arrayObj2array(arrayObj) {
+        const arr = [];
+        for (let i = 0; null != arrayObj[i]; i++) {
+            arr.push(arrayObj[i]);
+        }
+        return arr;
+    }
     function cellIdx2cellCoord(idx, { width }) {
         const x = idx % width;
         const y = Math.floor(idx / width);
@@ -10637,6 +10644,11 @@ var satSolverWorker = (function () {
         } while (0 <= x && x < grid.width && 0 <= y && y < grid.height);
         return out;
     }
+    function idxMapToKeysArray(map) {
+        if (null == map)
+            return [];
+        return Object.keys(map).filter(k => null != map[k] && false != map[k]).map(Number).sort((a, b) => a - b);
+    }
 
     const cryptoMiniSatPromise = load();
     const asyncYield = () => new Promise(resolve => setTimeout(resolve, 0));
@@ -10651,6 +10663,38 @@ var satSolverWorker = (function () {
                     yield x;
                 }
             }
+        }
+    }
+    function* knightMoves(N) {
+        for (const [y0, x0, y1, x1] of product(N, N, N, N)) {
+            if (y0 >= y1)
+                continue; // Don't double-count.
+            const dy = Math.abs(y0 - y1);
+            const dx = Math.abs(x0 - x1);
+            if (3 !== dy + dx)
+                continue;
+            if (1 !== Math.abs(dy - dx))
+                continue;
+            yield [
+                [x0, y0],
+                [x1, y1],
+            ];
+        }
+    }
+    function* kingMoves(N) {
+        for (const [y0, x0, y1, x1] of product(N, N, N, N)) {
+            if (y0 >= y1)
+                continue; // Don't double-count.
+            const dy = Math.abs(y0 - y1);
+            if (1 !== dy)
+                continue;
+            const dx = Math.abs(x0 - x1);
+            if (1 !== dx)
+                continue;
+            yield [
+                [x0, y0],
+                [x1, y1],
+            ];
         }
     }
     /**
@@ -10684,7 +10728,7 @@ var satSolverWorker = (function () {
             pbLib,
         };
         const baseVars = Math.pow(context.size, 3);
-        let numVars = 1 + baseVars;
+        let numLits = 1 + baseVars;
         for (const element of Object.values(board.elements)) {
             if (cancellationToken.cancelled)
                 return false;
@@ -10692,16 +10736,16 @@ var satSolverWorker = (function () {
             if (undefined === handler)
                 console.warn(`Ignoring constraint: ${element.type}`);
             if (null != handler) {
-                numVars = handler(numVars, element, context);
+                numLits = handler(numLits, element, context);
             }
         }
         // Create solver instance.
         const sat = await cryptoMiniSatPromise;
         const satSolverPtr = sat.cmsat_new();
         try {
-            console.log(`Running SAT Solver: ${numVars} vars (${baseVars} base), ${context.clauses.length} clauses.`);
+            console.log(`Running SAT Solver: ${numLits} vars (${baseVars} base), ${context.clauses.length} clauses.`);
             // sat.cmsat_set_verbosity(satSolverPtr, 1);
-            sat.cmsat_new_vars(satSolverPtr, numVars);
+            sat.cmsat_new_vars(satSolverPtr, numLits);
             // Add clauses.
             for (const clause of context.clauses) {
                 sat.cmsat_add_clause(satSolverPtr, clause.map(literalToCms));
@@ -10748,7 +10792,7 @@ var satSolverWorker = (function () {
         corner: null,
         center: null,
         colors: null,
-        grid(numVars, _element, context) {
+        grid(numLits, _element, context) {
             const ones = Array(context.size).fill(1);
             for (const [a, b] of product(context.size, context.size)) {
                 const cel = [];
@@ -10759,13 +10803,13 @@ var satSolverWorker = (function () {
                     row.push(context.getLiteral(a, c, b));
                     col.push(context.getLiteral(c, a, b));
                 }
-                numVars = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, numVars);
-                numVars = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, numVars);
-                numVars = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, numVars);
+                numLits = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, numLits);
+                numLits = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, numLits);
+                numLits = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, numLits);
             }
-            return numVars;
+            return numLits;
         },
-        box(numVars, _element, context) {
+        box(numLits, _element, context) {
             // TODO: ELEMENT VALUE IS UNUSED.
             const ones = Array(context.size).fill(1);
             for (const [val, bx] of product(context.size, context.size)) {
@@ -10773,11 +10817,11 @@ var satSolverWorker = (function () {
                 for (const [pos] of product(context.size)) {
                     box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
                 }
-                numVars = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numVars);
+                numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
             }
-            return numVars;
+            return numLits;
         },
-        disjointGroups(numVars, element, context) {
+        disjointGroups(numLits, element, context) {
             if (element.value) {
                 const ones = Array(context.size).fill(1);
                 for (const [val, pos] of product(context.size, context.size)) {
@@ -10785,41 +10829,181 @@ var satSolverWorker = (function () {
                     for (const [bx] of product(context.size)) {
                         box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
                     }
-                    numVars = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numVars);
+                    numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
                 }
             }
-            return numVars;
+            return numLits;
         },
-        givens(numVars, element, context) {
+        givens(numLits, element, context) {
             for (const [cellIdx, value1] of Object.entries(element.value || {})) {
                 const v = value1 - 1;
                 const [x, y] = cellIdx2cellCoord(+cellIdx, context.grid);
                 const literal = context.getLiteral(y, x, v);
                 context.clauses.push([literal]);
             }
-            return numVars;
+            return numLits;
         },
-        filled(numVars, element, context) {
+        filled(numLits, element, context) {
             // Treat filled same as givens (TODO? Make configurable).
-            return ELEMENT_HANDLERS.givens(numVars, element, context);
+            return ELEMENT_HANDLERS.givens(numLits, element, context);
         },
-        littleKiller(numVars, element, context) {
+        knight(numLits, element, context) {
+            return encodeMoves(numLits, element, context, knightMoves);
+        },
+        king(numLits, element, context) {
+            return encodeMoves(numLits, element, context, kingMoves);
+        },
+        even(numLits, element, context) {
+            const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            return encodeExcludeValues(numLits, cellCoords, v => 1 === (v + 1) % 2, context);
+        },
+        odd(numLits, element, context) {
+            const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            return encodeExcludeValues(numLits, cellCoords, v => 0 === (v + 1) % 2, context);
+        },
+        killer(numLits, element, context) {
+            for (const { sum, cells } of Object.values(element.value || {})) {
+                const cellCoords = idxMapToKeysArray(cells || {}).map(idx => cellIdx2cellCoord(+idx, context.grid));
+                // Cage no repeats.
+                numLits = encodeNoRepeats(numLits, cellCoords, context);
+                // Cage sum.
+                if ('number' === typeof sum) {
+                    numLits = encodeSum(numLits, sum, cellCoords, context);
+                }
+            }
+            return numLits;
+        },
+        littleKiller(numLits, element, context) {
             for (const [diagIdx, sum] of Object.entries(element.value || {})) {
                 if ('number' !== typeof sum)
                     continue;
-                const lits = [];
+                const cellCoords = diagonalIdx2diagonalCellCoords(+diagIdx, context.grid);
+                numLits = encodeSum(numLits, sum, cellCoords, context);
+            }
+            return numLits;
+        },
+        thermo(numLits, element, context) {
+            for (const thermoCells of Object.values(element.value || {})) {
+                const cellCoords = arrayObj2array(thermoCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+                numLits = encodeIncreasing(numLits, cellCoords, true, context);
+            }
+            return numLits;
+        },
+        slowThermo(numLits, element, context) {
+            for (const slowThermoCells of Object.values(element.value || {})) {
+                const cellCoords = arrayObj2array(slowThermoCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+                numLits = encodeIncreasing(numLits, cellCoords, false, context);
+            }
+            return numLits;
+        },
+        arrow(numLits, element, context) {
+            for (const { bulb, body } of Object.values(element.value || {})) {
+                // Reverse so least significant digit first.
+                const bulbArrReversed = arrayObj2array(bulb);
+                bulbArrReversed.reverse();
+                // Discard start (which is on cell head).
+                const [_bodyStart, ...bodyArrRest] = arrayObj2array(body);
+                if (0 >= bulbArrReversed.length || 1 >= bodyArrRest.length)
+                    continue;
                 const weights = [];
-                for (const [x, y] of diagonalIdx2diagonalCellCoords(+diagIdx, context.grid)) {
-                    for (const [v] of product(context.size)) {
-                        lits.push(context.getLiteral(y, x, v));
-                        weights.push(1 + v);
+                const lits = [];
+                // Arrow bulb -- do in reverse order to handle ones place first.
+                {
+                    let power = 1;
+                    for (const bulbCellIdx of bulbArrReversed) {
+                        const [x, y] = cellIdx2cellCoord(bulbCellIdx, context.grid);
+                        for (const [v] of product(context.size)) {
+                            const bulbDigitLiteral = context.getLiteral(y, x, v);
+                            const value = 1 + v;
+                            weights.push(-1 * power * value);
+                            lits.push(bulbDigitLiteral);
+                        }
+                        power *= 10;
                     }
                 }
-                numVars = context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numVars);
+                // Arrow body.
+                {
+                    const cellCoords = bodyArrRest.map(idx => cellIdx2cellCoord(idx, context.grid));
+                    writeSum(cellCoords, context, weights, lits); // Write weights into existing arrays.
+                }
+                // Set -HEAD + BODY = 0;
+                numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, numLits);
             }
-            return numVars;
+            return numLits;
         },
     };
+    /**
+     * Encodes that CELLS should be increasing.
+     * If STRICT is false, encodes that CELLS should be nondecreasing.
+     * If STRICT is true, encodes that cells should be strictly increasing.
+     */
+    function encodeIncreasing(numLits, cells, strict, context) {
+        for (let i = 1; i < cells.length; i++) {
+            const [prevX, prevY] = cells[i - 1];
+            const [nextX, nextY] = cells[i];
+            for (let large = 1; large < context.size; large++) {
+                for (let small = 0; small <= large; small++) {
+                    // Dont add exclusion of equality if we're not strict.
+                    if (!strict && small === large)
+                        continue;
+                    const largePrevLit = context.getLiteral(prevY, prevX, large);
+                    const smallNextLit = context.getLiteral(nextY, nextX, small);
+                    // Prevent large preceding small.
+                    context.clauses.push([-largePrevLit, -smallNextLit]);
+                }
+            }
+        }
+        return numLits; // Unchanged.
+    }
+    function encodeNoRepeats(numLits, cells, context) {
+        for (const [v] of product(context.size)) {
+            const literals = [];
+            for (const [x, y] of cells) {
+                const literal = context.getLiteral(y, x, v);
+                literals.push(literal);
+            }
+            numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, numLits);
+        }
+        return numLits;
+    }
+    function encodeSum(numLits, sum, cells, context) {
+        const [weights, lits] = writeSum(cells, context);
+        return context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numLits);
+    }
+    function writeSum(cells, context, weights = [], literals = []) {
+        for (const [x, y] of cells) {
+            for (const [v] of product(context.size)) {
+                const value = 1 + v;
+                const literal = context.getLiteral(y, x, v);
+                weights.push(value);
+                literals.push(literal);
+            }
+        }
+        return [weights, literals];
+    }
+    function encodeMoves(numLits, element, context, func) {
+        if (element.value) {
+            for (const [[x0, y0], [x1, y1]] of func(context.size)) {
+                for (const [v] of product(context.size)) {
+                    const aLit = context.getLiteral(y0, x0, v);
+                    const bLit = context.getLiteral(y1, x1, v);
+                    context.clauses.push([-aLit, -bLit]); // Cannot both be true.
+                }
+            }
+        }
+        return numLits;
+    }
+    function encodeExcludeValues(numLits, cells, excludeValues, context) {
+        for (const [x, y] of cells) {
+            for (const [v] of product(context.size)) {
+                if (excludeValues(v)) {
+                    const literal = context.getLiteral(y, x, v);
+                    context.clauses.push([-literal]);
+                }
+            }
+        }
+        return numLits;
+    }
 
     function makeUid() {
         return `${(31 * Math.floor(0xFFFFFFFF * Math.random()) + Date.now()) % 0xFFFFFFFF}`;
