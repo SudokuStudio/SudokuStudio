@@ -321,6 +321,36 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
+    between(numLits: number, element: schema.LineElement, context: Context): number {
+        for (const cells of Object.values(element.value || {})) {
+            const betweenCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            if (3 > betweenCells.length) continue;
+
+            const isAscendingLit = ++numLits;
+            const [ headX, headY ] = betweenCells.shift()!;
+            const [ tailX, tailY ] = betweenCells.pop()!;
+
+            for (const [ betwX, betwY ] of betweenCells) {
+                for (let large = 0; large < context.size; large++) {
+                    for (let small = 0; small <= large; small++) {
+                        // Using De Morgan's law.
+                        context.clauses.push(
+                            // Cannot be ASCENDING  & HEAD >= BETW
+                            [ -isAscendingLit, -context.getLiteral(headY, headX, large), -context.getLiteral(betwY, betwX, small) ],
+                            // Cannot be ASCENDING  & BETW >= TAIL
+                            [ -isAscendingLit, -context.getLiteral(betwY, betwX, large), -context.getLiteral(tailY, tailX, small) ],
+                            // Cannot be DESCENDING & HEAD <= BETW.
+                            [  isAscendingLit, -context.getLiteral(headY, headX, small), -context.getLiteral(betwY, betwX, large) ],
+                            // Cannot be DESCENDING & BETW <= TAIL.
+                            [  isAscendingLit, -context.getLiteral(betwY, betwX, small), -context.getLiteral(tailY, tailX, large) ],
+                        );
+                    }
+                }
+            }
+        }
+        return numLits;
+    },
+
     arrow(numLits: number, element: schema.ArrowElement, context: Context): number {
         for (const { bulb, body } of Object.values(element.value || {})) {
             // Reverse so least significant digit first.
@@ -379,7 +409,7 @@ function encodeIncreasing(numLits: number, cells: Coord<Geometry.CELL>[], strict
     for (let i = 1; i < cells.length; i++) {
         const [ prevX, prevY ] = cells[i - 1];
         const [ nextX, nextY ] = cells[i];
-        for (let large = 1; large < context.size; large++) {
+        for (let large = 0; large < context.size; large++) {
             for (let small = 0; small <= large; small++) {
                 // Dont add exclusion of equality if we're not strict.
                 if (!strict && small === large) continue;
@@ -444,7 +474,7 @@ function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: numb
 
 function encodeMoves(numLits: number, element: schema.BooleanElement, context: Context, func: typeof knightMoves): number {
     if (element.value) {
-        for (const [[ x0, y0 ], [ x1, y1 ]] of func(context.size)) {
+        for (const [ [ x0, y0 ], [ x1, y1 ] ] of func(context.size)) {
             for (const [ v ] of product(context.size)) {
                 const aLit = context.getLiteral(y0, x0, v);
                 const bLit = context.getLiteral(y1, x1, v);
