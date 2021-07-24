@@ -6,6 +6,7 @@
     export let id: string;
     export let ref: StateRef;
     export let grid: { width: number, height: number };
+    export let isSlow: boolean = true;
 
     const bulbRadius = 0.375;
 
@@ -32,10 +33,31 @@
 >
     <circle cx="0.5" cy="0.5" r={bulbRadius} fill="#444" />
 </marker>
+
+<marker id="slow-thermo-bulb-{id}"
+    viewBox="0 0 1 1" refX="0.5" refY="0.5"
+    markerUnits="userSpaceOnUse"
+    markerWidth="1" markerHeight="1"
+    orient="auto"
+>
+    <path
+        d="M0.35, 0.13 L0.65, 0.13 L0.86, 0.34 L0.86, 0.64 L0.64, 0.86 L0.35, 0.86 L0.13, 0.65 L0.13, 0.35 Z"
+        stroke="#444"
+        fill="aaa"
+    />
+</marker>
+
 <mask id="thermo-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
     {#each getThermos($ref || {}) as { thermoId, d, invalid } (thermoId)}
-        <path {d} fill="none" stroke={invalid ? '#fff' : '#444'} stroke-width="0.2"
+        {#if isSlow}
+            <path {d} fill="none" stroke= "#444" stroke-width="0.2"
+            marker-start="url(#slow-thermo-bulb-{id})"
+            stroke-linejoin="round"
+            stroke-dasharray="0.4 0.1"  />
+        {:else}
+            <path {d} fill="none" stroke={invalid && ! isSlow ? "#fff" : "#444"} stroke-width="0.2"
             marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
+        {/if}
     {/each}
 </mask>
 <g {id}>
