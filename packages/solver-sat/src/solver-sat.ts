@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
-import { cellCoord2CellIdx, cellIdx2cellCoord, diagonalIdx2diagonalCellCoords } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, diagonalIdx2diagonalCellCoords } from '@sudoku-studio/board-utils';
 import { Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
@@ -224,6 +224,25 @@ export const ELEMENT_HANDLERS = {
                 }
             }
             numVars = context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numVars);
+        }
+        return numVars;
+    },
+
+    thermo(numVars: number, element: schema.LineElement, context: Context): number {
+        for (const thermoCells of Object.values(element.value || {})) {
+            const thermoCellsArr = arrayObj2array(thermoCells);
+            for (let i = 1; i < thermoCellsArr.length; i++) {
+                const [ prevX, prevY ] = cellIdx2cellCoord(thermoCellsArr[i - 1], context.grid);
+                const [ nextX, nextY ] = cellIdx2cellCoord(thermoCellsArr[i],     context.grid);
+                for (let large = 1; large < context.size; large++) {
+                    for (let small = 0; small <= large; small++) { // Or equal for regular thermo.
+                        const largePrevLit = context.getLiteral(prevY, prevX, large);
+                        const smallNextLit = context.getLiteral(nextY, nextX, small);
+                        // Prevent large preceding small.
+                        context.clauses.push([ -largePrevLit, -smallNextLit ]);
+                    }
+                }
+            }
         }
         return numVars;
     },
