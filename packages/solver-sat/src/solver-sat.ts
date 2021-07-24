@@ -477,6 +477,10 @@ function encodeCellsMustContain(numLits: number, cells: Coord<Geometry.CELL>[], 
 }
 
 function encodeNoRepeats(numLits: number, cells: Coord<Geometry.CELL>[], context: Context): number {
+    if (context.size < cells.length) {
+        context.clauses.push([]);
+        return numLits;
+    }
     for (const [ v ] of product(context.size)) {
         const literals = writeLitsV(cells, v, context);
         numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, numLits);
