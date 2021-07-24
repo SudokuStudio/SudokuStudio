@@ -10615,6 +10615,26 @@ var satSolverWorker = (function () {
     function cellCoord2CellIdx([x, y], { width }) {
         return y * width + x;
     }
+    function cornerIdx2cornerCoord(vertId, { width }) {
+        const x = vertId % (width + 1);
+        const y = Math.floor(vertId / (width + 1));
+        return [x, y];
+    }
+    function cornerCoord2cellCoords([cx, cy], { width, height }) {
+        const out = [];
+        for (let dy = -1; dy <= 0; dy++) {
+            const y = cy + dy;
+            if (y < 0 || height <= y)
+                continue;
+            for (let dx = -1; dx <= 0; dx++) {
+                const x = cx + dx;
+                if (x < 0 || width <= x)
+                    continue;
+                out.push([x, y]);
+            }
+        }
+        return out;
+    }
     function diagonalIdx2dirVec(idx) {
         return [
             (0b01 & idx) ? -1 : 1,
@@ -10931,6 +10951,14 @@ var satSolverWorker = (function () {
             }
             return numLits;
         },
+        quadruple(numLits, element, context) {
+            for (const [cornerIdx, values] of Object.entries(element.value || {})) {
+                const cellCoords = cornerCoord2cellCoords(cornerIdx2cornerCoord(+cornerIdx, context.grid), context.grid);
+                const vs = arrayObj2array(values).map(value1 => value1 - 1);
+                numLits = encodeCellsMustContain(numLits, cellCoords, vs, context);
+            }
+            return numLits;
+        }
     };
     /**
      * Encodes that CELLS should be increasing.
@@ -10955,16 +10983,31 @@ var satSolverWorker = (function () {
         }
         return numLits; // Unchanged.
     }
+    function encodeCellsMustContain(numLits, cells, vs, context) {
+        const valueOccurrences = new Map();
+        for (const v of vs) {
+            valueOccurrences.set(v, 1 + (valueOccurrences.get(v) || 0));
+        }
+        const ones = Array(cells.length).fill(1);
+        for (const [v, occurrences] of valueOccurrences) {
+            const literals = writeLitsV(cells, +v, context);
+            numLits = context.pbLib.encodeBoth(ones, literals, occurrences, occurrences, context.clauses, numLits);
+        }
+        return numLits;
+    }
     function encodeNoRepeats(numLits, cells, context) {
         for (const [v] of product(context.size)) {
-            const literals = [];
-            for (const [x, y] of cells) {
-                const literal = context.getLiteral(y, x, v);
-                literals.push(literal);
-            }
+            const literals = writeLitsV(cells, v, context);
             numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, numLits);
         }
         return numLits;
+    }
+    function writeLitsV(cells, v, context, literals = []) {
+        for (const [x, y] of cells) {
+            const literal = context.getLiteral(y, x, v);
+            literals.push(literal);
+        }
+        return literals;
     }
     function encodeSum(numLits, sum, cells, context) {
         const [weights, lits] = writeSum(cells, context);
