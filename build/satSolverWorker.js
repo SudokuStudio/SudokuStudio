@@ -4607,27 +4607,25 @@ var satSolverWorker = (function () {
                 return Module.ccall('cmsat_nvars', 'number', ['number'], [self]);
             },
             cmsat_add_clause(self, lits) {
-                if (0 >= lits.length)
-                    return false;
-                const ptr = Module._malloc(lits.length << 2);
+                const ptr = lits.length && Module._malloc(lits.length << 2);
                 try {
                     Module.HEAPU32.set(lits, ptr >> 2);
                     return Module.ccall('cmsat_add_clause', 'number', ['number', 'number', 'number'], [self, ptr, lits.length]);
                 }
                 finally {
-                    Module._free(ptr);
+                    if (0 !== ptr)
+                        Module._free(ptr);
                 }
             },
             cmsat_add_xor_clause(self, lits, rhs) {
-                if (0 >= lits.length)
-                    return false;
-                const ptr = Module._malloc(lits.length << 2);
+                const ptr = lits.length && Module._malloc(lits.length << 2);
                 try {
                     Module.HEAPU32.set(lits, ptr >> 2);
                     return Module.ccall('cmsat_add_xor_clause', 'number', ['number', 'number', 'number', 'boolean'], [self, ptr, lits.length, rhs]);
                 }
                 finally {
-                    Module._free(ptr);
+                    if (0 !== ptr)
+                        Module._free(ptr);
                 }
             },
             cmsat_new_vars(self, n) {
@@ -11074,6 +11072,10 @@ var satSolverWorker = (function () {
         return numLits;
     }
     function encodeNoRepeats(numLits, cells, context) {
+        if (context.size < cells.length) {
+            context.clauses.push([]);
+            return numLits;
+        }
         for (const [v] of product(context.size)) {
             const literals = writeLitsV(cells, v, context);
             numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, numLits);
