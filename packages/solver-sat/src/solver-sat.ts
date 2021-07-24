@@ -299,6 +299,28 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
+    whisper(numLits: number, element: schema.LineElement, context: Context): number {
+        const delta = (context.size + 1) >> 1; // TODO: make this configurable somehow.
+
+        for (const whisperCells of Object.values(element.value || {})) {
+            const cellCoords = arrayObj2array(whisperCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            for (let i = 1; i < cellCoords.length; i++) {
+                const [ x0, y0 ] = cellCoords[i - 1];
+                const [ x1, y1 ] = cellCoords[i];
+
+                for (const [ v0, v1 ] of product(context.size, context.size)) {
+                    if (Math.abs(v0 - v1) < delta) { // If the difference is too small, we can't have both.
+                        const lit0 = context.getLiteral(y0, x0, v0);
+                        const lit1 = context.getLiteral(y1, x1, v1);
+                        context.clauses.push([ -lit0, -lit1 ]);
+                    }
+                }
+            }
+        }
+
+        return numLits;
+    },
+
     arrow(numLits: number, element: schema.ArrowElement, context: Context): number {
         for (const { bulb, body } of Object.values(element.value || {})) {
             // Reverse so least significant digit first.
