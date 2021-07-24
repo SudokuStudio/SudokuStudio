@@ -245,8 +245,7 @@ export const ELEMENT_HANDLERS = {
     },
 
     king(numLits: number, element: schema.BooleanElement, context: Context): number {
-        numLits = encodeMoves(numLits, element, context, kingMoves);
-        return numLits;
+        return encodeMoves(numLits, element, context, kingMoves);
     },
 
     killer(numLits: number, element: schema.KillerElement, context: Context): number {
@@ -276,19 +275,16 @@ export const ELEMENT_HANDLERS = {
 
     thermo(numLits: number, element: schema.LineElement, context: Context): number {
         for (const thermoCells of Object.values(element.value || {})) {
-            const thermoCellsArr = arrayObj2array(thermoCells);
-            for (let i = 1; i < thermoCellsArr.length; i++) {
-                const [ prevX, prevY ] = cellIdx2cellCoord(thermoCellsArr[i - 1], context.grid);
-                const [ nextX, nextY ] = cellIdx2cellCoord(thermoCellsArr[i],     context.grid);
-                for (let large = 1; large < context.size; large++) {
-                    for (let small = 0; small <= large; small++) { // Or equal for regular thermo.
-                        const largePrevLit = context.getLiteral(prevY, prevX, large);
-                        const smallNextLit = context.getLiteral(nextY, nextX, small);
-                        // Prevent large preceding small.
-                        context.clauses.push([ -largePrevLit, -smallNextLit ]);
-                    }
-                }
-            }
+            const cellCoords = arrayObj2array(thermoCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            numLits = encodeIncreasing(numLits, cellCoords, true, context);
+        }
+        return numLits;
+    },
+
+    slowThermo(numLits: number, element: schema.LineElement, context: Context): number {
+        for (const slowThermoCells of Object.values(element.value || {})) {
+            const cellCoords = arrayObj2array(slowThermoCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            numLits = encodeIncreasing(numLits, cellCoords, false, context);
         }
         return numLits;
     },
@@ -332,6 +328,30 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 } as const;
+
+/**
+ * Encodes that CELLS should be increasing.
+ * If STRICT is false, encodes that CELLS should be nondecreasing.
+ * If STRICT is true, encodes that cells should be strictly increasing.
+ */
+function encodeIncreasing(numLits: number, cells: Coord<Geometry.CELL>[], strict: boolean, context: Context): number {
+    for (let i = 1; i < cells.length; i++) {
+        const [ prevX, prevY ] = cells[i - 1];
+        const [ nextX, nextY ] = cells[i];
+        for (let large = 1; large < context.size; large++) {
+            for (let small = 0; small <= large; small++) {
+                // Dont add exclusion of equality if we're not strict.
+                if (!strict && small === large) continue;
+
+                const largePrevLit = context.getLiteral(prevY, prevX, large);
+                const smallNextLit = context.getLiteral(nextY, nextX, small);
+                // Prevent large preceding small.
+                context.clauses.push([ -largePrevLit, -smallNextLit ]);
+            }
+        }
+    }
+    return numLits; // Unchanged.
+}
 
 function encodeNoRepeats(numLits: number, cells: Coord<Geometry.CELL>[], context: Context): number {
     for (const [ v ] of product(context.size)) {
