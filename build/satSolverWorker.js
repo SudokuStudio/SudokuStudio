@@ -10947,13 +10947,13 @@ var satSolverWorker = (function () {
                         for (let small = 0; small <= large; small++) {
                             // Using De Morgan's law.
                             context.clauses.push(
-                            // Cannot be ASCENDING  & HEAD > BETW
+                            // Cannot be ASCENDING  & HEAD >= BETW
                             [-isAscendingLit, -context.getLiteral(headY, headX, large), -context.getLiteral(betwY, betwX, small)], 
-                            // Cannot be ASCENDING  & BETW > TAIL
+                            // Cannot be ASCENDING  & BETW >= TAIL
                             [-isAscendingLit, -context.getLiteral(betwY, betwX, large), -context.getLiteral(tailY, tailX, small)], 
-                            // Cannot be DESCENDING & HEAD < BETW.
+                            // Cannot be DESCENDING & HEAD <= BETW.
                             [isAscendingLit, -context.getLiteral(headY, headX, small), -context.getLiteral(betwY, betwX, large)], 
-                            // Cannot be DESCENDING & BETW < TAIL.
+                            // Cannot be DESCENDING & BETW <= TAIL.
                             [isAscendingLit, -context.getLiteral(betwY, betwX, small), -context.getLiteral(tailY, tailX, large)]);
                         }
                     }
