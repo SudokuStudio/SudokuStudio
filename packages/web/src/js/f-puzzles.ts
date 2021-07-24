@@ -338,7 +338,6 @@ export function parseFpuzzles(b64: string): schema.Board {
     if (fBoard.maximum) addRegionElement('max', fBoard.maximum);
 
     if (fBoard.quadruple) {
-        console.log('QUADRUPLE!');
         const elem: schema.QuadrupleElement = findOrAddElement('quadruple', {});
         for (const fQuadEntry of fBoard.quadruple) {
             if (4 !== fQuadEntry.cells.length) {

@@ -1,7 +1,7 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, diagonalIdx2diagonalCellCoords, idxMapToKeysArray } from '@sudoku-studio/board-utils';
-import { Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, idxMapToKeysArray } from '@sudoku-studio/board-utils';
+import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
 
@@ -337,6 +337,15 @@ export const ELEMENT_HANDLERS = {
         }
         return numLits;
     },
+
+    quadruple(numLits: number, element: schema.QuadrupleElement, context: Context): number {
+        for (const [ cornerIdx, values ] of Object.entries(element.value || {})) {
+            const cellCoords = cornerCoord2cellCoords(cornerIdx2cornerCoord(+cornerIdx, context.grid), context.grid);
+            const vs = arrayObj2array(values as ArrayObj<number>).map(value1 => value1 - 1);
+            numLits = encodeCellsMustContain(numLits, cellCoords, vs, context);
+        }
+        return numLits;
+    }
 } as const;
 
 /**
@@ -363,16 +372,35 @@ function encodeIncreasing(numLits: number, cells: Coord<Geometry.CELL>[], strict
     return numLits; // Unchanged.
 }
 
+function encodeCellsMustContain(numLits: number, cells: Coord<Geometry.CELL>[], vs: number[], context: Context): number {
+    const valueOccurrences = new Map<number, number>();
+    for (const v of vs) {
+        valueOccurrences.set(v, 1 + (valueOccurrences.get(v) || 0));
+    }
+
+    const ones = Array(cells.length).fill(1);
+    for (const [ v, occurrences ] of valueOccurrences) {
+        const literals = writeLitsV(cells, +v, context);
+        numLits = context.pbLib.encodeBoth(ones, literals, occurrences, occurrences, context.clauses, numLits);
+    }
+
+    return numLits;
+}
+
 function encodeNoRepeats(numLits: number, cells: Coord<Geometry.CELL>[], context: Context): number {
     for (const [ v ] of product(context.size)) {
-        const literals = [];
-        for (const [ x, y ] of cells) {
-            const literal = context.getLiteral(y, x, v);
-            literals.push(literal);
-        }
+        const literals = writeLitsV(cells, v, context);
         numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, numLits);
     }
     return numLits;
+}
+
+function writeLitsV(cells: Coord<Geometry.CELL>[], v: number, context: Context, literals: number[] = []): number[] {
+    for (const [ x, y ] of cells) {
+        const literal = context.getLiteral(y, x, v);
+        literals.push(literal);
+    }
+    return literals;
 }
 
 function encodeSum(numLits: number, sum: number, cells: Coord<Geometry.CELL>[], context: Context): number {

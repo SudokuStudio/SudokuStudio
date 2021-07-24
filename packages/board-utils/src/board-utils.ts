@@ -78,6 +78,21 @@ export function svgCoord2cornerCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, h
     if ((x < 0 || width < x) || (y < 0 || height < y)) return null;
     return [ x, y ];
 }
+export function cornerCoord2cellCoords([ cx, cy ]: Coord<Geometry.CORNER>, { width, height }: Grid): Coord<Geometry.CELL>[] {
+    const out: Coord<Geometry.CELL>[] = [];
+    for (let dy = -1; dy <= 0; dy++) {
+        const y = cy + dy;
+        if (y < 0 || height <= y) continue;
+
+        for (let dx = -1; dx <= 0; dx++) {
+            const x = cx + dx;
+            if (x < 0 || width <= x) continue;
+
+            out.push([ x, y ]);
+        }
+    }
+    return out;
+}
 
 
 export function svgCoord2edgeIdx([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid): null | Idx<Geometry.EDGE> {
