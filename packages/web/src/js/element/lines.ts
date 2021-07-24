@@ -21,6 +21,23 @@ export const thermoInfo: ElementInfo = {
     },
 };
 
+export const slowThermoInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getLineInputHandler(ref, grid, svg, {
+            deletePrioritizeHead: true,
+            deletePrioritizeTail: false,
+            allowSelfIntersection: false,
+        });
+    },
+    order: 30,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Slow Thermo',
+        icon: 'slow-thermo',
+    },
+};
+
 export const betweenInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {

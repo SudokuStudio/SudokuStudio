@@ -15,7 +15,7 @@ export const killerInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'Killer',
+        name: 'Killer Cage',
         icon: 'killer',
     },
 };

@@ -120,6 +120,13 @@
         return new LineRender(args);
     }
 
+    function SlowThermoRender(args: any) {
+        Object.assign(args.props, {
+            isSlow: true,
+        });
+        return new ThermoRender(args);
+    }
+
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
         ['select']: UserRender,
@@ -134,6 +141,7 @@
         ['colors']: ColorsRender,
 
         ['thermo']: ThermoRender,
+        ['slowThermo']: SlowThermoRender,
         ['between']: BetweenRender,
         ['palindrome']: PalindromeRender,
         ['whisper']: WhisperRender,
