@@ -306,7 +306,7 @@ export const ELEMENT_HANDLERS = {
             bulbArrReversed.reverse();
             // Discard start (which is on cell head).
             const [ _bodyStart, ...bodyArrRest ] = arrayObj2array(body);
-            if (0 >= bulbArrReversed.length || 1 >= bodyArrRest.length) continue;
+            if (0 >= bulbArrReversed.length || 0 >= bodyArrRest.length) continue;
 
             const weights: number[] = [];
             const lits: number[] = [];
