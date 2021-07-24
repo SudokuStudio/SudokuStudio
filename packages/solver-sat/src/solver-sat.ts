@@ -317,7 +317,44 @@ export const ELEMENT_HANDLERS = {
                 }
             }
         }
+        return numLits;
+    },
 
+    renban(numLits: number, element: schema.LineElement, context: Context): number {
+        for (const renbanCells of Object.values(element.value || {})) {
+            const cellCoords = arrayObj2array(renbanCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            if (0 >= cellCoords.length) continue;
+
+            // 1: Encode no repeats.
+            numLits = encodeNoRepeats(numLits, cellCoords, context);
+
+            // 2: CREATE LITERALS to mark if V is in the region.
+            const isVInRegion = Array(context.size).fill(0).map(() => ++numLits);
+            for (const [ v ] of product(context.size)) {
+                // Forward: if isVInRegion then some cell must contain v.
+                const forwardClause = [ -isVInRegion[v] ];
+
+                for (const [ x, y ] of cellCoords) {
+                    const cellIsV = context.getLiteral(y, x, v);
+                    // Backward: if some cell contains v, then isVInRegion is true.
+                    context.clauses.push([ -cellIsV, isVInRegion[v] ]);
+
+                    forwardClause.push(cellIsV);
+                }
+                context.clauses.push(forwardClause);
+            }
+
+            // 3: For all SMALL < MEDIUM < LARGE:
+            // If both SMALL and LARGE are in the region then MEDIUM is in the region.
+            for (let large = 2; large < context.size; large++) {
+                for (let medium = 1; medium < large; medium++) {
+                    for (let small = 0; small < medium; small++) {
+                        // S & L => M
+                        context.clauses.push([ -isVInRegion[small], -isVInRegion[large], isVInRegion[medium] ]);
+                    }
+                }
+            }
+        }
         return numLits;
     },
 
