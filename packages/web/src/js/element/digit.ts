@@ -67,16 +67,16 @@ export const colorsInfo: ElementInfo = {
             blockedByFilled: false,
             nextMode: 'filled',
             digitMapping: [
-                "#111111",
-                "#666666",
+                "#e0e0e0",
                 "#b2b2b2",
-                hsluv.hsluvToHex([  10, 100, 60 ]),
-                hsluv.hsluvToHex([  40, 100, 65 ]),
-                hsluv.hsluvToHex([  70, 100, 92 ]),
-                hsluv.hsluvToHex([ 120, 100, 80 ]),
-                hsluv.hsluvToHex([ 230, 100, 85 ]),
-                hsluv.hsluvToHex([ 260, 100, 55 ]),
-                hsluv.hsluvToHex([ 300, 100, 70 ]),
+                hsluv.hsluvToHex([  10,  90,  75 ]), // red
+                hsluv.hsluvToHex([  10,  90,  55 ]), // dark red
+                hsluv.hsluvToHex([  70,  80,  90 ]), // yellow
+                hsluv.hsluvToHex([ 120,  50,  90 ]), // light green
+                hsluv.hsluvToHex([ 120,  80,  60 ]), // dark green
+                hsluv.hsluvToHex([ 310,  50,  85 ]), // pink
+                hsluv.hsluvToHex([ 230,  70,  85 ]), // blue
+                hsluv.hsluvToHex([ 230,  80,  65 ]), // dark blue
             ],
         });
     },
