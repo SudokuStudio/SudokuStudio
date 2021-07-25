@@ -358,6 +358,19 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
+    palindrome(numLits: number, element: schema.LineElement, context: Context): number {
+        for (const cells of Object.values(element.value || {})) {
+            const cellCoords = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+
+            const cellCoordsA = cellCoords.slice(0, cellCoords.length >> 1);
+            const cellCoordsB = cellCoords.slice(-cellCoordsA.length);
+            cellCoordsB.reverse();
+
+            numLits = encodeClones(numLits, cellCoordsA, cellCoordsB, context);
+        }
+        return numLits;
+    },
+
     between(numLits: number, element: schema.LineElement, context: Context): number {
         for (const cells of Object.values(element.value || {})) {
             const betweenCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
@@ -434,8 +447,28 @@ export const ELEMENT_HANDLERS = {
             numLits = encodeCellsMustContain(numLits, cellCoords, vs, context);
         }
         return numLits;
-    }
+    },
 } as const;
+
+function encodeClones(numLits: number, cellsA: Coord<Geometry.CELL>[], cellsB: Coord<Geometry.CELL>[], context: Context): number {
+    if (cellsA.length !== cellsB.length) throw Error(`Cloned cells must be of equal length (${cellsA.length} !== ${cellsB.length}).`);
+    for (let i = 0; i < cellsA.length; i++) {
+        const [ xA, yA ] = cellsA[i];
+        const [ xB, yB ] = cellsB[i];
+        for (const [ v ] of product(context.size)) {
+            const litA = context.getLiteral(yA, xA, v);
+            const litB = context.getLiteral(yB, xB, v);
+            context.clauses.push(
+                // A implies B.
+                [ -litA, litB ],
+                // B implies A.
+                [ -litB, litA ],
+            );
+
+        }
+    }
+    return numLits;
+}
 
 /**
  * Encodes that CELLS should be increasing.
