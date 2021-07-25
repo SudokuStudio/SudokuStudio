@@ -10732,6 +10732,12 @@ var satSolverWorker = (function () {
             return [];
         return Object.keys(map).filter(k => null != map[k] && false != map[k]).map(Number).sort((a, b) => a - b);
     }
+    function getMajorDiagonal(positive, grid) {
+        if (grid.width !== grid.height)
+            throw Error(`No major diagonal exists for ${grid.height} rows by ${grid.width} cols grid.`);
+        return Array(grid.width).fill(null)
+            .map((_, i) => [i, positive ? (grid.width - 1 - i) : i]);
+    }
 
     const cryptoMiniSatPromise = load();
     const asyncYield = () => new Promise(resolve => setTimeout(resolve, 0));
@@ -10936,6 +10942,19 @@ var satSolverWorker = (function () {
         king(numLits, element, context) {
             return encodeMoves(numLits, element, context, kingMoves);
         },
+        diagonal(numLits, element, context) {
+            if (element.value) {
+                if (element.value.positive) {
+                    const cellCoords = getMajorDiagonal(true, context.grid);
+                    numLits = encodeNoRepeats(numLits, cellCoords, context);
+                }
+                if (element.value.negative) {
+                    const cellCoords = getMajorDiagonal(false, context.grid);
+                    numLits = encodeNoRepeats(numLits, cellCoords, context);
+                }
+            }
+            return numLits;
+        },
         even(numLits, element, context) {
             const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
             return encodeExcludeValues(numLits, cellCoords, v => 1 === (v + 1) % 2, context);
@@ -10962,6 +10981,20 @@ var satSolverWorker = (function () {
                     continue;
                 const cellCoords = diagonalIdx2diagonalCellCoords(+diagIdx, context.grid);
                 numLits = encodeSum(numLits, sum, cellCoords, context);
+            }
+            return numLits;
+        },
+        clone(numLits, element, context) {
+            for (const { a, b } of Object.values(element.value || {})) {
+                if (null == a || null == b)
+                    continue;
+                const cellCoordsA = arrayObj2array(a).map(idx => cellIdx2cellCoord(idx, context.grid));
+                const cellCoordsB = arrayObj2array(b).map(idx => cellIdx2cellCoord(idx, context.grid));
+                if (cellCoordsA.length !== cellCoordsB.length) {
+                    console.error(`Clone element has two different lengths (${cellCoordsA.length} !== ${cellCoordsB.length})`);
+                    continue;
+                }
+                numLits = encodeClones(numLits, cellCoordsA, cellCoordsB, context);
             }
             return numLits;
         },
@@ -11027,6 +11060,16 @@ var satSolverWorker = (function () {
                         }
                     }
                 }
+            }
+            return numLits;
+        },
+        palindrome(numLits, element, context) {
+            for (const cells of Object.values(element.value || {})) {
+                const cellCoords = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+                const cellCoordsA = cellCoords.slice(0, cellCoords.length >> 1);
+                const cellCoordsB = cellCoords.slice(-cellCoordsA.length);
+                cellCoordsB.reverse();
+                numLits = encodeClones(numLits, cellCoordsA, cellCoordsB, context);
             }
             return numLits;
         },
@@ -11099,8 +11142,26 @@ var satSolverWorker = (function () {
                 numLits = encodeCellsMustContain(numLits, cellCoords, vs, context);
             }
             return numLits;
-        }
+        },
     };
+    function encodeClones(numLits, cellsA, cellsB, context) {
+        if (cellsA.length !== cellsB.length)
+            throw Error(`Cloned cells must be of equal length (${cellsA.length} !== ${cellsB.length}).`);
+        for (let i = 0; i < cellsA.length; i++) {
+            const [xA, yA] = cellsA[i];
+            const [xB, yB] = cellsB[i];
+            for (const [v] of product(context.size)) {
+                const litA = context.getLiteral(yA, xA, v);
+                const litB = context.getLiteral(yB, xB, v);
+                context.clauses.push(
+                // A implies B.
+                [-litA, litB], 
+                // B implies A.
+                [-litB, litA]);
+            }
+        }
+        return numLits;
+    }
     /**
      * Encodes that CELLS should be increasing.
      * If STRICT is false, encodes that CELLS should be nondecreasing.
