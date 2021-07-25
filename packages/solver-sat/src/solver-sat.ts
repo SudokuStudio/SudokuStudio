@@ -509,6 +509,39 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
+    ratio(numLits: number, element: schema.EdgeNumberElement, context: Context): number {
+        const DEFAULT_RATIO = 2;
+        for (const [ edgeIdx, ratioOrTrue ] of Object.entries(element.value || {})) {
+            const ratio = ('number' === typeof ratioOrTrue) ? ratioOrTrue : DEFAULT_RATIO;
+            if (ratio <= 0) throw Error(`Ratio must be positive: ${ratio}.`);
+
+            const [ cellIdxA, cellIdxB ] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
+            const [ xA, yA ] = cellIdx2cellCoord(cellIdxA, context.grid);
+            const [ xB, yB ] = cellIdx2cellCoord(cellIdxB, context.grid);
+
+            for (const [ v ] of product(context.size)) {
+                const value = 1 + v;
+                const valueDiv = value / ratio;
+                const valueMul = value * ratio;
+                // Cell A is VALUE implies cell B is VALUE * DELTA or VALUE / DELTA.
+                // Cell B is VALUE implies cell A is VALUE * DELTA or VALUE / DELTA.
+                const aIsVClause = [ -context.getLiteral(yA, xA, v) ];
+                const bIsVClause = [ -context.getLiteral(yB, xB, v) ];
+                if (Number.isInteger(valueDiv)) {
+                    aIsVClause.push(context.getLiteral(yB, xB, valueDiv - 1)); // -1 for zero-indexing.
+                    bIsVClause.push(context.getLiteral(yA, xA, valueDiv - 1));
+                }
+                if (Number.isInteger(valueMul) && valueMul <= context.size) {
+                    aIsVClause.push(context.getLiteral(yB, xB, valueMul - 1));
+                    bIsVClause.push(context.getLiteral(yA, xA, valueMul - 1));
+                }
+                context.clauses.push(aIsVClause);
+                context.clauses.push(bIsVClause);
+            }
+        }
+        return numLits;
+    },
+
     quadruple(numLits: number, element: schema.QuadrupleElement, context: Context): number {
         for (const [ cornerIdx, values ] of Object.entries(element.value || {})) {
             const cellCoords = cornerCoord2cellCoords(cornerIdx2cornerCoord(+cornerIdx, context.grid), context.grid);
