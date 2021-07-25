@@ -10908,13 +10908,15 @@ var satSolverWorker = (function () {
             }
             return numLits;
         },
-        box(numLits, _element, context) {
-            // TODO: ELEMENT VALUE IS UNUSED.
+        box(numLits, element, context) {
+            const { width, height } = element.value || {};
+            if (!width || !height)
+                throw Error(`Invalid box, width: ${width}, height: ${height}.`);
             const ones = Array(context.size).fill(1);
             for (const [val, bx] of product(context.size, context.size)) {
                 const box = [];
                 for (const [pos] of product(context.size)) {
-                    box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
+                    box.push(context.getLiteral(Math.floor(bx / width) * height + Math.floor(pos / width), (bx % width) * height + (pos % width), val));
                 }
                 numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
             }
