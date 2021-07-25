@@ -229,9 +229,10 @@ export function idxMapToKeysArray<TAG extends Geometry>(map: null | undefined | 
     return Object.keys(map).filter(k => null != map[k] && false != map[k]).map(Number).sort((a, b) => a - b);
 }
 
-export function getMajorDiagonal(positive: boolean, grid: Grid): Idx<Geometry.CELL>[] {
+export function getMajorDiagonal(positive: boolean, grid: Grid): Coord<Geometry.CELL>[] {
+    if (grid.width !== grid.height) throw Error(`No major diagonal exists for ${grid.height} rows by ${grid.width} cols grid.`);
     return Array(grid.width).fill(null)
-        .map((_, i) => cellCoord2CellIdx([ i, positive ? (grid.width - 1 - i) : i ], grid));
+        .map((_, i) => [ i, positive ? (grid.width - 1 - i) : i ]);
 }
 
 export function getRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[], output: Set<Idx<Geometry.CELL>>): void {

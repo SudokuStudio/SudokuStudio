@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, idxMapToKeysArray } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, getMajorDiagonal, idxMapToKeysArray } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
@@ -246,6 +246,20 @@ export const ELEMENT_HANDLERS = {
 
     king(numLits: number, element: schema.BooleanElement, context: Context): number {
         return encodeMoves(numLits, element, context, kingMoves);
+    },
+
+    diagonal(numLits: number, element: schema.DiagonalElement, context: Context): number {
+        if (element.value) {
+            if (element.value.positive) {
+                const cellCoords = getMajorDiagonal(true, context.grid);
+                numLits = encodeNoRepeats(numLits, cellCoords, context);
+            }
+            if (element.value.negative) {
+                const cellCoords = getMajorDiagonal(false, context.grid);
+                numLits = encodeNoRepeats(numLits, cellCoords, context);
+            }
+        }
+        return numLits;
     },
 
     even(numLits: number, element: schema.RegionElement, context: Context): number {
