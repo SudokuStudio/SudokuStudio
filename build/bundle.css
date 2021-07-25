@@ -1311,6 +1311,14 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   width: 24.444%;
 }
 
+.solver-row-container.svelte-6cak3z.svelte-6cak3z {
+  margin: 0.25em 0 0.5em 1.5em;
+}
+
+.solver-row-container.svelte-6cak3z .solver-row.svelte-6cak3z {
+  padding: 0.25em;
+}
+
 line.svelte-1qd4hgf {
   stroke: rgba(0, 0, 0, 0.2);
   stroke-width: 0.02;

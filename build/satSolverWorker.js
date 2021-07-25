@@ -11339,12 +11339,17 @@ var satSolverWorker = (function () {
         const taskId = makeUid();
         const token = {};
         CANCELLATION_TABLE[taskId] = token;
+        console.log(`[${taskId}] Starting.`);
         solve(board, maxSolutions, onSolutionFoundOrComplete, token)
-            .finally(() => delete CANCELLATION_TABLE[taskId]);
+            .finally(() => {
+            delete CANCELLATION_TABLE[taskId];
+            console.log(`[${taskId}] Finished.`);
+        });
         return taskId;
     }
     function cancel(taskId) {
         if (taskId in CANCELLATION_TABLE) {
+            console.log(`Cancelling ${taskId}.`);
             CANCELLATION_TABLE[taskId].cancelled = true;
             delete CANCELLATION_TABLE[taskId];
             return true;
