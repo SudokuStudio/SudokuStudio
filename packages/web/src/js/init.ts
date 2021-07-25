@@ -6,7 +6,7 @@ import { MARK_TYPES, userState } from "./user";
 import { parseFpuzzles } from "./f-puzzles";
 import { createNewBoard } from "./elements";
 
-import { IlpSolver } from "./solver/satSolver";
+import { SatSolver } from "./solver/satSolver";
 import { solutionToString } from "@sudoku-studio/board-utils";
 
 // TODO SOMETHING PROPER
@@ -14,7 +14,7 @@ import { solutionToString } from "@sudoku-studio/board-utils";
     const START = Date.now();
 
     const board = boardState.get<schema.Board>()!;
-    const canAttempt = await IlpSolver.cantAttempt(board);
+    const canAttempt = await SatSolver.cantAttempt(board);
     if (canAttempt) {
         throw Error('Solver cannot attempt this puzzle: ' + canAttempt);
     }
@@ -23,7 +23,7 @@ import { solutionToString } from "@sudoku-studio/board-utils";
 
     let count = 0;
     let timeout: number = -1;
-    const cancel = IlpSolver.solve(board, maxSolutions, solution => {
+    const cancel = SatSolver.solve(board, maxSolutions, solution => {
         if (null == solution) {
             clearTimeout(timeout);
             console.log(`DONE. Found ${(count < maxSolutions) ? 'ALL ' : ''}${count} solutions in ${Date.now() - START} ms.`);

@@ -13,7 +13,7 @@ const getSolverWorker = (() => {
     }
 })();
 
-export const IlpSolver: Solver = {
+export const SatSolver: Solver = {
     cantAttempt(board: schema.Board): Promise<null | string> {
         return getSolverWorker().cantAttempt(board);
     },

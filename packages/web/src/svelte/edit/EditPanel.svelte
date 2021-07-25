@@ -9,6 +9,7 @@
     import SelectMenuComponent from "./constraint/SelectMenuComponent.svelte";
     import CheckboxMenuComponent from "./constraint/CheckboxMenuComponent.svelte";
     import { ELEMENT_HANDLERS } from "../../js/elements";
+import SatSolver from "./solver/SatSolver.svelte";
 
     const constraintsGlobal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
         return $elementHandlers.filter(({ info }) => info.menu && info.inGlobalMenu);
@@ -49,7 +50,11 @@
 <ul class="nolist">
     <li>
         <EditSection icon="computer" title="Solver Panel">
-            <div class="empty-placeholder">Nothing here!</div>
+            <ul class="nolist">
+                <li>
+                    <SatSolver />
+                </li>
+            </ul>
         </EditSection>
     </li>
     <li>
