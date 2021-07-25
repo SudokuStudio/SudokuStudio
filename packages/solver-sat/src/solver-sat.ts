@@ -283,6 +283,22 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
+    clone(numLits: number, element: schema.CloneElement, context: Context): number {
+        for (const { a, b } of Object.values(element.value || {})) {
+            if (null == a || null == b) continue;
+
+            const cellCoordsA = arrayObj2array(a).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const cellCoordsB = arrayObj2array(b).map(idx => cellIdx2cellCoord(idx, context.grid));
+            if (cellCoordsA.length !== cellCoordsB.length) {
+                console.error(`Clone element has two different lengths (${cellCoordsA.length} !== ${cellCoordsB.length})`);
+                continue;
+            }
+
+            numLits = encodeClones(numLits, cellCoordsA, cellCoordsB, context);
+        }
+        return numLits;
+    },
+
     thermo(numLits: number, element: schema.LineElement, context: Context): number {
         for (const thermoCells of Object.values(element.value || {})) {
             const cellCoords = arrayObj2array(thermoCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
