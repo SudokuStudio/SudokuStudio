@@ -480,6 +480,35 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
+    difference(numLits: number, element: schema.EdgeNumberElement, context: Context): number {
+        const DEFAULT_DELTA = 1;
+        for (const [ edgeIdx, deltaOrTrue ] of Object.entries(element.value || {})) {
+            const delta = ('number' === typeof deltaOrTrue) ? deltaOrTrue : DEFAULT_DELTA;
+
+            const [ cellIdxA, cellIdxB ] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
+            const [ xA, yA ] = cellIdx2cellCoord(cellIdxA, context.grid);
+            const [ xB, yB ] = cellIdx2cellCoord(cellIdxB, context.grid);
+
+            for (const [ v ] of product(context.size)) {
+                // Cell A is V implies cell B is V - DIFF or V + DIFF.
+                // Cell B is V implies cell A is V - DIFF or V + DIFF.
+                const aIsVClause = [ -context.getLiteral(yA, xA, v) ];
+                const bIsVClause = [ -context.getLiteral(yB, xB, v) ];
+                if (delta <= v) {
+                    aIsVClause.push(context.getLiteral(yB, xB, v - delta));
+                    bIsVClause.push(context.getLiteral(yA, xA, v - delta));
+                }
+                if (v < context.size - delta) {
+                    aIsVClause.push(context.getLiteral(yB, xB, v + delta));
+                    bIsVClause.push(context.getLiteral(yA, xA, v + delta));
+                }
+                context.clauses.push(aIsVClause);
+                context.clauses.push(bIsVClause);
+            }
+        }
+        return numLits;
+    },
+
     quadruple(numLits: number, element: schema.QuadrupleElement, context: Context): number {
         for (const [ cornerIdx, values ] of Object.entries(element.value || {})) {
             const cellCoords = cornerCoord2cellCoords(cornerIdx2cornerCoord(+cornerIdx, context.grid), context.grid);
