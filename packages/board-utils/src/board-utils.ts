@@ -106,12 +106,12 @@ export function svgCoord2edgeIdx([ xf, yf ]: Coord<Geometry.SVG>, { width, heigh
     return 2 * (w * r + c) + (+d);
 }
 export function edgeIdx2svgCoord(idx: Idx<Geometry.EDGE>, grid: Grid): Coord<Geometry.SVG> {
-    const [ idx0, idx1 ] = edgeIdx2cellCoords(idx, grid);
+    const [ idx0, idx1 ] = edgeIdx2cellIdxes(idx, grid);
     const [ x0, y0 ] = cellIdx2cellCoord(idx0, grid);
     const [ x1, y1 ] = cellIdx2cellCoord(idx1, grid);
     return [ 0.5 * (x0 + x1 + 1), 0.5 * (y0 + y1 + 1) ];
 }
-export function edgeIdx2cellCoords(idx: Idx<Geometry.EDGE>, grid: Grid): [ Idx<Geometry.CELL>, Idx<Geometry.CELL> ] {
+export function edgeIdx2cellIdxes(idx: Idx<Geometry.EDGE>, grid: Grid): [ Idx<Geometry.CELL>, Idx<Geometry.CELL> ] {
     if (1 === idx % 2) {
         const cellIdx = 0.5 * (idx - 1);
         return [ cellIdx, cellIdx + grid.width ];

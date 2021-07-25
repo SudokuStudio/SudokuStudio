@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, getMajorDiagonal, idxMapToKeysArray } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getMajorDiagonal, idxMapToKeysArray } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
@@ -466,6 +466,16 @@ export const ELEMENT_HANDLERS = {
 
             // Set -HEAD + BODY = 0;
             numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, numLits);
+        }
+        return numLits;
+    },
+
+    xv(numLits: number, element: schema.EdgeNumberElement, context: Context): number {
+        for (const [ edgeIdx, sum ] of Object.entries(element.value || {})) {
+            if ('number' !== typeof sum) continue;
+
+            const cellPair = edgeIdx2cellIdxes(+edgeIdx, context.grid).map(idx => cellIdx2cellCoord(idx, context.grid));
+            numLits = encodeSum(numLits, sum, cellPair, context);
         }
         return numLits;
     },
