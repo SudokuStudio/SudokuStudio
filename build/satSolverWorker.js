@@ -10698,6 +10698,16 @@ var satSolverWorker = (function () {
         }
         return out;
     }
+    function edgeIdx2cellIdxes(idx, grid) {
+        if (1 === idx % 2) {
+            const cellIdx = 0.5 * (idx - 1);
+            return [cellIdx, cellIdx + grid.width];
+        }
+        else {
+            const cellIdx = 0.5 * idx + Math.floor(0.5 * idx / (grid.width - 1));
+            return [cellIdx, cellIdx + 1];
+        }
+    }
     function diagonalIdx2dirVec(idx) {
         return [
             (0b01 & idx) ? -1 : 1,
@@ -11132,6 +11142,72 @@ var satSolverWorker = (function () {
                 }
                 // Set -HEAD + BODY = 0;
                 numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, numLits);
+            }
+            return numLits;
+        },
+        xv(numLits, element, context) {
+            for (const [edgeIdx, sum] of Object.entries(element.value || {})) {
+                if ('number' !== typeof sum)
+                    continue;
+                const cellPair = edgeIdx2cellIdxes(+edgeIdx, context.grid).map(idx => cellIdx2cellCoord(idx, context.grid));
+                numLits = encodeSum(numLits, sum, cellPair, context);
+            }
+            return numLits;
+        },
+        difference(numLits, element, context) {
+            const DEFAULT_DELTA = 1;
+            for (const [edgeIdx, deltaOrTrue] of Object.entries(element.value || {})) {
+                const delta = ('number' === typeof deltaOrTrue) ? deltaOrTrue : DEFAULT_DELTA;
+                const [cellIdxA, cellIdxB] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
+                const [xA, yA] = cellIdx2cellCoord(cellIdxA, context.grid);
+                const [xB, yB] = cellIdx2cellCoord(cellIdxB, context.grid);
+                for (const [v] of product(context.size)) {
+                    // Cell A is V implies cell B is V - DIFF or V + DIFF.
+                    // Cell B is V implies cell A is V - DIFF or V + DIFF.
+                    const aIsVClause = [-context.getLiteral(yA, xA, v)];
+                    const bIsVClause = [-context.getLiteral(yB, xB, v)];
+                    if (delta <= v) {
+                        aIsVClause.push(context.getLiteral(yB, xB, v - delta));
+                        bIsVClause.push(context.getLiteral(yA, xA, v - delta));
+                    }
+                    if (v < context.size - delta) {
+                        aIsVClause.push(context.getLiteral(yB, xB, v + delta));
+                        bIsVClause.push(context.getLiteral(yA, xA, v + delta));
+                    }
+                    context.clauses.push(aIsVClause);
+                    context.clauses.push(bIsVClause);
+                }
+            }
+            return numLits;
+        },
+        ratio(numLits, element, context) {
+            const DEFAULT_RATIO = 2;
+            for (const [edgeIdx, ratioOrTrue] of Object.entries(element.value || {})) {
+                const ratio = ('number' === typeof ratioOrTrue) ? ratioOrTrue : DEFAULT_RATIO;
+                if (ratio <= 0)
+                    throw Error(`Ratio must be positive: ${ratio}.`);
+                const [cellIdxA, cellIdxB] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
+                const [xA, yA] = cellIdx2cellCoord(cellIdxA, context.grid);
+                const [xB, yB] = cellIdx2cellCoord(cellIdxB, context.grid);
+                for (const [v] of product(context.size)) {
+                    const value = 1 + v;
+                    const valueDiv = value / ratio;
+                    const valueMul = value * ratio;
+                    // Cell A is VALUE implies cell B is VALUE * DELTA or VALUE / DELTA.
+                    // Cell B is VALUE implies cell A is VALUE * DELTA or VALUE / DELTA.
+                    const aIsVClause = [-context.getLiteral(yA, xA, v)];
+                    const bIsVClause = [-context.getLiteral(yB, xB, v)];
+                    if (Number.isInteger(valueDiv)) {
+                        aIsVClause.push(context.getLiteral(yB, xB, valueDiv - 1)); // -1 for zero-indexing.
+                        bIsVClause.push(context.getLiteral(yA, xA, valueDiv - 1));
+                    }
+                    if (Number.isInteger(valueMul) && valueMul <= context.size) {
+                        aIsVClause.push(context.getLiteral(yB, xB, valueMul - 1));
+                        bIsVClause.push(context.getLiteral(yA, xA, valueMul - 1));
+                    }
+                    context.clauses.push(aIsVClause);
+                    context.clauses.push(bIsVClause);
+                }
             }
             return numLits;
         },
