@@ -14,7 +14,7 @@
     type Item = { cageId: string, text: string, labelPos: { x: number, y: number }, d: string };
     function each(value: schema.KillerElement['value']): Item[] {
         const out: Item[] = [];
-        for (const [ cageId, { sum, cells } ] of Object.entries(value)) {
+        for (const [ cageId, { sum, cells } ] of Object.entries(value || {})) {
             const cellsArr = idxMapToKeysArray<Geometry.CELL>(cells);
             if (0 >= cellsArr.length) continue;
             const firstIdx = cellsArr[0];
