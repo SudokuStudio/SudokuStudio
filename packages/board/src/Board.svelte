@@ -33,7 +33,7 @@
     import NullRender from './svelte/NullRender.svelte';
     import CloneRender from "./svelte/CloneRender.svelte";
 
-    function ErrorRender(args: any) {
+    function WarningRender(args: any) {
         Object.assign(args.props, {
             fill: '#f33',
             outlineOpacity: '#eee',
@@ -142,7 +142,7 @@
     export const ELEMENT_RENDERERS = {
         ['select']: SelectRender,
         ['cursor']: CursorRender,
-        ['error']: ErrorRender,
+        ['warning']: WarningRender,
 
         ['grid']: GridRender,
         ['box']: BoxRender,
@@ -203,7 +203,7 @@
 </script>
 <script lang="ts">
     export let userState:  undefined | null | StateManager;
-    export let errorState: undefined | null | StateManager;
+    export let warningState: undefined | null | StateManager;
     export let boardState: StateManager;
     export let svg: SVGSVGElement = null!;
 
@@ -244,13 +244,13 @@
                 },
             );
         }
-        if (null != errorState) {
+        if (null != warningState) {
             list.push({
-                id: 'error_19282093', // TODO
-                type: 'error',
+                id: 'warning_19282093', // TODO
+                type: 'warning',
                 order: 94,
-                ref: errorState.ref('cells'),
-                element: ErrorRender,
+                ref: warningState.ref('cells'),
+                element: WarningRender,
             });
         }
 
