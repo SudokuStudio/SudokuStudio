@@ -82,7 +82,7 @@ function getThermoWarnings(
                     minSeen = digit;
                 }
                 else if (minSeen == digit) {
-                    warnings[cellIdx] = strict;
+                    if (strict) warnings[cellIdx] = true;
                 }
                 else { // maxSeen < digit.
                     warnings[cellIdx] = true;
