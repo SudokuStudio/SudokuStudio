@@ -226,4 +226,27 @@ export const renbanInfo: ElementInfo = {
         name: 'Renban',
         icon: 'renban',
     },
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        outer:
+        for (const cells of Object.values(value || {})) {
+            const cellsArr = arrayObj2array(cells);
+
+            const seen: number[] = [];
+            for (const cellIdx of cellsArr) {
+                const digit = digits[cellIdx];
+                if (null == digit) {
+                    continue outer; // Not complete.
+                }
+                seen.push(digit);
+            }
+
+            seen.sort((a, b) => a - b);
+            for (let i = 1; i < seen.length; i++) {
+                if (seen[i - 1] + 1 !== seen[i]) {
+                    cellsArr.forEach(idx => warnings[idx] = true);
+                    continue outer;
+                }
+            }
+        }
+    },
 };
