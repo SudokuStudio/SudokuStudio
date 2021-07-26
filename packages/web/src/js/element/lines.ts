@@ -149,6 +149,27 @@ export const palindromeInfo: ElementInfo = {
         name: 'Palindrome',
         icon: 'palindrome',
     },
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const cells of Object.values(value || {})) {
+            const cellsArr = arrayObj2array(cells);
+
+            const cellsA = cellsArr.slice(0, cellsArr.length >> 1);
+            const cellsB = cellsArr.slice(-cellsA.length);
+            cellsB.reverse();
+
+            for (let i = 0; i < cellsA.length; i++) {
+                const digitA = digits[cellsA[i]];
+                const digitB = digits[cellsB[i]];
+
+                if (null == digitA || null == digitB) continue;
+
+                if (digitA !== digitB) {
+                    warnings[cellsA[i]] = true;
+                    warnings[cellsB[i]] = true;
+                }
+            }
+        }
+    },
 };
 
 export const whisperInfo: ElementInfo = {
