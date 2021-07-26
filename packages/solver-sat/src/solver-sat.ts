@@ -92,8 +92,8 @@ export async function solve(board: schema.Board, maxSolutions: number,
         pbLib,
     }
 
-    const baseVars = Math.pow(context.size, 3);
-    let numLits = 1 + baseVars;
+    const numBaseVars = Math.pow(context.size, 3);
+    let numLits = numBaseVars;
 
     for (const element of Object.values(board.elements)) {
         if (cancellationToken.cancelled) return false;
@@ -110,7 +110,7 @@ export async function solve(board: schema.Board, maxSolutions: number,
     const sat = await cryptoMiniSatPromise;
     const satSolverPtr = sat.cmsat_new();
     try {
-        console.log(`Running SAT Solver: ${numLits} vars (${baseVars} base), ${context.clauses.length} clauses.`);
+        console.log(`Running SAT Solver: ${numLits} vars (${numBaseVars} base), ${context.clauses.length} clauses.`);
 
         // sat.cmsat_set_verbosity(satSolverPtr, 1);
         sat.cmsat_new_vars(satSolverPtr, numLits);
@@ -187,9 +187,9 @@ export const ELEMENT_HANDLERS = {
                 row.push(context.getLiteral(a, c, b));
                 col.push(context.getLiteral(c, a, b));
             }
-            numLits = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, numLits);
-            numLits = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, numLits);
-            numLits = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, numLits);
+            numLits = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, 1 + numLits);
+            numLits = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, 1 + numLits);
+            numLits = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, 1 + numLits);
         }
 
         return numLits;
@@ -205,7 +205,7 @@ export const ELEMENT_HANDLERS = {
             for (const [ pos ] of product(context.size)) {
                 box.push(context.getLiteral(Math.floor(bx / width) * height + Math.floor(pos / width), (bx % width) * height + (pos % width), val));
             }
-            numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
+            numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, 1 + numLits);
         }
 
         return numLits;
@@ -219,7 +219,7 @@ export const ELEMENT_HANDLERS = {
                 for (const [ bx ] of product(context.size)) {
                     box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
                 }
-                numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
+                numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, 1 + numLits);
             }
         }
         return numLits;
@@ -466,7 +466,7 @@ export const ELEMENT_HANDLERS = {
             }
 
             // Set -HEAD + BODY = 0;
-            numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, numLits);
+            numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, 1 + numLits);
         }
         return numLits;
     },
@@ -599,7 +599,7 @@ export const ELEMENT_HANDLERS = {
                     }
                     // Encode sum.
                     const sumClauses: number[][] = [];
-                    numLits = context.pbLib.encodeBoth(weights, literals, sandwichSumOrTrue, sandwichSumOrTrue, sumClauses, numLits);
+                    numLits = context.pbLib.encodeBoth(weights, literals, sandwichSumOrTrue, sandwichSumOrTrue, sumClauses, 1 + numLits);
                     // Sum only need be true if this is where the bread is.
                     makeConditional([ isBreadLits[frst], isBreadLits[last] ], sumClauses);
                     context.clauses.push(...sumClauses);
@@ -673,7 +673,7 @@ export const ELEMENT_HANDLERS = {
 
             // 2: Number visible must add up to the clue (first cell is ignored).
             const ones = Array(isVisibleLits.length).fill(1);
-            numLits = context.pbLib.encodeBoth(ones, isVisibleLits, numVisible - 1, numVisible - 1, context.clauses, ++numLits);
+            numLits = context.pbLib.encodeBoth(ones, isVisibleLits, numVisible - 1, numVisible - 1, context.clauses, 1 + numLits);
         }
         return numLits;
     },
@@ -746,7 +746,7 @@ function encodeCellsMustContain(numLits: number, cells: Coord<Geometry.CELL>[], 
     const ones = Array(cells.length).fill(1);
     for (const [ v, occurrences ] of valueOccurrences) {
         const literals = writeLitsV(cells, +v, context);
-        numLits = context.pbLib.encodeBoth(ones, literals, occurrences, occurrences, context.clauses, numLits);
+        numLits = context.pbLib.encodeBoth(ones, literals, occurrences, occurrences, context.clauses, 1 + numLits);
     }
 
     return numLits;
@@ -759,7 +759,7 @@ function encodeNoRepeats(numLits: number, cells: Coord<Geometry.CELL>[], context
     }
     for (const [ v ] of product(context.size)) {
         const literals = writeLitsV(cells, v, context);
-        numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, numLits);
+        numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, 1 + numLits);
     }
     return numLits;
 }
@@ -774,7 +774,7 @@ function writeLitsV(cells: Coord<Geometry.CELL>[], v: number, context: Context, 
 
 function encodeSum(numLits: number, sum: number, cells: Coord<Geometry.CELL>[], context: Context): number {
     const [ weights, lits ] = writeSum(cells, context);
-    return context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numLits);
+    return context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, 1 + numLits);
 }
 
 function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: number[] = [], literals: number[] = []): [ weights: number[], literals: number[] ] {
