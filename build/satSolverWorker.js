@@ -10708,6 +10708,21 @@ var satSolverWorker = (function () {
             return [cellIdx, cellIdx + 1];
         }
     }
+    function seriesIdx2CellCoords(idx, { width, height }) {
+        const z = idx >> 2;
+        const isRow = 1 & (idx >> 1);
+        const dx = isRow;
+        const dy = 1 - isRow;
+        let x = z * dy;
+        let y = z * dx;
+        const out = [];
+        while (x < width && y < height) {
+            out.push([x, y]);
+            x += dx;
+            y += dy;
+        }
+        return out;
+    }
     function diagonalIdx2dirVec(idx) {
         return [
             (0b01 & idx) ? -1 : 1,
@@ -11221,7 +11236,63 @@ var satSolverWorker = (function () {
             }
             return numLits;
         },
+        sandwich(numLits, element, context) {
+            // Helper to avoid creating duplicate bread marker variables.
+            const _breadLitTable = new Map();
+            function getBreadLit(coord) {
+                const idx = cellCoord2CellIdx(coord, context.grid);
+                let lit = _breadLitTable.get(idx);
+                if (null == lit) {
+                    lit = ++numLits;
+                    _breadLitTable.set(idx, lit);
+                }
+                return lit;
+            }
+            for (const [seriesIdx, sandwichSumOrTrue] of Object.entries(element.value || {})) {
+                if ('number' !== typeof sandwichSumOrTrue)
+                    continue;
+                const cellCoords = seriesIdx2CellCoords(+seriesIdx, context.grid);
+                // 1: CREATE LITERALS to mark if a cell is bread (1 or size - 1).
+                const isBreadLits = cellCoords.map(getBreadLit);
+                // 2: For each possible pair of bread cells, encode a sum (kinda inefficient).
+                for (let last = 1; last < context.size; last++) {
+                    for (let frst = 0; frst < last; frst++) {
+                        const weights = [];
+                        const literals = [];
+                        for (let i = frst + 1; i < last; i++) {
+                            const [x, y] = cellCoords[i];
+                            // Skip 1 and 9 (max).
+                            for (let v = 1; v < context.size - 1; v++) {
+                                const value = 1 + v;
+                                weights.push(value);
+                                literals.push(context.getLiteral(y, x, v));
+                            }
+                        }
+                        // Encode sum.
+                        const sumClauses = [];
+                        numLits = context.pbLib.encodeBoth(weights, literals, sandwichSumOrTrue, sandwichSumOrTrue, sumClauses, numLits);
+                        // Sum only need be true if this is where the bread is.
+                        makeConditional([isBreadLits[frst], isBreadLits[last]], sumClauses);
+                        context.clauses.push(...sumClauses);
+                    }
+                }
+            }
+            return numLits;
+        },
     };
+    /**
+     * Modifies the CLAUSES in-place such that they only need be satisfied if ALL of the CONDITION_CONJUNCTION literals are true.
+     * AKA the CONDITION_CONJUNCTION _implies_ the CLAUSES.
+     * @param conditionConjunction If any of the condition literals are false, the clauses need not be satisfied.
+     * @param clauses The existing clauses, to be modified in place.
+     */
+    function makeConditional(conditionConjunction, clauses) {
+        for (const clause of clauses) {
+            for (const conditionLiteral of conditionConjunction) {
+                clause.push(-conditionLiteral);
+            }
+        }
+    }
     function encodeClones(numLits, cellsA, cellsB, context) {
         if (cellsA.length !== cellsB.length)
             throw Error(`Cloned cells must be of equal length (${cellsA.length} !== ${cellsB.length}).`);
