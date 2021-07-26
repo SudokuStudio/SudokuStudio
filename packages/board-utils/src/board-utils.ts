@@ -292,6 +292,18 @@ export function writeRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cell
     }
 }
 
+export function markDigitsFailingCondition(
+    digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[],
+    output: IdxBitset<Geometry.CELL>, condition: (digit: number) => boolean): void
+{
+    for (const cellIdx of cells) {
+        const digit = digits[cellIdx];
+        if (null != digit && !condition(digit)) {
+            output[cellIdx] = true;
+        }
+    }
+}
+
 
 export type MakePathOptions = {
     shortenHead?: number,

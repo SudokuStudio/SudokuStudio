@@ -1,11 +1,12 @@
-import type { Geometry, Grid, Idx } from "@sudoku-studio/schema";
+import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
-import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
+import { cellCoord2CellIdx, idxMapToKeysArray } from "@sudoku-studio/board-utils";
 import { pushHistory } from "../history";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
+import { markDigitsFailingCondition } from "@sudoku-studio/board-utils";
 
 export const minInfo: ElementInfo = {
     getInputHandler,
@@ -38,6 +39,10 @@ export const evenInfo: ElementInfo = {
         name: 'Even',
         icon: 'odd-even',
     },
+    getWarnings(value: schema.RegionElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        const cells = idxMapToKeysArray(value || {});
+        markDigitsFailingCondition(digits, cells, warnings, x => 0 == x % 2);
+    },
 };
 
 export const oddInfo: ElementInfo = {
@@ -48,6 +53,10 @@ export const oddInfo: ElementInfo = {
         type: 'select',
         name: 'Odd',
         icon: 'odd-even',
+    },
+    getWarnings(value: schema.RegionElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        const cells = idxMapToKeysArray(value || {});
+        markDigitsFailingCondition(digits, cells, warnings, x => 1 == x % 2);
     },
 };
 
