@@ -10708,9 +10708,12 @@ var satSolverWorker = (function () {
             return [cellIdx, cellIdx + 1];
         }
     }
+    /**
+     * Returns the cell coordinates for a given series idx, starting from the adjacent cell.
+     */
     function seriesIdx2CellCoords(idx, { width, height }) {
         const z = idx >> 2;
-        const isRow = 1 & (idx >> 1);
+        const isRow = 0b1 & (idx >> 1);
         const dx = isRow;
         const dy = 1 - isRow;
         let x = z * dy;
@@ -10721,6 +10724,8 @@ var satSolverWorker = (function () {
             x += dx;
             y += dy;
         }
+        if (0b1 & idx)
+            out.reverse();
         return out;
     }
     function diagonalIdx2dirVec(idx) {
@@ -11275,6 +11280,31 @@ var satSolverWorker = (function () {
                         makeConditional([isBreadLits[frst], isBreadLits[last]], sumClauses);
                         context.clauses.push(...sumClauses);
                     }
+                }
+            }
+            return numLits;
+        },
+        xsums(numLits, element, context) {
+            for (const [seriesIdx, xsumOrTrue] of Object.entries(element.value || {})) {
+                if ('number' !== typeof xsumOrTrue)
+                    continue;
+                const [xCellCoord, ...restCellCoords] = seriesIdx2CellCoords(+seriesIdx, context.grid);
+                const [x, y] = xCellCoord;
+                // Deal with xSum = 1 separately:
+                if (1 === xsumOrTrue) {
+                    // xCell must be 1.
+                    context.clauses.push([context.getLiteral(y, x, 0)]);
+                    continue;
+                }
+                // xCell must not be 1. Important so the remaining clauses get triggered.
+                context.clauses.push([-context.getLiteral(y, x, 0)]);
+                for (let xv = 1; xv < context.size; xv++) {
+                    const sumCellCoords = restCellCoords.slice(0, xv);
+                    const xValue = 1 + xv;
+                    const xCellLit = context.getLiteral(y, x, xv);
+                    const prevNumClauses = context.clauses.length;
+                    numLits = encodeSum(numLits, xsumOrTrue - xValue, sumCellCoords, context);
+                    makeConditional([xCellLit], context.clauses.slice(prevNumClauses));
                 }
             }
             return numLits;
