@@ -1,9 +1,9 @@
-import type { Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
+import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
 import { parseDigit } from "../input/inputHandler";
-import { cellCoord2CellIdx } from "@sudoku-studio/board-utils";
+import { cellCoord2CellIdx, idxMapToKeysArray, writeRepeatingDigits } from "@sudoku-studio/board-utils";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { makeUid } from "../util";
@@ -17,6 +17,30 @@ export const killerInfo: ElementInfo = {
         type: 'select',
         name: 'Killer Cage',
         icon: 'killer',
+    },
+
+    getWarnings(value: schema.KillerElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const { sum, cells } of Object.values(value || {})) {
+            const cellsArr = idxMapToKeysArray<Geometry.CELL>(cells);
+            writeRepeatingDigits(digits, cellsArr, warnings);
+
+            if ('number' === typeof sum) {
+                let actualSum = 0;
+                let allFilled = true;
+                for (const cellIdx of cellsArr) {
+                    const digit = digits[cellIdx];
+                    if (null == digit) {
+                        allFilled = false;
+                    }
+                    else {
+                        actualSum += digit;
+                    }
+                }
+                if (sum < actualSum || (allFilled && sum !== actualSum)) {
+                    cellsArr.forEach(idx => warnings[idx] = true);
+                }
+            }
+        }
     },
 };
 

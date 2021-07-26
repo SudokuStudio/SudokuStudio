@@ -1,6 +1,6 @@
-import type { Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
+import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord } from "../../../../board-utils/lib/board-utils";
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
 import { pushHistory } from "../history";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
@@ -17,6 +17,44 @@ export const arrowInfo: ElementInfo = {
         name: 'Arrow',
         icon: 'arrow',
     },
+
+    getWarnings(value: schema.ArrowElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        outer:
+        for (const { bulb, body } of Object.values(value || {})) {
+            const bulbArrReversed = arrayObj2array(bulb);
+            bulbArrReversed.reverse();
+
+            let targetSum = 0;
+            let power = 1;
+            for (const bulbIdx of bulbArrReversed) {
+                const digit = digits[bulbIdx];
+                if (null == digit) {
+                    continue outer;
+                }
+
+                targetSum += power * digit;
+                power *= 10;
+            }
+
+            const [ _bodyStart, ...bodyArrRest ] = arrayObj2array(body);
+            let actualSum = 0;
+            let allFilled = true;
+            for (const bodyIdx of bodyArrRest) {
+                const digit = digits[bodyIdx];
+                if (null == digit) {
+                    allFilled = false;
+                }
+                else {
+                    actualSum += digit;
+                }
+            }
+
+            if (targetSum < actualSum || (allFilled && targetSum !== actualSum)) {
+                bulbArrReversed.forEach(idx => warnings[idx] = true);
+                bodyArrRest.forEach(idx => warnings[idx] = true);
+            }
+        }
+    }
 };
 
 /**
