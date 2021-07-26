@@ -10846,8 +10846,8 @@ var satSolverWorker = (function () {
             getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
             pbLib,
         };
-        const baseVars = Math.pow(context.size, 3);
-        let numLits = 1 + baseVars;
+        const numBaseVars = Math.pow(context.size, 3);
+        let numLits = numBaseVars;
         for (const element of Object.values(board.elements)) {
             if (cancellationToken.cancelled)
                 return false;
@@ -10862,7 +10862,7 @@ var satSolverWorker = (function () {
         const sat = await cryptoMiniSatPromise;
         const satSolverPtr = sat.cmsat_new();
         try {
-            console.log(`Running SAT Solver: ${numLits} vars (${baseVars} base), ${context.clauses.length} clauses.`);
+            console.log(`Running SAT Solver: ${numLits} vars (${numBaseVars} base), ${context.clauses.length} clauses.`);
             // sat.cmsat_set_verbosity(satSolverPtr, 1);
             sat.cmsat_new_vars(satSolverPtr, numLits);
             // Add clauses.
@@ -10922,9 +10922,9 @@ var satSolverWorker = (function () {
                     row.push(context.getLiteral(a, c, b));
                     col.push(context.getLiteral(c, a, b));
                 }
-                numLits = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, numLits);
-                numLits = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, numLits);
-                numLits = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, numLits);
+                numLits = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, 1 + numLits);
+                numLits = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, 1 + numLits);
+                numLits = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, 1 + numLits);
             }
             return numLits;
         },
@@ -10938,7 +10938,7 @@ var satSolverWorker = (function () {
                 for (const [pos] of product(context.size)) {
                     box.push(context.getLiteral(Math.floor(bx / width) * height + Math.floor(pos / width), (bx % width) * height + (pos % width), val));
                 }
-                numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
+                numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, 1 + numLits);
             }
             return numLits;
         },
@@ -10950,7 +10950,7 @@ var satSolverWorker = (function () {
                     for (const [bx] of product(context.size)) {
                         box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
                     }
-                    numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, numLits);
+                    numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, 1 + numLits);
                 }
             }
             return numLits;
@@ -11070,7 +11070,7 @@ var satSolverWorker = (function () {
                 // 1: Encode no repeats.
                 numLits = encodeNoRepeats(numLits, cellCoords, context);
                 // 2: CREATE LITERALS to mark if V is in the region.
-                const isVInRegion = Array(context.size).fill(0).map(() => ++numLits);
+                const isVInRegion = Array(context.size).fill().map(() => ++numLits);
                 for (const [v] of product(context.size)) {
                     // Forward: if isVInRegion then some cell must contain v.
                     const forwardClause = [-isVInRegion[v]];
@@ -11163,7 +11163,7 @@ var satSolverWorker = (function () {
                     writeSum(cellCoords, context, weights, lits); // Write weights into existing arrays.
                 }
                 // Set -HEAD + BODY = 0;
-                numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, numLits);
+                numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, 1 + numLits);
             }
             return numLits;
         },
@@ -11246,12 +11246,21 @@ var satSolverWorker = (function () {
             const _breadLitTable = new Map();
             function getBreadLit(coord) {
                 const idx = cellCoord2CellIdx(coord, context.grid);
-                let lit = _breadLitTable.get(idx);
-                if (null == lit) {
-                    lit = ++numLits;
-                    _breadLitTable.set(idx, lit);
+                let isBreadLit = _breadLitTable.get(idx);
+                if (null == isBreadLit) {
+                    isBreadLit = ++numLits;
+                    _breadLitTable.set(idx, isBreadLit);
+                    const [x, y] = cellIdx2cellCoord(idx, context.grid);
+                    const cellIsMin = context.getLiteral(y, x, 0);
+                    const cellIsMax = context.getLiteral(y, x, context.size - 1);
+                    // Cell is min => is bread.
+                    context.clauses.push([-cellIsMin, isBreadLit]);
+                    // Cell is max => is bread.
+                    context.clauses.push([-cellIsMax, isBreadLit]);
+                    // Cell is bread => is min or is max.
+                    context.clauses.push([-isBreadLit, cellIsMin, cellIsMax]);
                 }
-                return lit;
+                return isBreadLit;
             }
             for (const [seriesIdx, sandwichSumOrTrue] of Object.entries(element.value || {})) {
                 if ('number' !== typeof sandwichSumOrTrue)
@@ -11275,7 +11284,7 @@ var satSolverWorker = (function () {
                         }
                         // Encode sum.
                         const sumClauses = [];
-                        numLits = context.pbLib.encodeBoth(weights, literals, sandwichSumOrTrue, sandwichSumOrTrue, sumClauses, numLits);
+                        numLits = context.pbLib.encodeBoth(weights, literals, sandwichSumOrTrue, sandwichSumOrTrue, sumClauses, 1 + numLits);
                         // Sum only need be true if this is where the bread is.
                         makeConditional([isBreadLits[frst], isBreadLits[last]], sumClauses);
                         context.clauses.push(...sumClauses);
@@ -11306,6 +11315,39 @@ var satSolverWorker = (function () {
                     numLits = encodeSum(numLits, xsumOrTrue - xValue, sumCellCoords, context);
                     makeConditional([xCellLit], context.clauses.slice(prevNumClauses));
                 }
+            }
+            return numLits;
+        },
+        skyscraper(numLits, element, context) {
+            for (const [seriesIdx, numVisible] of Object.entries(element.value || {})) {
+                if ('number' !== typeof numVisible)
+                    continue;
+                const cellCoords = seriesIdx2CellCoords(+seriesIdx, context.grid);
+                // 1: CREATE LITERALS to mark if a cell is visible. Skip the first one (always visible).
+                const isVisibleLits = Array(context.size - 1).fill().map(() => ++numLits);
+                for (let i = 1; i < context.size; i++) {
+                    const [x, y] = cellCoords[i];
+                    for (let v = 0; v < context.size; v++) {
+                        const cellIsVLit = context.getLiteral(y, x, v);
+                        const cellIsVisible = isVisibleLits[i - 1];
+                        // This cell being NOT visible implies some previous cells is greater.
+                        const notVisibleClause = [-cellIsVLit, cellIsVisible];
+                        context.clauses.push(notVisibleClause);
+                        for (let iPrev = 0; iPrev < i; iPrev++) {
+                            for (let gtV = v + 1; gtV < context.size; gtV++) {
+                                // Any previous cell greater implies this is NOT visible.
+                                const [xPrev, yPrev] = cellCoords[iPrev];
+                                const prevCellGtLit = context.getLiteral(yPrev, xPrev, gtV);
+                                // Cell is v AND prev cell is gtV implies cell not visible.
+                                context.clauses.push([-cellIsVLit, -prevCellGtLit, -cellIsVisible]);
+                                notVisibleClause.push(prevCellGtLit);
+                            }
+                        }
+                    }
+                }
+                // 2: Number visible must add up to the clue (first cell is ignored).
+                const ones = Array(isVisibleLits.length).fill(1);
+                numLits = context.pbLib.encodeBoth(ones, isVisibleLits, numVisible - 1, numVisible - 1, context.clauses, 1 + numLits);
             }
             return numLits;
         },
@@ -11372,7 +11414,7 @@ var satSolverWorker = (function () {
         const ones = Array(cells.length).fill(1);
         for (const [v, occurrences] of valueOccurrences) {
             const literals = writeLitsV(cells, +v, context);
-            numLits = context.pbLib.encodeBoth(ones, literals, occurrences, occurrences, context.clauses, numLits);
+            numLits = context.pbLib.encodeBoth(ones, literals, occurrences, occurrences, context.clauses, 1 + numLits);
         }
         return numLits;
     }
@@ -11383,7 +11425,7 @@ var satSolverWorker = (function () {
         }
         for (const [v] of product(context.size)) {
             const literals = writeLitsV(cells, v, context);
-            numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, numLits);
+            numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, 1 + numLits);
         }
         return numLits;
     }
@@ -11396,7 +11438,7 @@ var satSolverWorker = (function () {
     }
     function encodeSum(numLits, sum, cells, context) {
         const [weights, lits] = writeSum(cells, context);
-        return context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, numLits);
+        return context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, 1 + numLits);
     }
     function writeSum(cells, context, weights = [], literals = []) {
         for (const [x, y] of cells) {
