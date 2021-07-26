@@ -605,9 +605,36 @@ export const ELEMENT_HANDLERS = {
                     context.clauses.push(...sumClauses);
                 }
             }
-
         }
+        return numLits;
+    },
 
+    xsums(numLits: number, element: schema.SeriesNumberElement, context: Context): number {
+        for (const [ seriesIdx, xsumOrTrue ] of Object.entries(element.value || {})) {
+            if ('number' !== typeof xsumOrTrue) continue;
+
+            const [ xCellCoord, ...restCellCoords ] = seriesIdx2CellCoords(+seriesIdx, context.grid);
+            const [ x, y ] = xCellCoord;
+
+            // Deal with xSum = 1 separately:
+            if (1 === xsumOrTrue) {
+                // xCell must be 1.
+                context.clauses.push([ context.getLiteral(y, x, 0) ]);
+                continue;
+            }
+            // xCell must not be 1. Important so the remaining clauses get triggered.
+            context.clauses.push([ -context.getLiteral(y, x, 0) ]);
+
+            for (let xv = 1; xv < context.size; xv++) {
+                const sumCellCoords = restCellCoords.slice(0, xv);
+                const xValue = 1 + xv;
+                const xCellLit = context.getLiteral(y, x, xv);
+
+                const prevNumClauses = context.clauses.length;
+                numLits = encodeSum(numLits, xsumOrTrue - xValue, sumCellCoords, context);
+                makeConditional([ xCellLit ], context.clauses.slice(prevNumClauses));
+            }
+        }
         return numLits;
     },
 } as const;

@@ -145,9 +145,12 @@ export function seriesIdx2seriesCoord(idx: Idx<Geometry.SERIES>, { width, height
         return [ z, w * (1 + height) - 1 ];
     }
 }
+/**
+ * Returns the cell coordinates for a given series idx, starting from the adjacent cell.
+ */
 export function seriesIdx2CellCoords(idx: Idx<Geometry.SERIES>, { width, height }: Grid): Coord<Geometry.CELL>[] {
     const z = idx >> 2;
-    const isRow = 1 & (idx >> 1);
+    const isRow = 0b1 & (idx >> 1);
     const dx = isRow;
     const dy = 1 - isRow;
     let x = z * dy;
@@ -158,6 +161,7 @@ export function seriesIdx2CellCoords(idx: Idx<Geometry.SERIES>, { width, height 
         x += dx;
         y += dy;
     }
+    if (0b1 & idx) out.reverse();
     return out;
 }
 
