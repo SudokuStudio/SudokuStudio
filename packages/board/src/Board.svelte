@@ -5,6 +5,9 @@
     import { idxMapToKeysArray, BOX_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getEdges, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils";
     import { derived, readable } from "svelte/store";
 
+    import SelectRender from './svelte/SelectRender.svelte';
+    import CursorRender from "./svelte/CursorRender.svelte";
+
     import GridRender from './svelte/GridRender.svelte';
     import BoxRender from './svelte/BoxRender.svelte';
     import DigitRender from './svelte/DigitRender.svelte';
@@ -22,7 +25,6 @@
     import KillerRender from './svelte/KillerRender.svelte';
     import QuadrupleRender from './svelte/QuadrupleRender.svelte';
     import DiagonalRender from './svelte/DiagonalRender.svelte';
-    import UserRender from './svelte/UserRender.svelte';
     import CornerRender from './svelte/CornerRender.svelte';
     import CenterRender from './svelte/CenterRender.svelte';
     import ColorsRender from './svelte/ColorsRender.svelte';
@@ -30,6 +32,15 @@
     import LittleKillerRender from "./svelte/LittleKillerRender.svelte";
     import NullRender from './svelte/NullRender.svelte';
     import CloneRender from "./svelte/CloneRender.svelte";
+
+    function ErrorRender(args: any) {
+        Object.assign(args.props, {
+            fill: '#f33',
+            outlineOpacity: '#eee',
+            innerOpacity: '#333',
+        });
+        return new SelectRender(args);
+    }
 
     function FilledRender(args: any) {
         args.props.color = '#4e72b0';
@@ -129,7 +140,9 @@
 
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
-        ['select']: UserRender,
+        ['select']: SelectRender,
+        ['cursor']: CursorRender,
+        ['error']: ErrorRender,
 
         ['grid']: GridRender,
         ['box']: BoxRender,
@@ -189,7 +202,8 @@
 
 </script>
 <script lang="ts">
-    export let userState: StateManager;
+    export let userState:  undefined | null | StateManager;
+    export let errorState: undefined | null | StateManager;
     export let boardState: StateManager;
     export let svg: SVGSVGElement = null!;
 
@@ -211,15 +225,34 @@
     }[];
 
     const list = readable<ElementList>([], set => {
-        const list: ElementList = [
-            {
-                id: 'select_192839012', // TODO
-                type: 'select',
-                order: 95, // TODO
-                ref: userState as any, // TODO
-                element: UserRender,
-            },
-        ];
+        const list: ElementList = [];
+        if (null != userState) {
+            list.push(
+                {
+                    id: 'select_192839012', // TODO
+                    type: 'select',
+                    order: 95, // TODO
+                    ref: userState.ref('select'), // TODO
+                    element: SelectRender,
+                },
+                {
+                    id: 'cursor_192839012', // TODO
+                    type: 'cursor',
+                    order: 94, // TODO
+                    ref: userState.ref('cursor'), // TODO
+                    element: CursorRender,
+                },
+            );
+        }
+        if (null != errorState) {
+            list.push({
+                id: 'error_19282093', // TODO
+                type: 'error',
+                order: 94,
+                ref: errorState.ref('cells'),
+                element: ErrorRender,
+            });
+        }
 
         boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
             let i = -1;
