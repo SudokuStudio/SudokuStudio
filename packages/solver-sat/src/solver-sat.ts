@@ -360,7 +360,7 @@ export const ELEMENT_HANDLERS = {
             numLits = encodeNoRepeats(numLits, cellCoords, context);
 
             // 2: CREATE LITERALS to mark if V is in the region.
-            const isVInRegion = Array(context.size).fill(0).map(() => ++numLits);
+            const isVInRegion = Array<void>(context.size).fill().map(() => ++numLits);
             for (const [ v ] of product(context.size)) {
                 // Forward: if isVInRegion then some cell must contain v.
                 const forwardClause = [ -isVInRegion[v] ];
@@ -634,6 +634,46 @@ export const ELEMENT_HANDLERS = {
                 numLits = encodeSum(numLits, xsumOrTrue - xValue, sumCellCoords, context);
                 makeConditional([ xCellLit ], context.clauses.slice(prevNumClauses));
             }
+        }
+        return numLits;
+    },
+
+    skyscraper(numLits: number, element: schema.SeriesNumberElement, context: Context): number {
+        for (const [ seriesIdx, numVisible ] of Object.entries(element.value || {})) {
+            if ('number' !== typeof numVisible) continue;
+
+            const cellCoords = seriesIdx2CellCoords(+seriesIdx, context.grid);
+
+            // 1: CREATE LITERALS to mark if a cell is visible. Skip the first one (always visible).
+            const isVisibleLits = Array<void>(context.size - 1).fill().map(() => ++numLits);
+            for (let i = 1; i < context.size; i++) {
+                const [ x, y ] = cellCoords[i];
+
+                for (let v = 0; v < context.size; v++) {
+                    const cellIsVLit = context.getLiteral(y, x, v);
+                    const cellIsVisible = isVisibleLits[i - 1];
+
+                    // This cell being NOT visible implies some previous cells is greater.
+                    const notVisibleClause = [ -cellIsVLit, cellIsVisible ];
+                    context.clauses.push(notVisibleClause);
+
+                    for (let iPrev = 0; iPrev < i; iPrev++) {
+                        for (let gtV = v + 1; gtV < context.size; gtV++) {
+                            // Any previous cell greater implies this is NOT visible.
+                            const [ xPrev, yPrev ] = cellCoords[iPrev];
+                            const prevCellGtLit = context.getLiteral(yPrev, xPrev, gtV);
+                            // Cell is v AND prev cell is gtV implies cell not visible.
+                            context.clauses.push([ -cellIsVLit, -prevCellGtLit, -cellIsVisible ]);
+
+                            notVisibleClause.push(prevCellGtLit);
+                        }
+                    }
+                }
+            }
+
+            // 2: Number visible must add up to the clue (first cell is ignored).
+            const ones = Array(isVisibleLits.length).fill(1);
+            numLits = context.pbLib.encodeBoth(ones, isVisibleLits, numVisible - 1, numVisible - 1, context.clauses, ++numLits);
         }
         return numLits;
     },
