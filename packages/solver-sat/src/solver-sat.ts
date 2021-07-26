@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getMajorDiagonal, idxMapToKeysArray } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getMajorDiagonal, idxMapToKeysArray, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
@@ -551,7 +551,80 @@ export const ELEMENT_HANDLERS = {
         }
         return numLits;
     },
+
+    sandwich(numLits: number, element: schema.SeriesNumberElement, context: Context): number {
+        // Helper to avoid creating duplicate bread marker variables.
+        const _breadLitTable = new Map();
+        function getBreadLit(coord: Coord<Geometry.CELL>): number {
+            const idx = cellCoord2CellIdx(coord, context.grid);
+            let isBreadLit = _breadLitTable.get(idx);
+            if (null == isBreadLit) {
+                isBreadLit = ++numLits;
+                _breadLitTable.set(idx, isBreadLit);
+
+                const [ x, y ] = cellIdx2cellCoord(idx, context.grid);
+                const cellIsMin = context.getLiteral(y, x, 0);
+                const cellIsMax = context.getLiteral(y, x, context.size - 1);
+                // Cell is min => is bread.
+                context.clauses.push([ -cellIsMin, isBreadLit ]);
+                // Cell is max => is bread.
+                context.clauses.push([ -cellIsMax, isBreadLit ]);
+                // Cell is bread => is min or is max.
+                context.clauses.push([ -isBreadLit, cellIsMin, cellIsMax ]);
+            }
+            return isBreadLit;
+        }
+
+        for (const [ seriesIdx, sandwichSumOrTrue ] of Object.entries(element.value || {})) {
+            if ('number' !== typeof sandwichSumOrTrue) continue;
+
+            const cellCoords = seriesIdx2CellCoords(+seriesIdx, context.grid);
+
+            // 1: CREATE LITERALS to mark if a cell is bread (1 or size - 1).
+            const isBreadLits = cellCoords.map(getBreadLit);
+
+            // 2: For each possible pair of bread cells, encode a sum (kinda inefficient).
+            for (let last = 1; last < context.size; last++) {
+                for (let frst = 0; frst < last; frst++) {
+                    const weights: number[] = [];
+                    const literals: number[] = [];
+                    for (let i = frst + 1; i < last; i++) {
+                        const [ x, y ] = cellCoords[i];
+                        // Skip 1 and 9 (max).
+                        for (let v = 1; v < context.size - 1; v++) {
+                            const value = 1 + v;
+                            weights.push(value)
+                            literals.push(context.getLiteral(y, x, v));
+                        }
+                    }
+                    // Encode sum.
+                    const sumClauses: number[][] = [];
+                    numLits = context.pbLib.encodeBoth(weights, literals, sandwichSumOrTrue, sandwichSumOrTrue, sumClauses, numLits);
+                    // Sum only need be true if this is where the bread is.
+                    makeConditional([ isBreadLits[frst], isBreadLits[last] ], sumClauses);
+                    context.clauses.push(...sumClauses);
+                }
+            }
+
+        }
+
+        return numLits;
+    },
 } as const;
+
+/**
+ * Modifies the CLAUSES in-place such that they only need be satisfied if ALL of the CONDITION_CONJUNCTION literals are true.
+ * AKA the CONDITION_CONJUNCTION _implies_ the CLAUSES.
+ * @param conditionConjunction If any of the condition literals are false, the clauses need not be satisfied.
+ * @param clauses The existing clauses, to be modified in place.
+ */
+function makeConditional(conditionConjunction: number[], clauses: number[][]): void {
+    for (const clause of clauses) {
+        for (const conditionLiteral of conditionConjunction) {
+            clause.push(-conditionLiteral);
+        }
+    }
+}
 
 function encodeClones(numLits: number, cellsA: Coord<Geometry.CELL>[], cellsB: Coord<Geometry.CELL>[], context: Context): number {
     if (cellsA.length !== cellsB.length) throw Error(`Cloned cells must be of equal length (${cellsA.length} !== ${cellsB.length}).`);

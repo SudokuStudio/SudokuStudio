@@ -145,6 +145,21 @@ export function seriesIdx2seriesCoord(idx: Idx<Geometry.SERIES>, { width, height
         return [ z, w * (1 + height) - 1 ];
     }
 }
+export function seriesIdx2CellCoords(idx: Idx<Geometry.SERIES>, { width, height }: Grid): Coord<Geometry.CELL>[] {
+    const z = idx >> 2;
+    const isRow = 1 & (idx >> 1);
+    const dx = isRow;
+    const dy = 1 - isRow;
+    let x = z * dy;
+    let y = z * dx;
+    const out: Coord<Geometry.CELL>[] = [];
+    while (x < width && y < height) {
+        out.push([ x, y ]);
+        x += dx;
+        y += dy;
+    }
+    return out;
+}
 
 
 export function svgCoord2diagonalIdx([ xf, yf ]: Coord<Geometry.SVG>, grid: Grid): null | Idx<Geometry.DIAGONAL> {
