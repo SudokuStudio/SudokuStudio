@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Board } from "@sudoku-studio/board";
-    import { boardDiv, boardState, boardSvg } from "../../js/board";
+    import { boardDiv, boardState, boardSvg, warningState } from "../../js/board";
     import { currentInputHandler } from "../../js/elementStores";
     import type { InputHandler } from "../../js/input/inputHandler";
     import { userState } from "../../js/user";
@@ -32,7 +32,7 @@
 
     on:mouseleave|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'leave')}>
 </div>
-<Board bind:svg={$boardSvg} {boardState} {userState} />
+<Board bind:svg={$boardSvg} {boardState} {userState} {warningState} />
 
 <style lang="scss">
     .overlay {

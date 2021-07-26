@@ -36,5 +36,7 @@ export type ElementInfo = {
 
     /** Can be unset if no menu component. */
     inGlobalMenu?: null | boolean,
-    menu?: null | MenuComponent;
+    menu?: null | MenuComponent,
+
+    getWarnings?: null | ((value: any, grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>) => void)
 };

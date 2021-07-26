@@ -12,3 +12,5 @@ export const boardGridRef = boardState.ref('grid');
 export function getDigits(includeGivens: boolean = true, includeFilled: boolean = true): IdxMap<Geometry.CELL, number> {
     return getDigitsHelper(boardState.get<schema.Board['elements']>('elements') || {}, includeGivens, includeFilled);
 }
+
+export const warningState = (window as any).warningState = new StateManager();

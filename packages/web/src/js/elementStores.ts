@@ -1,13 +1,14 @@
 import { derived, readable } from "svelte/store";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import type { ElementInfo } from "./element/element";
-import { boardGridRef, boardState, boardSvg } from "./board";
-import type { Grid, schema } from "@sudoku-studio/schema";
+import { boardGridRef, boardState, boardSvg, warningState } from "./board";
+import type { Geometry, Grid, IdxBitset, schema } from "@sudoku-studio/schema";
 import { createElement, ELEMENT_HANDLERS } from "./elements";
 import { userPrevToolState, userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 import { pushHistory } from "./history";
 import { makeUid } from "./util";
+import { getDigits } from "@sudoku-studio/board-utils";
 
 export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];
@@ -83,6 +84,21 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
         set(list);
     }, true);
 });
+
+boardState.ref('elements').watch<schema.Board['elements']>((_path, _oldElements, newElements) => {
+    if (null == newElements) return;
+    const digits = getDigits(newElements);
+
+    const warnings: IdxBitset<Geometry.CELL> = {};
+    const grid = boardGridRef.get<Grid>();
+    for (const { type, value } of Object.values(newElements)) {
+        const handler = ELEMENT_HANDLERS[type];
+        if (null == handler || null == handler.getWarnings) continue;
+
+        handler.getWarnings(value, grid, digits, warnings);
+    }
+    warningState.update({ 'cells': warnings });
+}, true);
 
 export const currentElement = readable<null | ElementHandlerItem>(null, set => {
     let list: ElementHandlerList = [];

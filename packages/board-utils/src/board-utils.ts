@@ -1,4 +1,4 @@
-import type { Grid, Idx, Coord, Geometry, ArrayObj, IdxMap, schema } from "@sudoku-studio/schema";
+import type { Grid, Idx, Coord, Geometry, ArrayObj, IdxMap, schema, IdxBitset } from "@sudoku-studio/schema";
 
 // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
 export function any(x: any): any {
@@ -254,20 +254,41 @@ export function getMajorDiagonal(positive: boolean, grid: Grid): Coord<Geometry.
         .map((_, i) => [ i, positive ? (grid.width - 1 - i) : i ]);
 }
 
-export function getRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[], output: Set<Idx<Geometry.CELL>>): void {
-    const counts = new Map<number, Idx<Geometry.CELL>[]>();
+export function getRowCellIdxes(row: number, { width, height }: Grid): Idx<Geometry.CELL>[] {
+    if (row < 0 || height <= row) throw Error(`ROW is outside grid: ${row}.`);
+    return Array<void>(width).fill().map((_, i) => row * width + i);
+}
+
+export function getColCellIdxes(col: number, { width, height }: Grid): Idx<Geometry.CELL>[] {
+    if (col < 0 || width <= col) throw Error(`COL is outside grid: ${col}.`);
+    return Array<void>(height).fill().map((_, i) => col + i * width);
+}
+
+export function getBoxCellIdxes(bx: number, boxInfo: NonNullable<schema.BoxElement['value']>, grid: Grid): Idx<Geometry.CELL>[] {
+    const out: Idx<Geometry.CELL>[] = [];
+
+    const positions = boxInfo.width * boxInfo.height;
+    for (let pos = 0; pos < positions; pos++) {
+        const y = Math.floor(bx / boxInfo.width) * boxInfo.height + Math.floor(pos / boxInfo.width);
+        const x = (bx % boxInfo.width) * boxInfo.height + (pos % boxInfo.width);
+        out.push(cellCoord2CellIdx([ x, y ], grid));
+    }
+    return out;
+}
+
+export function writeRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[], output: IdxBitset<Geometry.CELL>): void {
+    const seen = new Map<number, Idx<Geometry.CELL>>();
     for (const cellIdx of cells) {
         const digit = digits[cellIdx];
         if (null == digit) continue;
 
-        let occurances = counts.get(digit);
-        if (null == occurances) {
-            occurances = [];
-            counts.set(digit, occurances);
+        if (seen.has(digit)) {
+            output[seen.get(digit)!] = true;
+            output[cellIdx] = true;
         }
-        occurances.push(cellIdx);
-        if (1 < occurances.length)
-            occurances.forEach(output.add);
+        else {
+            seen.set(digit, cellIdx);
+        }
     }
 }
 
