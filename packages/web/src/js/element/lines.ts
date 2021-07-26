@@ -107,6 +107,31 @@ export const betweenInfo: ElementInfo = {
         name: 'Between',
         icon: 'between',
     },
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const cells of Object.values(value || {})) {
+            const betweenCells = arrayObj2array(cells);
+            if (3 > betweenCells.length) continue;
+
+            const headIdx = betweenCells.shift()!;
+            const tailIdx = betweenCells.pop()!;
+
+            const headVal = digits[headIdx];
+            const tailVal = digits[tailIdx];
+            if (null == headVal || null == tailVal) continue;
+
+            const min = Math.min(headVal, tailVal);
+            const max = Math.max(headVal, tailVal);
+
+            for (const betweenIdx of betweenCells) {
+                const digit = digits[betweenIdx];
+                if (null != digit && (digit <= min || max <= digit)) {
+                    warnings[betweenIdx] = true;
+                    warnings[headIdx] = true;
+                    warnings[tailIdx] = true;
+                }
+            }
+        }
+    },
 };
 
 export const palindromeInfo: ElementInfo = {
