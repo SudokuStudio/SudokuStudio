@@ -187,6 +187,28 @@ export const whisperInfo: ElementInfo = {
         name: 'Whisper',
         icon: 'whisper',
     },
+    getWarnings(value: schema.LineElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        const delta = (grid.width + 1) >> 1; // TODO: make this configurable somehow.
+
+        for (const cells of Object.values(value || {})) {
+            const cellsArr = arrayObj2array(cells);
+
+            for (let i = 1; i < cellsArr.length; i++) {
+                const prevIdx = cellsArr[i - 1];
+                const nextIdx = cellsArr[i];
+
+                const prevDigit = digits[prevIdx];
+                const nextDigit = digits[nextIdx];
+
+                if (null == prevDigit || null == nextDigit) continue;
+
+                if (Math.abs(prevDigit - nextDigit) < delta) {
+                    warnings[prevIdx] = true;
+                    warnings[nextIdx] = true;
+                }
+            }
+        }
+    },
 };
 
 export const renbanInfo: ElementInfo = {
