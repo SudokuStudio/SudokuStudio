@@ -635,7 +635,7 @@ export function makeConicalCellSlice(idx: Idx<Geometry.CELL>, grid: Grid, index:
 }
 
 
-export function getDigits(elements: schema.Board['elements'], includeGivens: boolean = true, includeFilled: boolean = true): IdxMap<Geometry.CELL, number> {
+export function getDigits(elements: schema.Board['elements'], includeGivens = true, includeFilled = true, includeZeros = false): IdxMap<Geometry.CELL, number> {
     const out: IdxMap<Geometry.CELL, number> = {};
     if (!includeGivens && !includeFilled) return out;
 
@@ -656,6 +656,14 @@ export function getDigits(elements: schema.Board['elements'], includeGivens: boo
                 for (const cellIdx of Object.keys(element.value || {})) {
                     delete out[cellIdx];
                 }
+            }
+        }
+    }
+
+    if (!includeZeros) {
+        for (const key of Object.keys(out)) {
+            if (0 === out[key]) {
+                delete out[key];
             }
         }
     }
