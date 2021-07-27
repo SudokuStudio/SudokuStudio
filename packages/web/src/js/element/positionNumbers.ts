@@ -180,6 +180,34 @@ export const skyscraperInfo: ElementInfo = {
         name: 'Skyscraper',
         icon: 'skyscraper',
     },
+    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const [ seriesIdx, numVisible ] of Object.entries(value || {})) {
+            if ('number' !== typeof numVisible) continue;
+
+            const seriesCells = seriesIdx2CellCoords(+seriesIdx, grid).map(coord => cellCoord2CellIdx(coord, grid));
+
+            let numVisibleActual = 0;
+            let max = Number.NEGATIVE_INFINITY;
+            let i = 0;
+            for (; i < seriesCells.length; i++) {
+                const cellIdx = seriesCells[i];
+                const digit = digits[cellIdx];
+                if (null == digit) break;
+
+                if (max < digit) {
+                    max = digit;
+                    numVisibleActual++;
+
+                    if (numVisible < numVisibleActual) break;
+                }
+            }
+
+            const allFilled = i === seriesCells.length;
+            if (numVisible < numVisibleActual || (allFilled && numVisible !== numVisibleActual)) {
+                seriesCells.map(idx => warnings[idx] = true);
+            }
+        }
+    },
 };
 
 export const xsumsInfo: ElementInfo = {
