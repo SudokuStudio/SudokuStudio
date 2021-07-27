@@ -10660,8 +10660,6 @@ var satSolverWorker = (function () {
     );
     })();
 
-    const loadPbLib = Module();
-
     // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
     function arrayObj2array(arrayObj) {
         const arr = [];
@@ -10815,6 +10813,7 @@ var satSolverWorker = (function () {
     }
 
     const cryptoMiniSatPromise = load();
+    const pbLibPromise = Module();
     const asyncYield = () => new Promise(resolve => setTimeout(resolve, 0));
     /**
      * CryptoMiniSat uses unsigned u32s with the lowest bit representing negation.
@@ -10837,7 +10836,7 @@ var satSolverWorker = (function () {
         return null;
     }
     async function solve(board, maxSolutions, onSolutionFoundOrComplete, cancellationToken = {}) {
-        const pbLib = await loadPbLib;
+        const pbLib = await pbLibPromise;
         const size = board.grid.width;
         const context = {
             clauses: [],
