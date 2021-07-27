@@ -1,4 +1,0 @@
-[submodule "packages/solver-sat/external/pblib-wasm"]
-	path = packages/solver-sat/external/pblib-wasm
-	url = https://github.com/SudokuStudio/pblib-wasm.git
-

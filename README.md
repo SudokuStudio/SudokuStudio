@@ -18,7 +18,7 @@ npm i -g npm@^7.0.0
 
 Clone the project with submodules, and `cd` inside.
 ```
-git clone --recurse-submodules https://github.com/SudokuStudio/SudokuStudio.git
+git clone https://github.com/SudokuStudio/SudokuStudio.git
 cd SudokuStudio
 ```
 

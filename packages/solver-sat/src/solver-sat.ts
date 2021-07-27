@@ -1,9 +1,18 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
-import { loadPbLib } from './pblib';
+import loadPbLib from '@sudoku-studio/pblib';
 import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
+type Context = {
+    clauses: number[][],
+    size: number,
+    grid: Grid,
+    getLiteral: (y: number, x: number, v: number) => number,
+    pbLib: ReturnType<typeof loadPbLib> extends Promise<infer T> ? T : never,
+};
+
 const cryptoMiniSatPromise = loadCryptoMiniSat();
+const pbLibPromise = loadPbLib();
 
 const asyncYield = () => new Promise<void>(resolve => setTimeout(resolve, 0));
 
@@ -38,7 +47,7 @@ export async function solve(board: schema.Board, maxSolutions: number,
     onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void,
     cancellationToken: CancellationToken = {}): Promise<boolean>
 {
-    const pbLib = await loadPbLib;
+    const pbLib = await pbLibPromise;
 
     const size = board.grid.width;
     const context: Context = {
@@ -119,14 +128,6 @@ export async function solve(board: schema.Board, maxSolutions: number,
         sat.cmsat_free(satSolverPtr);
     }
 }
-
-type Context = {
-    clauses: number[][],
-    size: number,
-    grid: Grid,
-    getLiteral: (y: number, x: number, v: number) => number,
-    pbLib: (typeof loadPbLib) extends Promise<infer T> ? T : never,
-};
 
 export const ELEMENT_HANDLERS = {
     corner: null,

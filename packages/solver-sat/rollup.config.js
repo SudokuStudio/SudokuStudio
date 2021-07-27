@@ -19,7 +19,7 @@ export default {
                 {
                     src: [
                         '../cryptominisat/lib/cryptominisat5_simple.wasm',
-                        'external/pblib-wasm/dist/pblib.wasm',
+                        '../../node_modules/@sudoku-studio/pblib/dist/pblib.wasm',
                     ],
                     dest: 'lib',
                 },
