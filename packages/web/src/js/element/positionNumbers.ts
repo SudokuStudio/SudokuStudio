@@ -1,6 +1,6 @@
 import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { click2svgCoord, edgeIdx2cellIdxes, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx } from "@sudoku-studio/board-utils";
+import { cellCoord2CellIdx, click2svgCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx, warnSum } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
@@ -119,6 +119,14 @@ export const littleKillerInfo: ElementInfo = {
         type: 'select',
         name: 'Little Killer',
         icon: 'little-killer',
+    },
+    getWarnings(value: schema.LittleKillerElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const [ diagonalIdx, sum ] of Object.entries(value || {})) {
+            if ('number' !== typeof sum) continue;
+
+            const cellsArr = diagonalIdx2diagonalCellCoords(+diagonalIdx, grid).map(coord => cellCoord2CellIdx(coord, grid));
+            warnSum(digits, cellsArr, warnings, sum);
+        }
     },
 };
 

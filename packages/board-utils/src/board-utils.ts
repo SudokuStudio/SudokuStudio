@@ -292,6 +292,23 @@ export function writeRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cell
     }
 }
 
+export function warnSum(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[], warnings: IdxBitset<Geometry.CELL>, sum: number): void {
+    let actualSum = 0;
+    let allFilled = true;
+    for (const cellIdx of cells) {
+        const digit = digits[cellIdx];
+        if (null == digit) {
+            allFilled = false;
+        }
+        else {
+            actualSum += digit;
+        }
+    }
+    if (sum < actualSum || (allFilled && sum !== actualSum)) {
+        cells.forEach(idx => warnings[idx] = true);
+    }
+}
+
 export function warnClones(digits: IdxMap<Geometry.CELL, number>, cellsA: Idx<Geometry.CELL>[], cellsB: Idx<Geometry.CELL>[], warnings: IdxBitset<Geometry.CELL>): void {
     for (let i = 0; i < cellsA.length; i++) {
         const digitA = digits[cellsA[i]];
