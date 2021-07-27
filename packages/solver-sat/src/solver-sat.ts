@@ -1,54 +1,11 @@
 import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
 import { loadPbLib } from './pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getMajorDiagonal, idxMapToKeysArray, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
 
 const asyncYield = () => new Promise<void>(resolve => setTimeout(resolve, 0));
-
-function* product(...args: number[]): Generator<number[], void, void> {
-    if (0 === args.length) {
-        yield [];
-    }
-    else {
-        for (let i = 0; i < args[0]; i++) {
-            for (const x of product(...args.slice(1))) {
-                x.unshift(i);
-                yield x;
-            }
-        }
-    }
-}
-
-function *knightMoves(N: number): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
-    for (const [ y0, x0, y1, x1 ] of product(N, N, N, N)) {
-        if (y0 >= y1) continue; // Don't double-count.
-        const dy = Math.abs(y0 - y1);
-        const dx = Math.abs(x0 - x1);
-        if (3 !== dy + dx) continue;
-        if (1 !== Math.abs(dy - dx)) continue;
-        yield [
-            [ x0, y0 ],
-            [ x1, y1 ],
-        ];
-    }
-}
-
-function* kingMoves(N: number): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
-    for (const [ y0, x0, y1, x1 ] of product(N, N, N, N)) {
-        if (y0 >= y1) continue; // Don't double-count.
-        const dy = Math.abs(y0 - y1);
-        if (1 !== dy) continue;
-        const dx = Math.abs(x0 - x1);
-        if (1 !== dx) continue;
-
-        yield [
-            [ x0, y0 ],
-            [ x1, y1 ],
-        ];
-    }
-}
 
 /**
  * CryptoMiniSat uses unsigned u32s with the lowest bit representing negation.
@@ -791,7 +748,7 @@ function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: numb
 
 function encodeMoves(numLits: number, element: schema.BooleanElement, context: Context, func: typeof knightMoves): number {
     if (element.value) {
-        for (const [ [ x0, y0 ], [ x1, y1 ] ] of func(context.size)) {
+        for (const [ [ x0, y0 ], [ x1, y1 ] ] of func(context.grid)) {
             for (const [ v ] of product(context.size)) {
                 const aLit = context.getLiteral(y0, x0, v);
                 const bLit = context.getLiteral(y1, x1, v);

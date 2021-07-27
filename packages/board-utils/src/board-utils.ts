@@ -740,3 +740,46 @@ export const roman2num = (() => {
         return num;
     }
 })();
+
+export function* product(...args: number[]): Generator<number[], void, void> {
+    if (0 === args.length) {
+        yield [];
+    }
+    else {
+        for (let i = 0; i < args[0]; i++) {
+            for (const x of product(...args.slice(1))) {
+                x.unshift(i);
+                yield x;
+            }
+        }
+    }
+}
+
+export function *knightMoves({ width, height }: Grid): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
+    for (const [ y0, x0, y1, x1 ] of product(height, width, height, width)) {
+        if (y0 >= y1) continue; // Don't double-count.
+        const dy = Math.abs(y0 - y1);
+        const dx = Math.abs(x0 - x1);
+        if (3 !== dy + dx) continue;
+        if (1 !== Math.abs(dy - dx)) continue;
+        yield [
+            [ x0, y0 ],
+            [ x1, y1 ],
+        ];
+    }
+}
+
+export function* kingMoves({ width, height }: Grid): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
+    for (const [ y0, x0, y1, x1 ] of product(height, width, height, width)) {
+        if (y0 >= y1) continue; // Don't double-count.
+        const dy = Math.abs(y0 - y1);
+        if (1 !== dy) continue;
+        const dx = Math.abs(x0 - x1);
+        if (1 !== dx) continue;
+
+        yield [
+            [ x0, y0 ],
+            [ x1, y1 ],
+        ];
+    }
+}

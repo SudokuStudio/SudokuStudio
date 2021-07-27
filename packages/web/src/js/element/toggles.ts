@@ -1,5 +1,5 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
-import { cellCoord2CellIdx, getMajorDiagonal, writeRepeatingDigits } from "../../../../board-utils/lib/board-utils";
+import { cellCoord2CellIdx, getMajorDiagonal, kingMoves, knightMoves, writeRepeatingDigits } from "../../../../board-utils/lib/board-utils";
 import type { ElementInfo } from "./element";
 
 export const diagonalInfo: ElementInfo = {
@@ -93,6 +93,15 @@ export const kingInfo: ElementInfo = {
             icon: 'king',
         },
     },
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        if (value) {
+            for (const coords of kingMoves(grid)) {
+                // Length-two array.
+                const idxes = coords.map(coord => cellCoord2CellIdx(coord, grid));
+                writeRepeatingDigits(digits, idxes, warnings);
+            }
+        }
+    },
 };
 
 export const knightInfo: ElementInfo = {
@@ -105,6 +114,15 @@ export const knightInfo: ElementInfo = {
             name: 'Antiknight',
             icon: 'knight',
         },
+    },
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        if (value) {
+            for (const coords of knightMoves(grid)) {
+                // Length-two array.
+                const idxes = coords.map(coord => cellCoord2CellIdx(coord, grid));
+                writeRepeatingDigits(digits, idxes, warnings);
+            }
+        }
     },
 };
 
