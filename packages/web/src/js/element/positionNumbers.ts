@@ -1,6 +1,6 @@
-import type { Coord, Geometry, Grid, Idx } from "@sudoku-studio/schema";
+import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { click2svgCoord, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx } from "@sudoku-studio/board-utils";
+import { click2svgCoord, edgeIdx2cellIdxes, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
@@ -20,6 +20,22 @@ export const differenceInfo: ElementInfo = {
         name: 'Difference',
         icon: 'kropki',
     },
+    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const [ edgeIdx, differenceOrTrue ] of Object.entries(value || {})) {
+            if (null == differenceOrTrue) continue;
+            const difference = true === differenceOrTrue ? 1 : differenceOrTrue;
+
+            const [ idxA, idxB ] = edgeIdx2cellIdxes(+edgeIdx, grid);
+            const digitA = digits[idxA];
+            const digitB = digits[idxB];
+            if (null == digitA || null == digitB) continue;
+
+            if (Math.abs(digitA - digitB) !== difference) {
+                warnings[idxA] = true;
+                warnings[idxB] = true;
+            }
+        }
+    },
 };
 
 export const ratioInfo: ElementInfo = {
@@ -35,6 +51,22 @@ export const ratioInfo: ElementInfo = {
         type: 'select',
         name: 'Ratio',
         icon: 'kropki',
+    },
+    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const [ edgeIdx, ratioOrTrue ] of Object.entries(value || {})) {
+            if (null == ratioOrTrue) continue;
+            const ratio = true === ratioOrTrue ? 2 : ratioOrTrue;
+
+            const [ idxA, idxB ] = edgeIdx2cellIdxes(+edgeIdx, grid);
+            const digitA = digits[idxA];
+            const digitB = digits[idxB];
+            if (null == digitA || null == digitB) continue;
+
+            if (digitA * ratio !== digitB && digitB * ratio !== digitA) {
+                warnings[idxA] = true;
+                warnings[idxB] = true;
+            }
+        }
     },
 };
 
@@ -56,6 +88,21 @@ export const xvInfo: ElementInfo = {
         type: 'select',
         name: 'XV Sum',
         icon: 'xv',
+    },
+    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const [ edgeIdx, sum ] of Object.entries(value || {})) {
+            if ('number' !== typeof sum) continue;
+
+            const [ idxA, idxB ] = edgeIdx2cellIdxes(+edgeIdx, grid);
+            const digitA = digits[idxA];
+            const digitB = digits[idxB];
+            if (null == digitA || null == digitB) continue;
+
+            if (digitA + digitB !== sum) {
+                warnings[idxA] = true;
+                warnings[idxB] = true;
+            }
+        }
     },
 };
 
