@@ -544,9 +544,12 @@ var satSolverWorker = (function () {
         }
       }
       var ret = func.apply(null, cArgs);
+      function onDone(ret) {
+        if (stack !== 0) stackRestore(stack);
+        return convertReturnValue(ret);
+      }
 
-      ret = convertReturnValue(ret);
-      if (stack !== 0) stackRestore(stack);
+      ret = onDone(ret);
       return ret;
     }
 
@@ -1062,7 +1065,10 @@ var satSolverWorker = (function () {
             typeof fetch === 'function') {
           return fetch(wasmBinaryFile, { credentials: 'same-origin' }).then(function (response) {
             var result = WebAssembly.instantiateStreaming(response, info);
-            return result.then(receiveInstantiationResult, function(reason) {
+
+            return result.then(
+              receiveInstantiationResult,
+              function(reason) {
                 // We expect the most common failure cause to be a bad MIME type for the binary,
                 // in which case falling back to ArrayBuffer instantiation should work.
                 err('wasm streaming compile failed: ' + reason);
@@ -1213,7 +1219,7 @@ var satSolverWorker = (function () {
           return value;
         }
       
-      var PATH={splitPath:function(filename) {
+      var PATH = {splitPath:function(filename) {
             var splitPathRe = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
             return splitPathRe.exec(filename).slice(1);
           },normalizeArray:function(parts, allowAboveRoot) {
@@ -1292,7 +1298,7 @@ var satSolverWorker = (function () {
           return function() { abort("randomDevice"); };
         }
       
-      var PATH_FS={resolve:function() {
+      var PATH_FS = {resolve:function() {
             var resolvedPath = '',
               resolvedAbsolute = false;
             for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
@@ -1345,7 +1351,7 @@ var satSolverWorker = (function () {
             return outputParts.join('/');
           }};
       
-      var TTY={ttys:[],init:function () {
+      var TTY = {ttys:[],init:function () {
             // https://github.com/emscripten-core/emscripten/pull/1555
             // if (false) {
             //   // currently, FS.init does not distinguish if process.stdin is a file or TTY
@@ -1468,7 +1474,7 @@ var satSolverWorker = (function () {
       function mmapAlloc(size) {
           abort();
         }
-      var MEMFS={ops_table:null,mount:function(mount) {
+      var MEMFS = {ops_table:null,mount:function(mount) {
             return MEMFS.createNode(null, '/', 16384 | 511 /* 0777 */, 0);
           },createNode:function(parent, name, mode, dev) {
             if (FS.isBlkdev(mode) || FS.isFIFO(mode)) {
@@ -1799,7 +1805,7 @@ var satSolverWorker = (function () {
           });
           if (dep) addRunDependency();
         }
-      var FS={root:null,mounts:[],devices:{},streams:[],nextInode:1,nameTable:null,currentPath:"/",initialized:false,ignorePermissions:true,trackingDelegate:{},tracking:{openFlags:{READ:1,WRITE:2}},ErrnoError:null,genericErrors:{},filesystems:null,syncFSRequests:0,lookupPath:function(path, opts) {
+      var FS = {root:null,mounts:[],devices:{},streams:[],nextInode:1,nameTable:null,currentPath:"/",initialized:false,ignorePermissions:true,trackingDelegate:{},tracking:{openFlags:{READ:1,WRITE:2}},ErrnoError:null,genericErrors:{},filesystems:null,syncFSRequests:0,lookupPath:function(path, opts) {
             path = PATH_FS.resolve(FS.cwd(), path);
             opts = opts || {};
       
@@ -3363,7 +3369,7 @@ var satSolverWorker = (function () {
             };
             openRequest.onerror = onerror;
           }};
-      var SYSCALLS={mappings:{},DEFAULT_POLLMASK:5,umask:511,calculateAt:function(dirfd, path, allowEmpty) {
+      var SYSCALLS = {mappings:{},DEFAULT_POLLMASK:5,umask:511,calculateAt:function(dirfd, path, allowEmpty) {
             if (path[0] === '/') {
               return path;
             }
@@ -3696,7 +3702,7 @@ var satSolverWorker = (function () {
           return false;
         }
 
-      var ENV={};
+      var ENV = {};
       
       function getExecutableName() {
           return thisProgram || './this.program';
@@ -3731,8 +3737,7 @@ var satSolverWorker = (function () {
           }
           return getEnvStrings.strings;
         }
-      function _environ_get(__environ, environ_buf) {try {
-      
+      function _environ_get(__environ, environ_buf) {
           var bufSize = 0;
           getEnvStrings().forEach(function(string, i) {
             var ptr = environ_buf + bufSize;
@@ -3741,14 +3746,9 @@ var satSolverWorker = (function () {
             bufSize += string.length + 1;
           });
           return 0;
-        } catch (e) {
-        if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) abort(e);
-        return e.errno;
-      }
-      }
+        }
 
-      function _environ_sizes_get(penviron_count, penviron_buf_size) {try {
-      
+      function _environ_sizes_get(penviron_count, penviron_buf_size) {
           var strings = getEnvStrings();
           HEAP32[((penviron_count)>>2)] = strings.length;
           var bufSize = 0;
@@ -3757,11 +3757,7 @@ var satSolverWorker = (function () {
           });
           HEAP32[((penviron_buf_size)>>2)] = bufSize;
           return 0;
-        } catch (e) {
-        if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) abort(e);
-        return e.errno;
-      }
-      }
+        }
 
       function _exit(status) {
           // void _exit(int status);
@@ -3843,9 +3839,9 @@ var satSolverWorker = (function () {
           return sum;
         }
       
-      var __MONTH_DAYS_LEAP=[31,29,31,30,31,30,31,31,30,31,30,31];
+      var __MONTH_DAYS_LEAP = [31,29,31,30,31,30,31,31,30,31,30,31];
       
-      var __MONTH_DAYS_REGULAR=[31,28,31,30,31,30,31,31,30,31,30,31];
+      var __MONTH_DAYS_REGULAR = [31,28,31,30,31,30,31,31,30,31,30,31];
       function __addDays(date, days) {
           var newDate = new Date(date.getTime());
           while (days > 0) {
@@ -4559,14 +4555,15 @@ var satSolverWorker = (function () {
     /** @param {boolean|number=} implicit */
     function exit(status, implicit) {
 
-      if (keepRuntimeAlive()) ; else {
+      procExit(status);
+    }
 
-        if (Module['onExit']) Module['onExit'](status);
-
+    function procExit(code) {
+      if (!keepRuntimeAlive()) {
+        if (Module['onExit']) Module['onExit'](code);
         ABORT = true;
       }
-
-      quit_(status, new ExitStatus(status));
+      quit_(code, new ExitStatus(code));
     }
 
     if (Module['preInit']) {
