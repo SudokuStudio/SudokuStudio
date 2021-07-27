@@ -1,6 +1,6 @@
-import type { ArrayObj, Grid } from "@sudoku-studio/schema";
+import type { ArrayObj, Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { click2svgCoord, cornerCoord2cornerIdx, svgCoord2cornerCoord } from "@sudoku-studio/board-utils";
+import { arrayObj2array, cellCoord2CellIdx, click2svgCoord, cornerCoord2cellCoords, cornerCoord2cornerIdx, cornerIdx2cornerCoord, svgCoord2cornerCoord } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
@@ -14,6 +14,26 @@ export const quadrupleInfo: ElementInfo = {
         type: 'select',
         name: 'Quadruple',
         icon: 'quadruple',
+    },
+    getWarnings(value: schema.QuadrupleElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const [ cornerIdx, reqValues ] of Object.entries(value || {})) {
+            const reqValuesArr = arrayObj2array((reqValues || {}) as ArrayObj<number>);
+
+            const cells = cornerCoord2cellCoords(cornerIdx2cornerCoord(+cornerIdx, grid), grid).map(coord => cellCoord2CellIdx(coord, grid));
+            const actualValues = cells.map(idx => digits[idx]);
+            if (actualValues.some(idx => null == idx)) continue;
+
+            for (const actualValue of actualValues as number[]) {
+                const i = reqValuesArr.indexOf(actualValue);
+                if (-1 !== i) {
+                    reqValuesArr.splice(i, 1);
+                }
+            }
+
+            if (0 < reqValuesArr.length) {
+                cells.map(idx => warnings[idx] = true);
+            }
+        }
     },
 };
 
