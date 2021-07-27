@@ -1,3 +1,5 @@
+import type { Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
+import { cellCoord2CellIdx, getMajorDiagonal, writeRepeatingDigits } from "../../../../board-utils/lib/board-utils";
 import type { ElementInfo } from "./element";
 
 export const diagonalInfo: ElementInfo = {
@@ -18,6 +20,18 @@ export const diagonalInfo: ElementInfo = {
                 refPath: 'negative',
             },
         ],
+    },
+    getWarnings(value: schema.DiagonalElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        if (value) {
+            if (value.positive) {
+                const cells = getMajorDiagonal(true, grid).map(coord => cellCoord2CellIdx(coord, grid));
+                writeRepeatingDigits(digits, cells, warnings);
+            }
+            if (value.negative) {
+                const cells = getMajorDiagonal(false, grid).map(coord => cellCoord2CellIdx(coord, grid));
+                writeRepeatingDigits(digits, cells, warnings);
+            }
+        }
     },
 };
 
