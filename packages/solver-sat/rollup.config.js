@@ -18,7 +18,7 @@ export default {
             targets: [
                 {
                     src: [
-                        '../cryptominisat/lib/cryptominisat5_simple.wasm',
+                        '../../node_modules/@sudoku-studio/cryptominisat/dist/cryptominisat5_simple.wasm',
                         '../../node_modules/@sudoku-studio/pblib/dist/pblib.wasm',
                     ],
                     dest: 'lib',

@@ -1,4 +1,4 @@
-import { load as loadCryptoMiniSat, lbool } from 'cryptominisat';
+import { load as loadCryptoMiniSat, lbool } from '@sudoku-studio/cryptominisat';
 import loadPbLib from '@sudoku-studio/pblib';
 import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
