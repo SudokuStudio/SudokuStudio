@@ -292,7 +292,7 @@ export function writeRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cell
     }
 }
 
-export function warnSum(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[], warnings: IdxBitset<Geometry.CELL>, sum: number): void {
+export function warnSum(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[], warnings: IdxBitset<Geometry.CELL>, sum: number): boolean {
     let actualSum = 0;
     let allFilled = true;
     for (const cellIdx of cells) {
@@ -306,7 +306,9 @@ export function warnSum(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geomet
     }
     if (sum < actualSum || (allFilled && sum !== actualSum)) {
         cells.forEach(idx => warnings[idx] = true);
+        return true;
     }
+    return false;
 }
 
 export function warnClones(digits: IdxMap<Geometry.CELL, number>, cellsA: Idx<Geometry.CELL>[], cellsB: Idx<Geometry.CELL>[], warnings: IdxBitset<Geometry.CELL>): void {

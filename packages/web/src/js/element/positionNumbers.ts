@@ -1,6 +1,6 @@
 import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
-import { cellCoord2CellIdx, click2svgCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx, warnSum } from "@sudoku-studio/board-utils";
+import { cellCoord2CellIdx, click2svgCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, seriesIdx2CellCoords, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx, warnSum } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
@@ -143,6 +143,26 @@ export const sandwichInfo: ElementInfo = {
         type: 'select',
         name: 'Sandwich',
         icon: 'sandwich',
+    },
+    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const [ seriesIdx, sum ] of Object.entries(value || {})) {
+            if ('number' !== typeof sum) continue;
+
+            const seriesCells = seriesIdx2CellCoords(+seriesIdx, grid).map(coord => cellCoord2CellIdx(coord, grid));
+            const seriesDigits = seriesCells.map(idx => digits[idx]);
+
+            const iMin = seriesDigits.indexOf(1);
+            const iMax = seriesDigits.indexOf(grid.width);
+            if (iMin < 0 || iMax < 0) continue;
+
+            const i = Math.min(iMin, iMax);
+            const j = Math.max(iMin, iMax);
+
+            if (warnSum(digits, seriesCells.slice(i + 1, j), warnings, sum)) {
+                warnings[seriesCells[iMin]] = true;
+                warnings[seriesCells[iMax]] = true;
+            }
+        }
     },
 };
 
