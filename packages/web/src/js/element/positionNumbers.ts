@@ -224,6 +224,18 @@ export const xsumsInfo: ElementInfo = {
         name: 'X-Sums',
         icon: 'xv',
     },
+    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const [ seriesIdx, xsum ] of Object.entries(value || {})) {
+            if ('number' !== typeof xsum) continue;
+
+            const seriesCells = seriesIdx2CellCoords(+seriesIdx, grid).map(coord => cellCoord2CellIdx(coord, grid));
+            const xsumLength = digits[seriesCells[0]];
+
+            if (null == xsumLength) continue;
+
+            warnSum(digits, seriesCells.slice(0, xsumLength), warnings, xsum);
+        }
+    },
 };
 
 
