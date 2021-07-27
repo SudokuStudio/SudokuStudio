@@ -1,9 +1,9 @@
-import type { Coord, Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
+import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
 import { parseDigit } from "../input/inputHandler";
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, warnClones } from "@sudoku-studio/board-utils";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
@@ -18,6 +18,16 @@ export const cloneInfo: ElementInfo = {
         type: 'select',
         name: 'Clone',
         icon: 'clone',
+    },
+    getWarnings(value: schema.CloneElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const { a, b } of Object.values(value || {})) {
+            if (null == a || null == b) continue;
+
+            const cellsA = arrayObj2array(a);
+            const cellsB = arrayObj2array(b);
+
+            warnClones(digits, cellsA, cellsB, warnings);
+        }
     },
 };
 

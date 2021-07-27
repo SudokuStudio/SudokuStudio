@@ -292,6 +292,20 @@ export function writeRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cell
     }
 }
 
+export function warnClones(digits: IdxMap<Geometry.CELL, number>, cellsA: Idx<Geometry.CELL>[], cellsB: Idx<Geometry.CELL>[], warnings: IdxBitset<Geometry.CELL>): void {
+    for (let i = 0; i < cellsA.length; i++) {
+        const digitA = digits[cellsA[i]];
+        const digitB = digits[cellsB[i]];
+
+        if (null == digitA || null == digitB) continue;
+
+        if (digitA !== digitB) {
+            warnings[cellsA[i]] = true;
+            warnings[cellsB[i]] = true;
+        }
+    }
+}
+
 export function markDigitsFailingCondition(
     digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[],
     output: IdxBitset<Geometry.CELL>, condition: (digit: number) => boolean): void

@@ -3,7 +3,7 @@ import type { StateRef } from "@sudoku-studio/state-manager";
 import type { InputHandler } from "../input/inputHandler";
 import type { ElementInfo } from "./element";
 import { getLineInputHandler } from "../input/lineInputHandler";
-import { arrayObj2array } from "@sudoku-studio/board-utils";
+import { arrayObj2array, warnClones } from "@sudoku-studio/board-utils";
 
 export const thermoInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
@@ -157,17 +157,7 @@ export const palindromeInfo: ElementInfo = {
             const cellsB = cellsArr.slice(-cellsA.length);
             cellsB.reverse();
 
-            for (let i = 0; i < cellsA.length; i++) {
-                const digitA = digits[cellsA[i]];
-                const digitB = digits[cellsB[i]];
-
-                if (null == digitA || null == digitB) continue;
-
-                if (digitA !== digitB) {
-                    warnings[cellsA[i]] = true;
-                    warnings[cellsB[i]] = true;
-                }
-            }
+            warnClones(digits, cellsA, cellsB, warnings);
         }
     },
 };

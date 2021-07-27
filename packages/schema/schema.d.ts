@@ -147,8 +147,8 @@ export declare namespace schema {
             [K: string]: {
                 label?: string,
                 color?: string,
-                a: ArrayObj<Idx<Geometry.CELL>>,
-                b: ArrayObj<Idx<Geometry.CELL>>,
+                a?: ArrayObj<Idx<Geometry.CELL>>,
+                b?: ArrayObj<Idx<Geometry.CELL>>,
             },
         },
     }
