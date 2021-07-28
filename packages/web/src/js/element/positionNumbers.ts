@@ -222,7 +222,7 @@ export const xsumsInfo: ElementInfo = {
     menu: {
         type: 'select',
         name: 'X-Sums',
-        icon: 'xv',
+        icon: 'xsum',
     },
     getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ seriesIdx, xsum ] of Object.entries(value || {})) {
