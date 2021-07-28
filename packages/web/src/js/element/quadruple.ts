@@ -40,6 +40,7 @@ export const quadrupleInfo: ElementInfo = {
 function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
     const digits: number[] = [];
     let cornerRef: null | StateRef = null;
+    let maxLen = 4;
 
     function onDigitInput(code: string): boolean {
         if (null == cornerRef) return false;
@@ -57,7 +58,9 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHa
             digits.length = 0;
         }
         else {
-            if (4 <= digits.length) return false;
+            if (maxLen <= digits.length) {
+                digits.length = 0;
+            }
             digits.push(digit);
             digits.sort();
         }
@@ -109,6 +112,10 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHa
 
             const idx = cornerCoord2cornerIdx(coord, grid);
             const clickedCornerRef = ref.ref(`${idx}`);
+
+            maxLen = 4;
+            if (coord[0] <= 0 || grid.width  <= coord[0]) maxLen *= 0.5;
+            if (coord[1] <= 0 || grid.height <= coord[1]) maxLen *= 0.5;
 
             if (true === clickedCornerRef.get()) {
                 // Delete empty.
