@@ -424,57 +424,99 @@ export function click2svgCoord({ offsetX, offsetY }: { offsetX: number, offsetY:
     return [ x, y ];
 }
 
+export function getOrthogonallyAdjacentCells([ x, y ]: Coord<Geometry.CELL>, { width, height }: Grid): Coord<Geometry.CELL>[] {
+    const out: Coord<Geometry.CELL>[] = [];
+    if (0 < x && 0 < y)
+        out.push([ x - 1, y - 1 ]);
+    if (0 < x && y < height - 1)
+        out.push([ x - 1, y + 1 ]);
+    if (x < width - 1 && 0 < y)
+        out.push([ x + 1, y - 1 ]);
+    if (x < width - 1 && y < height - 1)
+        out.push([ x + 1, y + 1 ]);
+    return out;
+}
+
+export function getBorderCellPairs(cellIdxes: Idx<Geometry.CELL>[], grid: Grid): [ Idx<Geometry.CELL>, Idx<Geometry.CELL> ][] {
+    const in2out = new Map<Idx<Geometry.CELL>, Set<Idx<Geometry.CELL>>>();
+
+    for (const cellIdx of cellIdxes) {
+        const adjCellIdxes: Idx<Geometry.CELL>[] = getOrthogonallyAdjacentCells(cellIdx2cellCoord(cellIdx, grid), grid)
+            .map(coord => cellCoord2CellIdx(coord, grid));
+
+        const outsideAdj = new Set<Idx<Geometry.CELL>>();
+        for (const adjCellIdx of adjCellIdxes) {
+            if (in2out.has(adjCellIdx)) {
+                in2out.get(adjCellIdx)!.delete(cellIdx);
+            }
+            else {
+                outsideAdj.add(adjCellIdx);
+            }
+        }
+        in2out.set(cellIdx, outsideAdj);
+    }
+
+    const out: [ Idx<Geometry.CELL>, Idx<Geometry.CELL> ][] = [];
+    for (const [ inIdx, outIdxes ] of in2out) {
+        for (const outIdx of outIdxes) {
+            out.push([ inIdx, outIdx ]);
+        }
+    }
+    return out;
+}
+
+export function getBorderAdjList(cellIdxes: Idx<Geometry.CELL>[], grid: Grid): Map<Idx<Geometry.CORNER>, Set<Idx<Geometry.CORNER>>> {
+    // Adjacency table representing the directed graph created by the clockwise outline(s) of the selected cells.
+    const adjList = new Map<Idx<Geometry.CORNER>, Set<Idx<Geometry.CORNER>>>();
+
+    // A --> B
+    // ^     |
+    // |     V
+    // D <-- C
+    // For each cell.
+    // Consider each each clockwise edge A->B
+    // If the inverse edge B->A already exists, delete that.
+    // Otherwise create the edge A->B.
+
+    function add(A: Idx<Geometry.CORNER>, B: Idx<Geometry.CORNER>): void {
+        const adjBack = adjList.get(B);
+        if (adjBack?.has(A)) {
+            adjBack.delete(A);
+            if (0 >= adjBack.size) adjList.delete(B);
+        }
+        else {
+            let adj = adjList.get(A);
+            if (null == adj) {
+                adj = new Set();
+                adjList.set(A, adj);
+            }
+            adj.add(B);
+        }
+    }
+    for (const idx of cellIdxes) {
+        const [ x, y ] = cellIdx2cellCoord(idx, grid);
+        const A = cornerCoord2cornerIdx([     x,     y ], grid);
+        const B = cornerCoord2cornerIdx([ 1 + x,     y ], grid);
+        const C = cornerCoord2cornerIdx([ 1 + x, 1 + y ], grid);
+        const D = cornerCoord2cornerIdx([     x, 1 + y ], grid);
+        add(A, B);
+        add(B, C);
+        add(C, D);
+        add(D, A);
+    }
+
+    return adjList
+}
+
 /**
- * @param cellIdxs Cell indexes (0 to 80 for 9x9).
+ * @param cellIdxes Cell indexes (0 to 80 for 9x9).
  * @param grid Grid width and height.
  * @param inset (Optional) Amount to inset the outline.
  * @returns SVG <path d="..." /> string.
  */
-export function getEdges(cellIdxs: Idx<Geometry.CELL>[], grid: Grid, inset = 0): string | null {
-
-    // Adjacency table representing the directed graph created by the clockwise outline(s) of the selected cells.
-    const adjList = new Map<Idx<Geometry.CORNER>, Set<Idx<Geometry.CORNER>>>();
-
-    {
-        // A --> B
-        // ^     |
-        // |     V
-        // D <-- C
-        // For each cell.
-        // Consider each each clockwise edge A->B
-        // If the inverse edge B->A already exists, delete that.
-        // Otherwise create the edge A->B.
-
-        function add(A: Idx<Geometry.CORNER>, B: Idx<Geometry.CORNER>): void {
-            const adjBack = adjList.get(B);
-            if (adjBack?.has(A)) {
-                adjBack.delete(A);
-                if (0 >= adjBack.size) adjList.delete(B);
-            }
-            else {
-                let adj = adjList.get(A);
-                if (null == adj) {
-                    adj = new Set();
-                    adjList.set(A, adj);
-                }
-                adj.add(B);
-            }
-        }
-        for (const idx of cellIdxs) {
-            const [ x, y ] = cellIdx2cellCoord(idx, grid);
-            const A = cornerCoord2cornerIdx([     x,     y ], grid);
-            const B = cornerCoord2cornerIdx([ 1 + x,     y ], grid);
-            const C = cornerCoord2cornerIdx([ 1 + x, 1 + y ], grid);
-            const D = cornerCoord2cornerIdx([     x, 1 + y ], grid);
-            add(A, B);
-            add(B, C);
-            add(C, D);
-            add(D, A);
-        }
-    }
-
+export function getBorderPath(cellIdxes: Idx<Geometry.CELL>[], grid: Grid, inset = 0): string | null {
+    const adjList = getBorderAdjList(cellIdxes, grid);
     if (0 >= adjList.size) return null;
-
 
     // Traverse each region (may be multiple disconnected regions).
     const loops: string[] = [];

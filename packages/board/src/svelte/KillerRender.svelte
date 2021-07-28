@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { idxMapToKeysArray, getEdges, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
+    import { idxMapToKeysArray, getBorderPath, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
     import type { Geometry, schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
@@ -18,7 +18,7 @@
             const cellsArr = idxMapToKeysArray<Geometry.CELL>(cells);
             if (0 >= cellsArr.length) continue;
             const firstIdx = cellsArr[0];
-            const d = getEdges(cellsArr, grid, inset);
+            const d = getBorderPath(cellsArr, grid, inset);
             if (null == d) continue;
             const firstCoord = cellIdx2cellCoord(firstIdx, grid);
             const labelPos = {

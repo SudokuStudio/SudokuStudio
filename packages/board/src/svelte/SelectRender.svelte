@@ -1,7 +1,7 @@
 <script lang="ts">
     import { derived } from "svelte/store";
 
-    import { getEdges, idxMapToKeysArray } from "@sudoku-studio/board-utils";
+    import { getBorderPath, idxMapToKeysArray } from "@sudoku-studio/board-utils";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
@@ -15,8 +15,8 @@
     export let outlineOpacity = '#b2b2b2';
     export let innerOpacity = '#080808';
 
-    const dMask = derived(ref, select => getEdges(idxMapToKeysArray(select), grid, inset) || undefined);
-    const dFill = derived(ref, select => getEdges(idxMapToKeysArray(select), grid, 0) || undefined);
+    const dMask = derived(ref, select => getBorderPath(idxMapToKeysArray(select), grid, inset) || undefined);
+    const dFill = derived(ref, select => getBorderPath(idxMapToKeysArray(select), grid, 0) || undefined);
 </script>
 
 <filter id="select-{id}-blur">

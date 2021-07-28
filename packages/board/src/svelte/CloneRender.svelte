@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getEdges, cellIdx2cellCoord, arrayObj2array } from "@sudoku-studio/board-utils";
+    import { getBorderPath, cellIdx2cellCoord, arrayObj2array } from "@sudoku-studio/board-utils";
     import type { schema } from "@sudoku-studio/schema";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
@@ -22,7 +22,7 @@
                 cellsArr.sort((a, b) => a - b);
                 if (0 >= cellsArr.length) continue;
                 const lastIdx = cellsArr[cellsArr.length - 1];
-                const d = getEdges(cellsArr, grid, inset);
+                const d = getBorderPath(cellsArr, grid, inset);
                 if (null == d) continue;
                 const lastCoord = cellIdx2cellCoord(lastIdx, grid);
                 const labelPos = {
