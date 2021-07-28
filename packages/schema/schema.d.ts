@@ -183,7 +183,7 @@ export declare namespace schema {
         value?: IdxMap<Geometry.EDGE, true | number>,
     }
     export interface SeriesNumberElement extends AbstractElement {
-        type: 'sandwich' | 'xsums' | 'skyscraper',
+        type: 'sandwich' | 'xsum' | 'skyscraper',
         value?: IdxMap<Geometry.SERIES, true | number>,
     }
     export interface LittleKillerElement extends AbstractElement {

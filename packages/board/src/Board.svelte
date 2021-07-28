@@ -176,7 +176,7 @@
 
         ['littleKiller']: LittleKillerRender,
         ['sandwich']: SeriesRender,
-        ['xsums']: SeriesRender,
+        ['xsum']: SeriesRender,
         ['skyscraper']: SeriesRender,
 
         ['diagonal']: DiagonalRender,
@@ -195,7 +195,7 @@
 
         ['quadruple']: 0.2225,
         ['sandwich']: 1,
-        ['xsums']: 1,
+        ['xsum']: 1,
         ['skyscraper']: 1,
         ['littleKiller']: 0.9,
     } as { [K in keyof typeof ELEMENT_RENDERERS]?: number };

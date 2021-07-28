@@ -210,7 +210,7 @@ export const skyscraperInfo: ElementInfo = {
     },
 };
 
-export const xsumsInfo: ElementInfo = {
+export const xsumInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, {
             svgCoord2idx: svgCoord2seriesIdx,

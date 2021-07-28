@@ -587,7 +587,7 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
-    xsums(numLits: number, element: schema.SeriesNumberElement, context: Context): number {
+    xsum(numLits: number, element: schema.SeriesNumberElement, context: Context): number {
         for (const [ seriesIdx, xsumOrTrue ] of Object.entries(element.value || {})) {
             if ('number' !== typeof xsumOrTrue) continue;
 
