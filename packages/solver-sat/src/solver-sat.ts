@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool } from '@sudoku-studio/cryptominisat';
 import loadPbLib from '@sudoku-studio/pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 type Context = {
@@ -229,6 +229,27 @@ export const ELEMENT_HANDLERS = {
     odd(numLits: number, element: schema.RegionElement, context: Context): number {
         const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
         return encodeExcludeValues(numLits, cellCoords, v => 0 === (v + 1) % 2, context);
+    },
+
+    min(numLits: number, element: schema.RegionElement, context: Context): number {
+        const cellIdxes = idxMapToKeysArray(element.value || {});
+        for (const [ inIdx, outIdx ] of getBorderCellPairs(cellIdxes, context.grid)) {
+            const inCoord  = cellIdx2cellCoord(inIdx,  context.grid);
+            const outCoord = cellIdx2cellCoord(outIdx, context.grid);
+            // IN < OUT.
+            numLits = encodeIncreasing(numLits, [ inCoord, outCoord ], true, context);
+        }
+        return numLits;
+    },
+    max(numLits: number, element: schema.RegionElement, context: Context): number {
+        const cellIdxes = idxMapToKeysArray(element.value || {});
+        for (const [ inIdx, outIdx ] of getBorderCellPairs(cellIdxes, context.grid)) {
+            const inCoord  = cellIdx2cellCoord(inIdx,  context.grid);
+            const outCoord = cellIdx2cellCoord(outIdx, context.grid);
+            // OUT < IN.
+            numLits = encodeIncreasing(numLits, [ outCoord, inCoord ], true, context);
+        }
+        return numLits;
     },
 
     killer(numLits: number, element: schema.KillerElement, context: Context): number {
