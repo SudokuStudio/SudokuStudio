@@ -11354,7 +11354,7 @@ var satSolverWorker = (function () {
             }
             return numLits;
         },
-        xsums(numLits, element, context) {
+        xsum(numLits, element, context) {
             for (const [seriesIdx, xsumOrTrue] of Object.entries(element.value || {})) {
                 if ('number' !== typeof xsumOrTrue)
                     continue;
