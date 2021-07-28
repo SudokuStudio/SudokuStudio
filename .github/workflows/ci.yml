@@ -17,9 +17,8 @@ jobs:
 
     - name: Setup node
       uses: actions/setup-node@v2
-
-    - name: Update npm
-      run: sudo npm i -g npm@^7.0.0
+      with:
+        node-version: '16'
 
     - name: Install packages
       run: npm ci
