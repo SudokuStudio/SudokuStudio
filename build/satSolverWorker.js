@@ -10763,6 +10763,42 @@ var satSolverWorker = (function () {
         return Array(grid.width).fill(null)
             .map((_, i) => [i, positive ? (grid.width - 1 - i) : i]);
     }
+    function getOrthogonallyAdjacentCells([x, y], { width, height }) {
+        const out = [];
+        if (0 < x)
+            out.push([x - 1, y]);
+        if (0 < y)
+            out.push([x, y - 1]);
+        if (x < width - 1)
+            out.push([x + 1, y]);
+        if (y < height - 1)
+            out.push([x, y + 1]);
+        return out;
+    }
+    function getBorderCellPairs(cellIdxes, grid) {
+        const in2out = new Map();
+        for (const cellIdx of cellIdxes) {
+            const adjCellIdxes = getOrthogonallyAdjacentCells(cellIdx2cellCoord(cellIdx, grid), grid)
+                .map(coord => cellCoord2CellIdx(coord, grid));
+            const outsideAdj = new Set();
+            for (const adjCellIdx of adjCellIdxes) {
+                if (in2out.has(adjCellIdx)) {
+                    in2out.get(adjCellIdx).delete(cellIdx);
+                }
+                else {
+                    outsideAdj.add(adjCellIdx);
+                }
+            }
+            in2out.set(cellIdx, outsideAdj);
+        }
+        const out = [];
+        for (const [inIdx, outIdxes] of in2out) {
+            for (const outIdx of outIdxes) {
+                out.push([inIdx, outIdx]);
+            }
+        }
+        return out;
+    }
     function* product(...args) {
         if (0 === args.length) {
             yield [];
@@ -10990,6 +11026,26 @@ var satSolverWorker = (function () {
         odd(numLits, element, context) {
             const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
             return encodeExcludeValues(numLits, cellCoords, v => 0 === (v + 1) % 2, context);
+        },
+        min(numLits, element, context) {
+            const cellIdxes = idxMapToKeysArray(element.value || {});
+            for (const [inIdx, outIdx] of getBorderCellPairs(cellIdxes, context.grid)) {
+                const inCoord = cellIdx2cellCoord(inIdx, context.grid);
+                const outCoord = cellIdx2cellCoord(outIdx, context.grid);
+                // IN < OUT.
+                numLits = encodeIncreasing(numLits, [inCoord, outCoord], true, context);
+            }
+            return numLits;
+        },
+        max(numLits, element, context) {
+            const cellIdxes = idxMapToKeysArray(element.value || {});
+            for (const [inIdx, outIdx] of getBorderCellPairs(cellIdxes, context.grid)) {
+                const inCoord = cellIdx2cellCoord(inIdx, context.grid);
+                const outCoord = cellIdx2cellCoord(outIdx, context.grid);
+                // OUT < IN.
+                numLits = encodeIncreasing(numLits, [outCoord, inCoord], true, context);
+            }
+            return numLits;
         },
         killer(numLits, element, context) {
             for (const { sum, cells } of Object.values(element.value || {})) {
