@@ -3,10 +3,9 @@ import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
 import { parseDigit } from "../input/inputHandler";
-import { cellCoord2CellIdx, idxMapToKeysArray, warnSum, writeRepeatingDigits } from "@sudoku-studio/board-utils";
+import { boardRepr, cellCoord2CellIdx, idxMapToKeysArray, warnSum, writeRepeatingDigits } from "@sudoku-studio/board-utils";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
-import { makeUid } from "../util";
 import { pushHistory } from "../history";
 
 export const killerInfo: ElementInfo = {
@@ -76,7 +75,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
     function startDrag(idx: Idx<Geometry.CELL>): void {
         if (undefined === mode) {
             const cageId = getExistingCageAtIdx(idx);
-            cageRef = stateRef.ref(cageId || makeUid());
+            cageRef = stateRef.ref(cageId || boardRepr.makeUid());
             mode = true;
         }
     }

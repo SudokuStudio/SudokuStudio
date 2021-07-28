@@ -17,8 +17,8 @@
   ],
   "scripts": {
     "clean": "npm run --workspaces clean",
-    "build": "npm run -w packages/state-manager build && npm run -w packages/board-utils build && npm run -w packages/solver-sat build && npm run -w packages/web build",
-    "dev":   "npm run -w packages/state-manager build && npm run -w packages/board-utils build && npm run -w packages/solver-sat build && npm run -w packages/web dev",
+    "build": "npm run -w packages/state-manager build && npm run -w packages/board-utils build && npm run -w packages/board-format build && npm run -w packages/solver-sat build && npm run -w packages/web build",
+    "dev":   "npm run -w packages/state-manager build && npm run -w packages/board-utils build && npm run -w packages/board-format build && npm run -w packages/solver-sat build && npm run -w packages/web dev",
     "test": "npm run build && npm run --workspaces test"
   },
   "workspaces": [
@@ -27,6 +27,7 @@
     "packages/board-utils",
     "packages/board",
     "packages/board-svg",
+    "packages/board-format",
     "packages/solver-sat",
     "packages/web"
   ]

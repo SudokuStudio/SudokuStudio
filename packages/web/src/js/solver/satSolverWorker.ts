@@ -2,14 +2,14 @@ import * as Comlink from "comlink";
 import type { CancellationToken } from "@sudoku-studio/solver-sat";
 import { cantAttempt, solve } from "@sudoku-studio/solver-sat";
 import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
-import { makeUid } from "../util";
+import { boardRepr } from "@sudoku-studio/board-utils";
 
 const CANCELLATION_TABLE: Record<string, CancellationToken> = {};
 
 function solveAsync(board: schema.Board, maxSolutions: number,
     onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): string
 {
-    const taskId = makeUid();
+    const taskId = boardRepr.makeUid();
     const token: CancellationToken = {};
     CANCELLATION_TABLE[taskId] = token;
 

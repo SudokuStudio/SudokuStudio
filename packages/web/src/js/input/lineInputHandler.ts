@@ -1,9 +1,8 @@
-import { arrayObj2array, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
+import { arrayObj2array, boardRepr, cellCoord2CellIdx } from "@sudoku-studio/board-utils";
 import type { ArrayObj, Geometry, Grid, Idx } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { pushHistory } from "../history";
 import { userSelectState, userCursorState } from "../user";
-import { makeUid } from "../util";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import type { InputHandler } from "./inputHandler";
 
@@ -23,7 +22,7 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
 
     pointerHandler.onDragStart = (_event: MouseEvent) => {
         lineCells.length = 0;
-        lineRef = stateRef.ref(makeUid());
+        lineRef = stateRef.ref(boardRepr.makeUid());
     };
 
     pointerHandler.onDrag = (event: CellDragTapEvent) => {

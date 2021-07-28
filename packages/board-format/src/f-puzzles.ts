@@ -1,8 +1,6 @@
-import LZString from "lz-string";
-import { cellCoord2CellIdx, svgCoord2diagonalIdx, svgCoord2edgeIdx, roman2num, svgCoord2seriesIdx, cellIdx2cellCoord, svgCoord2cornerCoord, cornerCoord2cornerIdx } from "@sudoku-studio/board-utils";
+import * as LZString from "lz-string";
+import { boardRepr, cellCoord2CellIdx, svgCoord2diagonalIdx, svgCoord2edgeIdx, roman2num, svgCoord2seriesIdx, cellIdx2cellCoord, svgCoord2cornerCoord, cornerCoord2cornerIdx } from "@sudoku-studio/board-utils";
 import type { Coord, Geometry, Grid, Idx, IdxBitset, schema } from "@sudoku-studio/schema";
-import { makeUid } from "./util";
-import { createElement, createNewBoard } from "./elements";
 import { hexToHsluv, hsluvToHex } from "hsluv";
 
 type FPuzzlesBoard = {
@@ -119,8 +117,7 @@ function parseRCNotation(rc: string): Coord<Geometry.CELL> {
 }
 
 
-export function parseFpuzzles(b64: string): schema.Board {
-    (window as any).LZString = LZString;
+export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElementFn): schema.Board {
     const json = LZString.decompressFromBase64(b64);
     if (null == json) throw Error('Failed to LZString decompress fpuzzles board.');
     const fBoard: FPuzzlesBoard = JSON.parse(json);
@@ -128,7 +125,7 @@ export function parseFpuzzles(b64: string): schema.Board {
     const size = fBoard.size as undefined | keyof typeof fpuzzlesSizes;
     if (null == size || !(size in fpuzzlesSizes)) throw Error(`Unknown size: ${size})`);
 
-    const board = createNewBoard(...fpuzzlesSizes[size]);
+    const board = boardRepr.createNewBoard(createElement, ...fpuzzlesSizes[size]);
     const grid: Grid = { width: size, height: size };
 
 
@@ -141,7 +138,7 @@ export function parseFpuzzles(b64: string): schema.Board {
             }
         }
         const elem = createElement<E>(type, value);
-        board.elements[makeUid()] = elem;
+        board.elements[boardRepr.makeUid()] = elem;
         return elem;
     }
     function addRegionElement(type: schema.RegionElement['type'], fRegionConstraint: FPuzzlesCell[]): void {
@@ -155,7 +152,7 @@ export function parseFpuzzles(b64: string): schema.Board {
         const elem: schema.LineElement = findOrAddElement(type, {});
         for (const fLinesObj of fLinesConstraint) {
             for (const fLine of fLinesObj.lines) {
-                const cellArr: Idx<Geometry.CELL>[] = elem.value![makeUid()] = [];
+                const cellArr: Idx<Geometry.CELL>[] = elem.value![boardRepr.makeUid()] = [];
                 for (const rc of fLine) {
                     const cellIdx = cellCoord2CellIdx(parseRCNotation(rc), grid);
                     cellArr.push(cellIdx);
@@ -211,7 +208,7 @@ export function parseFpuzzles(b64: string): schema.Board {
     function addKillerElement(fConstraint: FPuzzlesCells[]): void {
         const elem: schema.KillerElement = findOrAddElement('killer', {});
         for (const fKillerEntry of fConstraint) {
-            const killerItem = elem.value![makeUid()] = {
+            const killerItem = elem.value![boardRepr.makeUid()] = {
                 cells: {} as IdxBitset<Geometry.CELL>,
                 sum: (null != fKillerEntry.value) ? Number(fKillerEntry.value) : undefined,
             };
@@ -283,7 +280,7 @@ export function parseFpuzzles(b64: string): schema.Board {
         const elem: schema.ArrowElement = findOrAddElement('arrow', {});
         for (const fArrowEntry of fBoard.arrow) {
             for (const fLine of fArrowEntry.lines || []) {
-                const arrowItem = elem.value![makeUid()] = {
+                const arrowItem = elem.value![boardRepr.makeUid()] = {
                     bulb: [] as Idx<Geometry.CELL>[],
                     body: [] as Idx<Geometry.CELL>[],
                 };
@@ -366,7 +363,7 @@ export function parseFpuzzles(b64: string): schema.Board {
         const elem: schema.CloneElement = findOrAddElement('clone', {});
         outer:
         for (const fCloneEntry of fBoard.clone) {
-            const cloneItem = elem.value![makeUid()] = {
+            const cloneItem = elem.value![boardRepr.makeUid()] = {
                 color: undefined as undefined | string,
                 a: fCloneEntry.cells     .map (rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),
                 b: fCloneEntry.cloneCells.map(rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),

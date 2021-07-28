@@ -1,0 +1,15 @@
+{
+  "name": "@sudoku-studio/board-format",
+  "version": "0.0.0",
+  "description": "Sudoku puzzles format converter",
+  "scripts": {
+    "clean": "rm -r lib",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "main": "lib/board-format.js",
+  "types": "lib/board-format.d.ts",
+  "dependencies": {
+    "lz-string": "^1.4.4"
+  }
+}

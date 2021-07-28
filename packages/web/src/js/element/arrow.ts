@@ -1,11 +1,10 @@
 import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
+import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
 import { pushHistory } from "../history";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
 import { userCursorState, userSelectState } from "../user";
-import { makeUid } from "../util";
 import type { ElementInfo } from "./element";
 
 export const arrowInfo: ElementInfo = {
@@ -108,7 +107,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
                 // Adding body to existing arrow.
                 const bodyEmpty = 0 >= arrayObj2array(body || {}).length;
                 // If body is empty, use existing arrow entry. Otherwise create new with same bulb.
-                arrowRef = bodyEmpty ? stateRef.ref(arrowId) : stateRef.ref(makeUid());
+                arrowRef = bodyEmpty ? stateRef.ref(arrowId) : stateRef.ref(boardRepr.makeUid());
                 mode = Mode.BODY;
                 bulbCells = bulbArr;
                 bodyCells = [ idx ];
@@ -118,7 +117,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
             }
         }
         // Making bulb.
-        arrowRef = stateRef.ref(makeUid());
+        arrowRef = stateRef.ref(boardRepr.makeUid());
         mode = Mode.BULB;
         bulbCells = [ idx ];
         bodyCells = [];

@@ -3,11 +3,11 @@ import LZString from "lz-string";
 import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
 import { boardState } from "./board";
 import { MARK_TYPES, userState } from "./user";
-import { parseFpuzzles } from "./f-puzzles";
-import { createNewBoard } from "./elements";
+import { fPuzzles } from "@sudoku-studio/board-format";
+import { createElement } from "./elements";
 
 import { SatSolver } from "./solver/satSolver";
-import { solutionToString } from "@sudoku-studio/board-utils";
+import { boardRepr, solutionToString } from "@sudoku-studio/board-utils";
 
 // TODO SOMETHING PROPER
 (window as any).solve = async function(maxSolutions = 10, maxTimeMillis = 10 * 1000): Promise<() => Promise<void>> {
@@ -72,7 +72,7 @@ export function initUserAndBoard(): void {
     if (thisUrl.searchParams.has('f')) {
         try {
             const b64 = thisUrl.searchParams.get('f')!.replace(/ /g, '+');
-            const newBoardState = parseFpuzzles(b64);
+            const newBoardState = fPuzzles.parseFpuzzles(b64, createElement);
             setupUserState(newBoardState);
             boardState.update(newBoardState as any);
 
@@ -92,7 +92,7 @@ export function initUserAndBoard(): void {
         if (81 === digitsString.length) {
             const digits = Array.from(digitsString).map(char => DIGIT_REGEX.test(char) ? +char : undefined);
 
-            const newBoardState = createNewBoard();
+            const newBoardState = boardRepr.createNewBoard(createElement);
             setupUserState(newBoardState);
 
             for (const element of Object.values(newBoardState.elements)) {
@@ -124,7 +124,7 @@ export function initUserAndBoard(): void {
             console.error('Failed to update board from `b` param.');
         }
     }
-    const newBoardState = createNewBoard();
+    const newBoardState = boardRepr.createNewBoard(createElement);
     setupUserState(newBoardState);
     boardState.update(newBoardState as any);
 };

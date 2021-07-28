@@ -1,9 +1,6 @@
 import type { Grid, Idx, Coord, Geometry, ArrayObj, IdxMap, schema, IdxBitset } from "@sudoku-studio/schema";
 
-// Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
-export function any(x: any): any {
-    return x;
-}
+export * as boardRepr from "./board-repr";
 
 export function solutionToString(solution: IdxMap<Geometry.CELL, number>, grid: Grid): string {
     const rows: string[] = [];

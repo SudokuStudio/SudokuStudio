@@ -7,8 +7,7 @@ import { createElement, ELEMENT_HANDLERS } from "./elements";
 import { userPrevToolState, userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 import { pushHistory } from "./history";
-import { makeUid } from "./util";
-import { getDigits } from "@sudoku-studio/board-utils";
+import { boardRepr, getDigits } from "@sudoku-studio/board-utils";
 
 export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo };
 export type ElementHandlerList = ElementHandlerItem[];
@@ -19,7 +18,7 @@ export function addElement<E extends schema.Element>(type: E['type'], value?: E[
     const handler = ELEMENT_HANDLERS[type];
     if (null == handler) throw Error(`Cannot add unimplmeneted element type: ${type}.`);
 
-    const id = makeUid();
+    const id = boardRepr.makeUid();
     const diff = boardState.update({
         [`elements/${id}`]: element,
     });

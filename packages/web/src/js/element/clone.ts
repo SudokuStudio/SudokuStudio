@@ -3,12 +3,12 @@ import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
 import { parseDigit } from "../input/inputHandler";
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, warnClones } from "@sudoku-studio/board-utils";
+import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord, warnClones } from "@sudoku-studio/board-utils";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
 import { hsluvToHex } from "hsluv";
-import { makeA1Column, makeUid } from "../util";
+import { makeA1Column } from "../util";
 
 export const cloneInfo: ElementInfo = {
     getInputHandler,
@@ -133,7 +133,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
             }
         }
         else {
-            cloneRef = stateRef.ref(makeUid());
+            cloneRef = stateRef.ref(boardRepr.makeUid());
             mode = Mode.SELECTING;
             cloneEntry = makeNewClone();
         }
