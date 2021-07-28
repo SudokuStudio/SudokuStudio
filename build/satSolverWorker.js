@@ -10657,7 +10657,6 @@ var satSolverWorker = (function () {
     );
     })();
 
-    // Annoying hack to cast to `any` because Svelte doesn't support TS inside the HTML templates.
     function arrayObj2array(arrayObj) {
         const arr = [];
         for (let i = 0; null != arrayObj[i]; i++) {
