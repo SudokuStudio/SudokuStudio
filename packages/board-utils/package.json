@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -r lib",
     "build": "tsc",
-    "test": "jest"
+    "test": ""
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",

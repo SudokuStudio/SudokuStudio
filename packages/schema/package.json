@@ -1,5 +1,10 @@
 {
   "name": "@sudoku-studio/schema",
   "version": "0.0.0",
-  "types": "./schema.d.ts"
+  "types": "./schema.d.ts",
+  "scripts": {
+    "clean": "",
+    "build": "",
+    "test": ""
+  }
 }

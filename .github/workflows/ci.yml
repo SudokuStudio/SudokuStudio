@@ -7,7 +7,7 @@ jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 5
     steps:
 
     - name: Checkout sources
@@ -26,6 +26,9 @@ jobs:
 
     - name: Build
       run: SUDOKU_STUDIO_VERSION="${GITHUB_SHA:0:7}" npm run build
+
+    - name: Test
+      run: npm run test
 
     - name: Deploy to gh-pages
       shell: bash

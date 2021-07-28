@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -r lib",
     "build": "tsc",
-    "test": "jest"
+    "test": ""
   },
   "main": "lib/board-format.js",
   "types": "lib/board-format.d.ts",

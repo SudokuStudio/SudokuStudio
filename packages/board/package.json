@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -r public/build",
     "build": "rollup -c",
-    "test": "jest"
+    "test": ""
   },
   "main": "lib/board.js",
   "svelte": "src/main.ts",
