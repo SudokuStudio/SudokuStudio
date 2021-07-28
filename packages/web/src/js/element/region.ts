@@ -2,7 +2,7 @@ import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-stu
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
-import { cellCoord2CellIdx, idxMapToKeysArray } from "@sudoku-studio/board-utils";
+import { cellCoord2CellIdx, getBorderCellPairs, idxMapToKeysArray } from "@sudoku-studio/board-utils";
 import { pushHistory } from "../history";
 import { userCursorState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
@@ -17,6 +17,18 @@ export const minInfo: ElementInfo = {
         name: 'Min',
         icon: 'min',
     },
+    getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        const cells = idxMapToKeysArray(value || {});
+        for (const [ inCell, outCell ] of getBorderCellPairs(cells, grid)) {
+            const inDigit = digits[inCell];
+            const outDigit = digits[outCell];
+            if (null == inDigit || null == outDigit) continue;
+            if (outDigit < inDigit) {
+                warnings[inCell] = true;
+                warnings[outCell] = true;
+            }
+        }
+    },
 };
 
 export const maxInfo: ElementInfo = {
@@ -27,6 +39,18 @@ export const maxInfo: ElementInfo = {
         type: 'select',
         name: 'Max',
         icon: 'max',
+    },
+    getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        const cells = idxMapToKeysArray(value || {});
+        for (const [ inCell, outCell ] of getBorderCellPairs(cells, grid)) {
+            const inDigit = digits[inCell];
+            const outDigit = digits[outCell];
+            if (null == inDigit || null == outDigit) continue;
+            if (inDigit < outDigit) {
+                warnings[inCell] = true;
+                warnings[outCell] = true;
+            }
+        }
     },
 };
 
