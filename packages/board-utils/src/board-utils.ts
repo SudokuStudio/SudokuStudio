@@ -426,14 +426,14 @@ export function click2svgCoord({ offsetX, offsetY }: { offsetX: number, offsetY:
 
 export function getOrthogonallyAdjacentCells([ x, y ]: Coord<Geometry.CELL>, { width, height }: Grid): Coord<Geometry.CELL>[] {
     const out: Coord<Geometry.CELL>[] = [];
-    if (0 < x && 0 < y)
-        out.push([ x - 1, y - 1 ]);
-    if (0 < x && y < height - 1)
-        out.push([ x - 1, y + 1 ]);
-    if (x < width - 1 && 0 < y)
-        out.push([ x + 1, y - 1 ]);
-    if (x < width - 1 && y < height - 1)
-        out.push([ x + 1, y + 1 ]);
+    if (0 < x)
+        out.push([ x - 1, y ]);
+    if (0 < y)
+        out.push([ x, y - 1 ]);
+    if (x < width - 1)
+        out.push([ x + 1, y ]);
+    if (y < height - 1)
+        out.push([ x, y + 1 ]);
     return out;
 }
 
