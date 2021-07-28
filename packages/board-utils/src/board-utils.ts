@@ -264,10 +264,12 @@ export function getColCellIdxes(col: number, { width, height }: Grid): Idx<Geome
 export function getBoxCellIdxes(bx: number, boxInfo: NonNullable<schema.BoxElement['value']>, grid: Grid): Idx<Geometry.CELL>[] {
     const out: Idx<Geometry.CELL>[] = [];
 
+    const horizontalBoxes = grid.width / boxInfo.width;
+
     const positions = boxInfo.width * boxInfo.height;
     for (let pos = 0; pos < positions; pos++) {
-        const y = Math.floor(bx / boxInfo.width) * boxInfo.height + Math.floor(pos / boxInfo.width);
-        const x = (bx % boxInfo.width) * boxInfo.height + (pos % boxInfo.width);
+        const y = Math.floor(bx / horizontalBoxes) * boxInfo.height + Math.floor(pos / boxInfo.width);
+        const x = (bx % horizontalBoxes) * boxInfo.width + (pos % boxInfo.width);
         out.push(cellCoord2CellIdx([ x, y ], grid));
     }
     return out;

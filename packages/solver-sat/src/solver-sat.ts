@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool } from '@sudoku-studio/cryptominisat';
 import loadPbLib from '@sudoku-studio/pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getBoxCellIdxes, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 type Context = {
@@ -159,11 +159,10 @@ export const ELEMENT_HANDLERS = {
 
         const ones = Array(context.size).fill(1);
         for (const [ val, bx ] of product(context.size, context.size)) {
-            const box: number[] = [];
-            for (const [ pos ] of product(context.size)) {
-                box.push(context.getLiteral(Math.floor(bx / width) * height + Math.floor(pos / width), (bx % width) * height + (pos % width), val));
-            }
-            numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, 1 + numLits);
+            const literals = getBoxCellIdxes(bx, { width, height }, context.grid)
+                .map(idx => cellIdx2cellCoord(idx, context.grid))
+                .map(([ x, y ]) => context.getLiteral(y, x, val));
+            numLits = context.pbLib.encodeBoth(ones, literals, 1, 1, context.clauses, 1 + numLits);
         }
 
         return numLits;
