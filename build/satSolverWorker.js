@@ -10762,6 +10762,17 @@ var satSolverWorker = (function () {
         return Array(grid.width).fill(null)
             .map((_, i) => [i, positive ? (grid.width - 1 - i) : i]);
     }
+    function getBoxCellIdxes(bx, boxInfo, grid) {
+        const out = [];
+        const horizontalBoxes = grid.width / boxInfo.width;
+        const positions = boxInfo.width * boxInfo.height;
+        for (let pos = 0; pos < positions; pos++) {
+            const y = Math.floor(bx / horizontalBoxes) * boxInfo.height + Math.floor(pos / boxInfo.width);
+            const x = (bx % horizontalBoxes) * boxInfo.width + (pos % boxInfo.width);
+            out.push(cellCoord2CellIdx([x, y], grid));
+        }
+        return out;
+    }
     function getOrthogonallyAdjacentCells([x, y], { width, height }) {
         const out = [];
         if (0 < x)
@@ -10954,8 +10965,8 @@ var satSolverWorker = (function () {
                     col.push(context.getLiteral(c, a, b));
                 }
                 numLits = context.pbLib.encodeBoth(ones, cel, 1, 1, context.clauses, 1 + numLits);
-                numLits = context.pbLib.encodeAtMostK(row, 1, context.clauses, 1 + numLits);
-                numLits = context.pbLib.encodeAtMostK(col, 1, context.clauses, 1 + numLits);
+                numLits = context.pbLib.encodeBoth(ones, row, 1, 1, context.clauses, 1 + numLits);
+                numLits = context.pbLib.encodeBoth(ones, col, 1, 1, context.clauses, 1 + numLits);
             }
             return numLits;
         },
@@ -10963,17 +10974,16 @@ var satSolverWorker = (function () {
             const { width, height } = element.value || {};
             if (!width || !height)
                 throw Error(`Invalid box, width: ${width}, height: ${height}.`);
+            const ones = Array(context.size).fill(1);
             for (const [val, bx] of product(context.size, context.size)) {
-                const box = [];
-                for (const [pos] of product(context.size)) {
-                    box.push(context.getLiteral(Math.floor(bx / width) * height + Math.floor(pos / width), (bx % width) * height + (pos % width), val));
-                }
-                numLits = context.pbLib.encodeAtMostK(box, 1, context.clauses, 1 + numLits);
+                const literals = getBoxCellIdxes(bx, { width, height }, context.grid)
+                    .map(idx => cellIdx2cellCoord(idx, context.grid))
+                    .map(([x, y]) => context.getLiteral(y, x, val));
+                numLits = context.pbLib.encodeBoth(ones, literals, 1, 1, context.clauses, 1 + numLits);
             }
             return numLits;
         },
         disjointGroups(numLits, element, context) {
-            // TODO THIS IS HARDCODED FOR 9x9
             if (element.value) {
                 const ones = Array(context.size).fill(1);
                 for (const [val, pos] of product(context.size, context.size)) {
