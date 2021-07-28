@@ -193,7 +193,6 @@
         ['grid']: GRID_THICKNESS_HALF,
         ['box']: BOX_THICKNESS_HALF,
 
-        ['quadruple']: 0.2225,
         ['sandwich']: 1,
         ['xsum']: 1,
         ['skyscraper']: 1,
