@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*"],
+  "include": [ "src/**/*" ],
 
   "compilerOptions": {
     "moduleResolution": "node",
@@ -16,6 +16,6 @@
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": true
   }
 }
