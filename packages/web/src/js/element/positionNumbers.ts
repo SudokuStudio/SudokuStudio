@@ -221,7 +221,7 @@ export const xsumsInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: {
         type: 'select',
-        name: 'X-Sums',
+        name: 'X-Sum',
         icon: 'xsum',
     },
     getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
