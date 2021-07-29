@@ -119,7 +119,9 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         }
         else {
             // Only keyup case.
-            userToolState.replace(userPrevToolState.get());
+            // Add delay to handle numpad numbers force-releasing shift.
+            // https://github.com/SudokuStudio/SudokuStudio/issues/24
+            setTimeout(() => userToolState.replace(userPrevToolState.get()), 1);
             return true;
         }
 
