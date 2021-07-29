@@ -14,7 +14,7 @@
     type Item = { cloneAbId: string, label: string, labelPos: { x: number, y: number }, d: string, color: string };
     function each(value: schema.CloneElement['value']): Item[] {
         const out: Item[] = [];
-        for (const [ cloneId, { label, color, a, b } ] of Object.entries(value)) {
+        for (const [ cloneId, { label, color, a, b } ] of Object.entries(value || {})) {
             for (let i = 0; i < 2; i++) {
                 const cells = [ a, b ][i];
                 if (null == cells) continue;

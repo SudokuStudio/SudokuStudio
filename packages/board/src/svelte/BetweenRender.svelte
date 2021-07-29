@@ -22,7 +22,7 @@
                 head: cellIdx2cellCoord(idxArr[0], grid),
                 tail: cellIdx2cellCoord(idxArr[idxArr.length - 1], grid),
                 itemId,
-                d: makePath(idxArr, grid),
+                d: makePath(idxArr, grid, { shortenHead: bulbRadius, shortenTail: bulbRadius }),
             });
         }
         return out;
@@ -31,25 +31,11 @@
 </script>
 
 
-<marker id="between-bulb-{id}"
-    viewBox="0 0 1 1" refX="0.5" refY="0.5"
-    markerUnits="userSpaceOnUse"
-    markerWidth="1" markerHeight="1"
-    orient="auto"
->
-    <circle cx="0.5" cy="0.5" r={bulbRadius + 0.5 * outlineWidth} fill="#000" />
-</marker>
-<mask id="between-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
-    <rect width={grid.width} height={grid.height} fill="#fff" />
-    {#each $items as { itemId, head, tail } (itemId)}
-        <circle cx={head[0] + 0.5} cy={head[1] + 0.5} r={bulbRadius - 0.5 * outlineWidth} fill="#000" stroke="none" />
-        <circle cx={tail[0] + 0.5} cy={tail[1] + 0.5} r={bulbRadius - 0.5 * outlineWidth} fill="#000" stroke="none" />
-    {/each}
-</mask>
 <g {id}>
-    {#each $items as { itemId, d } (itemId)}
-        <path {d} fill="none" stroke="#c18bb7" stroke-opacity="0.95" stroke-linejoin="round" stroke-linecap="round"
-            stroke-width={strokeWidth} mask="url(#between-{id}-mask)"
-            marker-start="url(#between-bulb-{id})" marker-end="url(#between-bulb-{id})" />
+    {#each $items as { itemId, d, head, tail } (itemId)}
+        <path {d} fill="none" stroke="#c18bb7" stroke-opacity="0.95" stroke-linejoin="round" stroke-linecap="butt"
+            stroke-width={strokeWidth} mask="url(#between-{id}-mask)" />
+        <circle cx={head[0] + 0.5} cy={head[1] + 0.5} r={bulbRadius} fill="none" stroke="#000" stroke-width={outlineWidth} />
+        <circle cx={tail[0] + 0.5} cy={tail[1] + 0.5} r={bulbRadius} fill="none" stroke="#000" stroke-width={outlineWidth} />
     {/each}
 </g>

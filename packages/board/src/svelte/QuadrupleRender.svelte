@@ -46,13 +46,13 @@
     }
 </script>
 
-<mask id="quadruple-{id}-mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
+<clipPath id="quadruple-{id}-mask">
     <!-- Mask the board square. -->
     <rect x="0" y="0" width={grid.width} height={grid.height} fill="#fff" />
-</mask>
+</clipPath>
 <g {id}>
     {#each each($ref || {}) as { idx, x, y, lines } (idx)}
-        <circle cx={x} cy={y} r={radius} fill="#fff" stroke="#000" stroke-width={strokeWidth} mask="url(#quadruple-{id}-mask)" />
+        <circle cx={x} cy={y} r={radius} fill="#fff" stroke="#000" stroke-width={strokeWidth} clip-path="url(#quadruple-{id}-mask)" />
         {#each lines as { lx, ly, line, textAnchor, domBaseline } }
             <text x={lx} y={ly} text-anchor={textAnchor} dominant-baseline={domBaseline} font-size={fontSize} font-weight="600">{line}</text>
         {/each}

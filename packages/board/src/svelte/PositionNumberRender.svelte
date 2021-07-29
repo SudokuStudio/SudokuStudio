@@ -23,7 +23,7 @@
     type Item = { idx: Idx<Geometry>, x: number, y: number, text: string };
     function each(value: schema.SeriesNumberElement['value']): Item[] {
         const out: Item[] = [];
-        for (const [ idx, digitOrTrue ] of Object.entries(value)) {
+        for (const [ idx, digitOrTrue ] of Object.entries(value || {})) {
             const text = mapDigits(digitOrTrue!);
             const [ x, y ] = idx2coord(+idx, grid);
             out.push({

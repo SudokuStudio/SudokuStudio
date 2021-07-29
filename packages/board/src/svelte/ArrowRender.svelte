@@ -16,7 +16,7 @@
     type Item = { arrowId: string, dBulb: string, dBody: string };
     function each(value: schema.ArrowElement['value']): Item[] {
         const out: Item[] = [];
-        for (const [ arrowId, { bulb, body } ] of Object.entries(value)) {
+        for (const [ arrowId, { bulb, body } ] of Object.entries(value || {})) {
             const dBulb = makePath(arrayObj2array(bulb || {}), grid);
             const dBody = makePath(arrayObj2array(body || {}), grid, { shortenHead: bulbRadius, shortenTail: 0.2 });
             out.push({ arrowId, dBulb, dBody });
