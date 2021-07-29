@@ -23,14 +23,14 @@
             bind:group={$userToolState} />
         <button class="nobutton focus-skip" on:click={() => $boardDiv && $boardDiv.focus()}>Jump To Board</button>
     {/if}
-    <div class="constraint-row" role="button" on:click|stopPropagation={onClick} title={isLocal ? `${name} Tool` : undefined}>
+    <div class="constraint-row" role="button" on:click|stopPropagation={onClick} title={isLocal ? `${name} Tool` : undefined} aria-labelledby="label-{counter}">
         <div class="constraint-row-left">
             {#if deletable}
                 <button class="delete-button nobutton hoverable" on:click|stopPropagation={onTrash}>
                     <span class="icon hoverable-icon icon-inline icon-c-clickable icon-trash" />
                 </button><!-- no whitespace
          -->{/if}{#if isLocal}
-                <label class:unused={unused} class="name clickable" for="local-radio-{counter}">{name}</label>
+                <label class:unused={unused} class="name clickable" for="local-radio-{counter}" id="label-{counter}">{name}</label>
             {:else}
                 <span class:unused={unused} class="name">{name}</span>
             {/if}
