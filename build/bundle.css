@@ -999,13 +999,17 @@ ul.header-buttons.right.svelte-1gtf4ed {
   padding: 0.25em 0 0.25em 1.75em;
 }
 
-.overlay.svelte-kdd1wn {
+.overlay.svelte-f3k5y2 {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   cursor: pointer;
+}
+
+.overlay.svelte-f3k5y2:focus {
+  outline: none;
 }
 
 .info-input.svelte-fcgi7u.svelte-fcgi7u {
