@@ -44,4 +44,7 @@
 
         cursor: pointer;
     }
+    .overlay:focus {
+        outline: none;
+    }
 </style>
