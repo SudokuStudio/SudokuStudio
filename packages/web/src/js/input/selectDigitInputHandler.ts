@@ -138,7 +138,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         ArrowDown: [ 0, 1 ],
     } as const;
 
-    function onArrowKey(event: KeyboardEvent) {
+    function onArrowKey(event: KeyboardEvent): boolean {
         if (!(event.code in ARROW_KEYS)) return false;
 
         const [ dx, dy ] = ARROW_KEYS[event.code as keyof typeof ARROW_KEYS];
@@ -162,6 +162,21 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
                 [idx]: true,
             });
         }
+        return true;
+    }
+
+    function onSelectionShortcut(event: KeyboardEvent): boolean {
+        if (!(event.ctrlKey || event.metaKey) || 'KeyA' !== event.code) return false;
+
+        const selectAll: IdxBitset<Geometry.CELL> = {};
+        for (let y = 0; y < grid.height; y++) {
+            for (let x = 0; x < grid.width; x++) {
+                selectAll[cellCoord2CellIdx([ x, y ], grid)] = true;
+            }
+        }
+        userSelectState.replace(selectAll);
+
+        return true;
     }
 
     return {
@@ -177,7 +192,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         },
 
         keydown(event: KeyboardEvent): void {
-            if (onDigitInput(event.code) || onQuickshift(event) || onArrowKey(event)) {
+            if (onDigitInput(event.code) || onQuickshift(event) || onArrowKey(event) || onSelectionShortcut(event)) {
                 event.stopImmediatePropagation();
                 event.preventDefault();
             }
