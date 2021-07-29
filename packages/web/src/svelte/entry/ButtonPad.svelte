@@ -36,7 +36,7 @@
                     value={$filled} bind:group={$userToolState} on:change={setPreviousMode} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits" title="Fill digits">
                     <span aria-hidden="true">1</span>
-                    <span class="sr-only">Digits</span>
+                    <span class="sr-only">Fill Digits tool</span>
                 </label>
             </div>
             <div>
@@ -48,7 +48,7 @@
                         <span style="position: absolute; top:    12%; right: 20%;">2</span>
                         <span style="position: absolute; bottom: 12%; left:  20%;">3</span>
                     </span>
-                    <span class="sr-only">Corner Marks</span>
+                    <span class="sr-only">Corner Marks tool [shift]</span>
                 </label>
             </div>
             <div>
@@ -56,7 +56,7 @@
                     value={$center} bind:group={$userToolState} on:change={setPreviousMode} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-center" title="Center marks [cmd or ctrl]">
                     <span aria-hidden="true" style="font-size: 50%;">123</span>
-                    <span class="sr-only">Center Marks</span>
+                    <span class="sr-only">Center Marks tool [cmd or ctrl]</span>
                 </label>
             </div>
             <div>
@@ -64,7 +64,7 @@
                     value={$colors} bind:group={$userToolState} on:change={setPreviousMode} />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-colors" title="Color highlights [alt]">
                     <span class="icon icon-inline icon-c-textinv icon-colors" />
-                    <span class="sr-only">Colors</span>
+                    <span class="sr-only">Colors tool [alt]</span>
                 </label>
             </div>
         </div>
@@ -72,42 +72,42 @@
     <div class="right-container">
         <div class="right">
             <div class="num-pad">
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 1 / 2 / 2" value="1"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 1 / 2 / 2" value="1" title="[1]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>1</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 2 / 2 / 3" value="2"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 2 / 2 / 3" value="2" title="[2]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>2</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 3 / 2 / 4" value="3"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 3 / 2 / 4" value="3" title="[3]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>3</button>
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 1 / 3 / 2" value="4"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 1 / 3 / 2" value="4" title="[4]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>4</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 2 / 3 / 3" value="5"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 2 / 3 / 3" value="5" title="[5]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>5</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 3 / 3 / 4" value="6"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 3 / 3 / 4" value="6" title="[6]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>6</button>
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 1 / 4 / 2" value="7"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 1 / 4 / 2" value="7" title="[7]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>7</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 2 / 4 / 3" value="8"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 2 / 4 / 3" value="8" title="[8]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>8</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 3 / 4 / 4" value="9"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 3 / 4 / 4" value="9" title="[9]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>9</button>
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 1 / 5 / 2" value="0"
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 1 / 5 / 2" value="0" title="[0]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>0</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 2 / 5 / 4" value="Delete"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined} title="Delete" aria-label="Delete">
+                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 2 / 5 / 4" value="Delete" title="Delete [del or backspace]"
+                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined} aria-label="Delete">
                     <span class="icon icon-inline icon-c-textinv icon-delete" />
                 </button>
             </div>
             <div class="ctrl-pad">
-                <button class="mdc-ripple-surface padbutton" title="Undo" aria-label="Undo" on:click={() => changeHistory(false)}>
+                <button class="mdc-ripple-surface padbutton" title="Undo [ctrl+z]" aria-label="Undo [ctrl+z]" on:click={() => changeHistory(false)}>
                     <span class="icon icon-inline icon-c-textinv icon-undo" />
                 </button>
-                <button class="mdc-ripple-surface padbutton" title="Redo" aria-label="Redo" on:click={() => changeHistory(true)}>
+                <button class="mdc-ripple-surface padbutton" title="Redo [ctrl+y]" aria-label="Redo [ctrl+y]" on:click={() => changeHistory(true)}>
                     <span class="icon icon-inline icon-c-textinv icon-undo redo" />
                 </button>
-                <button class="mdc-ripple-surface padbutton" title="Take Screenshot" aria-label="Take Screenshot">
+                <button class="mdc-ripple-surface padbutton" title="Take Screenshot" aria-label="Take Screenshot" disabled={true}>
                     <span class="icon icon-inline icon-c-textinv icon-screenshot" />
                 </button>
             </div>
