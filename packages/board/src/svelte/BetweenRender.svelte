@@ -22,7 +22,7 @@
                 head: cellIdx2cellCoord(idxArr[0], grid),
                 tail: cellIdx2cellCoord(idxArr[idxArr.length - 1], grid),
                 itemId,
-                d: makePath(idxArr, grid, { shortenHead: bulbRadius, shortenTail: bulbRadius }),
+                d: makePath(idxArr, grid, { shortenHead: bulbRadius, shortenTail: bulbRadius, bezierRounding: 0.2 }),
             });
         }
         return out;

@@ -112,7 +112,7 @@
             pathOptions: {
                 shortenHead: 0,
                 shortenTail: 0,
-                bezierRounding: 0.1,
+                bezierRounding: 0,
             },
         });
         return new LineRender(args);
