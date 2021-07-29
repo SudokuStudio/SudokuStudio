@@ -23,7 +23,7 @@
             bind:group={$userToolState} />
         <button class="nobutton focus-skip" on:click={() => $boardDiv && $boardDiv.focus()}>Jump To Board</button>
     {/if}
-    <div class="constraint-row" role="button" on:click|stopPropagation={onClick}>
+    <div class="constraint-row" role="button" on:click|stopPropagation={onClick} title={isLocal ? `${name} Tool` : undefined}>
         <div class="constraint-row-left">
             {#if deletable}
                 <button class="delete-button nobutton hoverable" on:click|stopPropagation={onTrash}>

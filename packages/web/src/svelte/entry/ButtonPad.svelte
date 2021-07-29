@@ -31,11 +31,10 @@
 <div class="container" on:click={onBubblingClick}>
     <div class="mode-pad-container">
         <div class="mode-pad">
-            <!-- TOOD switch to INPUT RADIOs. -->
             <div>
                 <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits"
                     value={$filled} bind:group={$userToolState} on:change={setPreviousMode} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-digits" title="Fill digits">
                     <span aria-hidden="true">1</span>
                     <span class="sr-only">Digits</span>
                 </label>
@@ -43,7 +42,7 @@
             <div>
                 <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-corner"
                     value={$corner} bind:group={$userToolState} on:change={setPreviousMode} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-corner">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-corner" title="Corner marks [shift]">
                     <span aria-hidden="true" style="font-size: 50%;">
                         <span style="position: absolute; top:    12%; left:  20%;">1</span>
                         <span style="position: absolute; top:    12%; right: 20%;">2</span>
@@ -55,7 +54,7 @@
             <div>
                 <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-center"
                     value={$center} bind:group={$userToolState} on:change={setPreviousMode} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-center">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-center" title="Center marks [cmd or ctrl]">
                     <span aria-hidden="true" style="font-size: 50%;">123</span>
                     <span class="sr-only">Center Marks</span>
                 </label>
@@ -63,7 +62,7 @@
             <div>
                 <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-colors"
                     value={$colors} bind:group={$userToolState} on:change={setPreviousMode} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-colors">
+                <label class="mdc-ripple-surface padbutton padbutton-mode" role="button" for="mode-radio-colors" title="Color highlights [alt]">
                     <span class="icon icon-inline icon-c-textinv icon-colors" />
                     <span class="sr-only">Colors</span>
                 </label>
