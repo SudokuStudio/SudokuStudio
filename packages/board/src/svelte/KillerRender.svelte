@@ -18,7 +18,7 @@
             const cellsArr = idxMapToKeysArray<Geometry.CELL>(cells);
             if (0 >= cellsArr.length) continue;
             const firstIdx = cellsArr[0];
-            const d = getBorderPath(cellsArr, grid, inset);
+            const d = getBorderPath(cellsArr, grid, inset, true);
             if (null == d) continue;
             const firstCoord = cellIdx2cellCoord(firstIdx, grid);
             const labelPos = {

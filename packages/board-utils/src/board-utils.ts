@@ -513,9 +513,12 @@ export function getBorderAdjList(cellIdxes: Idx<Geometry.CELL>[], grid: Grid): M
  * @param inset (Optional) Amount to inset the outline.
  * @returns SVG <path d="..." /> string.
  */
-export function getBorderPath(cellIdxes: Idx<Geometry.CELL>[], grid: Grid, inset = 0): string | null {
+export function getBorderPath(cellIdxes: Idx<Geometry.CELL>[], grid: Grid, inset = 0, connectDiag = false): string | null {
     const adjList = getBorderAdjList(cellIdxes, grid);
     if (0 >= adjList.size) return null;
+
+    // Keep track of all diagonally touching corners needing connecting.
+    const connectedDiags = new Set<Idx<Geometry.CORNER>>();
 
     // Traverse each region (may be multiple disconnected regions).
     const loops: string[] = [];
@@ -536,29 +539,44 @@ export function getBorderPath(cellIdxes: Idx<Geometry.CELL>[], grid: Grid, inset
             // Find all the next edges.
             const adj = adjList.get(vertId)!;
 
-            // Pick the most-clockwise edge to traverse.
-            let crossProd = Number.NEGATIVE_INFINITY;
+            // Pick the most-clockwise edge to traverse, or the opposite if connectDiag is true.
+            let crossProd = connectDiag ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
             let nextVertId = -1;
             let c = null;
             for (const aVertId of adj) {
                 const aC = cornerIdx2cornerCoord(aVertId, grid);
                 const aCrossProd = (b[0] - a[0]) * (aC[1] - b[1]) - (b[1] - a[1]) * (aC[0] - b[0]);
-                if (crossProd < aCrossProd) {
+                if (connectDiag !== (crossProd < aCrossProd)) {
                     crossProd = aCrossProd;
                     nextVertId = aVertId;
                     c = aC;
                 }
             }
+            if (connectDiag && 1 < adj.size) connectedDiags.add(vertId);
+
             if (null == c) throw "UNREACHABLE";
             adj.delete(nextVertId);
             if (0 >= adj.size) adjList.delete(vertId);
 
             // Calculate insets, push to list.
             if (0 !== crossProd) {
+                const ax = inset * (b[0] - a[0]);
+                const ay = inset * (c[0] - b[0]);
+                const bx = inset * (a[1] - b[1]);
+                const by = inset * (b[1] - c[1]);
+                const dx = by + crossProd * ay;
+                const dy = ax + crossProd * bx;
+
                 let [ x, y ] = b;
-                y += inset * (b[0] - a[0]) + crossProd * inset * (a[1] - b[1]);
-                x += inset * (b[1] - c[1]) + crossProd * inset * (c[0] - b[0]);
-                points.push(`${x},${y}`);
+                x += dx;
+                y += dy;
+                if (connectedDiags.has(vertId)) {
+                    points.push(`${x - 3 * ax},${y - 3 * ay}`);
+                    points.push(`${x - 3 * bx},${y - 3 * by}`);
+                }
+                else {
+                    points.push(`${x},${y}`);
+                }
             }
 
             // Rotate vars.
