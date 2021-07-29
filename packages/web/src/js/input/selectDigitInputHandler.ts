@@ -44,7 +44,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
     }
 
     function onDigitInputHelper(stateRef: StateRef, digit: null | number | string): boolean {
-        const blockingDigits = getDigits(blockedByGivens, blockedByFilled);
+        const blockingDigits = getDigits(null != digit && blockedByGivens, null != digit && blockedByFilled);
 
         const update: Update = {};
         // Keep track of if all marks are already set, and if so delete them instead of adding them.
