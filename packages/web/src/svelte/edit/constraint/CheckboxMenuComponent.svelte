@@ -4,6 +4,7 @@
     import ConstraintRow from "./ConstraintRow.svelte";
     import Checkbox from "./Checkbox.svelte";
     import { pushHistory } from "../../../js/history";
+    import { removeElement } from "../../../js/elementStores";
 
     export let id: string;
     export let elementRef: StateRef;
@@ -38,7 +39,7 @@
     }
 </script>
 
-<ConstraintRow {id} {deletable} name={info.name} unused={unused($valueRef)} onClick={onClick} onTrash={() => elementRef.replace(null)}>
+<ConstraintRow {id} {deletable} name={info.name} unused={unused($valueRef)} onClick={onClick} onTrash={() => removeElement(id)}>
     {#each (Array.isArray(info.checkbox) ? info.checkbox : [ info.checkbox ]) as { name, icon, refPath }}
         <Checkbox {name} {icon} checked={refPath ? valueRef.ref(refPath) : valueRef} />
     {/each}

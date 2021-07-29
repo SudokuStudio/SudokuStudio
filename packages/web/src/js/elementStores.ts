@@ -4,7 +4,7 @@ import type { ElementInfo } from "./element/element";
 import { boardGridRef, boardState, boardSvg, warningState } from "./board";
 import type { Geometry, Grid, IdxBitset, schema } from "@sudoku-studio/schema";
 import { createElement, ELEMENT_HANDLERS } from "./elements";
-import { userPrevToolState, userToolState } from "./user";
+import { userPrevToolState, userState, userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 import { pushHistory } from "./history";
 import { boardRepr, getDigits } from "@sudoku-studio/board-utils";
@@ -30,6 +30,20 @@ export function addElement<E extends schema.Element>(type: E['type'], value?: E[
     }
 
     return id;
+}
+
+export function removeElement(id: string): void {
+    const diff = boardState.update({
+        [`elements/${id}`]: null,
+    });
+    pushHistory(diff);
+
+    // If deleting the selected tool, switch to filled.
+    if (id === userToolState.get()) {
+        const newId = userState.get<string>('marks', 'filled');
+        userToolState.replace(newId);
+        userPrevToolState.replace(newId);
+    }
 }
 
 export const elementHandlers = readable<ElementHandlerList>([], set => {
