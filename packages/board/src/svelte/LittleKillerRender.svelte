@@ -13,8 +13,8 @@ import { diagonalIdx2dirVec, diagonalIdx2svgCoord } from "@sudoku-studio/board-u
     const fontWeight = 800;
     const strokeWidth = 0.025;
 
-    const arrowStart = 0.4 * fontSize;
-    const arrowEnd = arrowStart + 0.2;
+    const arrowStart = 0.48 * fontSize;
+    const arrowEnd = arrowStart + 0.15;
 
     type Item = { idx: Idx<Geometry.EDGE>, x: number, y: number, text: string, d: string };
     function each(value: schema.SeriesNumberElement['value']): Item[] {
