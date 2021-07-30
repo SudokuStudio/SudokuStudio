@@ -1,11 +1,11 @@
 on:
-  push:
-    branches: [dev]
+  - push
+  - pull_request
 name: CI
 
 jobs:
-  publish:
-    name: Publish
+  test:
+    name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -30,6 +30,7 @@ jobs:
       run: npm run test
 
     - name: Deploy to gh-pages
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
       shell: bash
       run: |
         BASE_DIR=packages/web/public
