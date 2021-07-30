@@ -430,7 +430,7 @@ export const ELEMENT_HANDLERS = {
                     for (const [ v ] of product(context.size)) {
                         const bulbDigitLiteral = context.getLiteral(y, x, v);
                         const value = 1 + v;
-                        weights.push(-1 * power * value);
+                        weights.push(-5 * power * value);
                         lits.push(bulbDigitLiteral);
                     }
                     power *= 10;
