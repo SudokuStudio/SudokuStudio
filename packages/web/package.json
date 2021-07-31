@@ -32,6 +32,7 @@
     "rollup-plugin-svelte": "^7.0.0",
     "rollup-plugin-terser": "^7.0.0",
     "sass": "^1.35.1",
+    "save-svg-as-png": "^1.4.17",
     "svelte": "^3.0.0",
     "svelte-check": "^2.0.0",
     "svelte-jester": "^1.7.0",

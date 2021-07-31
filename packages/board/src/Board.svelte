@@ -316,6 +316,8 @@
 <svg bind:this={svg} viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}" xmlns="http://www.w3.org/2000/svg">
     <style>
         svg {
+            font-family: "Mulish", "Muli", sans-serif;
+
             -webkit-tap-highlight-color: transparent;
             touch-action: none;
         }

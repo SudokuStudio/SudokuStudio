@@ -1,12 +1,13 @@
 <script lang="ts">
-    import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState } from "../../js/user";
+    import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState, userSelectState, userCursorState } from "../../js/user";
     import { currentInputHandler } from "../../js/elementStores";
 
     // Button ripples.
     import { MDCRipple } from "@material/ripple";
     import { onMount } from "svelte";
     import { changeHistory } from "../../js/history";
-    import { boardDiv } from "../../js/board";
+    import { saveSvgAsPng } from "save-svg-as-png";
+    import { boardState, boardDiv, boardSvg } from "../../js/board";
 
     onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
 
@@ -25,6 +26,23 @@
         if (!isKeyboardClick) {
             $boardDiv.focus();
         }
+    }
+
+    function saveImage(): void {
+        // Clear selection.
+        userSelectState.replace(null);
+        userCursorState.replace(null);
+
+        const title  = boardState.get<string>('meta', 'title')  || 'Untitled';
+        const author = boardState.get<string>('meta', 'author') || 'Anonymous';
+        const filename = `Sudoku Studio - ${title} by ${author}.png`;
+        const unsubscribe = boardSvg.subscribe(svg => saveSvgAsPng(svg, filename, {
+            scale: 100,
+            backgroundColor: '#fff',
+            top: svg.viewBox.baseVal.x,
+            left: svg.viewBox.baseVal.y,
+        }));
+        unsubscribe();
     }
 </script>
 
@@ -107,7 +125,7 @@
                 <button class="mdc-ripple-surface padbutton" title="Redo [ctrl+y]" aria-label="Redo [ctrl+y]" on:click={() => changeHistory(true)}>
                     <span class="icon icon-inline icon-c-textinv icon-undo redo" />
                 </button>
-                <button class="mdc-ripple-surface padbutton" title="Take Screenshot" aria-label="Take Screenshot" disabled={true}>
+                <button class="mdc-ripple-surface padbutton" title="Save Image" aria-label="Save Image" on:click={saveImage}>
                     <span class="icon icon-inline icon-c-textinv icon-screenshot" />
                 </button>
             </div>
