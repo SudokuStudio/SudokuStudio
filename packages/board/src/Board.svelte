@@ -99,7 +99,7 @@
 
     function PalindromeRender(args: any) {
         Object.assign(args.props, {
-            stroke: '#c7855c',
+            stroke: '#ed8',
             strokeWidth: 0.125,
         });
         return new LineRender(args);
@@ -107,12 +107,12 @@
 
     function WhisperRender(args: any) {
         Object.assign(args.props, {
-            stroke: '#8fcbcf',
+            stroke: '#8c8',
             strokeWidth: 0.1,
             pathOptions: {
-                shortenHead: 0,
-                shortenTail: 0,
-                bezierRounding: 0,
+                shortenHead: 0.15,
+                shortenTail: 0.15,
+                bezierRounding: 0.15,
             },
         });
         return new LineRender(args);
@@ -120,7 +120,7 @@
 
     function RenbanRender(args: any) {
         Object.assign(args.props, {
-            stroke: '#cfd184',
+            stroke: '#c8c',
             strokeWidth: 0.075,
             pathOptions: {
                 shortenHead: 0.15,
