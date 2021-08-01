@@ -14,7 +14,7 @@ import { boardRepr, solutionToString } from "@sudoku-studio/board-utils";
     const START = Date.now();
 
     const board = boardState.get<schema.Board>()!;
-    const canAttempt = await SatSolver.cantAttempt(board);
+    const canAttempt = await SatSolver.cannotAttempt(board);
     if (canAttempt) {
         throw Error('Solver cannot attempt this puzzle: ' + canAttempt);
     }

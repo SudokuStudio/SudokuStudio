@@ -22,7 +22,7 @@ export function createNewBoard(createElement: CreateElementFn, boxWidth: number 
         elements: {}
     };
 
-    board.elements['1'] = createElement<schema.GridElement>('grid');
+    board.elements['1'] = createElement<schema.NullElement>('grid');
     board.elements['2'] = createElement<schema.BoxElement>('box', {
         width: boxWidth,
         height: boxHeight,

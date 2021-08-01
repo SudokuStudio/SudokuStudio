@@ -1,4 +1,4 @@
-import { CancellationToken, cantAttempt, solve } from "../dist/solver-sat";
+import { CancellationToken, cannotAttempt, solve } from "../dist/solver-sat";
 import { fPuzzles } from "@sudoku-studio/board-format";
 import { arrayObj2array } from "@sudoku-studio/board-utils";
 import { ArrayObj, Geometry, IdxMap } from "@sudoku-studio/schema";
@@ -102,9 +102,9 @@ describe('FPuzzles', () => {
 
     const timeout = 300_000;
     test.each(sudokuSolverBoards.concat(otherBoards))('"%s"', async (_name, board64, solnStr) => {
-        const board = fPuzzles.parseFpuzzles(board64, (type, value) => ({ type, value } as any));
+        const board = fPuzzles.parseFpuzzles(board64);
 
-        const reason = cantAttempt(board);
+        const reason = cannotAttempt(board);
         expect(reason).toBeNull();
 
         const token: CancellationToken = {};

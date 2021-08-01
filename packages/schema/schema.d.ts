@@ -60,8 +60,8 @@ export type Grid = {
 export declare namespace schema {
     export interface Board {
         grid: Grid,
-        meta: Record<string, any>,
         elements: Record<string, Element>,
+        meta?: Record<string, any>,
     }
 
     export interface Grid {
@@ -70,11 +70,10 @@ export declare namespace schema {
     }
 
     export type Element =
-        GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
+        NullElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
         | BooleanElement | ConsecutiveElement | DiagonalElement | KillerElement
         | KillerElement | CloneElement | QuadrupleElement | LineElement | ArrowElement
-        | EdgeNumberElement | SeriesNumberElement | LittleKillerElement | RegionElement
-        | TODO_ELEMENTS;
+        | EdgeNumberElement | SeriesNumberElement | LittleKillerElement | RegionElement;
     export type ElementType = Element['type'];
 
     export interface AbstractElement {
@@ -83,7 +82,7 @@ export declare namespace schema {
         value?: unknown,
     }
 
-    export interface GridElement extends AbstractElement {
+    export interface NullElement extends AbstractElement {
         type: 'grid',
         value?: null,
     }
@@ -113,10 +112,7 @@ export declare namespace schema {
 
     export interface BooleanElement extends AbstractElement {
         type: 'knight' | 'king' | 'disjointGroups' | 'selfTaxicab',
-        value?: {
-            positive: boolean,
-            negative: boolean,
-        },
+        value?: boolean,
     }
     export interface ConsecutiveElement extends AbstractElement {
         type: 'consecutive',
@@ -163,7 +159,7 @@ export declare namespace schema {
         }>,
     }
     export interface LineElement extends AbstractElement {
-        type: 'thermo' | 'between' | 'palindrome' | 'whisper' | 'renban',
+        type: 'thermo' | 'slowThermo' | 'between' | 'palindrome' | 'whisper' | 'renban',
         value?: {
             [K: string]: ArrayObj<Idx<Geometry.CELL>>,
         },
@@ -195,15 +191,11 @@ export declare namespace schema {
         type: 'min' | 'max' | 'odd' | 'even',
         value?: IdxMap<Geometry.CELL, true>,
     }
-
-    export interface TODO_ELEMENTS extends AbstractElement {
-        type: never,
-        value?: unknown,
-    }
 }
 
 export interface Solver {
-    cantAttempt(board: schema.Board): Promise<null | string>;
+    cannotAttempt(board: schema.Board): Promise<null | string>;
     solve(board: schema.Board, maxSolutions: number,
-        onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): () => Promise<boolean>;
+        onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): () => Promise<boolean>,
+    // trueCandidates(board: schema.Board): Promise<IdxMap<Geometry.CELL, Record<number, boolean>>>,
 }

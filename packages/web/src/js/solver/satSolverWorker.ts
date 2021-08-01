@@ -1,6 +1,6 @@
 import * as Comlink from "comlink";
 import type { CancellationToken } from "@sudoku-studio/solver-sat";
-import { cantAttempt, solve } from "@sudoku-studio/solver-sat";
+import { cannotAttempt, solve } from "@sudoku-studio/solver-sat";
 import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
 import { boardRepr } from "@sudoku-studio/board-utils";
 
@@ -35,7 +35,7 @@ function cancel(taskId: string): boolean {
 }
 
 const DEFAULT = {
-    cantAttempt,
+    cannotAttempt,
     solveAsync,
     cancel,
 } as const;

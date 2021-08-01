@@ -51,9 +51,9 @@
         if (running) return;
 
         const board = boardState.get<schema.Board>()!;
-        const cantAttempt = await SatSolver.cantAttempt(board);
-        if (cantAttempt) {
-            message = 'Cannot solve: ' + cantAttempt;
+        const cannotAttempt = await SatSolver.cannotAttempt(board);
+        if (cannotAttempt) {
+            message = 'Cannot solve: ' + cannotAttempt;
             running = false;
             return;
         }

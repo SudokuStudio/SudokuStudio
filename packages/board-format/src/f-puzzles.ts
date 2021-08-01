@@ -117,7 +117,7 @@ function parseRCNotation(rc: string): Coord<Geometry.CELL> {
 }
 
 
-export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElementFn): schema.Board {
+export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElementFn = (type, value) => ({ type, value } as any)): schema.Board {
     const json = LZString.decompressFromBase64(b64);
     if (null == json) throw Error('Failed to LZString decompress fpuzzles board.');
     const fBoard: FPuzzlesBoard = JSON.parse(json);
@@ -219,9 +219,9 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
         }
     }
 
-    if (fBoard.title) board.meta.title = fBoard.title;
-    if (fBoard.author) board.meta.author = fBoard.author;
-    if (fBoard.ruleset) board.meta.description = fBoard.ruleset;
+    if (fBoard.title)   board.meta!.title = fBoard.title;
+    if (fBoard.author)  board.meta!.author = fBoard.author;
+    if (fBoard.ruleset) board.meta!.description = fBoard.ruleset;
 
     for (let y = 0; y < size; y++) {
         const gridRow = fBoard.grid[y];
@@ -265,7 +265,7 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
 
     if (fBoard['diagonal+']) findOrAddElement('diagonal', { positive: true });
     if (fBoard['diagonal-']) findOrAddElement('diagonal', { negative: true });
-    if (fBoard.antiknight) findOrAddElement('knight', true);
+    if (fBoard.antiknight) findOrAddElement<schema.BooleanElement>('knight', true);
     if (fBoard.antiking) findOrAddElement('king', true);
     if (fBoard.disjointgroups) findOrAddElement('disjointGroups', true);
     if (fBoard.nonconsecutive) findOrAddElement('consecutive', { orth: true });

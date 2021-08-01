@@ -1,0 +1,192 @@
+{
+  "grid": {
+    "width": 9,
+    "height": 9
+  },
+  "elements": {
+    "1": {
+      "type": "grid",
+      "order": 101
+    },
+    "2": {
+      "type": "box",
+      "order": 100,
+      "value": {
+        "width": 3,
+        "height": 3
+      }
+    },
+    "10": {
+      "type": "givens",
+      "order": 220,
+      "value": {
+        "4": 3,
+        "10": 8,
+        "59": 4,
+        "61": 3
+      }
+    },
+    "11": {
+      "type": "filled",
+      "order": 210
+    },
+    "12": {
+      "type": "corner",
+      "order": 200
+    },
+    "13": {
+      "type": "center",
+      "order": 200
+    },
+    "14": {
+      "type": "colors",
+      "order": 10
+    },
+    "137091080": {
+      "type": "renban",
+      "order": 80,
+      "value": {
+        "46934669": {
+          "0": 52,
+          "1": 51,
+          "2": 60,
+          "3": 61,
+          "4": 62
+        },
+        "305538187": {
+          "0": 67,
+          "1": 76,
+          "2": 77,
+          "3": 78,
+          "4": 68
+        },
+        "657883952": {
+          "0": 64,
+          "1": 72,
+          "2": 73,
+          "3": 74,
+          "4": 65
+        },
+        "3881145350": {
+          "0": 11,
+          "1": 19,
+          "2": 28,
+          "3": 38,
+          "4": 39,
+          "5": 40,
+          "6": 32,
+          "7": 23,
+          "8": 13
+        }
+      }
+    },
+    "349731691": {
+      "type": "thermo",
+      "order": 30,
+      "value": {
+        "805183318": {
+          "0": 52,
+          "1": 43,
+          "2": 34,
+          "3": 25
+        },
+        "3377822140": {
+          "0": 53,
+          "1": 44,
+          "2": 35,
+          "3": 26
+        }
+      }
+    },
+    "832715287": {
+      "type": "palindrome",
+      "order": 60,
+      "value": {
+        "775501189": {
+          "0": 65,
+          "1": 57
+        },
+        "2913084284": {
+          "0": 32,
+          "1": 42,
+          "2": 51
+        },
+        "3411616071": {
+          "0": 67,
+          "1": 68,
+          "2": 60
+        },
+        "3548025062": {
+          "0": 28,
+          "1": 36,
+          "2": 45,
+          "3": 54,
+          "4": 64,
+          "5": 65,
+          "6": 66
+        },
+        "3612742386": {
+          "0": 41,
+          "1": 50,
+          "2": 60
+        },
+        "3968838540": {
+          "0": 22,
+          "1": 30,
+          "2": 29
+        },
+        "4229246695": {
+          "0": 32,
+          "1": 41,
+          "2": 49,
+          "3": 57,
+          "4": 47,
+          "5": 37
+        }
+      }
+    },
+    "3194434782": {
+      "type": "whisper",
+      "order": 70,
+      "value": {
+        "282258877": {
+          "0": 79,
+          "1": 70,
+          "2": 61
+        }
+      }
+    },
+    "3932256060": {
+      "type": "odd",
+      "order": 41,
+      "value": {
+        "11": true,
+        "13": true
+      }
+    },
+    "4067974256": {
+      "type": "killer",
+      "order": 120,
+      "value": {
+        "882024632": {
+          "cells": {
+            "1": true,
+            "5": true,
+            "11": true,
+            "12": true,
+            "13": true,
+            "20": true,
+            "21": true,
+            "22": true
+          },
+          "sum": 42
+        }
+      }
+    }
+  },
+  "meta": {
+    "title": "Its shrek and donkey",
+    "author": "LugnutsK",
+    "description": "- Normal Sudoku rules.\n- Digits in the cage sum to 42 and do not repeat.\n- Digits must increase along the thermos.\n- Digits in the two large circles must be odd.\n- Brown lines are palindromes.\n- Green lines are renbans (consecutive digits in any order).\n- Turquoise line is a German whisper; consecutive digits must have a difference of at least 5."
+  }
+}

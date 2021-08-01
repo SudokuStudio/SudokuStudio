@@ -30,7 +30,7 @@ export type CancellationToken = {
     cancelled?: true
 };
 
-export function cantAttempt(board: schema.Board): null | string {
+export function cannotAttempt(board: schema.Board): null | string {
     if (board.grid.width !== board.grid.height) {
         return 'Grid is not square.';
     }
@@ -134,7 +134,7 @@ export const ELEMENT_HANDLERS = {
     center: null,
     colors: null,
 
-    grid(numLits: number, _element: schema.GridElement, context: Context): number {
+    grid(numLits: number, _element: schema.NullElement, context: Context): number {
         const ones = Array(context.size).fill(1);
         for (const [ a, b ] of product(context.size, context.size)) {
             const cel: number[] = [];

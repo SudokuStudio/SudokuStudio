@@ -14,8 +14,8 @@ const getSolverWorker = (() => {
 })();
 
 export const SatSolver: Solver = {
-    cantAttempt(board: schema.Board): Promise<null | string> {
-        return getSolverWorker().cantAttempt(board);
+    cannotAttempt(board: schema.Board): Promise<null | string> {
+        return getSolverWorker().cannotAttempt(board);
     },
 
     solve(board: schema.Board, maxSolutions: number,
