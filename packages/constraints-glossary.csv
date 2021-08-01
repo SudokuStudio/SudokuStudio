@@ -1,0 +1,30 @@
+Default Name,Search Tags (space separated),Categories,Definition,Reference
+Antiknight,chess knight’s knights move,Global Constraints,Digits a chess knight's move apart may not repeat.,
+Antiking,chess king’s kings move,Global Constraints,Digits a chess king's move apart may not repeat.,
+Diagonals,sudoku x,Global Constraints,Digits along the marked diagonal(s) may not repeat.,
+Disjoint Groups,subsets,Global Constraints,Digits in the same relative position to their box may not repeat.,
+Nonconsecutive,,Global Constraints,[Edge- | Corner-] adjacent digits may not be consecutive.,
+Self Taxicab,,Global Constraints,"Digits n cells apart, by edge adjacency only, may not repeat, where n is the digit in the cell.",
+Taxicab,,Global Constraints,"Digits n cells apart, by edge adjacency only, may not repeat, where n is a preset number.",
+Arrow,lines,Local Constraints > Line Constraints,Digits along arrows must sum to the digit in the circle; digits may repeat.,
+Between,lines,Local Constraints > Line Constraints,Digits on between lines must be greater than one circle and less than the other; digits may repeat.,
+Clone,,Local Constraints > Area Constraints,Digits in cloned sets must be the same and in the same order.,
+Difference,white kropki dot consecutive pairs difference ratio,Local Constraints > Adjacency Constraints,"Cells separated by a white dot must differ by 1, or the number given.",Ratio
+Even,parity odd even,Local Constraints > Cell Constraints,Cells with a gray square must be even.,Odd
+Given,digit number,Local Constraints > Cell Constraints,Normal n × n sudoku rules apply.,
+Killer,partial cages sums,Local Constraints > Area Constraints,Digits in cages must sum to the given cage total; digits may not repeat.,
+Little Killer,diagonal sums,Local Constraints > Cell Constraints,Digits along a diagonal must sum to the given total; digits may repeat.,
+Maximum,extremes fortress minimum maximum,Local Constraints > Cell Constraints,Contiguous groups of cells with greater-than signs must be greater than all of their edge neighbors.,Minimum
+Minimum,extremes fortress minimum maximum,Local Constraints > Cell Constraints,Contiguous groups of cells with less-than signs must be less than all of their edge neighbors.,Maximum
+Odd,parity odd even,Local Constraints > Line Constraints,Cells with a gray circle must be odd.,Even
+Palindrome,lines,Local Constraints > Line Constraints,Digits along palindromes must read the same from both ends.,
+Quadruple,,Local Constraints > Adjacency Constraints,Digits in quadruple circles must appear at least once in the 1–4 neighboring cells.,
+Ratio,black kropki dot pairs difference ratio,Local Constraints > Adjacency Constraints,"Cells separated by a black dot must have a ratio of 2, or the number given.",Difference
+Renban,lines non-repeating,Local Constraints > Line Constraints,Digits along renban lines must be in a consecutive set in any order; digits may not repeat.,
+Sandwich,outside sums,Local Constraints > Outside Constraints,Sandwich clues outside the grid indicate the sum of the digits between the 1 and the 9 in the indicated row or column.,
+Skyscraper,outside towers,Local Constraints > Outside Constraints,Skyscraper clues outside the grid indicate the number of digits greater than all previous digits in that direction.,
+Slow Thermo,lines repeat,Local Constraints > Line Constraints,Digits on slow thermos increase or stay the same from bulb to tip; digits may repeat.,Thermo
+Thermo,lines non-repeating,Local Constraints > Line Constraints,Digits on thermos increase from bulb to tip and may not repeat.,Slow Thermo
+Whisper,german whispers lines five 5,Local Constraints > Line Constraints,Adjacent digits along whispers must differ by at least 5; digits may repeat.,
+XV,roman numerals sums,Local Constraints > Adjacency Constraints,Cells separated by a roman numeral must sum to that number.,
+X-Sum,outside x sums,Local Constraints > Outside Constraints,"The first x digits (including the first cell) must sum to the number clued outside of the grid, where x is the first cell in the row or column.",
