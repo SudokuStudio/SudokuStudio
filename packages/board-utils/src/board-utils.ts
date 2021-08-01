@@ -30,7 +30,9 @@ export function arrayObj2array<T>(arrayObj: ArrayObj<T>): T[] {
     return arr;
 }
 
-
+export function cellIdxMax({ width, height }: Grid): number {
+    return width * height;
+}
 export function cellIdx2cellCoord(idx: Idx<Geometry.CELL>, { width }: Grid): Coord<Geometry.CELL> {
     const x = idx % width;
     const y = Math.floor(idx / width);
@@ -92,6 +94,9 @@ export function cornerCoord2cellCoords([ cx, cy ]: Coord<Geometry.CORNER>, { wid
 }
 
 
+export function edgeIdxMax({ width, height }: Grid): number {
+    return 2 * width * height - width - height;
+}
 export function svgCoord2edgeIdx([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid): null | Idx<Geometry.EDGE> {
     const d = Math.abs(yf % 1 - 0.5) >= Math.abs(xf % 1 - 0.5);
     const w = width - (+!d);

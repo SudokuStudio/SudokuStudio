@@ -42,7 +42,7 @@ export type Idx<TAG extends Geometry> = number & { _idx?: TAG };
 /** 2d coordinates [ x, y ] for the given Geometry. */
 export type Coord<TAG extends Geometry> = [ x: number, y: number ] & { _coord?: TAG }
 /** JS Object map from Idx<TAG> to boolean flag representing set membership. */
-export type IdxBitset<TAG extends Geometry> = IdxMap<TAG, boolean>;
+export type IdxBitset<TAG extends Geometry> = IdxMap<TAG, true>;
 /** JS Object map from Idx<TAG> to any value. */
 export type IdxMap<TAG extends Geometry, V> = {
     [K in Idx<TAG> as `${K}`]?: V;
@@ -189,7 +189,7 @@ export declare namespace schema {
 
     export interface RegionElement extends AbstractElement {
         type: 'min' | 'max' | 'odd' | 'even',
-        value?: IdxMap<Geometry.CELL, true>,
+        value?: IdxBitset<Geometry.CELL>,
     }
 }
 
