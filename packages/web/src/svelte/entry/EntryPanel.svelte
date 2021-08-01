@@ -28,9 +28,9 @@
         <ButtonPad />
     </div>
     <div class="entry-info">
-        <input class="info-input title" type="text" placeholder="Untitled" bind:value={$title} />
+        <input class="info-input title" type="text" placeholder="Classic Sudoku" bind:value={$title} />
         <input class="info-input setter" type="text" placeholder="Anonymous" bind:value={$author} />
-        <textarea class="rules-text" spellcheck="false" bind:value={$description} on:focus={setSpellcheck} on:blur={setSpellcheck}></textarea>
+        <textarea class="rules-text" placeholder="Normal sudoku rules apply." spellcheck="false" bind:value={$description} on:focus={setSpellcheck} on:blur={setSpellcheck}></textarea>
     </div>
 </div>
 
