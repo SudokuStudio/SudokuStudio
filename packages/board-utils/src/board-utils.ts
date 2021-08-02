@@ -65,6 +65,9 @@ export function svgCoord2cellCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, hei
 }
 
 
+export function cornerIdxMax({ width, height }: Grid): number {
+    return (width + 1) * (height + 1);
+}
 // Same as cell fns but with width increased by 1 b/c of the one extra fencepost.
 export function cornerCoord2cornerIdx([ x, y ]: Coord<Geometry.CORNER>, { width }: Grid): Idx<Geometry.CORNER> {
     return y * (width + 1) + x;
@@ -173,6 +176,9 @@ export function seriesIdx2CellCoords(idx: Idx<Geometry.SERIES>, { width, height 
 }
 
 
+export function diagonalIdxMax({ width, height }: Grid): number {
+    return 4 * (width + height - 1);
+}
 export function svgCoord2diagonalIdx([ xf, yf ]: Coord<Geometry.SVG>, grid: Grid): null | Idx<Geometry.DIAGONAL> {
     const { width, height } = grid;
 

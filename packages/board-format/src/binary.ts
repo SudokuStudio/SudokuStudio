@@ -1,7 +1,7 @@
-import { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
+import { ArrayObj, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import * as LZMA from "./lzma_worker";
 import * as Base64 from "base64-js";
-import { array2arrayObj, arrayObj2array, cellIdxMax, edgeIdxMax, seriesIdxMax } from "@sudoku-studio/board-utils";
+import { array2arrayObj, arrayObj2array, cellIdxMax, cornerIdxMax, diagonalIdxMax, edgeIdxMax, seriesIdxMax } from "@sudoku-studio/board-utils";
 
 const utf8encoder = new TextEncoder();
 const utf8decoder = new TextDecoder();
@@ -40,6 +40,7 @@ export class ReaderWriter {
         return val;
     }
     writeUint8(val: number): void {
+        if (0xFF < val) throw Error(`Invalid uin8: ${val}.`);
         this._alloc(1);
         this.dataView.setUint8(this.offset, val);
         this.offset += 1;
@@ -198,6 +199,8 @@ function makeJsonSerde<T extends schema.Element>(type: T['type'], currentVersion
         },
     } as const;
 }
+// @ts-ignore
+const _ignored = makeJsonSerde;
 
 function makeDigitElementSerde<T extends schema.DigitElement>(type: T['type'], currentVersion: number) {
     return {
@@ -331,14 +334,56 @@ function makeBooleanElementSerde<T extends schema.BooleanElement>(type: T['type'
     return {
         type, currentVersion,
         serialize(writer: ReaderWriter, _grid: Grid, value: T['value']): void {
-            writer.writeUint8(value ? 1 : 0);
+            writer.writeUint8(value ? 0b1 : 0);
         },
         deserialize(reader: ReaderWriter, _grid: Grid, version: number): T['value'] {
             if (currentVersion !== version) throw Error(`BooleanElementSerde cannot handle different version: expected ${currentVersion}, received ${version}.`);
-            return 0 < reader.readUint8();
+            return 0 !== (0b1 & reader.readUint8());
         },
     }
 }
+
+const BoxElementSerde = {
+    type: 'box',
+    currentVersion: 1,
+    serialize(writer: ReaderWriter, _grid: Grid, value: schema.BoxElement['value']): void {
+        writer.writeUint8(value?.height || 0);
+        writer.writeUint8(value?.width  || 0);
+    },
+    deserialize(reader: ReaderWriter, _grid: Grid, version: number): schema.BoxElement['value'] {
+        if (this.currentVersion !== version) throw Error(`BoxElementSerde cannot handle different version: expected ${this.currentVersion}, received ${version}.`);
+        const height = reader.readUint8();
+        const width  = reader.readUint8();
+        return { width, height };
+    },
+} as const;
+
+const ColorsElementSerde = {
+    type: 'colors',
+    currentVersion: 1,
+    serialize(writer: ReaderWriter, grid: Grid, value: schema.ColorsElement['value']): void {
+        const cellColors: IdxMap<Geometry.CELL, { [N in string]?: true }> = value || {};
+        for (let idx = 0; idx < cellIdxMax(grid); idx++) {
+            const colors = Object.keys(cellColors[idx] || {});
+            writer.writeUint8(colors.length);
+            for (const color of colors) {
+                writeColor(writer, color);
+            }
+        }
+    },
+    deserialize(reader: ReaderWriter, grid: Grid, version: number): schema.ColorsElement['value'] {
+        if (this.currentVersion !== version) throw Error(`ColorsElementSerde cannot handle different version: expected ${this.currentVersion}, received ${version}.`);
+        const cellColors: IdxMap<Geometry.CELL, { [N in string]?: true }> = {};
+        for (let idx = 0; idx < cellIdxMax(grid); idx++) {
+            const numColors = reader.readUint8();
+            const colors: { [N in string]?: true } = cellColors[idx] = {};
+            for (let _i = 0; _i < numColors; _i++) {
+                colors[readColor(reader)] = true;
+            }
+        }
+        return cellColors;
+    },
+} as const;
 
 const GridElementSerde = {
     type: 'grid',
@@ -372,6 +417,35 @@ const ArrowElementSerde = {
             value[i] = { bulb, body };
         }
         return value;
+    },
+} as const;
+
+const QuadrupleElementSerde = {
+    type: 'quadruple',
+    currentVersion: 1,
+    serialize(writer: ReaderWriter, grid: Grid, value: schema.QuadrupleElement['value']): void {
+        const quadruples = value || {};
+        for (let idx = 0; idx < cornerIdxMax(grid); idx++) {
+            const digitsOrTrue = quadruples[idx] || true;
+            const digits = ('object' === typeof digitsOrTrue) ? arrayObj2array<number>(digitsOrTrue as ArrayObj<number>) : [];
+            writer.writeUint8(digits.length);
+            for (const digit of digits) {
+                writer.writeUint8(digit);
+            }
+        }
+    },
+    deserialize(reader: ReaderWriter, grid: Grid, version: number): schema.QuadrupleElement['value'] {
+        if (this.currentVersion !== version) throw Error(`KillerElementSerde cannot handle different version: expected ${this.currentVersion}, received ${version}.`);
+        const quadruples: schema.QuadrupleElement['value'] = {};
+        for (let idx = 0; idx < cornerIdxMax(grid); idx++) {
+            const numDigits = reader.readUint8();
+            const digits: number[] = [];
+            for (let _i = 0; _i < numDigits; _i++) {
+                digits.push(reader.readUint8());
+            }
+            quadruples[idx] = 0 < digits.length ? array2arrayObj(digits) : true;
+        }
+        return quadruples;
     },
 } as const;
 
@@ -426,17 +500,76 @@ const KillerElementSerde = {
         }
         return cages;
     },
-};
+} as const;
+
+const LittleKillerElementSerde = {
+    type: 'littleKiller',
+    currentVersion: 1,
+    serialize(writer: ReaderWriter, grid: Grid, value: schema.LittleKillerElement['value']): void {
+        const map: IdxMap<Geometry.DIAGONAL, number | true> = value || {};
+        for (let idx = 0; idx < diagonalIdxMax(grid); idx++) {
+            const v = map[idx];
+            writer.writeUint8(null == v ? 0 : true === v ? 0xFF : v);
+        }
+    },
+    deserialize(reader: ReaderWriter, grid: Grid, version: number): schema.LittleKillerElement['value'] {
+        if (this.currentVersion !== version) throw Error(`LittleKillerElementSerde cannot handle different version: expected ${this.currentVersion}, received ${version}.`);
+        const map: IdxMap<Geometry.DIAGONAL, number | true> = {};
+        for (let idx = 0; idx < diagonalIdxMax(grid); idx++) {
+            const x = reader.readUint8();
+            if (0 !== x) map[idx] = 0xFF === x ? true : x;
+        }
+        return map;
+    },
+} as const;
+
+const DIAGONAL_POSITIVE_MASK = 0b01;
+const DIAGONAL_NEGATIVE_MASK = 0b10;
+const DiagonalElementSerde = {
+    type: 'diagonal',
+    currentVersion: 1,
+    serialize(writer: ReaderWriter, _grid: Grid, value: schema.DiagonalElement['value']): void {
+        const bitPositive = value?.positive ? DIAGONAL_POSITIVE_MASK : 0;
+        const bitNegative = value?.negative ? DIAGONAL_NEGATIVE_MASK : 0;
+        writer.writeUint8(bitNegative | bitPositive);
+    },
+    deserialize(reader: ReaderWriter, _grid: Grid, version: number): schema.DiagonalElement['value'] {
+        if (this.currentVersion !== version) throw Error(`DiagonalElementSerde cannot handle different version: expected ${this.currentVersion}, received ${version}.`);
+        const byte = reader.readUint8();
+        const positive = 0 !== (DIAGONAL_POSITIVE_MASK & byte);
+        const negative = 0 !== (DIAGONAL_NEGATIVE_MASK & byte);
+        return { negative, positive };
+    },
+} as const;
+
+const CONSECUTIVE_ORTH_MASK = 0b01;
+const CONSECUTIVE_DIAG_MASK = 0b10;
+const ConsecutiveElementSerde = {
+    type: 'diagonal',
+    currentVersion: 1,
+    serialize(writer: ReaderWriter, _grid: Grid, value: schema.ConsecutiveElement['value']): void {
+        const bitOrth = value?.orth ? CONSECUTIVE_ORTH_MASK : 0;
+        const bitDiag = value?.diag ? CONSECUTIVE_DIAG_MASK : 0;
+        writer.writeUint8(bitOrth | bitDiag);
+    },
+    deserialize(reader: ReaderWriter, _grid: Grid, version: number): schema.ConsecutiveElement['value'] {
+        if (this.currentVersion !== version) throw Error(`ConsecutiveElementSerde cannot handle different version: expected ${this.currentVersion}, received ${version}.`);
+        const byte = reader.readUint8();
+        const orth = 0 !== (CONSECUTIVE_ORTH_MASK & byte);
+        const diag = 0 !== (CONSECUTIVE_DIAG_MASK & byte);
+        return { orth, diag };
+    },
+} as const;
 
 const ELEMENT_SERDES = [
     GridElementSerde,
-    makeJsonSerde<schema.BoxElement>('box', 1),
+    BoxElementSerde,
 
     makeDigitElementSerde<schema.DigitElement>('givens', 1),
     makeDigitElementSerde<schema.DigitElement>('filled', 1),
     makePencilMarksElementSerde<schema.PencilMarksElement>('center', 1),
     makePencilMarksElementSerde<schema.PencilMarksElement>('corner', 1),
-    makeJsonSerde<schema.ColorsElement>('colors', 1),
+    ColorsElementSerde,
 
     makeLineElementSerde<schema.LineElement>('thermo', 1),
     makeLineElementSerde<schema.LineElement>('slowThermo', 1),
@@ -451,7 +584,7 @@ const ELEMENT_SERDES = [
     makeRegionElementSerde<schema.RegionElement>('odd', 1),
     makeRegionElementSerde<schema.RegionElement>('even', 1),
 
-    makeJsonSerde<schema.QuadrupleElement>('quadruple', 1),
+    QuadrupleElementSerde,
     CloneElementSerde,
     KillerElementSerde,
 
@@ -462,15 +595,15 @@ const ELEMENT_SERDES = [
     makeSeriesNumberElementSerde<schema.SeriesNumberElement>('sandwich', 1),
     makeSeriesNumberElementSerde<schema.SeriesNumberElement>('skyscraper', 1),
     makeSeriesNumberElementSerde<schema.SeriesNumberElement>('xsum', 1),
-    makeJsonSerde<schema.LittleKillerElement>('littleKiller', 1),
+    LittleKillerElementSerde,
 
     makeBooleanElementSerde<schema.BooleanElement>('knight', 1),
     makeBooleanElementSerde<schema.BooleanElement>('king', 1),
     makeBooleanElementSerde<schema.BooleanElement>('disjointGroups', 1),
     makeBooleanElementSerde<schema.BooleanElement>('selfTaxicab', 1),
 
-    makeJsonSerde<schema.DiagonalElement>('diagonal', 1),
-    makeJsonSerde<schema.ConsecutiveElement>('consecutive', 1),
+    DiagonalElementSerde,
+    ConsecutiveElementSerde,
 ] as const;
 
 // @ts-ignore

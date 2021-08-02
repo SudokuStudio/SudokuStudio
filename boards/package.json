@@ -1,0 +1,7 @@
+{
+  "name": "@sudoku-studio/boards",
+  "types": "./types.d.ts",
+  "exports": {
+    "./fpuzzles": "./fpuzzles.js"
+  }
+}

@@ -124,8 +124,8 @@ export declare namespace schema {
     export interface DiagonalElement extends AbstractElement {
         type: 'diagonal',
         value?: {
-            positive: boolean,
             negative: boolean,
+            positive: boolean,
         },
     }
     export interface KillerElement extends AbstractElement {

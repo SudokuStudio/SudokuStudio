@@ -1,6 +1,29 @@
 import { binary, fPuzzles } from "../dist/board-format";
 import { writeFile } from "fs/promises";
 
+import fpuzzlesBoards from "@sudoku-studio/boards/fpuzzles";
+import { schema } from "@sudoku-studio/schema";
+
+test('writeBoards', async () => {
+    for (const [ name, fPuzzlesB64, soln ] of fpuzzlesBoards) {
+        const fPuzzlesDecodedBoard = fPuzzles.parseFpuzzles(fPuzzlesB64);
+        const ourBin = binary.writeBuffer(fPuzzlesDecodedBoard);
+
+        const fileName = name.toLowerCase().replace(/[^0-9a-z]/g, '_');
+        await writeFile(`${__dirname}/../../../boards/binary/${fileName}.bin`, ourBin, 'binary');
+        await writeFile(`${__dirname}/../../../boards/binary/${fileName}.solution.txt`, soln, 'utf-8');
+    }
+
+    {
+        const board: schema.Board = {"grid":{"width":9,"height":9},"meta":{"title":"Secret Pillars","author":"echoes","description":"Normal killer sudoku rules apply; cages sum to the marked total without repeating digits.\n\nNormal parity rules apply; some even cells are marked with a gray square.\n\nNormal kropki rules apply; one edge is marked with a white dot, and the cells to either side have a difference of 1. Not all white dots are given."},"elements":{"1":{"type":"grid","order":101},"2":{"type":"box","order":100,"value":{"width":3,"height":3}},"10":{"type":"givens","order":220},"11":{"type":"filled","order":210},"12":{"type":"corner","order":200},"13":{"type":"center","order":200},"14":{"type":"colors","order":10},"355143166":{"type":"even","order":40,"value":{"0":true,"2":true,"4":true,"6":true,"30":true,"64":true}},"1288278304":{"type":"killer","order":120,"value":{"324446933":{"cells":{"76":true,"77":true},"sum":13},"383356378":{"cells":{"0":true,"1":true,"10":true,"19":true,"28":true,"37":true,"46":true,"55":true,"64":true},"sum":45},"422607914":{"cells":{"29":true,"38":true},"sum":13},"473944436":{"cells":{"58":true,"67":true},"sum":13},"879946307":{"cells":{"9":true,"18":true},"sum":10},"971141005":{"cells":{"13":true,"22":true},"sum":6},"1051867357":{"cells":{"44":true,"53":true},"sum":7},"1306705152":{"cells":{"26":true,"35":true},"sum":12},"1634447309":{"cells":{"54":true,"63":true},"sum":7},"2397216212":{"cells":{"60":true,"69":true},"sum":7},"2610385281":{"cells":{"24":true,"33":true},"sum":13},"2746150700":{"cells":{"8":true,"17":true},"sum":8},"2779053395":{"cells":{"56":true,"65":true},"sum":9},"3018678183":{"cells":{"74":true,"75":true},"sum":7},"3039715062":{"cells":{"78":true,"79":true},"sum":9},"3078906367":{"cells":{"31":true,"40":true},"sum":11},"3200753384":{"cells":{"11":true,"20":true},"sum":10},"3269771711":{"cells":{"36":true,"45":true},"sum":13},"3493960443":{"cells":{"2":true,"3":true,"12":true,"21":true,"30":true,"39":true,"48":true,"57":true,"66":true},"sum":45},"3533066374":{"cells":{"72":true,"73":true},"sum":13},"3536970188":{"cells":{"4":true,"5":true,"14":true,"23":true,"32":true,"41":true,"50":true,"59":true,"68":true},"sum":45},"3712599461":{"cells":{"6":true,"7":true,"16":true,"25":true,"34":true,"43":true,"52":true,"61":true,"70":true},"sum":45},"3972207821":{"cells":{"42":true,"51":true},"sum":10}}},"4100189067":{"type":"difference","order":140,"value":{"66":true}}}};
+        const ourBin = binary.writeBuffer(board);
+        await writeFile(`${__dirname}/../../../boards/binary/secret_pillars.bin`, ourBin, 'binary');
+
+        const ourB64 = await binary.writeLzmaBase64(board);
+        console.log('secret_pillars', ourB64.length, ourB64);
+    }
+});
+
 describe('binary', () => {
     test('clipped', async () => {
         // // "Clipped" by glum_hippo: Arrow, Thermo, Givens, King
@@ -22,14 +45,17 @@ describe('binary', () => {
         // // "Cloneways Game of Life" by ahaupt, Botaku, Ben, Xoned, Philip Newman, Hackiisan, ICHUTES, Qinlux, Gliperal (Killer, Minimum, Maximum, XV, Arrows, Clones)
         // const fPuzzlesB64 = 'N4IgzglgXgpiBcBOANCALhNAbO8QGEsB7AOxgHcBDATzAAIBxSgWxjqIDM6AZCDuVJQCuaABZEATghAA1ShIhEhYEKglCcYGGmkA5Sc0pY6AY2Jk66zXUoAHW1mp0AFCcoBzGPU50xbMCxsJkTEEjYSbBAAJjAkGG5YAJQAOiT6EobGzBAkAPSGAB429o6p6Zl0AIISEkTklhpexQ7UZQZGdAAauTIN1nYtLiREdGTulBgAbkGkYGgSlDloKSQAQtTwqZSiwrZoqatEaJQA1kIHsamdpDBRqQAKohBYELZ0uhSGJKkAEpQmJwgEAC3xIAEl8D8AKoAFQAogBlVIARRyWCEBVSDBethgCywqhA7gUUQQAG0yaATNIAMSrAAMADFGQyQABfZBU2kM5msjlcvA05m8+nszkgamC4Us0X8uWc+XANkAXWQlIl3KZMrFApAdK1fPFkr10sNuqFwrNGqlltlCqNmpFOutep52rlqspiv5LotTu9DsFbqtxv1/oVnvNzMq9JjztD0djdqjjJjcYDSvtmaVkYzvtNyfztp1PoTqaT8dpifTgZN5fTuazparxebNvDKY73sb2cVRa7tb97sHBZLPd9wcLocnJabI9b847/fd4+nBqnjuHvbnna3KtVEvMuHVJhgWCwKngZJAACUAIz4ADMhPv+AALC+AExPr/v38AVhfR8/wPMwbnwM8L3JW9/z/VAb1gwD4IANjg29UKQ9D8GQl8AHZ8EA5VS0gy9rwQtDyMwm9UI/FCCJfVCcPg/DCNQMCyAg89SNvfDcLw/AAA4XwE/A+PgkShPE/BEBfRBBJAIijRI6Cb14/jJNvESxM0+SpJk+C5KE0Cj04qCr1vB9n3gh9aNvb8rLsijvyo4CP0UqllPM187xfB9P1/Hz4O/fzjPAzyyO/bSb2/DSb2AqLgKM4iuJUyLf1i+KgPk0KOPCnT/Kkhybzkgrbzk593IlPKbxE0qap/Az8Dq8qFLYkzqofQKLKagLfxC5KzLI2Cotg2LYJknKYFM7ibzffAutmnr4LmiqBpmuaFrmuqVtaw8wpSrzhpfUbjukhSVUEGo6nJUAXjIUiyJ2+DYNs6j6OY7DhNE2TstA6qtpfHbKrurxySGs7nt0mDvuVP6DvBiafRBh6sKY6G0cWjG5r42G2OqxjzvFZGwcc2Lv307qJrhwbSfOg9shICBmCEZgbqq89pHq/yLpAQomZZtnTw5vBor/AbOfwnyeYKSZBeqiSvpx1BJiMIRcBATp43l77GqVkAVfRdWZHZUCPGPDz4e6ha/N6oKeoPJRsByKbaXpN33cJDhSDQfBXfdt2tct18ips38iu/V7nKytzUEdkHfcFf2A9QL24gTvUk6naqXtOqiaIY97Uf41iQDj5305pTPPe9iuq7WlS1I+2KtK+5uIbK7LY5EeO/f96u097j368OnXobGs6He78vB+TkBU59mes6DjbAaW28ga7p2OMX/uF8TpPA5p0WopirKEs70up+3/e+5Tmud+Hsjaq+oqSp+irN57m+Pbvgfv4DlUbIgA==';
 
-        // "Sandwich Sudoku" by Cracking the Cryptic https://www.youtube.com/watch?v=2DN32fY63JM (Sandwich)
-        const fPuzzlesB64 = "N4IgzglgXgpiBcBOANCA5gJwgEwQbT2AF9ljSSzKLryBdZQmq8l54+x1p7rjtn/nQaDQANwCGAGwCuceAEZUaCKJgA7BABcMsgdz56uR9sMMjqB42YumrdqrXrhxa7AHcIAYwAWYaQFt8UE8YSUkEEAAlAAYAYXkQVAkZORAADhAKEBCwiJjYgCZEkGTZCIKAZkzSbNDw+Ci4qqSpMob5ADZq4Lq8uIAWYtLU+QBWbtrchvzxlpTyqqyc+sbYrrm2kHlFmuW+2IB2IdbUiuiJvem4jI3UgqOl3qvYxGP5hp2eqaj5WPPbiKdC5PKIFP5vTYPXYgyIVcEAj7A76RfrwkonQGDR7I0Zo4aAhLYlaRDp4jENAqE6HIg5k95bV5EvJpOmbCqfSbExCsu6ZWhEIA=";
+        // // "Sandwich Sudoku" by Cracking the Cryptic https://www.youtube.com/watch?v=2DN32fY63JM (Sandwich)
+        // const fPuzzlesB64 = "N4IgzglgXgpiBcBOANCA5gJwgEwQbT2AF9ljSSzKLryBdZQmq8l54+x1p7rjtn/nQaDQANwCGAGwCuceAEZUaCKJgA7BABcMsgdz56uR9sMMjqB42YumrdqrXrhxa7AHcIAYwAWYaQFt8UE8YSUkEEAAlAAYAYXkQVAkZORAADhAKEBCwiJjYgCZEkGTZCIKAZkzSbNDw+Ci4qqSpMob5ADZq4Lq8uIAWYtLU+QBWbtrchvzxlpTyqqyc+sbYrrm2kHlFmuW+2IB2IdbUiuiJvem4jI3UgqOl3qvYxGP5hp2eqaj5WPPbiKdC5PKIFP5vTYPXYgyIVcEAj7A76RfrwkonQGDR7I0Zo4aAhLYlaRDp4jENAqE6HIg5k95bV5EvJpOmbCqfSbExCsu6ZWhEIA=";
 
         // // "MiniMax Sandwich" by Lisztes (Disjoint, Sandwich, Minimum/Maximum)
         // const fPuzzlesB64 = "N4IgzglgXgpiBcBOANCALhNAbO8QFkIA7CfAQwA8ACAZTKIBMB3CAYwAsRUyBXNdgPYAnBCAAyEMFDQwwXEEJ44wMNKIBywgLZkstHgwEBrHlUXKqZAA5WsATwB0VAKJkOZgU2RVWArDy0ib3oGKgBmCjCqACMBal8iNDJiMCoYN3YqIgDomCEqADMhAS0qAEYqNAEqRDSKN2w7KgEiVhgHAB0iLoARSQArAWI0fUMTMyVZSxt7JwBhGCwsVP4yEesrdPziSvYYKjAyLX2rAUgMFrNFtYgAN32q3ZgIfIYYAt4sEaEYAHMIFqpLQ8MAjIgCEYJJI7fj7Q7HLI5PKdbpEOiMFjuGgGYymcxTDazKgAFT2iK0uSEqQEfEgbyeVF+QggoTAgiYDLAAWaBQZDAg/zQqUOGLYe1CuTQTBgMCI5UsjBqVBh7DWHg5wh8fgCRBRXQA4j8mm0lqkWPxLEJikxUh9WMRfs0+EwyEJQsDQVrEsk5dkKXlUkz0jJ8qs5bo9MJ+AJfi0I00yAx+m5ZZDFss9URDTBjemzZhMq7rba3A7lUQXW6qB7IS1ob6kVSqMoVqrw0tmkJo7GiPHLEmU4kfHmUfImSyEABtSfAAC+yDnC/ni5Xy7XS4AusgZ+vV0v93u51udwfd2fT8fD+er5vtzf72fL9fnxe7y+H7eTx+H0/T3+f1uID8mAgzDEyNJWHI8BoIoMCoCKzBilyWhTqAJpYKIABKAAMcwABzyLcug8LgIBlARy4gOhWG4QA7IRxGkQATPRlHUXgmEAKxzNhDH+MxvFsemWFMTxfEkaITEAGwgEJSw0XMnHiaRFGAVoxAQMCKHwDOVHCRxolMbJC56fJBn4cZaH6SAmF4XMRlyRhHF2RRJnsTZ3FKbOamUJpASoaZTkefZlmBVhdleW51lcRZjkiYpoXuTFiCyRus5AA==";
 
         // // "Orbit" by Qodec (Arrow, Little Killer, Even/Odd)
         // const fPuzzlesB64 = "N4IgzglgXgpiBcBOANCALhNAbO8QHkAnAI0xFQEMBXNACwHtCEQBFegExgGNyRCqcYGGmYARCAHNMYAAQUs9AHYS5iuYUL0A7jIhq6MGRMIR2MgLZUwaGWCrmZaeo9qH2kzLrXSZXCIS4cADoZcSk0WXMKAE8ZQhgABxgKG3klFQo1Cg1tIIAdRQKwnzTlGXcKCSV5WT13LhSYM2JY7M0tWXoaSE4XQ2NTCysbOwcnPqMIADcYNUV7YhhCORs6FPV2kOKIixi4xOTUhTKKcohK6qx8wsUAYRgsLFktTFo5I3jYvwCcIesZRYyDjsEL3R7PV7vYwwWJgACOVGyhks/0BMBmiiCvAG7AQAG08aAEtlMNFmABRDEgAC+yGAtPpdIZzKZrKJJLQZLw+HYuOpAF1kISWYzRSLxYLhWzxdLpZKxbKFUqBULlYqZfT5RrtXLVTq1WKterjYbVSBiSZOcweXyTfrzRyuSBKbMafzBSAsJhsDAANYQR5LUb40BcB5YZgAJQAjAAGW4Adl4YfB+JAkcQtwAHLxI1nbogQB73PEuBglMwAKqR3hTeRUXAgHMMkApiN4SMAZluceT4bAacjACYC7no9mi6gS9xy4oqwAZWv1xtJlttqPxzt91PwPHp8dD3Mj6OTkDTssQCt4USL1B1rAN5gANhpdNb4ajCduse3T0H+ZPVAM1uQ9i38GdLzna8azvZdmELNcPw7eMk1QNsB13fdbhfICRwAVlzbsABZcyI24tyAvCQNzJ8e1Pc9ZzEW8QHvR88E7Zs33XDsv17ND+0HWjC0oicgLI1D027HD03wsdbhIsDS0YvBK2Y1jGyI1cuKQ/dN1/DC92AkigPzAigK/aTI1oiTIyonMxNHRSIKvEBqyXB8NMPRDHijbsf34ndDLIwD0yow8gNoij0y/Yz01M3NMxfJyLxc0QYJYuC8CIrcVRANptBDT09BgAzDO7GyR0s8czJk+Siw9dDB3KosWy9RQSvxMryNI6iRJCqzqPdAK/0wrtuv5VritK6LupMuqgMzGq82w+rhoMmatwmt82o63dDK/GzaPs0LRwcnMhvfQKZqTLbQB26bbMTHqkoagTRqom7Jvah7uyWsiFNeq6xoI26iu+zqTqigaAbWwcqM2r7doJGaltol7YdGr8QYFakgA";
+
+        // "Quadiagonal" by Tyrgannus (Disjoint, Quad)
+        const fPuzzlesB64 = "N4IgzglgXgpiBcBOANCALhNAbO8QEUBXAQwBMJiBzAewDtisRVjC0ALagJwRABUBPTpWK1ahMExCdCOMDDQ8AtADkuAWwYACMIVLUA1oU3TZm4gAdzWfgB1aigMpoRpYp1KbyYAFbUItNE0AdzYYThhPCEpMME0AYxFaakCAIwj/TXYIsGI1CPCwcxg4zAA3CLiYLCxNDLUZDCt8mGi6MDtFAHU2TAqITjjTNwiARxJSWJCwiJhiOLZNMTU0zlraTND4/sGI+rBUiPMCmADtajyp8LWNiqqsWKz4rEJ0h+pCef9KADpJSk4IKQEABtYHAAC+yAhUMh0LhsIRMIAusgwYj4TDMRiISi0Vj0QT8bjsYSScjUWTKQTiaTaUSKXSqeS8UyqTT8Ry2SiQF5fP40P93uYJPA0NIYKgxmRpE0QaBKtURcCQAAlACMAGEABySdUaxC6gBM2qN+pA3NKDBeSrVyAALMgAKzIRBI2EgBX3EGqu0ax2630ANl1jr9IY1wYtVpgNvtyC1LrdUI9dyVqoA7BrDbrMwBmXVarMFjX5qPPGMg3PIdPxxPuz1plWZnWoJtm1uFluqwsGsvWkGG5BVwPVpPy1PevXZ1ua/Ot43T1XG0uoS3l2OD52BscpxWT3Ma9O6g9dlW+o+t306vsV+DAu07huTwMl3Uvu051+tzMfm9Kw2PhOd6qgewatgeF4+hGAaHuaq7Rkqw6AXuwEqsaaqmouKoHhh4FFn+A7IV6qHGmBS6wXhZHYbBBF3oOVY1lqRGNqGH6tqG/qtu+b5hrRwKuvWQHKiqha4d2RatogGpiSqUnZnxVaOm6bpAA=";
 
         const fPuzzlesDecodedBoard = fPuzzles.parseFpuzzles(fPuzzlesB64);
 
