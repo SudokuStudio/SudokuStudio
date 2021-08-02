@@ -1,27 +1,44 @@
-import { binary, fPuzzles } from "../dist/board-format";
+import * as LZString from "lz-string";
+
+import { binary, fPuzzles, bytesToUrlBase64, urlBase64ToBytes } from "../dist/board-format";
 import { writeFile } from "fs/promises";
 
 import fpuzzlesBoards from "@sudoku-studio/boards/fpuzzles";
 import { schema } from "@sudoku-studio/schema";
+import { StateManager, Update } from '@sudoku-studio/state-manager';
 
 test('writeBoards', async () => {
+    const x: (number | string)[][] = [];
     for (const [ name, fPuzzlesB64, soln ] of fpuzzlesBoards) {
-        const fPuzzlesDecodedBoard = fPuzzles.parseFpuzzles(fPuzzlesB64);
-        const ourBin = binary.writeBuffer(fPuzzlesDecodedBoard);
+        const boardFromFPuzzles = fPuzzles.parseFpuzzles(fPuzzlesB64);
+
+        const boardState = new StateManager();
+        boardState.update(boardFromFPuzzles as any);
+        const board = boardState.get<schema.Board>();
+
+        const ourBin = await binary.writeBuffer(board);
+        const ourBinLzma = await binary.writeLzmaBuffer(board);
+        const lzs = LZString.compressToUint8Array(JSON.stringify(board));
 
         const fileName = name.toLowerCase().replace(/[^0-9a-z]/g, '_');
         await writeFile(`${__dirname}/../../../boards/binary/${fileName}.bin`, ourBin, 'binary');
+        await writeFile(`${__dirname}/../../../boards/binary/${fileName}.bin.lzma`, ourBinLzma, 'binary');
         await writeFile(`${__dirname}/../../../boards/binary/${fileName}.solution.txt`, soln, 'utf-8');
+
+        x.push([ name, 0.75 * fPuzzlesB64.length, lzs.length, ourBinLzma.length, (ourBinLzma.length / lzs.length).toFixed(4) ]);
     }
 
     {
         const board: schema.Board = {"grid":{"width":9,"height":9},"meta":{"title":"Secret Pillars","author":"echoes","description":"Normal killer sudoku rules apply; cages sum to the marked total without repeating digits.\n\nNormal parity rules apply; some even cells are marked with a gray square.\n\nNormal kropki rules apply; one edge is marked with a white dot, and the cells to either side have a difference of 1. Not all white dots are given."},"elements":{"1":{"type":"grid","order":101},"2":{"type":"box","order":100,"value":{"width":3,"height":3}},"10":{"type":"givens","order":220},"11":{"type":"filled","order":210},"12":{"type":"corner","order":200},"13":{"type":"center","order":200},"14":{"type":"colors","order":10},"355143166":{"type":"even","order":40,"value":{"0":true,"2":true,"4":true,"6":true,"30":true,"64":true}},"1288278304":{"type":"killer","order":120,"value":{"324446933":{"cells":{"76":true,"77":true},"sum":13},"383356378":{"cells":{"0":true,"1":true,"10":true,"19":true,"28":true,"37":true,"46":true,"55":true,"64":true},"sum":45},"422607914":{"cells":{"29":true,"38":true},"sum":13},"473944436":{"cells":{"58":true,"67":true},"sum":13},"879946307":{"cells":{"9":true,"18":true},"sum":10},"971141005":{"cells":{"13":true,"22":true},"sum":6},"1051867357":{"cells":{"44":true,"53":true},"sum":7},"1306705152":{"cells":{"26":true,"35":true},"sum":12},"1634447309":{"cells":{"54":true,"63":true},"sum":7},"2397216212":{"cells":{"60":true,"69":true},"sum":7},"2610385281":{"cells":{"24":true,"33":true},"sum":13},"2746150700":{"cells":{"8":true,"17":true},"sum":8},"2779053395":{"cells":{"56":true,"65":true},"sum":9},"3018678183":{"cells":{"74":true,"75":true},"sum":7},"3039715062":{"cells":{"78":true,"79":true},"sum":9},"3078906367":{"cells":{"31":true,"40":true},"sum":11},"3200753384":{"cells":{"11":true,"20":true},"sum":10},"3269771711":{"cells":{"36":true,"45":true},"sum":13},"3493960443":{"cells":{"2":true,"3":true,"12":true,"21":true,"30":true,"39":true,"48":true,"57":true,"66":true},"sum":45},"3533066374":{"cells":{"72":true,"73":true},"sum":13},"3536970188":{"cells":{"4":true,"5":true,"14":true,"23":true,"32":true,"41":true,"50":true,"59":true,"68":true},"sum":45},"3712599461":{"cells":{"6":true,"7":true,"16":true,"25":true,"34":true,"43":true,"52":true,"61":true,"70":true},"sum":45},"3972207821":{"cells":{"42":true,"51":true},"sum":10}}},"4100189067":{"type":"difference","order":140,"value":{"66":true}}}};
-        const ourBin = binary.writeBuffer(board);
+        const ourBin = await binary.writeBuffer(board);
+        const ourBinLzma = await binary.writeLzmaBuffer(board);
+        const lzs = LZString.compressToUint8Array(JSON.stringify(board));
         await writeFile(`${__dirname}/../../../boards/binary/secret_pillars.bin`, ourBin, 'binary');
+        await writeFile(`${__dirname}/../../../boards/binary/secret_pillars.bin.lzma`, ourBinLzma, 'binary');
 
-        const ourB64 = await binary.writeLzmaBase64(board);
-        console.log('secret_pillars', ourB64.length, ourB64);
+        x.push([ 'Secret Pillars', 0, lzs.length, ourBinLzma.length, (ourBinLzma.length / lzs.length).toFixed(4) ]);
     }
+    console.log(x.map(row => row.map((n, i) => `${n}`.padStart(i ? 10 : 30)).join(' ')).join('\n'));
 });
 
 describe('binary', () => {
@@ -62,18 +79,22 @@ describe('binary', () => {
         const ourBin = binary.writeBuffer(fPuzzlesDecodedBoard);
         await writeFile('./test/board.bin', ourBin);
 
-        const ourB64 = await binary.writeLzmaBase64(fPuzzlesDecodedBoard);
+        let ourLzmaBin = await binary.writeLzmaBuffer(fPuzzlesDecodedBoard);
+        const ourB64 = bytesToUrlBase64(ourLzmaBin);
         console.log(ourB64);
         console.log(fPuzzlesB64.length, ourB64.length);
 
-        const ourBoard = await binary.readLzmaBase64(ourB64);
+        ourLzmaBin = urlBase64ToBytes(ourB64);
+        const ourBoard = await binary.readLzmaBuffer(ourLzmaBin);
 
         await writeFile('./test/board.json', JSON.stringify(ourBoard, null, 2));
-        const ourB642 = await binary.writeLzmaBase64(ourBoard);
+        ourLzmaBin = await binary.writeLzmaBuffer(ourBoard);
+        const ourB642 = bytesToUrlBase64(ourLzmaBin);
 
         expect(ourB64).toEqual(ourB642);
 
-        const ourBoard2 = await binary.readLzmaBase64(ourB64);
+        ourLzmaBin = urlBase64ToBytes(ourB642);
+        const ourBoard2 = await binary.readLzmaBuffer(ourLzmaBin);
         expect(ourBoard).toEqual(ourBoard2);
     });
 });

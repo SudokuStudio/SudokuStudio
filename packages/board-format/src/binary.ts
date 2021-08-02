@@ -1,6 +1,5 @@
 import { ArrayObj, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import * as LZMA from "./lzma_worker";
-import * as Base64 from "base64-js";
 import { array2arrayObj, arrayObj2array, cellIdxMax, cornerIdxMax, diagonalIdxMax, edgeIdxMax, seriesIdxMax } from "@sudoku-studio/board-utils";
 
 const utf8encoder = new TextEncoder();
@@ -149,7 +148,6 @@ function color2rgb(hashColor: string): [ number, number, number ] {
 }
 function writeColor(writer: ReaderWriter, hashColor: undefined | null | string): void {
     const colorRgb = null != hashColor ? color2rgb(hashColor) : [ 0, 0, 0 ];
-    console.log(hashColor, colorRgb);
     writer.writeUint8(colorRgb[0]);
     writer.writeUint8(colorRgb[1]);
     writer.writeUint8(colorRgb[2]);
@@ -705,16 +703,13 @@ export function readBuffer(bin: ArrayBufferView): schema.Board {
     return board;
 }
 
-export async function writeLzmaBase64(board: schema.Board): Promise<string> {
+export async function writeLzmaBuffer(board: schema.Board): Promise<Uint8Array> {
     const buffer = writeBuffer(board);
     const compressed = await new Promise<number[]>((resolve, reject) => LZMA.compress(buffer, 9, (result, error) => error ? reject(error) : resolve(result)))
         .then(arr => Uint8Array.from(arr));
-    const b64 = Base64.fromByteArray(compressed);
-    return b64;
+    return compressed;
 }
-
-export async function readLzmaBase64(b64: string): Promise<schema.Board> {
-    const compressed = Base64.toByteArray(b64);
+export async function readLzmaBuffer(compressed: Uint8Array): Promise<schema.Board> {
     const buffer = await new Promise<number[]>((resolve, reject) => LZMA.decompress(compressed, (result, error) => error ? reject(error) : resolve(result)))
         .then(arr => Uint8Array.from(arr));
     const board = readBuffer(buffer);

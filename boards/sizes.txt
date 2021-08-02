@@ -1,0 +1,25 @@
+Puzzle Name             F-puzzles        Old        New    New / Old
+               Clipped        675        770        453       0.5883
+                 Blitz        681        822        315       0.3832
+        Self-contained        696        762        408       0.5354
+        Killer Blister        747        816        391       0.4792
+             300 Subs!        564        610        368       0.6033
+        Tangled Arrows        882       1020        526       0.5157
+                 Boxes        666        770        379       0.4922
+       Fortress Sudoku        498        482        287       0.5954
+Cloneways Game of Life       1164        970        465       0.4794
+           Quadiagonal        627        552        363       0.6576
+        Just add Color        660        624        351       0.5625
+             Hay Fever        609        716        406       0.5670
+               Dotween        765        790        438       0.5544
+       Sandwich Sudoku        306        300        166       0.5533
+      MiniMax Sandwich        711        786        496       0.6310
+           Peak Sudoku        492        504        351       0.6964
+    6x6 Extreme Killer        651        814        458       0.5627
+                Eddies        627        774        385       0.4974
+                 Orbit        876        724        383       0.5290
+                   159       1695        606        293       0.4835
+                 Alien       1542        800        482       0.6025
+       A Kind of Magic        840        602        303       0.5033
+          Rusted Wings        618        412        273       0.6626
+        Secret Pillars                  1116        492       0.4409

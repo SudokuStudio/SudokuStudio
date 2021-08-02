@@ -22,6 +22,7 @@
     "test": "npm run --workspaces test"
   },
   "workspaces": [
+    "boards",
     "packages/state-manager",
     "packages/schema",
     "packages/board-utils",
@@ -29,7 +30,6 @@
     "packages/board-svg",
     "packages/board-format",
     "packages/solver-sat",
-    "packages/web",
-    "boards"
+    "packages/web"
   ]
 }
