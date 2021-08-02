@@ -29,6 +29,9 @@ export function arrayObj2array<T>(arrayObj: ArrayObj<T>): T[] {
     }
     return arr;
 }
+export function array2arrayObj<T>(array: T[]): ArrayObj<T> {
+    return Object.assign({}, array);
+}
 
 export function cellIdxMax({ width, height }: Grid): number {
     return width * height;
@@ -124,7 +127,9 @@ export function edgeIdx2cellIdxes(idx: Idx<Geometry.EDGE>, grid: Grid): [ Idx<Ge
     }
 }
 
-
+export function seriesIdxMax({ width, height }: Grid): number {
+    return 2 * (width + height);
+}
 export function svgCoord2seriesIdx([ xf, yf ]: Coord<Geometry.SVG>, { width, height }: Grid): null | Idx<Geometry.SERIES> {
     const isCol = yf < 0 || height <= yf;
     const isRow = xf < 0 || width <= xf;

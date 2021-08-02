@@ -100,13 +100,13 @@ export declare namespace schema {
     export interface PencilMarksElement extends AbstractElement {
         type: 'corner' | 'center',
         value?: IdxMap<Geometry.CELL, {
-            [K: number]: true
+            [N in number]?: true
         }>,
     }
     export interface ColorsElement extends AbstractElement {
         type: 'colors',
         value?: IdxMap<Geometry.CELL, {
-            [K: string]: true
+            [K in string]?: true
         }>,
     }
 
@@ -170,7 +170,7 @@ export declare namespace schema {
             [K: string]: {
                 bulb: ArrayObj<Idx<Geometry.CELL>>,
                 /** The first cell of the body is within the bulb and should not be considered for the sum. */
-                body: ArrayObj<Idx<Geometry.CELL>>,
+                body?: ArrayObj<Idx<Geometry.CELL>>,
             },
         },
     }
