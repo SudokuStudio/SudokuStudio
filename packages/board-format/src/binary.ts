@@ -128,18 +128,18 @@ function readBitset(reader: ReaderWriter, bitset: { [N in number]?: true }, max:
     return anySet;
 }
 
-function color2uint32(hashColor: string): [ number, number, number ] {
-    if (hashColor.match(/#[0-9A-Fa-f]{3}/)) {
+function color2rgb(hashColor: string): [ number, number, number ] {
+    if (hashColor.match(/^#[0-9A-F]{3}$/i)) {
         const r = parseInt(hashColor.charAt(1), 16);
         const g = parseInt(hashColor.charAt(1), 16);
         const b = parseInt(hashColor.charAt(1), 16);
         return [
-            r << 8 + r,
-            g << 8 + g,
-            b << 8 + b,
+            r << 4 + r,
+            g << 4 + g,
+            b << 4 + b,
         ];
     }
-    if (hashColor.match(/#[0-9A-Fa-f]{6}/)) {
+    if (hashColor.match(/^#[0-9A-F]{6}$/i)) {
         const r = parseInt(hashColor.slice(1, 3), 16);
         const g = parseInt(hashColor.slice(3, 5), 16);
         const b = parseInt(hashColor.slice(5, 7), 16);
@@ -148,11 +148,12 @@ function color2uint32(hashColor: string): [ number, number, number ] {
     throw Error(`Cannot handle color: ${JSON.stringify(hashColor)}.`);
 }
 function writeColor(writer: ReaderWriter, hashColor: undefined | null | string): void {
-    const colorRgb = hashColor ? color2uint32(hashColor) : [ 0, 0, 0 ];
+    const colorRgb = null != hashColor ? color2rgb(hashColor) : [ 0, 0, 0 ];
+    console.log(hashColor, colorRgb);
     writer.writeUint8(colorRgb[0]);
     writer.writeUint8(colorRgb[1]);
     writer.writeUint8(colorRgb[2]);
-    writer.writeUint8(0);
+    writer.writeUint8(0); // Unused (for alpha).
 }
 function readColor(reader: ReaderWriter): string {
     const r = reader.readUint8();
