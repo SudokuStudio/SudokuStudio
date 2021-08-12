@@ -1,0 +1,29 @@
+                         Classic 1        348        344        220     0.6395
+                         Classic 2        237        246        124     0.5041
+                         Classic 3        318        318        196     0.6164
+                         Classic 4        315        316        201     0.6361
+                         Classic 5        336        332        207     0.6235
+                           Clipped        675        784        453     0.5778
+                             Blitz        681        808        312     0.3861
+                    Self-contained        696        748        405     0.5414
+                    Killer Blister        747        796        384     0.4824
+                         300 Subs!        564        626        368     0.5879
+                    Tangled Arrows        882       1052        528     0.5019
+                             Boxes        666        772        376     0.4870
+                   Fortress Sudoku        498        468        287     0.6132
+            Cloneways Game of Life       1164       1040        466     0.4481
+                       Quadiagonal        627        556        362     0.6511
+                    Just add Color        660        618        350     0.5663
+                         Hay Fever        609        744        407     0.5470
+                           Dotween        765        804        437     0.5435
+                   Sandwich Sudoku        306        250        123     0.4920
+                  MiniMax Sandwich        711        770        497     0.6455
+                       Peak Sudoku        492        480        351     0.7312
+                6x6 Extreme Killer        651        796        458     0.5754
+                            Eddies        627        790        387     0.4899
+                             Orbit        876        728        382     0.5247
+                               159       1695        634        296     0.4669
+                             Alien       1542        826        482     0.5835
+                   A Kind of Magic        840        600        303     0.5050
+                      Rusted Wings        618        392        273     0.6964
+                    Secret Pillars          0       1116        492     0.4409

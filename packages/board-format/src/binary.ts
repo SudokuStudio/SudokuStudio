@@ -182,6 +182,7 @@ function readLine(reader: ReaderWriter): Idx<Geometry.CELL>[] {
 type ElementSerde<T extends schema.Element> = {
     type: string,
     currentVersion: number,
+    skipIfEmpty: boolean,
     serialize  (writer: ReaderWriter, grid: Grid, value: T['value']): void,
     deserialize(reader: ReaderWriter, grid: Grid, version: number): T['value'],
 }
@@ -201,9 +202,9 @@ function makeJsonSerde<T extends schema.Element>(type: T['type'], currentVersion
 // @ts-ignore
 const _ignored = makeJsonSerde;
 
-function makeDigitElementSerde<T extends schema.DigitElement>(type: T['type'], currentVersion: number) {
+function makeDigitElementSerde<T extends schema.DigitElement>(type: T['type'], currentVersion: number, skipIfEmpty = false) {
     return {
-        type, currentVersion,
+        type, currentVersion, skipIfEmpty,
         serialize(writer: ReaderWriter, grid: Grid, value: T['value']): void {
             const digits: IdxMap<Geometry.CELL, number> = value || {};
             for (let idx = 0; idx < cellIdxMax(grid); idx++) {
@@ -222,9 +223,9 @@ function makeDigitElementSerde<T extends schema.DigitElement>(type: T['type'], c
     }
 }
 
-function makePencilMarksElementSerde<T extends schema.PencilMarksElement>(type: T['type'], currentVersion: number) {
+function makePencilMarksElementSerde<T extends schema.PencilMarksElement>(type: T['type'], currentVersion: number, skipIfEmpty = false) {
     return {
-        type, currentVersion,
+        type, currentVersion, skipIfEmpty,
         serialize(writer: ReaderWriter, grid: Grid, value: T['value']): void {
             const range = Math.max(grid.width, grid.height);
             const marks: IdxMap<Geometry.CELL, { [N in number]?: true }> = value || {};
@@ -250,6 +251,7 @@ function makePencilMarksElementSerde<T extends schema.PencilMarksElement>(type: 
 function makeLineElementSerde<T extends schema.LineElement>(type: T['type'], currentVersion: number) {
     return {
         type, currentVersion,
+        skipIfEmpty: false,
         serialize(writer: ReaderWriter, _grid: Grid, value: T['value']): void {
             const lines = Object.values(value || {});
             writer.writeUint32(lines.length);
@@ -272,6 +274,7 @@ function makeLineElementSerde<T extends schema.LineElement>(type: T['type'], cur
 function makeRegionElementSerde<T extends schema.RegionElement>(type: T['type'], currentVersion: number) {
     return {
         type, currentVersion,
+        skipIfEmpty: false,
         serialize(writer: ReaderWriter, grid: Grid, value: T['value']): void {
             const bitset: IdxBitset<Geometry.CELL> = value || {};
             writeBitset(writer, bitset, cellIdxMax(grid));
@@ -288,6 +291,7 @@ function makeRegionElementSerde<T extends schema.RegionElement>(type: T['type'],
 function makeEdgeNumberElementSerde<T extends schema.EdgeNumberElement>(type: T['type'], currentVersion: number) {
     return {
         type, currentVersion,
+        skipIfEmpty: false,
         serialize(writer: ReaderWriter, grid: Grid, value: T['value']): void {
             const map: IdxMap<Geometry.EDGE, number | true> = value || {};
             for (let idx = 0; idx < edgeIdxMax(grid); idx++) {
@@ -310,6 +314,7 @@ function makeEdgeNumberElementSerde<T extends schema.EdgeNumberElement>(type: T[
 function makeSeriesNumberElementSerde<T extends schema.SeriesNumberElement>(type: T['type'], currentVersion: number) {
     return {
         type, currentVersion,
+        skipIfEmpty: false,
         serialize(writer: ReaderWriter, grid: Grid, value: T['value']): void {
             const map: IdxMap<Geometry.SERIES, number | true> = value || {};
             for (let idx = 0; idx < seriesIdxMax(grid); idx++) {
@@ -332,6 +337,7 @@ function makeSeriesNumberElementSerde<T extends schema.SeriesNumberElement>(type
 function makeBooleanElementSerde<T extends schema.BooleanElement>(type: T['type'], currentVersion: number) {
     return {
         type, currentVersion,
+        skipIfEmpty: false,
         serialize(writer: ReaderWriter, _grid: Grid, value: T['value']): void {
             writer.writeUint8(value ? 0b1 : 0);
         },
@@ -345,6 +351,7 @@ function makeBooleanElementSerde<T extends schema.BooleanElement>(type: T['type'
 const BoxElementSerde = {
     type: 'box',
     currentVersion: 1,
+    skipIfEmpty: false,
     serialize(writer: ReaderWriter, _grid: Grid, value: schema.BoxElement['value']): void {
         writer.writeUint8(value?.height || 0);
         writer.writeUint8(value?.width  || 0);
@@ -360,6 +367,7 @@ const BoxElementSerde = {
 const ColorsElementSerde = {
     type: 'colors',
     currentVersion: 1,
+    skipIfEmpty: true, // !
     serialize(writer: ReaderWriter, grid: Grid, value: schema.ColorsElement['value']): void {
         const cellColors: IdxMap<Geometry.CELL, { [N in string]?: true }> = value || {};
         for (let idx = 0; idx < cellIdxMax(grid); idx++) {
@@ -387,6 +395,7 @@ const ColorsElementSerde = {
 const GridElementSerde = {
     type: 'grid',
     currentVersion: 1,
+    skipIfEmpty: true, // !
     serialize(_writer: ReaderWriter, _grid: Grid, _value: schema.NullElement['value']): void {
     },
     deserialize(_reader: ReaderWriter, _grid: Grid, version: number): schema.NullElement['value'] {
@@ -398,6 +407,7 @@ const GridElementSerde = {
 const ArrowElementSerde = {
     type: 'arrow',
     currentVersion: 1,
+    skipIfEmpty: false,
     serialize(writer: ReaderWriter, _grid: Grid, value: schema.ArrowElement['value']): void {
         const arrows = Object.values(value || {});
         writer.writeUint32(arrows.length);
@@ -422,6 +432,7 @@ const ArrowElementSerde = {
 const QuadrupleElementSerde = {
     type: 'quadruple',
     currentVersion: 1,
+    skipIfEmpty: false,
     serialize(writer: ReaderWriter, grid: Grid, value: schema.QuadrupleElement['value']): void {
         const quadruples = value || {};
         for (let idx = 0; idx < cornerIdxMax(grid); idx++) {
@@ -451,6 +462,7 @@ const QuadrupleElementSerde = {
 const CloneElementSerde = {
     type: 'clone',
     currentVersion: 1,
+    skipIfEmpty: false,
     serialize(writer: ReaderWriter, _grid: Grid, value: schema.CloneElement['value']): void {
         const cloneValues = Object.values(value || {});
         writer.writeUint32(cloneValues.length);
@@ -479,6 +491,7 @@ const CloneElementSerde = {
 const KillerElementSerde = {
     type: 'killer',
     currentVersion: 1,
+    skipIfEmpty: false,
     serialize(writer: ReaderWriter, grid: Grid, value: schema.KillerElement['value']): void {
         const cages = Object.values(value || {});
         writer.writeUint32(cages.length);
@@ -504,6 +517,7 @@ const KillerElementSerde = {
 const LittleKillerElementSerde = {
     type: 'littleKiller',
     currentVersion: 1,
+    skipIfEmpty: false,
     serialize(writer: ReaderWriter, grid: Grid, value: schema.LittleKillerElement['value']): void {
         const map: IdxMap<Geometry.DIAGONAL, number | true> = value || {};
         for (let idx = 0; idx < diagonalIdxMax(grid); idx++) {
@@ -527,6 +541,7 @@ const DIAGONAL_NEGATIVE_MASK = 0b10;
 const DiagonalElementSerde = {
     type: 'diagonal',
     currentVersion: 1,
+    skipIfEmpty: false,
     serialize(writer: ReaderWriter, _grid: Grid, value: schema.DiagonalElement['value']): void {
         const bitPositive = value?.positive ? DIAGONAL_POSITIVE_MASK : 0;
         const bitNegative = value?.negative ? DIAGONAL_NEGATIVE_MASK : 0;
@@ -546,6 +561,7 @@ const CONSECUTIVE_DIAG_MASK = 0b10;
 const ConsecutiveElementSerde = {
     type: 'diagonal',
     currentVersion: 1,
+    skipIfEmpty: false,
     serialize(writer: ReaderWriter, _grid: Grid, value: schema.ConsecutiveElement['value']): void {
         const bitOrth = value?.orth ? CONSECUTIVE_ORTH_MASK : 0;
         const bitDiag = value?.diag ? CONSECUTIVE_DIAG_MASK : 0;
@@ -633,6 +649,9 @@ export function writeBuffer(board: schema.Board): Uint8Array {
         const elementSerde: undefined | ElementSerde<any> = ELEMENT_SERDES.find(serde => element.type === serde.type);
         if (null == elementSerde) {
             throw Error(`Cannot serialize element of type ${JSON.stringify(element.type)}.`);
+        }
+        if (elementSerde.skipIfEmpty && 0 === Object.keys(element.value || {}).length) {
+            continue;
         }
         else {
             const elemMagic = hash(element.type);
