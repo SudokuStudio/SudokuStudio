@@ -9,7 +9,8 @@
     import SelectMenuComponent from "./constraint/SelectMenuComponent.svelte";
     import CheckboxMenuComponent from "./constraint/CheckboxMenuComponent.svelte";
     import { ELEMENT_HANDLERS } from "../../js/elements";
-import SatSolver from "./solver/SatSolver.svelte";
+    import SatSolver from "./solver/SatSolver.svelte";
+    import AddModal from "./AddModal.svelte";
 
     const constraintsGlobal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
         return $elementHandlers.filter(({ info }) => info.menu && info.inGlobalMenu);
@@ -89,6 +90,8 @@ import SatSolver from "./solver/SatSolver.svelte";
         </EditSection>
     </li>
 </ul>
+
+<AddModal />
 
 <style lang="scss">
     .empty-placeholder {

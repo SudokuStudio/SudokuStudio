@@ -23,6 +23,11 @@ export const thermoInfo: ElementInfo = {
     getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         getThermoWarnings(value, digits, warnings, true);
     },
+    meta: {
+        description: 'Digits on thermos increase from bulb to tip and may not repeat.',
+        tags: [ 'line', 'non-repeat', 'thermometer' ],
+        category: [ 'local', 'line' ],
+    },
 };
 
 export const slowThermoInfo: ElementInfo = {
@@ -42,6 +47,11 @@ export const slowThermoInfo: ElementInfo = {
     },
     getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         getThermoWarnings(value, digits, warnings, false);
+    },
+    meta: {
+        description: 'Digits on slow thermos increase or stay the same from bulb to tip; digits may repeat.',
+        tags: [ 'line', 'repeat', 'thermometer' ],
+        category: [ 'local', 'line' ],
     },
 };
 
@@ -132,6 +142,11 @@ export const betweenInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Digits on between lines must be greater than one circle and less than the other; digits may repeat.',
+        tags: [ 'line', 'range' ],
+        category: [ 'local', 'line' ],
+    },
 };
 
 export const palindromeInfo: ElementInfo = {
@@ -159,6 +174,11 @@ export const palindromeInfo: ElementInfo = {
 
             warnClones(digits, cellsA, cellsB, warnings);
         }
+    },
+    meta: {
+        description: 'Digits along palindromes must read the same from both ends.',
+        tags: [ 'line' ],
+        category: [ 'local', 'line' ],
     },
 };
 
@@ -199,6 +219,11 @@ export const whisperInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Adjacent digits along whispers must differ by at least 5; digits may repeat.',
+        tags: [ 'line', 'german', 'five', '5' ],
+        category: [ 'local', 'line' ],
+    },
 };
 
 export const renbanInfo: ElementInfo = {
@@ -238,5 +263,10 @@ export const renbanInfo: ElementInfo = {
                 }
             }
         }
+    },
+    meta: {
+        description: 'Digits along renban lines must be in a consecutive set in any order; digits may not repeat.',
+        tags: [ 'line', 'non-repeat' ],
+        category: [ 'local', 'line' ],
     },
 };

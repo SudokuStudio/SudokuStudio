@@ -36,6 +36,11 @@ export const differenceInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Cells separated by a white dot must differ by 1, or the number given.',
+        tags: [ 'dot', 'edge', 'white', 'kropki', 'consecutive', 'pair' ],
+        category: [ 'local', 'adj' ],
+    },
 };
 
 export const ratioInfo: ElementInfo = {
@@ -67,6 +72,11 @@ export const ratioInfo: ElementInfo = {
                 warnings[idxB] = true;
             }
         }
+    },
+    meta: {
+        description: 'Cells separated by a black dot must have a ratio of 2, or the number given.',
+        tags: [ 'dot', 'edge', 'black', 'kropki', 'times', 'multiply', 'pair' ],
+        category: [ 'local', 'adj' ],
     },
 };
 
@@ -104,6 +114,11 @@ export const xvInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Cells separated by a roman numeral must sum to that number.',
+        tags: [ 'roman numeral', 'roman number', 'sum' ],
+        category: [ 'local', 'adj' ],
+    },
 };
 
 export const littleKillerInfo: ElementInfo = {
@@ -127,6 +142,11 @@ export const littleKillerInfo: ElementInfo = {
             const cellsArr = diagonalIdx2diagonalCellCoords(+diagonalIdx, grid).map(coord => cellCoord2CellIdx(coord, grid));
             warnSum(digits, cellsArr, warnings, sum);
         }
+    },
+    meta: {
+        description: 'Digits along a diagonal must sum to the given total; digits may repeat.',
+        tags: [ 'diagonal', 'sum', 'repeat', 'outside' ],
+        category: [ 'local', 'cell' ],
     },
 };
 
@@ -163,6 +183,11 @@ export const sandwichInfo: ElementInfo = {
                 warnings[seriesCells[iMax]] = true;
             }
         }
+    },
+    meta: {
+        description: 'Sandwich clues outside the grid indicate the sum of the digits between the 1 and the 9 (or min and max) in the indicated row or column.',
+        tags: [ 'outside', 'series', 'sum', 'crust', 'filling' ],
+        category: [ 'local', 'outside' ],
     },
 };
 
@@ -208,6 +233,11 @@ export const skyscraperInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Skyscraper clues outside the grid indicate the number of digits greater than all previous digits in that direction.',
+        tags: [ 'outside', 'series', 'tower', 'see' ],
+        category: [ 'local', 'outside' ],
+    },
 };
 
 export const xsumInfo: ElementInfo = {
@@ -235,6 +265,11 @@ export const xsumInfo: ElementInfo = {
 
             warnSum(digits, seriesCells.slice(0, xsumLength), warnings, xsum);
         }
+    },
+    meta: {
+        description: 'The first x digits (including the first cell) must sum to the number clued outside of the grid, where x is the first cell in the row or column.',
+        tags: [ 'outside', 'series' ],
+        category: [ 'local', 'outside' ],
     },
 };
 

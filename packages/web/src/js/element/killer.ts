@@ -17,7 +17,6 @@ export const killerInfo: ElementInfo = {
         name: 'Killer Cage',
         icon: 'killer',
     },
-
     getWarnings(value: schema.KillerElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const { sum, cells } of Object.values(value || {})) {
             const cellsArr = idxMapToKeysArray<Geometry.CELL>(cells);
@@ -26,6 +25,11 @@ export const killerInfo: ElementInfo = {
             if ('number' !== typeof sum) continue;
             warnSum(digits, cellsArr, warnings, sum);
         }
+    },
+    meta: {
+        description: 'Digits in cages must sum to the given cage total (if given); digits may not repeat.',
+        tags: [ 'partial', 'cage', 'sum' ],
+        category: [ 'local', 'area' ],
     },
 };
 

@@ -16,7 +16,6 @@ export const arrowInfo: ElementInfo = {
         name: 'Arrow',
         icon: 'arrow',
     },
-
     getWarnings(value: schema.ArrowElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         outer:
         for (const { bulb, body } of Object.values(value || {})) {
@@ -53,7 +52,12 @@ export const arrowInfo: ElementInfo = {
                 bodyArrRest.forEach(idx => warnings[idx] = true);
             }
         }
-    }
+    },
+    meta: {
+        description: 'Digits along arrows must sum to the digit in the circle; digits may repeat.',
+        tags: [ 'line', 'sum' ],
+        category: [ 'local', 'line' ],
+    },
 };
 
 /**

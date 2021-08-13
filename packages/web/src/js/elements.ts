@@ -1,3 +1,5 @@
+import Fuse from 'fuse.js';
+
 import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
@@ -65,5 +67,37 @@ export function createElement<E extends schema.Element>(type: E['type'], value?:
         type,
         order: handler.order,
         value: value,
-    } as E; // Technically the type variance for "E extends schema.Element" is backwards.
+    } as E;
+}
+
+
+const elementsFuse = new Fuse(Object.entries(ELEMENT_HANDLERS).map(([ key, info ]) => ({ key, info })), {
+    keys: [
+        {
+            name: 'key',
+            weight: 0.2,
+        },
+        {
+            name: 'info.menu.name',
+            weight: 1.0,
+        },
+        {
+            name: 'info.meta.description',
+            weight: 0.8,
+        },
+        {
+            name: 'info.meta.tags',
+            weight: 0.8,
+        },
+        {
+            name: 'info.meta.category',
+            weight: 0.1,
+        },
+    ],
+    ignoreLocation: true,
+    includeScore: true,
+});
+
+export function search(fuzzyPattern: string) {
+    return elementsFuse.search(fuzzyPattern);
 }

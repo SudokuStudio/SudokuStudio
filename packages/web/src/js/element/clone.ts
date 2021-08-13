@@ -29,6 +29,11 @@ export const cloneInfo: ElementInfo = {
             warnClones(digits, cellsA, cellsB, warnings);
         }
     },
+    meta: {
+        description: 'Digits in cloned sets must be the same and in the same order.',
+        tags: [],
+        category: [ 'local', 'area' ],
+    },
 };
 
 function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {

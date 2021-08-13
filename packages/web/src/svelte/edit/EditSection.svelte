@@ -28,7 +28,7 @@
 </div>
 
 <style lang="scss">
-    @use 'src/css/vars';
+    @use '../../css/vars';
 
     .section-title {
         padding: 0.5em 0.5em;

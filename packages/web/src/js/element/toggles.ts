@@ -33,6 +33,11 @@ export const diagonalInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Digits along the marked diagonal(s) may not repeat.',
+        tags: [ 'x' ],
+        category: [ 'global' ],
+    },
 };
 
 export const disjointGroupsInfo: ElementInfo = {
@@ -45,6 +50,11 @@ export const disjointGroupsInfo: ElementInfo = {
             name: 'Disjoint Groups',
             icon: 'disjoint',
         },
+    },
+    meta: {
+        description: 'Digits in the same relative position to their box may not repeat.',
+        tags: [ 'subset', 'house' ],
+        category: [ 'global' ],
     },
 };
 
@@ -67,20 +77,30 @@ export const consecutiveInfo: ElementInfo = {
             },
         ],
     },
-};
-
-export const consecutiveDiagonalInfo: ElementInfo = {
-    inGlobalMenu: true,
-    order: 0,
-    menu: {
-        type: 'checkbox',
-        name: 'Nonconsecutive Diag.',
-        checkbox: {
-            name: 'Nonconsecutive',
-            icon: 'nonconsecutive',
-        },
+    meta: {
+        description: '[Edge- | Corner-] adjacent digits may not be consecutive.',
+        tags: [],
+        category: [ 'global' ],
     },
 };
+
+// export const consecutiveDiagonalInfo: ElementInfo = {
+//     inGlobalMenu: true,
+//     order: 0,
+//     menu: {
+//         type: 'checkbox',
+//         name: 'Nonconsecutive Diag.',
+//         checkbox: {
+//             name: 'Nonconsecutive',
+//             icon: 'nonconsecutive',
+//         },
+//     },
+//     meta: {
+//         description: '[Edge- | Corner-] adjacent digits may not be consecutive.',
+//         tags: [],
+//         category: [ 'global' ],
+//     },
+// };
 
 export const kingInfo: ElementInfo = {
     inGlobalMenu: true,
@@ -101,6 +121,11 @@ export const kingInfo: ElementInfo = {
                 writeRepeatingDigits(digits, idxes, warnings);
             }
         }
+    },
+    meta: {
+        description: "Digits a chess king's move apart may not repeat.",
+        tags: [ 'chess', 'move' ],
+        category: [ 'global' ],
     },
 };
 
@@ -124,6 +149,11 @@ export const knightInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: "Digits a chess knight's move apart may not repeat.",
+        tags: [ 'chess', 'move' ],
+        category: [ 'global' ],
+    },
 };
 
 export const selfTaxicabInfo: ElementInfo = {
@@ -138,3 +168,8 @@ export const selfTaxicabInfo: ElementInfo = {
         },
     },
 };
+
+/*
+Self Taxicab,,Global Constraints,"Digits n cells apart, by edge adjacency only, may not repeat, where n is the digit in the cell.",
+Taxicab,,Global Constraints,"Digits n cells apart, by edge adjacency only, may not repeat, where n is a preset number.",
+*/

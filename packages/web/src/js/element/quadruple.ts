@@ -35,6 +35,11 @@ export const quadrupleInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Digits in quadruple circles must appear at least once in the 1–4 neighboring cells.',
+        tags: [],
+        category: [ 'local', 'adj' ],
+    },
 };
 
 function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {

@@ -29,6 +29,11 @@ export const minInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Contiguous groups of cells with less-than signs must be less than all of their edge neighbors.',
+        tags: [ 'extreme', 'fortress', 'minimum', 'less' ],
+        category: [ 'local', 'cell' ],
+    },
 };
 
 export const maxInfo: ElementInfo = {
@@ -52,6 +57,11 @@ export const maxInfo: ElementInfo = {
             }
         }
     },
+    meta: {
+        description: 'Contiguous groups of cells with greater-than signs must be greater than all of their edge neighbors.',
+        tags: [ 'extreme', 'fortress', 'maximum', 'more', 'greater' ],
+        category: [ 'local', 'cell' ],
+    },
 };
 
 export const evenInfo: ElementInfo = {
@@ -67,6 +77,11 @@ export const evenInfo: ElementInfo = {
         const cells = idxMapToKeysArray(value || {});
         markDigitsFailingCondition(digits, cells, warnings, x => 0 == x % 2);
     },
+    meta: {
+        description: 'Cells with a gray square must be even.',
+        tags: [ 'parity', 'modulo', 'remainder' ],
+        category: [ 'local', 'cell' ],
+    },
 };
 
 export const oddInfo: ElementInfo = {
@@ -81,6 +96,11 @@ export const oddInfo: ElementInfo = {
     getWarnings(value: schema.RegionElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         const cells = idxMapToKeysArray(value || {});
         markDigitsFailingCondition(digits, cells, warnings, x => 1 == x % 2);
+    },
+    meta: {
+        description: 'Cells with a gray circle must be odd.',
+        tags: [ 'parity', 'modulo', 'remainder' ],
+        category: [ 'local', 'cell' ],
     },
 };
 
