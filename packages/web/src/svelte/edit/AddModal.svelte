@@ -1,23 +1,37 @@
 <script lang="ts">
     import { search } from "../../js/elements";
+    import { addElement } from "../../js/elementStores";
     import Modal from "../Modal.svelte";
 
     export let visible = false;
 
+    let searchInput: HTMLInputElement = null!;
     let searchPattern: string = '';
 
-    (window as any).showAddModal = () => visible = true;
+    function elementClicked(type: string): void {
+        addElement(type as any);
+        visible = false;
+    }
+
+    $: visible && setTimeout(() => searchInput.select(), 0);
 </script>
 
 <Modal bind:visible={visible}>
     <div class="search-input-container">
         <span class="icon hoverable-icon icon-inline icon-c-clickable icon-search" />
-        <input class="search-input" type="text" bind:value={searchPattern} />
+        <input class="search-input" type="text" bind:this={searchInput} bind:value={searchPattern} />
     </div>
     <div class="search-results">
-        <pre><code>{JSON.stringify(search(searchPattern)
-            .filter(({ score }) => null != score ? score <= 0.35 : false)
-            .map(({ score, item }) => ({ score, name: item.info?.menu?.name })), null, 2)}</code></pre>
+        <ol class="nolist">
+            {#each search(searchPattern) as { score: _, item }}
+                <li>
+                    <button class="result-item nobutton hoverable" title={item.info.meta?.description} on:click={() => elementClicked(item.key)}>
+                        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}" />
+                        {item.info.menu?.name}
+                    </button>
+                </li>
+            {/each}
+        </ol>
     </div>
 </Modal>
 
@@ -26,6 +40,7 @@
 
     .search-input-container {
         padding: 0.5em;
+        margin-bottom: 0.5em;
 
         @include vars.hoverborder();
         @include vars.hoverborder-hover();
@@ -52,5 +67,17 @@
     .search-results {
         height: 75vh;
         overflow: auto;
+    }
+
+    .result-item {
+        width: 100%;
+        margin: 0.25em 0 0 0;
+        padding: 0.25em;
+        text-align: inherit;
+
+        @include vars.hoverborder();
+        &:hover, &:focus-visible {
+            @include vars.hoverborder-hover();
+        }
     }
 </style>

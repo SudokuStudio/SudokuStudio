@@ -7,10 +7,10 @@ import type { InputHandler } from "../input/inputHandler";
 export interface AbstractMenuComponent {
     type: string;
     name: string;
+    icon: string;
 }
 export interface SelectMenuComponent extends AbstractMenuComponent {
     type: 'select';
-    icon: string;
 }
 
 export type CheckboxInfo = {

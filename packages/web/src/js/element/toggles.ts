@@ -20,6 +20,7 @@ export const diagonalInfo: ElementInfo = {
                 refPath: 'negative',
             },
         ],
+        icon: 'positive-diagonal',
     },
     getWarnings(value: schema.DiagonalElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
@@ -50,6 +51,7 @@ export const disjointGroupsInfo: ElementInfo = {
             name: 'Disjoint Groups',
             icon: 'disjoint',
         },
+        icon: 'disjoint',
     },
     meta: {
         description: 'Digits in the same relative position to their box may not repeat.',
@@ -76,6 +78,7 @@ export const consecutiveInfo: ElementInfo = {
                 refPath: 'diag',
             },
         ],
+        icon: 'consec-orth',
     },
     meta: {
         description: '[Edge- | Corner-] adjacent digits may not be consecutive.',
@@ -94,6 +97,7 @@ export const consecutiveInfo: ElementInfo = {
 //             name: 'Nonconsecutive',
 //             icon: 'nonconsecutive',
 //         },
+//         icon: 'nonconsecutive',
 //     },
 //     meta: {
 //         description: '[Edge- | Corner-] adjacent digits may not be consecutive.',
@@ -112,6 +116,7 @@ export const kingInfo: ElementInfo = {
             name: 'Antiking',
             icon: 'king',
         },
+        icon: 'king',
     },
     getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
@@ -139,6 +144,7 @@ export const knightInfo: ElementInfo = {
             name: 'Antiknight',
             icon: 'knight',
         },
+        icon: 'knight',
     },
     getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
@@ -166,6 +172,7 @@ export const selfTaxicabInfo: ElementInfo = {
             name: 'Self-Taxicab',
             icon: 'cityblock',
         },
+        icon: 'cityblock',
     },
 };
 

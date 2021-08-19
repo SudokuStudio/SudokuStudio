@@ -56,7 +56,7 @@ export const ELEMENT_HANDLERS = {
     ['disjointGroups']: disjointGroupsInfo,
     ['consecutive']: consecutiveInfo,
     ['selfTaxicab']: selfTaxicabInfo,
-} as Record<schema.ElementType, null | ElementInfo>;
+} as Record<schema.ElementType, ElementInfo>;
 
 export function createElement<E extends schema.Element>(type: E['type'], value?: E['value']): E {
     if (!(type in ELEMENT_HANDLERS)) throw Error(`Cannot add unknown element type: ${type}.`);
@@ -70,8 +70,11 @@ export function createElement<E extends schema.Element>(type: E['type'], value?:
     } as E;
 }
 
+const searchableElements = Object.entries(ELEMENT_HANDLERS)
+    .filter(([ _key, info ]) => null != info.menu)
+    .map(([ key, info ]) => ({ key, info }));
 
-const elementsFuse = new Fuse(Object.entries(ELEMENT_HANDLERS).map(([ key, info ]) => ({ key, info })), {
+const elementsFuse = new Fuse(searchableElements, {
     keys: [
         {
             name: 'key',

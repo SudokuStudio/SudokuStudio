@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { ElementHandlerList } from "../../js/elementStores";
-    import { addElement } from "../../js/elementStores";
     import type { ElementInfo } from "../../js/element/element";
 
     import EditSection from "./EditSection.svelte";
@@ -8,7 +7,6 @@
     import { derived } from "svelte/store";
     import SelectMenuComponent from "./constraint/SelectMenuComponent.svelte";
     import CheckboxMenuComponent from "./constraint/CheckboxMenuComponent.svelte";
-    import { ELEMENT_HANDLERS } from "../../js/elements";
     import SatSolver from "./solver/SatSolver.svelte";
     import AddModal from "./AddModal.svelte";
 
@@ -35,17 +33,7 @@
         };
     }
 
-    function showAddModal(_global: boolean): void {
-        const type = window.prompt('TEMPORARY. Enter element type string:\n'
-            + Object.keys(ELEMENT_HANDLERS).join(', '));
-        if (null == type) return;
-        try {
-            addElement(type as any);
-        }
-        catch (e) {
-            alert(`Unknown or unimplemented element type string: ${JSON.stringify(type)}`)
-        }
-    }
+    let showAddModal: boolean = false;
 </script>
 
 <ul class="nolist">
@@ -59,7 +47,7 @@
         </EditSection>
     </li>
     <li>
-        <EditSection icon="globe" title="Global Constraints" onAdd={() => showAddModal(true)}>
+        <EditSection icon="globe" title="Global Constraints" onAdd={() => showAddModal = true}>
             <ul class="nolist">
                 {#each $constraintsGlobal as { id, elementRef, info } (id)}
                     <li>
@@ -72,7 +60,7 @@
         </EditSection>
     </li>
     <li>
-        <EditSection icon="location" title="Local Constraints" onAdd={() => showAddModal(false)}>
+        <EditSection icon="location" title="Local Constraints" onAdd={() => showAddModal = true}>
             <ul class="nolist">
                 {#each $constraintsLocal as { id, elementRef, info } (id)}
                     <li>
@@ -91,7 +79,7 @@
     </li>
 </ul>
 
-<AddModal />
+<AddModal bind:visible={showAddModal} />
 
 <style lang="scss">
     .empty-placeholder {

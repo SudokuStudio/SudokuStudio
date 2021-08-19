@@ -6,10 +6,15 @@
             visible = false;
         }
     }
+    function checkEscape<T extends EventTarget>(this: T, event: KeyboardEvent & { currentTarget: EventTarget & T }) {
+        if ('Escape' === event.code) {
+            visible = false;
+        }
+    }
 </script>
 
 <div class="modal-container" hidden={!visible} on:click={dismiss}>
-    <div class="modal">
+    <div class="modal" on:keydown={checkEscape}>
         <slot>This modal is blank.</slot>
     </div>
 </div>
