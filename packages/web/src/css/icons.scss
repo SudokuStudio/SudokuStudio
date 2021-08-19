@@ -22,6 +22,9 @@
     -webkit-mask-repeat: no-repeat;
     mask-position: center;
     -webkit-mask-position: center;
+    mask-size: 95%;
+    -webkit-mask-size: 95%;
+
 
     &::before {
         display: block;
@@ -35,10 +38,6 @@
         line-height: 1;
 
         vertical-align: baseline;
-
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 80%;
     }
     &.icon-inline::before {
         content: "";
