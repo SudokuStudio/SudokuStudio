@@ -4,7 +4,7 @@ import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentC
 import type { InputHandler } from "../input/inputHandler";
 import { parseDigit } from "../input/inputHandler";
 import { boardRepr, cellCoord2CellIdx, idxMapToKeysArray, warnSum, writeRepeatingDigits } from "@sudoku-studio/board-utils";
-import { userCursorState, userSelectState } from "../user";
+import { userCursorIsShownState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
 
@@ -134,7 +134,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         load(): void {
             // TODO: not really that great of a way of doing this.
             userSelectState.replace(null);
-            userCursorState.replace(null);
+            userCursorIsShownState.replace(false);
         },
         unload(): void {
             pointerHandler.up();

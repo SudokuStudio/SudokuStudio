@@ -2,7 +2,7 @@ import { arrayObj2array, boardRepr, cellCoord2CellIdx } from "@sudoku-studio/boa
 import type { ArrayObj, Geometry, Grid, Idx } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { pushHistory } from "../history";
-import { userSelectState, userCursorState } from "../user";
+import { userCursorIsShownState, userSelectState } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import type { InputHandler } from "./inputHandler";
 
@@ -92,7 +92,7 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
         load(): void {
             // TODO: not really that great of a way of doing this.
             userSelectState.replace(null);
-            userCursorState.replace(null);
+            userCursorIsShownState.replace(false);
         },
         unload(): void {
             pointerHandler.up();

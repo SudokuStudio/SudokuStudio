@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState, userSelectState, userCursorState } from "../../js/user";
+    import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState, userSelectState, userCursorIsShownState } from "../../js/user";
     import { currentInputHandler } from "../../js/elementStores";
 
     // Button ripples.
@@ -31,7 +31,7 @@
     function saveImage(): void {
         // Clear selection.
         userSelectState.replace(null);
-        userCursorState.replace(null);
+        userCursorIsShownState.replace(false);
 
         const title  = boardState.get<string>('meta', 'title')  || 'Untitled';
         const author = boardState.get<string>('meta', 'author') || 'Anonymous';

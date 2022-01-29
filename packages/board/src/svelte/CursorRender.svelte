@@ -12,9 +12,11 @@
     const fill = "#08f";
     const cursorSize = 0.2;
 
-    const dCursor = derived(ref, cursorIdx => {
-        if (null == cursorIdx) return '';
-        const [ x, y ] = cellIdx2cellCoord(cursorIdx, grid);
+    const dCursor = derived(ref, cursorState => {
+        const { index, isShown } = cursorState;
+
+        if (!isShown) return '';
+        const [ x, y ] = cellIdx2cellCoord(index, grid);
         return `M${x},${y}L${x + cursorSize},${y}L${x},${y + cursorSize}Z`;
     });
 </script>

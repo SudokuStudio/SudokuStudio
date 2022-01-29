@@ -2,7 +2,7 @@ import type { ArrayObj, Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudok
 import type { StateRef } from "@sudoku-studio/state-manager";
 import { arrayObj2array, cellCoord2CellIdx, click2svgCoord, cornerCoord2cellCoords, cornerCoord2cornerIdx, cornerIdx2cornerCoord, svgCoord2cornerCoord } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
-import { userCursorState, userSelectState } from "../user";
+import { userCursorIsShownState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
 
@@ -80,7 +80,7 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHa
         load(): void {
             // TODO: not really that great of a way of doing this.
             userSelectState.replace(null);
-            userCursorState.replace(null);
+            userCursorIsShownState.replace(false);
         },
         unload(): void {
         },
