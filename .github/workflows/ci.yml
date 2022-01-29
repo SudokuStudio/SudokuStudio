@@ -17,7 +17,7 @@ jobs:
   test:
     name: Test
     needs: pre_job
-    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    if: ${{ github.ref == 'refs/heads/dev' || needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
