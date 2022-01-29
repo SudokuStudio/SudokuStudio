@@ -4,7 +4,7 @@ import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from 
 import { pushHistory } from "../history";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
-import { userCursorState, userSelectState } from "../user";
+import { userCursorIsShownState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 
 export const arrowInfo: ElementInfo = {
@@ -216,7 +216,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         load(): void {
             // TODO: not really that great of a way of doing this.
             userSelectState.replace(null);
-            userCursorState.replace(null);
+            userCursorIsShownState.replace(false);
         },
         unload(): void {
             pointerHandler.up();

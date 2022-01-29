@@ -7,7 +7,10 @@ export const MARK_TYPES = [
 export const userState = (window as any).userState = new StateManager();
 userState.update({
     select: {},
-    cursor: null,
+    cursor: {
+        index: null,
+        isShown: false,
+    },
 
     tool: '120', // TODO magic numbers.
     prevTool: '120',
@@ -22,7 +25,8 @@ userState.update({
 });
 
 export const userSelectState = userState.ref('select');
-export const userCursorState = userState.ref('cursor');
+export const userCursorIndexState = userState.ref('cursor', 'index');
+export const userCursorIsShownState = userState.ref('cursor', 'isShown');
 
 export const userPrevToolState = userState.ref('prevTool');
 export const userToolState = userState.ref('tool');

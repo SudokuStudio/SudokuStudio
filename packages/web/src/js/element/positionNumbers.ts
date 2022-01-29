@@ -2,7 +2,7 @@ import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sud
 import type { StateRef } from "@sudoku-studio/state-manager";
 import { cellCoord2CellIdx, click2svgCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, seriesIdx2CellCoords, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx, warnSum } from "@sudoku-studio/board-utils";
 import { InputHandler, parseDigit } from "../input/inputHandler";
-import { userCursorState, userSelectState } from "../user";
+import { userCursorIsShownState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
 
@@ -318,7 +318,7 @@ function getInputHandler<TAG extends Geometry>(ref: StateRef, grid: Grid, svg: S
         load(): void {
             // TODO: not really that great of a way of doing this.
             userSelectState.replace(null);
-            userCursorState.replace(null);
+            userCursorIsShownState.replace(false);
         },
         unload(): void {
         },

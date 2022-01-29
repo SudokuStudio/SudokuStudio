@@ -3,7 +3,7 @@ import type { Geometry, Grid, IdxBitset } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
 import { boardState, getDigits } from "../board";
 import { pushHistory } from "../history";
-import { userToolState, userSelectState, userState, userPrevToolState, userCursorState } from "../user";
+import { userToolState, userSelectState, userState, userPrevToolState, userCursorIsShownState, userCursorIndexState } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import { InputHandler, parseDigit } from "./inputHandler";
 
@@ -144,14 +144,15 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         if (!(event.code in ARROW_KEYS)) return false;
 
         const [ dx, dy ] = ARROW_KEYS[event.code as keyof typeof ARROW_KEYS];
-        let [ x, y ] = cellIdx2cellCoord(userCursorState.get() || 0, grid);
+        let [ x, y ] = cellIdx2cellCoord(userCursorIndexState.get() || 0, grid);
         x += dx + grid.width;
         y += dy + grid.height;
         x %= grid.width;
         y %= grid.height;
 
         const idx = cellCoord2CellIdx([ x, y ], grid);
-        userCursorState.replace(idx);
+        userCursorIndexState.replace(idx);
+        userCursorIsShownState.replace(true);
 
         if (event.shiftKey) {
             userSelectState.ref(`${idx}`).replace(true);
@@ -266,13 +267,14 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
     function handle(event: CellDragTapEvent, isClick: boolean): void {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
-        userCursorState.replace(idx);
+        userCursorIndexState.replace(idx);
+        userCursorIsShownState.replace(false);
 
         if (Mode.RESETTING === mode) {
             // Special: Resetting *tap* acts as toggle.
             const select = isClick && userSelectState.get<Record<string, true>>() || {};
             if (isClick && 1 === Object.keys(select).length && select[`${idx}`]) {
-                userSelectState.replace({})
+                userSelectState.replace({});
             }
             // Normal:
             else {
