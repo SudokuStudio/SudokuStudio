@@ -29,6 +29,24 @@
         }
     }
 
+    function initializeAsEnabled() {
+        if (!Array.isArray(info.checkbox)) {
+            valueRef.replace(true);
+        }
+        else {
+            const dict: Record<string, boolean> = {};
+            for (const { refPath } of info.checkbox) {
+                dict[refPath] = true;
+            }
+            valueRef.replace(dict);
+        }
+    }
+
+    if (null == valueRef.get()) {
+        // Initialize constraint as enabled when first added
+        initializeAsEnabled();
+    }
+
     function unused(data: any): boolean { // TODO? Do this somewhere else?
         if (!Array.isArray(info.checkbox)) {
             return !data;
