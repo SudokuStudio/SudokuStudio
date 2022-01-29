@@ -38,8 +38,12 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
 
     let cageRef: null | StateRef = null;
 
-    // Undefined for none, true for adding, null for removing.
-    let mode: undefined | true | null = undefined;
+    enum Mode {
+        DYNAMIC,
+        ADDING,
+        REMOVING,
+    };
+    let mode = Mode.DYNAMIC;
 
     const max = 100;
     function onDigitInput(code: string): boolean {
@@ -77,10 +81,10 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
     }
 
     function startDrag(idx: Idx<Geometry.CELL>): void {
-        if (undefined === mode) {
+        if (Mode.DYNAMIC === mode) {
             const cageId = getExistingCageAtIdx(idx);
             cageRef = stateRef.ref(cageId || boardRepr.makeUid());
-            mode = true;
+            mode = null == cageId ? Mode.ADDING : Mode.REMOVING;
         }
     }
 
@@ -89,15 +93,11 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         undo: {},
     };
 
-    pointerHandler.onDragStart = (_event: MouseEvent) => {
-        mode = undefined;
-    };
-
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    function handle(event: CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
-        if (undefined === mode) {
+        if (Mode.DYNAMIC === mode) {
             startDrag(idx);
         }
         if (null == cageRef) throw 'UNREACHABLE';
@@ -107,6 +107,16 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
             Object.assign(fullDiff.redo, diff.redo);
             Object.assign(fullDiff.undo, diff.undo);
         }
+    }
+
+    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+        mode = Mode.DYNAMIC;
+        handle(event);
+    };
+
+    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+        mode = Mode.ADDING;
+        handle(event);
     };
 
     pointerHandler.onDragEnd = () => {
@@ -116,8 +126,8 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
     };
 
     pointerHandler.onTap = (event: CellDragTapEvent) => {
-        // Ensure this is a tap and not a drag.
-        if (undefined !== mode) return;
+        if (Mode.REMOVING !== mode) return;
+        // If we are still in the removing mode, delete the killer cage
 
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
@@ -159,7 +169,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         },
 
         down(event: MouseEvent): void {
-            pointerHandler.down(event);
+            pointerHandler.down(event, grid, svg);
         },
         move(event: MouseEvent): void {
             pointerHandler.move(event, grid, svg);

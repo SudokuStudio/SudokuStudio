@@ -211,7 +211,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         },
 
         down(event: MouseEvent): void {
-            selectPointerHandler.down(event);
+            selectPointerHandler.down(event, grid, svg);
         },
         move(event: MouseEvent): void {
             selectPointerHandler.move(event, grid, svg);
@@ -239,7 +239,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         // Mode when user is selecting.
         SELECTING,
         // Mode when user is deselecting.
-        DESELCTING,
+        DESELECTING,
     }
 
     // The selecting mode.
@@ -256,7 +256,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         }
         else if (mouseEvent.altKey) {
             // Alt: always deselect.
-            return Mode.DESELCTING;
+            return Mode.DESELECTING;
         }
         else {
             // No modifier: reset and select only this cell.
@@ -264,43 +264,46 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         }
     }
 
-    function handle(event: CellDragTapEvent, isClick: boolean): void {
+    function handle(event: CellDragTapEvent): void {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
         userCursorIndexState.replace(idx);
         userCursorIsShownState.replace(false);
 
-        if (Mode.RESETTING === mode) {
-            // Special: Resetting *tap* acts as toggle.
-            const select = isClick && userSelectState.get<Record<string, true>>() || {};
-            if (isClick && 1 === Object.keys(select).length && select[`${idx}`]) {
-                userSelectState.replace({});
-            }
-            // Normal:
-            else {
-                userSelectState.replace({ [`${idx}`]: true });
-            }
-            mode = Mode.SELECTING;
-            return;
-        }
-
         if (Mode.DYNAMIC === mode) {
-            mode = userSelectState.ref(`${idx}`).get() ? Mode.DESELCTING : Mode.SELECTING;
+            mode = userSelectState.ref(`${idx}`).get() ? Mode.DESELECTING : Mode.SELECTING;
         }
         userSelectState.ref(`${idx}`).replace(Mode.SELECTING === mode || null);
     }
 
-    selectPointerHandler.onDragStart = (event: MouseEvent) => {
-        mode = getMode(event);
+    selectPointerHandler.onDragStart = (event: CellDragTapEvent) => {
+        const { event: mouseEvent } = event;
+        mode = getMode(mouseEvent);
+
+        if (Mode.RESETTING === mode) {
+            const { coord, grid } = event;
+            const cellIndex = cellCoord2CellIdx(coord, grid);
+            const selection = userSelectState.get<Record<string, true>>() || {};
+
+            // Special: Tapping on a single cell acts as a toggle
+            if (1 === Object.keys(selection).length && selection[cellIndex]) {
+                return;
+            }
+
+            userSelectState.replace({ [cellIndex]: true });
+            mode = Mode.SELECTING;
+        }
+        handle(event);
     };
     selectPointerHandler.onDrag = (event: CellDragTapEvent) => {
-        handle(event, false);
+        if (Mode.RESETTING === mode) {
+            mode = Mode.SELECTING;
+        }
+        handle(event);
     };
-    // selectPointerHandler.onDragEnd = (event: MouseEvent) => {
-    //     // mode = Mode.;
-    // };
-
-    selectPointerHandler.onTap = (event: CellDragTapEvent) => {
-        handle(event, true);
+    selectPointerHandler.onTap = (_event: CellDragTapEvent) => {
+        if (Mode.RESETTING === mode) {
+            userSelectState.replace({});
+        }
     };
 })();

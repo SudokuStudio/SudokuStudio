@@ -158,8 +158,9 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         arrowRef.ref(mode).replace(minLength <= lineCells.length ? lineCells : null);
     }
 
-    pointerHandler.onDragStart = (_event: MouseEvent) => {
+    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
         mode = Mode.DYNAMIC;
+        handle(event);
     };
 
     pointerHandler.onDrag = (event: CellDragTapEvent) => {
@@ -167,7 +168,6 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
     };
 
     pointerHandler.onDragEnd = () => {
-        if (Mode.DYNAMIC === mode) return;
         if (null == arrowRef) throw 'UNREACHABLE';
 
         if (0 >= bulbCells.length || 1 === bodyCells.length) {
@@ -189,7 +189,8 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
     };
 
     pointerHandler.onTap = (event: CellDragTapEvent) => {
-        if (Mode.DYNAMIC !== mode) return;
+        if (Mode.BODY !== mode) return;
+        // If we are in the arrow body mode but haven't dragged to a different cell, delete the arrow
 
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
@@ -206,9 +207,6 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         }
         if (null != arrowIdToDelete) {
             pushHistory(stateRef.ref(`${arrowIdToDelete}`).replace(null));
-        }
-        else {
-            handle(event);
         }
     };
 
@@ -233,7 +231,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         },
 
         down(event: MouseEvent): void {
-            pointerHandler.down(event);
+            pointerHandler.down(event, grid, svg);
         },
         move(event: MouseEvent): void {
             pointerHandler.move(event, grid, svg);

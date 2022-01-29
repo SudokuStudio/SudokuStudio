@@ -1,4 +1,4 @@
-import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
+import type { Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
@@ -107,47 +107,49 @@ export const oddInfo: ElementInfo = {
 function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
-    // Undefined for none, true for adding, null for removing.
-    let mode: undefined | true | null = undefined;
-    function getMode(idx: Idx<Geometry.CELL>): typeof mode {
-        if (undefined === mode) {
-            mode = !stateRef.ref(`${idx}`).get<true>() || null;
-        }
-        return mode;
-    }
+    enum Mode {
+        DYNAMIC,
+        ADDING,
+        REMOVING,
+    };
+    let mode = Mode.DYNAMIC;
 
     const fullDiff: Diff = {
         redo: {},
         undo: {},
     };
 
-    pointerHandler.onDragStart = (_event: MouseEvent) => {
-        mode = undefined;
-    };
-
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    function handle(event: CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
-        const diff = stateRef.ref(`${idx}`).replace(getMode(idx));
+        if (Mode.DYNAMIC === mode) {
+            // If the first cell already has the constraint, set mode to removing
+            // Otherwise, set mode to adding
+            mode = stateRef.ref(`${idx}`).get<true>() ? Mode.REMOVING : Mode.ADDING;
+        }
+
+        const stateValue = mode === Mode.ADDING ? true : null;
+        const diff = stateRef.ref(`${idx}`).replace(stateValue);
         if (null != diff) {
             Object.assign(fullDiff.redo, diff.redo);
             Object.assign(fullDiff.undo, diff.undo);
         }
+    }
+
+    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+        mode = Mode.DYNAMIC;
+        handle(event);
+    };
+
+    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+        handle(event);
     };
 
     pointerHandler.onDragEnd = () => {
         pushHistory(fullDiff);
         fullDiff.redo = {};
         fullDiff.undo = {};
-    };
-
-    pointerHandler.onTap = (event: CellDragTapEvent) => {
-        const { coord, grid } = event;
-        const idx = cellCoord2CellIdx(coord, grid);
-
-        const diff = stateRef.ref(`${idx}`).replace(getMode(idx));
-        pushHistory(diff);
     };
 
     return {
@@ -171,7 +173,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         },
 
         down(event: MouseEvent): void {
-            pointerHandler.down(event);
+            pointerHandler.down(event, grid, svg);
         },
         move(event: MouseEvent): void {
             pointerHandler.move(event, grid, svg);
