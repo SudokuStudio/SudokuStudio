@@ -149,13 +149,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         undo: {},
     };
 
-    pointerHandler.onDragStart = (_event: MouseEvent) => {
-        mode = Mode.DYNAMIC;
-        moveStart = null;
-        cloneRef = null;
-    };
-
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    function handle(event: CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
@@ -203,6 +197,18 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
 
         const diff = cloneRef.replace(cloneEntry);
         pushHistory(diff);
+    }
+
+    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+        mode = Mode.DYNAMIC;
+        moveStart = null;
+        cloneRef = null;
+
+        handle(event);
+    };
+
+    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+        handle(event);
     };
 
     pointerHandler.onDragEnd = () => {
@@ -212,8 +218,8 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
     };
 
     pointerHandler.onTap = (event: CellDragTapEvent) => {
-        // Ensure this is a tap and not a drag.
-        if (Mode.DYNAMIC !== mode) return;
+        if (Mode.MOVING !== mode) return;
+        // If we are in the clone moving mode but haven't dragged to a different cell, delete the clone
 
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
@@ -256,7 +262,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         },
 
         down(event: MouseEvent): void {
-            pointerHandler.down(event);
+            pointerHandler.down(event, grid, svg);
         },
         move(event: MouseEvent): void {
             pointerHandler.move(event, grid, svg);

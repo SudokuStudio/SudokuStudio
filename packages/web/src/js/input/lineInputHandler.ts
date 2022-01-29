@@ -20,12 +20,7 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
     let lineRef: null | StateRef = null;
     const lineCells: Idx<Geometry.CELL>[] = [];
 
-    pointerHandler.onDragStart = (_event: MouseEvent) => {
-        lineCells.length = 0;
-        lineRef = stateRef.ref(boardRepr.makeUid());
-    };
-
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    function handle(event: CellDragTapEvent) {
         if (null == lineRef) throw 'UNREACHABLE';
 
         const { coord, grid } = event;
@@ -40,6 +35,17 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
         }
 
         lineRef.replace(1 < lineCells.length ? lineCells : null);
+    }
+
+    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+        lineCells.length = 0;
+        lineRef = stateRef.ref(boardRepr.makeUid());
+
+        handle(event);
+    };
+
+    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+        handle(event);
     };
 
     pointerHandler.onDragEnd = () => {
@@ -109,7 +115,7 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
         },
 
         down(event: MouseEvent): void {
-            pointerHandler.down(event);
+            pointerHandler.down(event, grid, svg);
         },
         move(event: MouseEvent): void {
             pointerHandler.move(event, grid, svg);
