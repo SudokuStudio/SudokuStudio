@@ -102,5 +102,13 @@ const elementsFuse = new Fuse(searchableElements, {
 });
 
 export function search(fuzzyPattern: string) {
+    if (!fuzzyPattern) {
+        // If no search text, show all constraints
+        return searchableElements.map((item, refIndex) => ({
+            item,
+            score: 1,
+            refIndex,
+        }));
+    }
     return elementsFuse.search(fuzzyPattern);
 }
