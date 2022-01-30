@@ -1,7 +1,9 @@
 # Sudoku Studio
 
 ### Website
-https://sudokustudio.net
+https://sudokustudio.net (tracks `main` branch)
+
+https://sudokustudio.github.io/SudokuStudio (tracks `dev` branch)
 
 ## About
 
