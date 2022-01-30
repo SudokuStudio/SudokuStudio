@@ -1,6 +1,7 @@
 <script lang="ts">
     import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState, userSelectState, userCursorIsShownState } from "../../js/user";
     import { currentInputHandler } from "../../js/elementStores";
+    import DigitButton from "./DigitButton.svelte";
 
     // Button ripples.
     import { MDCRipple } from "@material/ripple";
@@ -19,6 +20,21 @@
     const corner = userState.ref('marks', 'corner');
     const center = userState.ref('marks', 'center');
     const colors = userState.ref('marks', 'colors');
+
+    function getToolName(userToolState: string): string {
+        switch (userToolState) {
+            case filled.get():
+                return 'filled';
+            case corner.get():
+                return 'corner';
+            case center.get():
+                return 'center';
+            case colors.get():
+                return 'colors';
+            default:
+                return '';
+        }
+    }
 
     // Keep focus on board if user *clicks* on button pad.
     function onBubblingClick(event: MouseEvent): void {
@@ -90,29 +106,19 @@
     <div class="right-container">
         <div class="right">
             <div class="num-pad">
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 1 / 2 / 2" value="1" title="[1]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>1</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 2 / 2 / 3" value="2" title="[2]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>2</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 1 / 3 / 2 / 4" value="3" title="[3]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>3</button>
+                <DigitButton digit={1} gridArea="1 / 1 / 2 / 2" toolName={getToolName($userToolState)} />
+                <DigitButton digit={2} gridArea="1 / 2 / 2 / 3" toolName={getToolName($userToolState)} />
+                <DigitButton digit={3} gridArea="1 / 3 / 2 / 4" toolName={getToolName($userToolState)} />
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 1 / 3 / 2" value="4" title="[4]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>4</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 2 / 3 / 3" value="5" title="[5]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>5</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 2 / 3 / 3 / 4" value="6" title="[6]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>6</button>
+                <DigitButton digit={4} gridArea="2 / 1 / 3 / 2" toolName={getToolName($userToolState)} />
+                <DigitButton digit={5} gridArea="2 / 2 / 3 / 3" toolName={getToolName($userToolState)} />
+                <DigitButton digit={6} gridArea="2 / 3 / 3 / 4" toolName={getToolName($userToolState)} />
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 1 / 4 / 2" value="7" title="[7]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>7</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 2 / 4 / 3" value="8" title="[8]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>8</button>
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 3 / 3 / 4 / 4" value="9" title="[9]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>9</button>
+                <DigitButton digit={7} gridArea="3 / 1 / 4 / 2" toolName={getToolName($userToolState)} />
+                <DigitButton digit={8} gridArea="3 / 2 / 4 / 3" toolName={getToolName($userToolState)} />
+                <DigitButton digit={9} gridArea="3 / 3 / 4 / 4" toolName={getToolName($userToolState)} />
 
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 1 / 5 / 2" value="0" title="[0]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}>0</button>
+                <DigitButton digit={0} gridArea="4 / 1 / 5 / 2" toolName={getToolName($userToolState)} />
                 <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 2 / 5 / 4" value="Delete" title="Delete [del or backspace]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined} aria-label="Delete">
                     <span class="icon icon-inline icon-c-textinv icon-delete" />
@@ -136,6 +142,7 @@
 <style lang="scss">
     @use "sass:math";
     @use "@material/ripple";
+    @use '../../css/padbutton';
     @use '../../css/vars' as vars;
 
     @mixin aspect-ratio-container($aspect-ratio-inv, $width) {
@@ -152,45 +159,6 @@
         height: 100%;
     }
 
-    $padbutton-border-radius: 0.2em;
-
-    .padbutton {
-        @include ripple.states-base-color(#fff);
-
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-
-        display: block;
-        box-sizing: border-box;
-
-        display: block;
-        font-family: inherit;
-        margin: 0;
-        padding: 0;
-        border: 0;
-        text-align: center;
-        background: none;
-        cursor: pointer;
-
-        font-size: 1em;
-        font-weight: vars.$font-weight-heavy;
-        color: #fff;
-
-        border-radius: $padbutton-border-radius;
-        border: 0.06em solid vars.$color-clickable;
-        background-color: vars.$color-clickable;
-
-        @include vars.breakpoint-mobile {
-            font-size: 5vw;
-        }
-    }
-
     .mode-pad > * {
         position: relative;
         height: 0;
@@ -201,7 +169,7 @@
             -moz-appearance: none;
             appearance: none;
 
-            border-radius: $padbutton-border-radius;
+            border-radius: vars.$padbutton-border-radius;
         }
         .radio-mode-button, .padbutton.padbutton-mode {
             position: absolute;

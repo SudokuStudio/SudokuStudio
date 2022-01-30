@@ -1,0 +1,39 @@
+@use "@material/ripple";
+@use '../../css/vars' as vars;
+
+.padbutton {
+    @include ripple.states-base-color(#fff);
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    display: block;
+    box-sizing: border-box;
+
+    display: block;
+    font-family: inherit;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    text-align: center;
+    background: none;
+    cursor: pointer;
+
+    font-size: 1em;
+    font-weight: vars.$font-weight-heavy;
+    color: #fff;
+
+    border-radius: vars.$padbutton-border-radius;
+    border: 0.06em solid vars.$color-clickable;
+    background-color: vars.$color-clickable;
+
+    @include vars.breakpoint-mobile {
+        font-size: 5vw;
+    }
+}
