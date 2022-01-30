@@ -192,6 +192,8 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         blur(_event: FocusEvent): void {
             // Reset any tool toggles.
             userToolState.replace(userPrevToolState.get());
+            // Reset selection
+            userSelectState.replace({});
         },
 
         keydown(event: KeyboardEvent): void {

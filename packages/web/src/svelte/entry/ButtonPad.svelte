@@ -62,7 +62,7 @@
     }
 </script>
 
-<div class="container" on:click={onBubblingClick}>
+<div class="container" on:click|stopPropagation={onBubblingClick}>
     <div class="mode-pad-container">
         <div class="mode-pad">
             <div>

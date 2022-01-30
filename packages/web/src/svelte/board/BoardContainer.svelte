@@ -16,6 +16,11 @@
 
 <svelte:window
     on:blur={wrapListener($currentInputHandler, 'blur')}
+    on:click={event => {
+        if (null != $currentInputHandler && document.activeElement !== $boardDiv) {
+            $currentInputHandler.blur(event);
+        }
+    }}
     on:mouseup={wrapListener($currentInputHandler, 'up')}
     on:keydown={wrapListener($currentInputHandler, 'keydown')}
     on:keyup={wrapListener($currentInputHandler, 'keyup')} />
