@@ -66,19 +66,21 @@ export const colorsInfo: ElementInfo = {
             blockedByGivens: false,
             blockedByFilled: false,
             nextMode: 'filled',
-            digitMapping: [
-                "#111111",
-                "#666666",
-                "#b2b2b2",
-                hsluv.hsluvToHex([  10, 100, 60 ]),
-                hsluv.hsluvToHex([  40, 100, 65 ]),
-                hsluv.hsluvToHex([  70, 100, 92 ]),
-                hsluv.hsluvToHex([ 120, 100, 80 ]),
-                hsluv.hsluvToHex([ 230, 100, 85 ]),
-                hsluv.hsluvToHex([ 260, 100, 55 ]),
-                hsluv.hsluvToHex([ 300, 100, 70 ]),
-            ],
+            digitMapping: colorsList,
         });
     },
     order: 10,
 } as const;
+
+export const colorsList: string[] = [
+    "#111111",
+    "#666666",
+    "#b2b2b2",
+    hsluv.hsluvToHex([  10, 100, 60 ]),
+    hsluv.hsluvToHex([  40, 100, 65 ]),
+    hsluv.hsluvToHex([  70, 100, 92 ]),
+    hsluv.hsluvToHex([ 120, 100, 80 ]),
+    hsluv.hsluvToHex([ 230, 100, 85 ]),
+    hsluv.hsluvToHex([ 260, 100, 55 ]),
+    hsluv.hsluvToHex([ 300, 100, 70 ]),
+];
