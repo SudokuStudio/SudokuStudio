@@ -11,14 +11,16 @@
 
 <div class="container" class:closed>
     <div role="button" tabindex="0" class="section-title" on:click={onClick}>
-        <button class="delete-button nobutton hoverable" on:click|stopPropagation={onAdd}>
+        <button class={`add-button nobutton hoverable ${onAdd ?? 'hide-button'}`} on:click|stopPropagation={onAdd}>
             <span class="icon hoverable-icon icon-inline icon-c-clickable icon-add" />
         </button>
         <span>
             <span class="icon hoverable-icon icon-inline icon-c-text icon-{icon}" />
             {title}
         </span>
-        <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu" />
+        <span class="tree-menu-wrapper">
+            <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu" />
+        </span>
     </div>
     <div class="panel-wrapper">
         <div class="panel">
@@ -31,19 +33,22 @@
     @use '../../css/vars';
 
     .section-title {
-        padding: 0.5em 0.5em;
         font-weight: vars.$font-weight-heavy;
 
         display: inline-block;
         font-size: 1em;
         font-family: inherit;
-        border: 0;
         margin: 0;
         background: none;
         cursor: pointer;
         width: 100%;
         box-sizing: border-box;
         text-align: left;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
 
         white-space: nowrap;
 
@@ -52,17 +57,27 @@
             @include vars.hoverborder-hover();
         }
 
-        .delete-button {
-            margin-right: 0.5em;
+        .add-button {
+            padding: 0.5em;
+
+            &.hide-button {
+                visibility: hidden;
+            }
         }
     }
 
-    .tree-menu {
-        transition: transform vars.$transition-time ease-in-out;
-        transform: rotate(180deg);
-        transform-origin: 50% 66%;
+    .tree-menu-wrapper {
+        display: flex;
         float: right;
+        padding: 0.5em;
+
+        .tree-menu {
+            transition: transform vars.$transition-time ease-in-out;
+            transform: rotate(180deg);
+            transform-origin: 50% 66%;
+        }
     }
+
     .closed .tree-menu {
         transform: rotate(0deg);
     }
