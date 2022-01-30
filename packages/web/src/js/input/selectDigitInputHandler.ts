@@ -85,21 +85,33 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         return false;
     }
 
-    const MODE_KEYS = new Set([
+    const HELD_MODE_KEYS = new Set([
         'Shift',
         'Control',
         'Alt',
         'Meta',
     ]);
 
+    const MODE_SHORTCUTS = {
+        KeyZ: 'filled',
+        KeyX: 'corner',
+        KeyC: 'center',
+        KeyV: 'colors',
+        Space: nextMode,
+    } as const;
+
     function onQuickshift(event: KeyboardEvent): boolean {
-        if ('Space' === event.code) {
-            if ('keydown' === event.type) {
-                userToolState.replace(userState.get('marks', nextMode));
-            }
+        if ('keydown' === event.type && event.code in MODE_SHORTCUTS) {
+            const newToolState = userState.get(
+                'marks',
+                MODE_SHORTCUTS[event.code as keyof typeof MODE_SHORTCUTS]
+            );
+            userToolState.replace(newToolState);
+            userPrevToolState.replace(newToolState);
             return true;
         }
-        if (!MODE_KEYS.has(event.key))
+
+        if (!HELD_MODE_KEYS.has(event.key))
             return false;
 
         const oldTool = userToolState.get();
@@ -133,17 +145,21 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         return false;
     }
 
-    const ARROW_KEYS = {
+    const DIRECTIONAL_KEYS = {
         ArrowLeft: [ -1, 0 ],
         ArrowUp: [ 0, -1 ],
         ArrowRight: [ 1, 0 ],
         ArrowDown: [ 0, 1 ],
+        KeyA: [ -1, 0 ],
+        KeyW: [ 0, -1 ],
+        KeyD: [ 1, 0 ],
+        KeyS: [ 0, 1 ],
     } as const;
 
-    function onArrowKey(event: KeyboardEvent): boolean {
-        if (!(event.code in ARROW_KEYS)) return false;
+    function onDirectionalKey(event: KeyboardEvent): boolean {
+        if (!(event.code in DIRECTIONAL_KEYS)) return false;
 
-        const [ dx, dy ] = ARROW_KEYS[event.code as keyof typeof ARROW_KEYS];
+        const [ dx, dy ] = DIRECTIONAL_KEYS[event.code as keyof typeof DIRECTIONAL_KEYS];
         let [ x, y ] = cellIdx2cellCoord(userCursorIndexState.get() || 0, grid);
         x += dx + grid.width;
         y += dy + grid.height;
@@ -197,7 +213,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         },
 
         keydown(event: KeyboardEvent): void {
-            if (onDigitInput(event.code) || onQuickshift(event) || onArrowKey(event) || onSelectionShortcut(event)) {
+            if (onDigitInput(event.code) || onQuickshift(event) || onDirectionalKey(event) || onSelectionShortcut(event)) {
                 event.stopImmediatePropagation();
                 event.preventDefault();
             }
