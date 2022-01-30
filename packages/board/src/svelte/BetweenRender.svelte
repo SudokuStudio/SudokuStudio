@@ -31,6 +31,9 @@
 </script>
 
 
+<mask id="between-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
+    <rect width={grid.width} height={grid.height} fill="#fff" />
+</mask>
 <g {id}>
     {#each $items as { itemId, d, head, tail } (itemId)}
         <path {d} fill="none" stroke="#c18bb7" stroke-opacity="0.95" stroke-linejoin="round" stroke-linecap="butt"
