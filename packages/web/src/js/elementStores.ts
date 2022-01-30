@@ -9,7 +9,7 @@ import type { InputHandler } from "./input/inputHandler";
 import { pushHistory } from "./history";
 import { boardRepr, getDigits } from "@sudoku-studio/board-utils";
 
-export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo };
+export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo, type: schema.ElementType };
 export type ElementHandlerList = ElementHandlerItem[];
 
 export function addElement<E extends schema.Element>(type: E['type'], value?: E['value']): string {
@@ -81,6 +81,7 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
                     id: elementId,
                     elementRef,
                     info: elementInfo,
+                    type,
                 });
             }
             else {

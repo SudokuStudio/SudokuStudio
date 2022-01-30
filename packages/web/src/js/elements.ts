@@ -70,38 +70,44 @@ export function createElement<E extends schema.Element>(type: E['type'], value?:
     } as E;
 }
 
-const searchableElements = Object.entries(ELEMENT_HANDLERS)
-    .filter(([ _key, info ]) => null != info.menu)
-    .map(([ key, info ]) => ({ key, info }));
+function getSearchableElements(filterFunction: (key: string, info: ElementInfo) => boolean) {
+    return Object.entries(ELEMENT_HANDLERS)
+        .filter(([ key, info ]) => null != info.menu && filterFunction(key, info))
+        .map(([ key, info ]) => ({ key, info }));
+}
 
-const elementsFuse = new Fuse(searchableElements, {
-    keys: [
-        {
-            name: 'key',
-            weight: 0.2,
-        },
-        {
-            name: 'info.menu.name',
-            weight: 1.0,
-        },
-        {
-            name: 'info.meta.description',
-            weight: 0.8,
-        },
-        {
-            name: 'info.meta.tags',
-            weight: 0.8,
-        },
-        {
-            name: 'info.meta.category',
-            weight: 0.1,
-        },
-    ],
-    ignoreLocation: true,
-    includeScore: true,
-});
+function buildElementsFuse(searchableElements: { key: string, info: ElementInfo }[]) {
+    return new Fuse(searchableElements, {
+        keys: [
+            {
+                name: 'key',
+                weight: 0.2,
+            },
+            {
+                name: 'info.menu.name',
+                weight: 1.0,
+            },
+            {
+                name: 'info.meta.description',
+                weight: 0.8,
+            },
+            {
+                name: 'info.meta.tags',
+                weight: 0.8,
+            },
+            {
+                name: 'info.meta.category',
+                weight: 0.1,
+            },
+        ],
+        ignoreLocation: true,
+        includeScore: true,
+    });
+}
 
-export function search(fuzzyPattern: string) {
+export function search(fuzzyPattern: string, filterFunction: (key: string, info: ElementInfo) => boolean) {
+    const searchableElements = getSearchableElements(filterFunction);
+
     if (!fuzzyPattern) {
         // If no search text, show all constraints
         return searchableElements.map((item, refIndex) => ({
@@ -110,5 +116,5 @@ export function search(fuzzyPattern: string) {
             refIndex,
         }));
     }
-    return elementsFuse.search(fuzzyPattern);
+    return buildElementsFuse(searchableElements).search(fuzzyPattern);
 }

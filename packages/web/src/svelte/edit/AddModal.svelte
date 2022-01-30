@@ -1,12 +1,14 @@
 <script lang="ts">
+    import type { ElementInfo } from "../../js/element/element";
     import { search } from "../../js/elements";
     import { addElement } from "../../js/elementStores";
     import Modal from "../Modal.svelte";
 
     export let visible = false;
+    export let filterFunction: (key: string, info: ElementInfo) => boolean;
+    export let searchPattern: string = '';
 
     let searchInput: HTMLInputElement = null!;
-    let searchPattern: string = '';
 
     function elementClicked(type: string): void {
         addElement(type as any);
@@ -23,7 +25,7 @@
     </div>
     <div class="search-results">
         <ol class="nolist">
-            {#each search(searchPattern) as { score: _, item }}
+            {#each search(searchPattern, filterFunction) as { score: _, item }}
                 <li>
                     <button class="result-item nobutton hoverable" title={item.info.meta?.description} on:click={() => elementClicked(item.key)}>
                         <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}" />
