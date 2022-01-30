@@ -80,28 +80,16 @@ function buildElementsFuse(searchableElements: { key: string, info: ElementInfo 
     return new Fuse(searchableElements, {
         keys: [
             {
-                name: 'key',
-                weight: 0.2,
-            },
-            {
                 name: 'info.menu.name',
-                weight: 1.0,
-            },
-            {
-                name: 'info.meta.description',
-                weight: 0.8,
+                weight: 1,
             },
             {
                 name: 'info.meta.tags',
-                weight: 0.8,
-            },
-            {
-                name: 'info.meta.category',
-                weight: 0.1,
+                weight: 1,
             },
         ],
         ignoreLocation: true,
-        includeScore: true,
+        threshold: 0.2,
     });
 }
 
@@ -112,7 +100,6 @@ export function search(fuzzyPattern: string, filterFunction: (key: string, info:
         // If no search text, show all constraints
         return searchableElements.map((item, refIndex) => ({
             item,
-            score: 1,
             refIndex,
         }));
     }

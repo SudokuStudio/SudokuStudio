@@ -25,7 +25,7 @@
     </div>
     <div class="search-results">
         <ol class="nolist">
-            {#each search(searchPattern, filterFunction) as { score: _, item }}
+            {#each search(searchPattern, filterFunction) as { item }}
                 <li>
                     <button class="result-item nobutton hoverable" title={item.info.meta?.description} on:click={() => elementClicked(item.key)}>
                         <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}" />
