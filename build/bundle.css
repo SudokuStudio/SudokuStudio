@@ -1080,6 +1080,10 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
+.empty-placeholder.svelte-1hnsx93 {
+  padding: 0.25em 0 0.25em 1.75em;
+}
+
 .overlay.svelte-f3k5y2 {
   position: absolute;
   top: 0;
@@ -1091,10 +1095,6 @@ ul.header-buttons.right.svelte-1gtf4ed {
 
 .overlay.svelte-f3k5y2:focus {
   outline: none;
-}
-
-.empty-placeholder.svelte-1hnsx93 {
-  padding: 0.25em 0 0.25em 1.75em;
 }
 
 .info-input.svelte-fcgi7u.svelte-fcgi7u {
@@ -1488,11 +1488,6 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   border-radius: 0.3rem;
 }
 
-line.svelte-1qd4hgf {
-  stroke: rgba(0, 0, 0, 0.2);
-  stroke-width: 0.02;
-}
-
 .padbutton.svelte-1kjemkx.svelte-1kjemkx {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -1553,6 +1548,11 @@ line.svelte-1qd4hgf {
 .padbutton.colors.svelte-1kjemkx .pad-color.svelte-1kjemkx {
   width: 70%;
   height: 70%;
+}
+
+line.svelte-1qd4hgf {
+  stroke: rgba(0, 0, 0, 0.2);
+  stroke-width: 0.02;
 }
 
 .constraint-checkbox.svelte-1ns67sk {
