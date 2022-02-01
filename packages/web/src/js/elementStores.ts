@@ -13,9 +13,24 @@ export type ElementHandlerItem = { id: string, elementRef: StateRef, info: Eleme
 export type ElementHandlerList = ElementHandlerItem[];
 
 export function addElement<E extends schema.Element>(type: E['type'], value?: E['value']): string {
-    const element = createElement(type, value);
     if (!(type in ELEMENT_HANDLERS)) throw Error(`Cannot add unknown element type: ${type}.`);
     const handler = ELEMENT_HANDLERS[type];
+
+    let elementValue = value;
+    if ('checkbox' === handler.menu?.type && null == elementValue) {
+        if (!Array.isArray(handler.menu.checkbox)) {
+            elementValue = true;
+        }
+        else {
+            const dict: Record<string, boolean> = {};
+            for (const { refPath } of handler.menu.checkbox) {
+                dict[refPath] = true;
+            }
+            elementValue = dict;
+        }
+    }
+
+    const element = createElement(type, elementValue);
     if (null == handler) throw Error(`Cannot add unimplmeneted element type: ${type}.`);
 
     const id = boardRepr.makeUid();
