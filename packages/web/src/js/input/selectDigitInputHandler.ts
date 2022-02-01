@@ -323,9 +323,10 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
 
         for (const type of MARK_TYPES) {
             const cellValue = getCellValue(type, cellIndex);
-            const givenValue = getCellValue('givens', cellIndex);
 
             if ('filled' === type) {
+                const givenValue = getCellValue('givens', cellIndex);
+
                 if (null != givenValue) {
                     cellMarks.filled = givenValue as number;
                 } else if (null != cellValue) {
