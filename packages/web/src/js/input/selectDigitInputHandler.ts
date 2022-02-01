@@ -1,9 +1,9 @@
 import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
-import type { Geometry, Grid, IdxBitset } from "@sudoku-studio/schema";
+import type { Geometry, Grid, Idx, IdxBitset, schema } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
 import { boardState, getDigits } from "../board";
 import { pushHistory } from "../history";
-import { userToolState, userSelectState, userState, userPrevToolState, userCursorIsShownState, userCursorIndexState } from "../user";
+import { MARK_TYPES, userToolState, userSelectState, userState, userPrevToolState, userCursorIsShownState, userCursorIndexState, getUserToolStateName } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
 import { InputHandler, parseDigit } from "./inputHandler";
 
@@ -295,6 +295,130 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         userSelectState.ref(`${idx}`).replace(Mode.SELECTING === mode || null);
     }
 
+    function getCellValue(markType: string, cellIndex: Idx<Geometry.CELL>): number | object | null {
+        const elements = boardState.get<schema.Board['elements']>('elements');
+        const elementKey = Object.keys(elements!).find((elementKey) => markType === elements![elementKey].type);
+
+        if (null == elementKey) {
+            return null;
+        }
+
+        return boardState.get('elements', elementKey, 'value', `${cellIndex}`);
+    }
+
+    type CellMarks = {
+        filled: number | null,
+        colors: string[] | null,
+        center: string[] | null,
+        corner: string[] | null,
+    };
+
+    function getMarksInCell(cellIndex: Idx<Geometry.CELL>) {
+        const cellMarks: CellMarks = {
+            filled: null,
+            colors: null,
+            center: null,
+            corner: null
+        };
+
+        for (const type of MARK_TYPES) {
+            const cellValue = getCellValue(type, cellIndex);
+            const givenValue = getCellValue('givens', cellIndex);
+
+            if ('filled' === type) {
+                if (null != givenValue) {
+                    cellMarks.filled = givenValue as number;
+                } else if (null != cellValue) {
+                    cellMarks.filled = cellValue as number;
+                }
+            } else if (null != cellValue) {
+                const markedDigits = Object.keys(cellValue as object);
+
+                if ('center' === type) {
+                    cellMarks.center = markedDigits;
+                } else if ('corner' === type) {
+                    cellMarks.corner = markedDigits;
+                } else if ('colors' === type) {
+                    cellMarks.colors = markedDigits;
+                }
+            }
+        }
+
+        // Filled digits hide center and corner marks
+        if (null != cellMarks.filled) {
+            cellMarks.center = null;
+            cellMarks.corner = null;
+        }
+
+        return cellMarks;
+    }
+
+    const CELL_MARKS_PRIORITY = ['filled', 'colors', 'center', 'corner'] as const;
+
+    function getDoubleClickCriteria(selectedCellMarks: CellMarks): keyof CellMarks | null {
+        const selectedTool = getUserToolStateName(userToolState.get()) as keyof CellMarks;
+
+        if (null != selectedCellMarks[selectedTool]) {
+            return selectedTool;
+        }
+
+        for (const type of CELL_MARKS_PRIORITY) {
+            if (null != selectedCellMarks[type]) {
+                return type;
+            }
+        }
+
+        return null;
+    }
+
+    function cellMatchesCriteria(criteria: keyof CellMarks, selectedCellMarks: CellMarks, otherCellMarks: CellMarks): boolean {
+        if ('filled' === criteria) {
+            return otherCellMarks.filled === selectedCellMarks.filled!;
+        }
+        if ('colors' === criteria) {
+            return selectedCellMarks.colors!.some((color) => otherCellMarks.colors?.includes(color));
+        }
+        if ('center' === criteria) {
+            return selectedCellMarks.center!.every((digit) => otherCellMarks.center?.includes(digit));
+        }
+        if ('corner' === criteria) {
+            return selectedCellMarks.corner!.some((digit) => otherCellMarks.corner?.includes(digit));
+        }
+        return false;
+    }
+
+    function getCellsByCriteria(criteria: keyof CellMarks, selectedCellMarks: CellMarks, grid: Grid): Record<string, true> {
+        const matchingCells: Record<string, true> = {};
+
+        for (let x = 0; x < grid.width; x++) {
+            for (let y = 0; y < grid.height; y++) {
+                const cellIndex = cellCoord2CellIdx([x, y], grid);
+                const otherCellMarks = getMarksInCell(cellIndex);
+
+                if (cellMatchesCriteria(criteria, selectedCellMarks, otherCellMarks)) {
+                    matchingCells[cellIndex] = true;
+                }
+            }
+        }
+
+        return matchingCells;
+    }
+
+    function handleDoubleClick(event: CellDragTapEvent): void {
+        const { coord, grid } = event;
+
+        const cellIndex = cellCoord2CellIdx(coord, grid);
+        const selectedCellMarks = getMarksInCell(cellIndex)
+        const criteria = getDoubleClickCriteria(selectedCellMarks);
+
+        if (null == criteria) {
+            return; // Selected cell is empty
+        }
+
+        const matchingCells = getCellsByCriteria(criteria, selectedCellMarks, grid);
+        userSelectState.replace(matchingCells);
+    }
+
     selectPointerHandler.onDragStart = (event: CellDragTapEvent) => {
         const { event: mouseEvent } = event;
         mode = getMode(mouseEvent);
@@ -320,8 +444,10 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         }
         handle(event);
     };
-    selectPointerHandler.onTap = (_event: CellDragTapEvent) => {
-        if (Mode.RESETTING === mode) {
+    selectPointerHandler.onTap = (event: CellDragTapEvent) => {
+        if (2 === event.event.detail) {
+            handleDoubleClick(event);
+        } else if (Mode.RESETTING === mode) {
             userSelectState.replace({});
         }
     };
