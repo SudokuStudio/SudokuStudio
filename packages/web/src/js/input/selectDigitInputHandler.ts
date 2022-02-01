@@ -158,6 +158,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
 
     function onDirectionalKey(event: KeyboardEvent): boolean {
         if (!(event.code in DIRECTIONAL_KEYS)) return false;
+        if (event.ctrlKey || event.metaKey) return false; // Prevent Ctrl+A from triggering directional key
 
         const [ dx, dy ] = DIRECTIONAL_KEYS[event.code as keyof typeof DIRECTIONAL_KEYS];
         let [ x, y ] = cellIdx2cellCoord(userCursorIndexState.get() || 0, grid);
