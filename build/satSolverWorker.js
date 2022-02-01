@@ -10905,7 +10905,6 @@ var satSolverWorker = (function () {
         const satSolverPtr = sat.cmsat_new();
         try {
             console.log(`Running SAT Solver: ${numLits} vars (${numBaseVars} base), ${context.clauses.length} clauses.`);
-            // sat.cmsat_set_verbosity(satSolverPtr, 1);
             sat.cmsat_new_vars(satSolverPtr, numLits);
             // Add clauses.
             for (const clause of context.clauses) {
