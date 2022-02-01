@@ -87,25 +87,6 @@ export const consecutiveInfo: ElementInfo = {
     },
 };
 
-// export const consecutiveDiagonalInfo: ElementInfo = {
-//     inGlobalMenu: true,
-//     order: 0,
-//     menu: {
-//         type: 'checkbox',
-//         name: 'Nonconsecutive Diag.',
-//         checkbox: {
-//             name: 'Nonconsecutive',
-//             icon: 'nonconsecutive',
-//         },
-//         icon: 'nonconsecutive',
-//     },
-//     meta: {
-//         description: '[Edge- | Corner-] adjacent digits may not be consecutive.',
-//         tags: [],
-//         category: [ 'global' ],
-//     },
-// };
-
 export const kingInfo: ElementInfo = {
     inGlobalMenu: true,
     order: 0,
@@ -175,8 +156,3 @@ export const selfTaxicabInfo: ElementInfo = {
         icon: 'cityblock',
     },
 };
-
-/*
-Self Taxicab,,Global Constraints,"Digits n cells apart, by edge adjacency only, may not repeat, where n is the digit in the cell.",
-Taxicab,,Global Constraints,"Digits n cells apart, by edge adjacency only, may not repeat, where n is a preset number.",
-*/

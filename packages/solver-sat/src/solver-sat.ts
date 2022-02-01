@@ -78,7 +78,6 @@ export async function solve(board: schema.Board, maxSolutions: number,
     try {
         console.log(`Running SAT Solver: ${numLits} vars (${numBaseVars} base), ${context.clauses.length} clauses.`);
 
-        // sat.cmsat_set_verbosity(satSolverPtr, 1);
         sat.cmsat_new_vars(satSolverPtr, numLits);
 
         // Add clauses.

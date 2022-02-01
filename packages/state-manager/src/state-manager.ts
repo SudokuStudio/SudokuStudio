@@ -360,72 +360,65 @@ export class StateManager {
         })();
 
         if (!isEq(data, newData)) {
-            // if (0 < path.length) {
-            //     if (redo && atUpdateDepth) redo[path.join('/')] = newData;
-            //     if (undo) undo[path.join('/')] = data;
-            // }
-            {
-                // NULL.
-                if (null == data) {
-                    // NULL -> NULL.
-                    if (null == newData) {
-                        throw "N/A";
-                    }
-                    // NULL -> OBJECT.
-                    if ('object' === typeof newData) {
-                        // nested.
-                    }
-                    // NULL -> VALUE.
-                    else {
-                        redo.length = 0;
-                        redo.push([ path.join('/'), newData ]);
-                        undo.length = 0;
-                        undo.push([ path.join('/'), null ]);
-                    }
+            // NULL.
+            if (null == data) {
+                // NULL -> NULL.
+                if (null == newData) {
+                    throw "N/A";
                 }
-                // OBJECT.
-                else if ('object' === typeof data) {
-                    // OBJECT -> NULL.
-                    if (null == newData) {
-                        // redo.length = 0;
-                        // redo.push([ path.join('/'), null ]);
-                        // (nested)
-                    }
-                    // OBJECT -> OBJECT.
-                    else if ('object' === typeof newData) {
-                        // (both nested)
-                    }
-                    // OBJECT -> VALUE.
-                    else {
-                        redo.length = 0;
-                        redo.push([ path.join('/'), newData ]);
-                        // (nested)
-                    }
+                // NULL -> OBJECT.
+                if ('object' === typeof newData) {
+                    // nested.
                 }
-                // VALUE.
+                // NULL -> VALUE.
                 else {
-                    // VALUE -> NULL.
-                    if (null == newData) {
-                        redo.length = 0;
-                        redo.push([ path.join('/'), null ]);
-                        undo.length = 0;
-                        undo.push([ path.join('/'), data ]);
-                    }
-                    // VALUE -> OBJECT.
-                    else if ('object' === typeof newData) {
-                        // (nested)
-                        undo.length = 0;
-                        undo.push([ path.join('/'), data ]);
-                    }
-                    // VALUE -> VALUE.
-                    else {
-                        redo.length = 0;
-                        redo.push([ path.join('/'), newData ]);
-                        undo.length = 0;
-                        undo.push([ path.join('/'), data ]);
-                    }
+                    redo.length = 0;
+                    redo.push([ path.join('/'), newData ]);
+                    undo.length = 0;
+                    undo.push([ path.join('/'), null ]);
                 }
             }
+            // OBJECT.
+            else if ('object' === typeof data) {
+                // OBJECT -> NULL.
+                if (null == newData) {
+                    // (nested)
+                }
+                // OBJECT -> OBJECT.
+                else if ('object' === typeof newData) {
+                    // (both nested)
+                }
+                // OBJECT -> VALUE.
+                else {
+                    redo.length = 0;
+                    redo.push([ path.join('/'), newData ]);
+                    // (nested)
+                }
+            }
+            // VALUE.
+            else {
+                // VALUE -> NULL.
+                if (null == newData) {
+                    redo.length = 0;
+                    redo.push([ path.join('/'), null ]);
+                    undo.length = 0;
+                    undo.push([ path.join('/'), data ]);
+                }
+                // VALUE -> OBJECT.
+                else if ('object' === typeof newData) {
+                    // (nested)
+                    undo.length = 0;
+                    undo.push([ path.join('/'), data ]);
+                }
+                // VALUE -> VALUE.
+                else {
+                    redo.length = 0;
+                    redo.push([ path.join('/'), newData ]);
+                    undo.length = 0;
+                    undo.push([ path.join('/'), data ]);
+                }
+            }
+
             for (const watcherTree of watcherTrees) {
                 for (const watcher of watcherTree[WatchersKey] || []) {
                     try {

@@ -417,7 +417,6 @@ export function normalize2d(vec: [ number, number ]): void {
 export function click2svgCoord({ offsetX, offsetY }: { offsetX: number, offsetY: number }, board: SVGSVGElement): Coord<Geometry.SVG> {
     const { width: elWidth, height: elHeight } = board.getBoundingClientRect();
     const { x: originX, y: originY, width, height } = board.viewBox.baseVal;
-    // if (offsetX < 0 || offsetY < 0) return null;
     const x = (width  * offsetX / elWidth  + originX);
     const y = (height * offsetY / elHeight + originY);
     return [ x, y ];

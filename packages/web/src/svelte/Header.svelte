@@ -58,8 +58,5 @@
         &.right {
             justify-content: flex-end;
         }
-
-        // li {
-        // }
     }
 </style>

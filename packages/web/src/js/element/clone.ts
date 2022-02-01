@@ -71,15 +71,6 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
                 digit = multiDigit;
         }
 
-        // if (null === digit && null == oldVal) {
-        //     // If delete on empty, delete the whole cage.
-        //     const diff = cloneRef.replace(null);
-        //     pushHistory(diff);
-        // }
-        // else {
-        //     const diff = cloneRef.ref('sum').replace(digit);
-        //     pushHistory(diff);
-        // }
         return true;
     }
 

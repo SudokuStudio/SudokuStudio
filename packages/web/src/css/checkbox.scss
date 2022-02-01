@@ -45,10 +45,7 @@ input[type='checkbox'] {
             transform: rotate(52.6deg) skewX(8deg);
         }
     }
-    // &:hover {
-    // }
-    // &:checked:hover {
-    // }
+
     &:disabled {
         border-color: $color-disabled;
     }
