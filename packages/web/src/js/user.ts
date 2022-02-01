@@ -1,4 +1,4 @@
-import { StateManager } from '@sudoku-studio/state-manager';
+import { StateManager, StateRef } from '@sudoku-studio/state-manager';
 
 export const MARK_TYPES = [
     'filled', 'corner', 'center', 'colors',
@@ -23,6 +23,21 @@ userState.update({
     history: {},
     historyUndone: {},
 });
+
+export function getUserToolStateName(toolState: StateRef | null): string | null {
+    switch (toolState) {
+        case userState.get('marks', 'filled'):
+            return 'filled';
+        case userState.get('marks', 'corner'):
+            return 'corner';
+        case userState.get('marks', 'center'):
+            return 'center';
+        case userState.get('marks', 'colors'):
+            return 'colors';
+        default:
+            return null;
+    }
+}
 
 export const userSelectState = userState.ref('select');
 export const userCursorIndexState = userState.ref('cursor', 'index');

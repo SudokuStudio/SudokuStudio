@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState, userSelectState, userCursorIsShownState } from "../../js/user";
+    import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState, userSelectState, userCursorIsShownState, getUserToolStateName } from "../../js/user";
     import { currentInputHandler } from "../../js/elementStores";
     import DigitButton from "./DigitButton.svelte";
 
@@ -20,21 +20,6 @@
     const corner = userState.ref('marks', 'corner');
     const center = userState.ref('marks', 'center');
     const colors = userState.ref('marks', 'colors');
-
-    function getToolName(userToolState: string): string {
-        switch (userToolState) {
-            case filled.get():
-                return 'filled';
-            case corner.get():
-                return 'corner';
-            case center.get():
-                return 'center';
-            case colors.get():
-                return 'colors';
-            default:
-                return '';
-        }
-    }
 
     // Keep focus on board if user *clicks* on button pad.
     function onBubblingClick(event: MouseEvent): void {
@@ -60,6 +45,8 @@
         }));
         unsubscribe();
     }
+
+    $: userToolStateName = getUserToolStateName($userToolState) || '';
 </script>
 
 <div class="container" on:click|stopPropagation={onBubblingClick}>
@@ -106,19 +93,19 @@
     <div class="right-container">
         <div class="right">
             <div class="num-pad">
-                <DigitButton digit={1} gridArea="1 / 1 / 2 / 2" toolName={getToolName($userToolState)} />
-                <DigitButton digit={2} gridArea="1 / 2 / 2 / 3" toolName={getToolName($userToolState)} />
-                <DigitButton digit={3} gridArea="1 / 3 / 2 / 4" toolName={getToolName($userToolState)} />
+                <DigitButton digit={1} gridArea="1 / 1 / 2 / 2" toolName={userToolStateName} />
+                <DigitButton digit={2} gridArea="1 / 2 / 2 / 3" toolName={userToolStateName} />
+                <DigitButton digit={3} gridArea="1 / 3 / 2 / 4" toolName={userToolStateName} />
 
-                <DigitButton digit={4} gridArea="2 / 1 / 3 / 2" toolName={getToolName($userToolState)} />
-                <DigitButton digit={5} gridArea="2 / 2 / 3 / 3" toolName={getToolName($userToolState)} />
-                <DigitButton digit={6} gridArea="2 / 3 / 3 / 4" toolName={getToolName($userToolState)} />
+                <DigitButton digit={4} gridArea="2 / 1 / 3 / 2" toolName={userToolStateName} />
+                <DigitButton digit={5} gridArea="2 / 2 / 3 / 3" toolName={userToolStateName} />
+                <DigitButton digit={6} gridArea="2 / 3 / 3 / 4" toolName={userToolStateName} />
 
-                <DigitButton digit={7} gridArea="3 / 1 / 4 / 2" toolName={getToolName($userToolState)} />
-                <DigitButton digit={8} gridArea="3 / 2 / 4 / 3" toolName={getToolName($userToolState)} />
-                <DigitButton digit={9} gridArea="3 / 3 / 4 / 4" toolName={getToolName($userToolState)} />
+                <DigitButton digit={7} gridArea="3 / 1 / 4 / 2" toolName={userToolStateName} />
+                <DigitButton digit={8} gridArea="3 / 2 / 4 / 3" toolName={userToolStateName} />
+                <DigitButton digit={9} gridArea="3 / 3 / 4 / 4" toolName={userToolStateName} />
 
-                <DigitButton digit={0} gridArea="4 / 1 / 5 / 2" toolName={getToolName($userToolState)} />
+                <DigitButton digit={0} gridArea="4 / 1 / 5 / 2" toolName={userToolStateName} />
                 <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 2 / 5 / 4" value="Delete" title="Delete [del or backspace]"
                     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined} aria-label="Delete">
                     <span class="icon icon-inline icon-c-textinv icon-delete" />
