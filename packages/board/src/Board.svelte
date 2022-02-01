@@ -254,10 +254,13 @@
         }
 
         boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
+            const type = oldVal?.type || newVal?.type;
+
+            // Element has been deleted via undo/redo
+            if (null == type) return;
+
             let i = -1;
             if (null != oldVal) {
-                if (null == ELEMENT_RENDERERS[oldVal.type]) return;
-
                 i = list.findIndex(({ id }) => elementId === id);
                 if (0 > i) {
                     console.error(`Failed to find renderer for constraint with id ${elementId}.`);
@@ -265,20 +268,22 @@
                 }
             }
 
-            if (null == newVal) {
+            // newVal is null when deleting manually
+            // newVal.type is null when deleting via undo/redo
+            if (null == newVal || null == newVal.type) {
                 // Deleted.
                 list.splice(i, 1);
             }
             else {
-                const element = ELEMENT_RENDERERS[newVal.type];
+                const element = ELEMENT_RENDERERS[type];
                 if (null == element) {
-                    console.warn(`Cannot render unknown constraint type: ${newVal.type}.`);
+                    console.warn(`Cannot render unknown constraint type: ${type}.`);
                     return;
                 }
 
                 const item = {
                     id: elementId,
-                    type: newVal.type,
+                    type,
                     order: newVal.order,
                     ref: boardState.ref(_elements, elementId, 'value'),
                     element,

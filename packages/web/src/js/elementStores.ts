@@ -65,7 +65,10 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
     const list: ElementHandlerList = [];
 
     boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
-        const type = oldVal?.type || newVal!.type;
+        const type = oldVal?.type || newVal?.type;
+
+        // Element has been deleted via undo/redo
+        if (null == type) return;
 
         const elementInfo = ELEMENT_HANDLERS[type];
         if (null == elementInfo) {
@@ -82,7 +85,9 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
             }
         }
 
-        if (null == newVal) {
+        // newVal is null when deleting manually
+        // newVal.type is null when deleting via undo/redo
+        if (null == newVal || null == newVal.type) {
             // Deleted.
             list.splice(i, 1);
         }
