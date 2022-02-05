@@ -196,13 +196,10 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         const idx = cellCoord2CellIdx(coord, grid);
 
         let arrowIdToDelete: null | string = null;
-        for (const [ arrowId, { bulb, body } ] of Object.entries(stateRef.get<schema.ArrowElement['value']>() || {})) {
-            if (arrayObj2array(body || {}).includes(idx)) {
-                arrowIdToDelete = arrowId;
-                break; // Prioritize body over bulb for deleting.
-            }
+        for (const [ arrowId, { bulb } ] of Object.entries(stateRef.get<schema.ArrowElement['value']>() || {})) {
             if (arrayObj2array(bulb || {}).includes(idx)) {
                 arrowIdToDelete = arrowId;
+                break;
             }
         }
         if (null != arrowIdToDelete) {
