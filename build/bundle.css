@@ -1182,6 +1182,48 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
     margin: 1em 0 0 0;
   }
 }
+.search-input-container.svelte-13xysja {
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
+  border-color: #637691;
+  display: flex;
+  align-items: baseline;
+}
+
+.search-input.svelte-13xysja {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0 0 0 0.5em;
+  padding: 0;
+  border: 0;
+  outline: none;
+  display: inline-block;
+  flex: 1;
+}
+
+.search-results.svelte-13xysja {
+  height: 75vh;
+  overflow: auto;
+}
+
+.result-item.svelte-13xysja {
+  width: 100%;
+  margin: 0.25em 0 0 0;
+  padding: 0.25em;
+  text-align: inherit;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
+}
+
+.result-item.svelte-13xysja:hover, .result-item.svelte-13xysja:focus-visible {
+  border-color: #637691;
+}
+
 .section-title.svelte-v1vuhq.svelte-v1vuhq.svelte-v1vuhq {
   font-weight: 800;
   display: inline-block;
@@ -1267,49 +1309,7 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   margin-bottom: 0.5em;
 }
 
-.search-input-container.svelte-13xysja {
-  padding: 0.5em;
-  margin-bottom: 0.5em;
-  border-radius: 0.3rem;
-  border: 0.1rem solid transparent;
-  transition: border-color 0.1s linear;
-  border-color: #637691;
-  display: flex;
-  align-items: baseline;
-}
-
-.search-input.svelte-13xysja {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  margin: 0 0 0 0.5em;
-  padding: 0;
-  border: 0;
-  outline: none;
-  display: inline-block;
-  flex: 1;
-}
-
-.search-results.svelte-13xysja {
-  height: 75vh;
-  overflow: auto;
-}
-
-.result-item.svelte-13xysja {
-  width: 100%;
-  margin: 0.25em 0 0 0;
-  padding: 0.25em;
-  text-align: inherit;
-  border-radius: 0.3rem;
-  border: 0.1rem solid transparent;
-  transition: border-color 0.1s linear;
-}
-
-.result-item.svelte-13xysja:hover, .result-item.svelte-13xysja:focus-visible {
-  border-color: #637691;
-}
-
-.padbutton.svelte-hmnhaq.svelte-hmnhaq.svelte-hmnhaq {
+.padbutton.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -1331,34 +1331,33 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   font-weight: 800;
   color: #fff;
   border-radius: 0.2em;
-  border: 0.06em solid #637691;
   background-color: #637691;
 }
 
-.padbutton.svelte-hmnhaq.svelte-hmnhaq.svelte-hmnhaq::before, .padbutton.svelte-hmnhaq.svelte-hmnhaq.svelte-hmnhaq::after {
+.padbutton.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp::before, .padbutton.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp::after {
   background-color: #fff;
   background-color: var(--mdc-ripple-color, #fff);
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-hmnhaq.svelte-hmnhaq.svelte-hmnhaq {
+  .padbutton.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp {
     font-size: 5vw;
   }
 }
-.mode-pad.svelte-hmnhaq > .svelte-hmnhaq.svelte-hmnhaq {
+.mode-pad.svelte-1hvlbtp > .svelte-1hvlbtp.svelte-1hvlbtp {
   position: relative;
   height: 0;
   padding-bottom: 100%;
 }
 
-.mode-pad.svelte-hmnhaq > * .radio-mode-button.svelte-hmnhaq.svelte-hmnhaq {
+.mode-pad.svelte-1hvlbtp > * .radio-mode-button.svelte-1hvlbtp.svelte-1hvlbtp {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   border-radius: 0.2em;
 }
 
-.mode-pad.svelte-hmnhaq > * .radio-mode-button.svelte-hmnhaq.svelte-hmnhaq, .mode-pad.svelte-hmnhaq > * .padbutton.padbutton-mode.svelte-hmnhaq.svelte-hmnhaq {
+.mode-pad.svelte-1hvlbtp > * .radio-mode-button.svelte-1hvlbtp.svelte-1hvlbtp, .mode-pad.svelte-1hvlbtp > * .padbutton.padbutton-mode.svelte-1hvlbtp.svelte-1hvlbtp {
   position: absolute;
   top: 0;
   left: 0;
@@ -1369,33 +1368,37 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   align-items: center;
 }
 
-.padbutton-mode.svelte-hmnhaq.svelte-hmnhaq.svelte-hmnhaq:not(.radio-mode-button:checked ~ *) {
+.mode-pad.svelte-1hvlbtp > * .padbutton.padbutton-mode.svelte-1hvlbtp.svelte-1hvlbtp {
+  border: 0.06em solid #637691;
+}
+
+.padbutton-mode.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp:not(.radio-mode-button:checked ~ *) {
   color: #637691;
   background-color: #fff;
 }
 
-.padbutton-mode.svelte-hmnhaq.svelte-hmnhaq.svelte-hmnhaq:not(.radio-mode-button:checked ~ *)::before, .padbutton-mode.svelte-hmnhaq.svelte-hmnhaq.svelte-hmnhaq:not(.radio-mode-button:checked ~ *)::after {
+.padbutton-mode.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp:not(.radio-mode-button:checked ~ *)::before, .padbutton-mode.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp:not(.radio-mode-button:checked ~ *)::after {
   background-color: #000;
   background-color: var(--mdc-ripple-color, #000);
 }
 
-.padbutton-mode.svelte-hmnhaq:not(.radio-mode-button:checked ~ *) .icon.svelte-hmnhaq.svelte-hmnhaq {
+.padbutton-mode.svelte-1hvlbtp:not(.radio-mode-button:checked ~ *) .icon.svelte-1hvlbtp.svelte-1hvlbtp {
   background-color: #637691;
 }
 
-.container.svelte-hmnhaq.svelte-hmnhaq.svelte-hmnhaq {
+.container.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp {
   display: flex;
   justify-content: space-between;
 }
 
-.container.svelte-hmnhaq .mode-pad-container.svelte-hmnhaq.svelte-hmnhaq {
+.container.svelte-1hvlbtp .mode-pad-container.svelte-1hvlbtp.svelte-1hvlbtp {
   width: 22.2222222222%;
   height: 0;
   padding-bottom: 103.7037037037%;
   position: relative;
 }
 
-.container.svelte-hmnhaq .mode-pad-container .mode-pad.svelte-hmnhaq.svelte-hmnhaq {
+.container.svelte-1hvlbtp .mode-pad-container .mode-pad.svelte-1hvlbtp.svelte-1hvlbtp {
   position: absolute;
   top: 0;
   left: 0;
@@ -1407,14 +1410,14 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   justify-content: space-between;
 }
 
-.container.svelte-hmnhaq .right-container.svelte-hmnhaq.svelte-hmnhaq {
+.container.svelte-1hvlbtp .right-container.svelte-1hvlbtp.svelte-1hvlbtp {
   width: 66.6666666667%;
   height: 0;
   padding-bottom: 106.6666666667%;
   position: relative;
 }
 
-.container.svelte-hmnhaq .right-container .right.svelte-hmnhaq.svelte-hmnhaq {
+.container.svelte-1hvlbtp .right-container .right.svelte-1hvlbtp.svelte-1hvlbtp {
   position: absolute;
   top: 0;
   left: 0;
@@ -1425,7 +1428,7 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   justify-content: space-between;
 }
 
-.container.svelte-hmnhaq .right-container .right .num-pad.svelte-hmnhaq.svelte-hmnhaq {
+.container.svelte-1hvlbtp .right-container .right .num-pad.svelte-1hvlbtp.svelte-1hvlbtp {
   width: 100%;
   height: 82%;
   display: grid;
@@ -1435,25 +1438,25 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   row-gap: 3.703703703%;
 }
 
-.container.svelte-hmnhaq .right-container .right .num-pad.svelte-hmnhaq > .svelte-hmnhaq {
+.container.svelte-1hvlbtp .right-container .right .num-pad.svelte-1hvlbtp > .svelte-1hvlbtp {
   line-height: 100%;
 }
 
-.container.svelte-hmnhaq .right-container .right .ctrl-pad.svelte-hmnhaq.svelte-hmnhaq {
+.container.svelte-1hvlbtp .right-container .right .ctrl-pad.svelte-1hvlbtp.svelte-1hvlbtp {
   height: 15.2%;
   font-size: 80%;
   display: flex;
 }
 
-.container.svelte-hmnhaq .right-container .right .ctrl-pad.svelte-hmnhaq > .svelte-hmnhaq {
+.container.svelte-1hvlbtp .right-container .right .ctrl-pad.svelte-1hvlbtp > .svelte-1hvlbtp {
   margin-right: 3.5%;
 }
 
-.container.svelte-hmnhaq .right-container .right .ctrl-pad.svelte-hmnhaq > .svelte-hmnhaq:last-child {
+.container.svelte-1hvlbtp .right-container .right .ctrl-pad.svelte-1hvlbtp > .svelte-1hvlbtp:last-child {
   margin-right: 0;
 }
 
-.container.svelte-hmnhaq .right-container .right .ctrl-pad.svelte-hmnhaq > .svelte-hmnhaq {
+.container.svelte-1hvlbtp .right-container .right .ctrl-pad.svelte-1hvlbtp > .svelte-1hvlbtp {
   width: 24.444%;
 }
 
@@ -1488,12 +1491,7 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   border-radius: 0.3rem;
 }
 
-line.svelte-1qd4hgf {
-  stroke: rgba(0, 0, 0, 0.2);
-  stroke-width: 0.02;
-}
-
-.padbutton.svelte-1kjemkx.svelte-1kjemkx {
+.padbutton.svelte-14edasu.svelte-14edasu {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -1515,44 +1513,48 @@ line.svelte-1qd4hgf {
   font-weight: 800;
   color: #fff;
   border-radius: 0.2em;
-  border: 0.06em solid #637691;
   background-color: #637691;
 }
 
-.padbutton.svelte-1kjemkx.svelte-1kjemkx::before, .padbutton.svelte-1kjemkx.svelte-1kjemkx::after {
+.padbutton.svelte-14edasu.svelte-14edasu::before, .padbutton.svelte-14edasu.svelte-14edasu::after {
   background-color: #fff;
   background-color: var(--mdc-ripple-color, #fff);
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .padbutton.svelte-1kjemkx.svelte-1kjemkx {
+  .padbutton.svelte-14edasu.svelte-14edasu {
     font-size: 5vw;
   }
 }
-.padbutton.center.svelte-1kjemkx .pad-text.svelte-1kjemkx {
+.padbutton.center.svelte-14edasu .pad-text.svelte-14edasu {
   font-size: 60%;
 }
 
-.padbutton.corner.svelte-1kjemkx .pad-text.svelte-1kjemkx {
+.padbutton.corner.svelte-14edasu .pad-text.svelte-14edasu {
   font-size: 60%;
   position: absolute;
   top: 0;
   left: 8%;
 }
 
-.padbutton.colors.svelte-1kjemkx.svelte-1kjemkx {
+.padbutton.colors.svelte-14edasu.svelte-14edasu {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.padbutton.colors.svelte-1kjemkx .pad-text.svelte-1kjemkx {
+.padbutton.colors.svelte-14edasu .pad-text.svelte-14edasu {
   display: none;
 }
 
-.padbutton.colors.svelte-1kjemkx .pad-color.svelte-1kjemkx {
-  width: 70%;
-  height: 70%;
+.padbutton.colors.svelte-14edasu .pad-color.svelte-14edasu {
+  width: 100%;
+  height: 100%;
+}
+
+line.svelte-1qd4hgf {
+  stroke: rgba(0, 0, 0, 0.2);
+  stroke-width: 0.02;
 }
 
 .constraint-checkbox.svelte-1ns67sk {
