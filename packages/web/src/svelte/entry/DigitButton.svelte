@@ -2,13 +2,27 @@
     import { colorsList } from "../../js/element/digit";
     import { currentInputHandler } from "../../js/elementStores";
 
+    import { MDCRipple } from "@material/ripple";
+
     export let digit: number;
     export let gridArea: string;
     export let toolName: string;
+
+    $: {
+        // Re-attach ripple when button is recreated
+        // Add a delay to allow button element to be found
+        setTimeout(() => {
+            const element = document.getElementsByClassName(`digit-button-${digit} ${toolName}`)[0];
+            if (null != element) {
+                MDCRipple.attachTo(element);
+            }
+        }, 0);
+    }
+    
 </script>
 
 <button
-    class={`mdc-ripple-surface padbutton ${toolName}`}
+    class={`mdc-ripple-surface padbutton digit-button-${digit} ${toolName}`}
     style={`grid-area: ${gridArea}`}
     value={digit}
     title={`[${digit}]`}
