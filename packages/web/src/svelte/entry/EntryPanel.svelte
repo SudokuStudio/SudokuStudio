@@ -18,9 +18,27 @@
     onDestroy(() => window.removeEventListener('resize', onResize));
     requestAnimationFrame(onResize); // Run on load.
 
+    function updateWindowTitle() {
+        const puzzleTitle = title.get<string>();
+        const puzzleAuthor = author.get<string>();
+        let windowTitle: string;
+
+        if (puzzleTitle && puzzleAuthor) {
+            windowTitle = `${puzzleTitle} by ${puzzleAuthor}`;
+        } else if (puzzleTitle) {
+            windowTitle = puzzleTitle;
+        } else {
+            windowTitle = 'Sudoku Studio';
+        }
+
+        document.title = windowTitle;
+    }
+
     const title = boardState.ref('meta', 'title');
     const author = boardState.ref('meta', 'author');
     const description = boardState.ref('meta', 'description');
+
+    updateWindowTitle();
 </script>
 
 <div class="entry-column">
@@ -28,8 +46,8 @@
         <ButtonPad />
     </div>
     <div class="entry-info">
-        <input class="info-input title"  type="text" placeholder="Classic Sudoku" bind:value={$title} />
-        <input class="info-input setter" type="text" placeholder="Anonymous" bind:value={$author} />
+        <input class="info-input title"  type="text" placeholder="Classic Sudoku" bind:value={$title} on:change={updateWindowTitle} />
+        <input class="info-input setter" type="text" placeholder="Anonymous" bind:value={$author} on:change={updateWindowTitle} />
         <textarea class="rules-text" placeholder="Normal sudoku rules apply." spellcheck="false" bind:value={$description} on:focus={setSpellcheck} on:blur={setSpellcheck}></textarea>
     </div>
 </div>
