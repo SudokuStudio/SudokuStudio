@@ -169,6 +169,9 @@
             justify-content: center;
             align-items: center;
         }
+        .padbutton.padbutton-mode {
+            border: 0.06em solid vars.$color-clickable;
+        }
     }
     .padbutton-mode:not(.radio-mode-button:checked ~ *) {
         @include ripple.states-base-color(#000);

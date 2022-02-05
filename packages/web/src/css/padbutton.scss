@@ -30,7 +30,6 @@
     color: #fff;
 
     border-radius: vars.$padbutton-border-radius;
-    border: 0.06em solid vars.$color-clickable;
     background-color: vars.$color-clickable;
 
     @include vars.breakpoint-mobile {
