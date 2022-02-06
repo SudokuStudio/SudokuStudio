@@ -1,7 +1,7 @@
 import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils";
-import type { Geometry, Grid, Idx, IdxBitset, schema } from "@sudoku-studio/schema";
+import type { Geometry, Grid, Idx, IdxBitset } from "@sudoku-studio/schema";
 import type { StateRef, Update } from "@sudoku-studio/state-manager";
-import { boardState, getDigits } from "../board";
+import { boardState, getCellValue, getDigits } from "../board";
 import { pushHistory } from "../history";
 import { MARK_TYPES, userToolState, userSelectState, userState, userPrevToolState, userCursorIsShownState, userCursorIndexState, getUserToolStateName } from "../user";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "./adjacentCellPointerHandler";
@@ -304,17 +304,6 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         userSelectState.ref(`${idx}`).replace(Mode.SELECTING === mode || null);
     }
 
-    function getCellValue(markType: string, cellIndex: Idx<Geometry.CELL>): number | object | null {
-        const elements = boardState.get<schema.Board['elements']>('elements');
-        const elementKey = Object.keys(elements!).find((elementKey) => markType === elements![elementKey].type);
-
-        if (null == elementKey) {
-            return null;
-        }
-
-        return boardState.get('elements', elementKey, 'value', `${cellIndex}`);
-    }
-
     type CellMarks = {
         filled: number | null,
         colors: string[] | null,
@@ -331,10 +320,10 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         };
 
         for (const type of MARK_TYPES) {
-            const cellValue = getCellValue(type, cellIndex);
+            const cellValue = getCellValue(type, cellIndex) as number | object | null;
 
             if ('filled' === type) {
-                const givenValue = getCellValue('givens', cellIndex);
+                const givenValue = getCellValue('givens', cellIndex) as number | null;
 
                 if (null != givenValue) {
                     cellMarks.filled = givenValue as number;
