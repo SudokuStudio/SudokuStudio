@@ -1,5 +1,6 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { Diff, StateRef } from "@sudoku-studio/state-manager";
+import { getCellValue } from "../board";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
 import { cellCoord2CellIdx, getBorderCellPairs, idxMapToKeysArray } from "@sudoku-studio/board-utils";
@@ -9,7 +10,9 @@ import type { ElementInfo } from "./element";
 import { markDigitsFailingCondition } from "@sudoku-studio/board-utils";
 
 export const minInfo: ElementInfo = {
-    getInputHandler,
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, 'max');
+    },
     order: 20,
     inGlobalMenu: false,
     menu: {
@@ -37,7 +40,9 @@ export const minInfo: ElementInfo = {
 };
 
 export const maxInfo: ElementInfo = {
-    getInputHandler,
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, 'min');
+    },
     order: 21,
     inGlobalMenu: false,
     menu: {
@@ -65,7 +70,9 @@ export const maxInfo: ElementInfo = {
 };
 
 export const evenInfo: ElementInfo = {
-    getInputHandler,
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, 'odd');
+    },
     order: 40,
     inGlobalMenu: false,
     menu: {
@@ -85,7 +92,9 @@ export const evenInfo: ElementInfo = {
 };
 
 export const oddInfo: ElementInfo = {
-    getInputHandler,
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, 'even');
+    },
     order: 41,
     inGlobalMenu: false,
     menu: {
@@ -104,7 +113,7 @@ export const oddInfo: ElementInfo = {
     },
 };
 
-function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, oppositeConstraint: string): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
     enum Mode {
@@ -127,6 +136,12 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
             // If the first cell already has the constraint, set mode to removing
             // Otherwise, set mode to adding
             mode = stateRef.ref(`${idx}`).get<true>() ? Mode.REMOVING : Mode.ADDING;
+        }
+
+        const oppositeConstraintValue = getCellValue(oppositeConstraint, idx);
+        if (oppositeConstraintValue) {
+            // Cannot place constraint if the opposite constraint is already in the cell
+            return;
         }
 
         const stateValue = mode === Mode.ADDING ? true : null;
