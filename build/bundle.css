@@ -1,4 +1,4 @@
-header.svelte-di5g0b.svelte-di5g0b.svelte-di5g0b {
+header.svelte-1e5l1it.svelte-1e5l1it.svelte-1e5l1it {
   font-size: 0.8rem;
   flex: 0 0 auto;
   flex-direction: column;
@@ -7,22 +7,22 @@ header.svelte-di5g0b.svelte-di5g0b.svelte-di5g0b {
   height: 2.5rem;
 }
 
-main.svelte-di5g0b.svelte-di5g0b.svelte-di5g0b {
+main.svelte-1e5l1it.svelte-1e5l1it.svelte-1e5l1it {
   flex: 1 1 auto;
   display: flex;
 }
 
-main.svelte-di5g0b > .content.svelte-di5g0b.svelte-di5g0b {
+main.svelte-1e5l1it > .content.svelte-1e5l1it.svelte-1e5l1it {
   flex: 1;
 }
 
-main.svelte-di5g0b .left-panel.svelte-di5g0b.svelte-di5g0b, main.svelte-di5g0b .right-panel.svelte-di5g0b.svelte-di5g0b {
+main.svelte-1e5l1it .left-panel.svelte-1e5l1it.svelte-1e5l1it, main.svelte-1e5l1it .right-panel.svelte-1e5l1it.svelte-1e5l1it {
   flex: 1 1 100%;
   overflow: visible auto;
   height: calc(100vh - 4rem);
 }
 
-main.svelte-di5g0b .center-panel.svelte-di5g0b.svelte-di5g0b {
+main.svelte-1e5l1it .center-panel.svelte-1e5l1it.svelte-1e5l1it {
   flex: 0 0 auto;
   width: min(calc(70vw - 20em), calc(100vh - 4rem));
   height: min(calc(70vw - 20em), calc(100vh - 4rem));
@@ -30,21 +30,23 @@ main.svelte-di5g0b .center-panel.svelte-di5g0b.svelte-di5g0b {
 }
 
 @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  main.svelte-di5g0b .content-row.svelte-di5g0b.svelte-di5g0b {
+  main.svelte-1e5l1it .content-row.svelte-1e5l1it.svelte-1e5l1it {
     flex-direction: column;
   }
 
-  main.svelte-di5g0b .center-panel.svelte-di5g0b.svelte-di5g0b {
+  main.svelte-1e5l1it .center-panel.svelte-1e5l1it.svelte-1e5l1it {
     width: min(calc(100vw - 6rem), 50vh);
     height: min(calc(100vw - 6rem), 50vh);
     align-self: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
   }
 
-  main.svelte-di5g0b .left-panel.svelte-di5g0b.svelte-di5g0b {
+  main.svelte-1e5l1it .left-panel.svelte-1e5l1it.svelte-1e5l1it {
     display: none;
   }
 }
-footer.svelte-di5g0b.svelte-di5g0b.svelte-di5g0b {
+footer.svelte-1e5l1it.svelte-1e5l1it.svelte-1e5l1it {
   flex: 0 0 auto;
   height: 1.5rem;
   line-height: 1.5rem;
@@ -52,7 +54,7 @@ footer.svelte-di5g0b.svelte-di5g0b.svelte-di5g0b {
   text-align: center;
 }
 
-footer.svelte-di5g0b .footer-text.svelte-di5g0b.svelte-di5g0b {
+footer.svelte-1e5l1it .footer-text.svelte-1e5l1it.svelte-1e5l1it {
   margin: 0 auto;
   width: 100%;
   max-width: 35em;
@@ -60,11 +62,11 @@ footer.svelte-di5g0b .footer-text.svelte-di5g0b.svelte-di5g0b {
   justify-content: space-evenly;
 }
 
-footer.svelte-di5g0b .footer-text.svelte-di5g0b > .svelte-di5g0b {
+footer.svelte-1e5l1it .footer-text.svelte-1e5l1it > .svelte-1e5l1it {
   margin-right: 2em;
 }
 
-footer.svelte-di5g0b .footer-text.svelte-di5g0b > .svelte-di5g0b:last-child {
+footer.svelte-1e5l1it .footer-text.svelte-1e5l1it > .svelte-1e5l1it:last-child {
   margin-right: 0;
 }
 
