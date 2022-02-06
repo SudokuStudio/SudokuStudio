@@ -21,16 +21,22 @@
             $currentInputHandler.blur(event);
         }
     }}
-    on:mouseup={wrapListener($currentInputHandler, 'up')}
+    on:mouseup={wrapListener($currentInputHandler, 'mouseUp')}
+    on:touchend={wrapListener($currentInputHandler, 'touchUp')}
     on:keydown={wrapListener($currentInputHandler, 'keydown')}
     on:keyup={wrapListener($currentInputHandler, 'keyup')} />
 
 <div bind:this={$boardDiv} class="overlay" tabindex="0"
     on:mousedown|capture|stopPropagation|preventDefault={event => {
         event.currentTarget.focus();
-        return $currentInputHandler && $currentInputHandler.down(event);
+        return $currentInputHandler && $currentInputHandler.mouseDown(event);
     }}
-    on:mousemove|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'move')}
+    on:touchstart|capture|stopPropagation|preventDefault={event => {
+        event.currentTarget.focus();
+        return $currentInputHandler && $currentInputHandler.touchDown(event);
+    }}
+    on:mousemove|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'mouseMove')}
+    on:touchmove|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'touchMove')}
 
     on:click|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'click')}
     on:contextmenu|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'click')}

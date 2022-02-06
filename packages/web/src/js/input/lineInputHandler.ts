@@ -101,7 +101,7 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
             userCursorIsShownState.replace(false);
         },
         unload(): void {
-            pointerHandler.up();
+            pointerHandler.mouseUp();
         },
 
         blur(_event: FocusEvent): void {
@@ -114,20 +114,29 @@ export function getLineInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGE
         padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {
         },
 
-        down(event: MouseEvent): void {
-            pointerHandler.down(event, grid, svg);
+        mouseDown(event: MouseEvent): void {
+            pointerHandler.mouseDown(event, grid, svg);
         },
-        move(event: MouseEvent): void {
-            pointerHandler.move(event, grid, svg);
+        mouseMove(event: MouseEvent): void {
+            pointerHandler.mouseMove(event, grid, svg);
         },
-        up(_event: MouseEvent): void {
-            pointerHandler.up();
+        mouseUp(_event: MouseEvent): void {
+            pointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
             pointerHandler.leave(event, grid, svg);
         },
         click(event: MouseEvent): void {
             pointerHandler.click(event, grid, svg);
+        },
+        touchDown(event: TouchEvent): void {
+            pointerHandler.touchDown(event, grid, svg);
+        },
+        touchMove(event: TouchEvent): void {
+            pointerHandler.touchMove(event, grid, svg);
+        },
+        touchUp(event: TouchEvent): void {
+            pointerHandler.touchUp(event, grid, svg);
         },
     } as const;
 }

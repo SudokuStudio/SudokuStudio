@@ -1,14 +1,16 @@
 import type { Grid, Coord, Geometry, Idx } from "@sudoku-studio/schema";
 import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
+import { getTouchPosition } from "./inputHandler";
 
 export type CellDragTapEvent = {
-    event: MouseEvent,
+    event: MouseEvent | TouchEvent,
     coord: Coord<Geometry.CELL>,
     grid: Grid,
 };
 
 export class AdjacentCellPointerHandler {
     onTap: null | ((event: CellDragTapEvent) => void) = null;
+    onDoubleTap: null | ((event: CellDragTapEvent) => void) = null;
     onDrag: null | ((event: CellDragTapEvent) => void) = null;
     onDragStart: null | ((event: CellDragTapEvent) => void) = null;
     onDragEnd: null | (() => void) = null;
@@ -19,24 +21,91 @@ export class AdjacentCellPointerHandler {
     private _prevCell: Idx<Geometry.CELL> | null = null;
     private _isDown = false;
     private _isTap: boolean = false;
+    private _lastTapTime: number = 0;
+    private _tapCount: number = 0;
 
     constructor(interpolateOnReenter: boolean) {
         this._interpolateOnReender = interpolateOnReenter;
     }
 
-    down(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
-        this._isDown = true;
-        this._isTap = true;
-        this._handle(event, grid, svg);
+    mouseDown(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
+        this._handleDown(event, event, grid, svg);
     }
 
-    move(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
-        if (this._isDown) {
-            this._handle(event, grid, svg);
+    mouseMove(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
+        this._handleMove(event, event, grid, svg);
+    }
+
+    mouseUp(): void {
+        this._handleUp();
+    }
+
+    touchDown(event: TouchEvent, grid: Grid, svg: SVGSVGElement) {
+        const touchPosition = getTouchPosition(event);
+        if (null == touchPosition) return;
+
+        this._handleDown(event, touchPosition, grid, svg);
+    }
+
+    touchMove(event: TouchEvent, grid: Grid, svg: SVGSVGElement) {
+        const touchPosition = getTouchPosition(event);
+        if (null == touchPosition) return;
+
+        this._handleMove(event, touchPosition, grid, svg);
+    }
+
+    touchUp(event: TouchEvent, grid: Grid, svg: SVGSVGElement) {
+        this._handleUp();
+
+        const touchPosition = getTouchPosition(event);
+        if (null == touchPosition) return;
+
+        const currentTime = new Date().getTime();
+        const timeSinceLastTap = currentTime - this._lastTapTime;
+        this._lastTapTime = currentTime;
+
+        // Increase the current tap count if the last tap happened within 500 ms
+        if (500 > timeSinceLastTap && 0 < timeSinceLastTap) {
+            this._tapCount += 1;
+        } else {
+            this._tapCount = 1;
+        }
+
+        if (2 === this._tapCount) {
+            this._handleDoubleClick(event, touchPosition, grid, svg);
+        } else {
+            this._handleClick(event, touchPosition, grid, svg);
         }
     }
 
-    up(): void {
+    leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
+        if (this._isDown) {
+            this._handle(event, event, grid, svg);
+        }
+    }
+
+    click(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
+        // event.detail represents the number of clicks (i.e. 2 = double click, 3 = triple click, etc.)
+        if (2 === event.detail) {
+            this._handleDoubleClick(event, event, grid, svg);
+        } else {
+            this._handleClick(event, event, grid, svg);
+        }
+    }
+
+    private _handleDown(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
+        this._isDown = true;
+        this._isTap = true;
+        this._handle(event, mousePosition, grid, svg);
+    }
+
+    private _handleMove(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
+        if (this._isDown) {
+            this._handle(event, mousePosition, grid, svg);
+        }
+    }
+
+    private _handleUp(): void {
         if (this._isDown) {
             this.onDragEnd && this.onDragEnd();
             this._prevPos = null;
@@ -45,24 +114,24 @@ export class AdjacentCellPointerHandler {
         }
     }
 
-    leave(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
-        if (this._isDown) {
-            this._handle(event, grid, svg);
-        }
-    }
-
-    // For special single-selected-cell deselect click.
-    click(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
+    private _handleClick(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
         if (this._isTap) {
-            const coord = svgCoord2cellCoord(click2svgCoord(event, svg), grid, false);
+            const coord = svgCoord2cellCoord(click2svgCoord(mousePosition, svg), grid, false);
             if (null != coord) {
                 this.onTap && this.onTap({ event, coord, grid });
             }
         }
     }
 
-    private _handle(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
-        const pos = click2svgCoord(event, svg);
+    private _handleDoubleClick(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
+        const coord = svgCoord2cellCoord(click2svgCoord(mousePosition, svg), grid, false);
+        if (null != coord) {
+            this.onDoubleTap && this.onDoubleTap({ event, coord, grid });
+        }
+    }
+
+    private _handle(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
+        const pos = click2svgCoord(mousePosition, svg);
 
         // Interpolate if mouse jumped cells within the board.
         if (null != this._prevPos && 1 < distSq(this._prevPos, pos)) {

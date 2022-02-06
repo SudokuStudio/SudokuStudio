@@ -1,7 +1,7 @@
 import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import { cellCoord2CellIdx, click2svgCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, seriesIdx2CellCoords, svgCoord2diagonalIdx, svgCoord2edgeIdx, svgCoord2seriesIdx, warnSum } from "@sudoku-studio/board-utils";
-import { InputHandler, parseDigit } from "../input/inputHandler";
+import { getTouchPosition, InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorIsShownState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
@@ -314,6 +314,21 @@ function getInputHandler<TAG extends Geometry>(ref: StateRef, grid: Grid, svg: S
         return true;
     }
 
+    function handleClick(mousePosition: { offsetX: number, offsetY: number }) {
+        const idx = svgCoord2idx(click2svgCoord(mousePosition, svg), grid);
+        if (null == idx) return;
+        const clickedIdxRef = ref.ref(`${idx}`);
+
+        if (true === clickedIdxRef.get()) {
+            // Delete empty.
+            clickedIdxRef.replace(null);
+            return;
+        }
+        // Otherwise clear or create new.
+        idxRef = clickedIdxRef;
+        onDigitInput('Delete');
+    }
+
     return {
         load(): void {
             // TODO: not really that great of a way of doing this.
@@ -341,27 +356,26 @@ function getInputHandler<TAG extends Geometry>(ref: StateRef, grid: Grid, svg: S
             }
         },
 
-        down(_event: MouseEvent): void {
+        mouseDown(_event: MouseEvent): void {
         },
-        move(_event: MouseEvent): void {
+        mouseMove(_event: MouseEvent): void {
         },
-        up(_event: MouseEvent): void {
+        mouseUp(_event: MouseEvent): void {
         },
         leave(_event: MouseEvent): void {
         },
         click(event: MouseEvent): void {
-            const idx = svgCoord2idx(click2svgCoord(event, svg), grid);
-            if (null == idx) return;
-            const clickedIdxRef = ref.ref(`${idx}`);
+            handleClick(event);
+        },
+        touchDown(event: TouchEvent): void {
+            const touchPosition = getTouchPosition(event);
+            if (null == touchPosition) return;
 
-            if (true === clickedIdxRef.get()) {
-                // Delete empty.
-                clickedIdxRef.replace(null);
-                return;
-            }
-            // Otherwise clear or create new.
-            idxRef = clickedIdxRef;
-            onDigitInput('Delete');
+            handleClick(touchPosition);
+        },
+        touchMove(_event: TouchEvent): void {
+        },
+        touchUp(_event: TouchEvent): void {
         },
     }
 }

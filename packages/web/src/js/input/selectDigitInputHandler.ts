@@ -203,7 +203,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         load(): void {
         },
         unload(): void {
-            selectPointerHandler.up();
+            selectPointerHandler.mouseUp();
         },
 
         blur(_event: FocusEvent): void {
@@ -229,20 +229,29 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
             onDigitInput(event.currentTarget.value);
         },
 
-        down(event: MouseEvent): void {
-            selectPointerHandler.down(event, grid, svg);
+        mouseDown(event: MouseEvent): void {
+            selectPointerHandler.mouseDown(event, grid, svg);
         },
-        move(event: MouseEvent): void {
-            selectPointerHandler.move(event, grid, svg);
+        mouseMove(event: MouseEvent): void {
+            selectPointerHandler.mouseMove(event, grid, svg);
         },
-        up(_event: MouseEvent): void {
-            selectPointerHandler.up();
+        mouseUp(_event: MouseEvent): void {
+            selectPointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
             selectPointerHandler.leave(event, grid, svg);
         },
         click(event: MouseEvent): void {
             selectPointerHandler.click(event, grid, svg);
+        },
+        touchDown(event: TouchEvent): void {
+            selectPointerHandler.touchDown(event, grid, svg);
+        },
+        touchMove(event: TouchEvent): void {
+            selectPointerHandler.touchMove(event, grid, svg);
+        },
+        touchUp(event: TouchEvent): void {
+            selectPointerHandler.touchUp(event, grid, svg);
         },
     } as const;
 }
@@ -264,7 +273,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
     // The selecting mode.
     let mode = Mode.RESETTING;
 
-    function getMode(mouseEvent: MouseEvent): Mode {
+    function getMode(mouseEvent: MouseEvent | TouchEvent): Mode {
         if (mouseEvent.shiftKey) {
             // Shift: always select.
             return Mode.SELECTING;
@@ -445,11 +454,12 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         }
         handle(event);
     };
-    selectPointerHandler.onTap = (event: CellDragTapEvent) => {
-        if (2 === event.event.detail) {
-            handleDoubleClick(event);
-        } else if (Mode.RESETTING === mode) {
+    selectPointerHandler.onTap = (_event: CellDragTapEvent) => {
+        if (Mode.RESETTING === mode) {
             userSelectState.replace({});
         }
+    };
+    selectPointerHandler.onDoubleTap = (event: CellDragTapEvent) => {
+        handleDoubleClick(event);
     };
 })();

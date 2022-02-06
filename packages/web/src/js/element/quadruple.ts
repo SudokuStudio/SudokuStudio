@@ -1,7 +1,7 @@
 import type { ArrayObj, Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
 import type { StateRef } from "@sudoku-studio/state-manager";
 import { arrayObj2array, cellCoord2CellIdx, click2svgCoord, cornerCoord2cellCoords, cornerCoord2cornerIdx, cornerIdx2cornerCoord, svgCoord2cornerCoord } from "@sudoku-studio/board-utils";
-import { InputHandler, parseDigit } from "../input/inputHandler";
+import { getTouchPosition, InputHandler, parseDigit } from "../input/inputHandler";
 import { userCursorIsShownState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
@@ -76,6 +76,27 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHa
         return true;
     }
 
+    function handleClick(mousePosition: { offsetX: number, offsetY: number }) {
+        const coord = svgCoord2cornerCoord(click2svgCoord(mousePosition, svg), grid);
+        if (null == coord) return;
+
+        const idx = cornerCoord2cornerIdx(coord, grid);
+        const clickedCornerRef = ref.ref(`${idx}`);
+
+        maxLen = 4;
+        if (coord[0] <= 0 || grid.width  <= coord[0]) maxLen *= 0.5;
+        if (coord[1] <= 0 || grid.height <= coord[1]) maxLen *= 0.5;
+
+        if (true === clickedCornerRef.get()) {
+            // Delete empty.
+            clickedCornerRef.replace(null);
+            return;
+        }
+        // Otherwise clear or create new.
+        cornerRef = clickedCornerRef;
+        onDigitInput('Delete');
+    }
+
     return {
         load(): void {
             // TODO: not really that great of a way of doing this.
@@ -103,33 +124,26 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHa
             }
         },
 
-        down(_event: MouseEvent): void {
+        mouseDown(_event: MouseEvent): void {
         },
-        move(_event: MouseEvent): void {
+        mouseMove(_event: MouseEvent): void {
         },
-        up(_event: MouseEvent): void {
+        mouseUp(_event: MouseEvent): void {
         },
         leave(_event: MouseEvent): void {
         },
         click(event: MouseEvent): void {
-            const coord = svgCoord2cornerCoord(click2svgCoord(event, svg), grid);
-            if (null == coord) return;
+            handleClick(event);
+        },
+        touchDown(event: TouchEvent): void {
+            const touchPosition = getTouchPosition(event);
+            if (null == touchPosition) return;
 
-            const idx = cornerCoord2cornerIdx(coord, grid);
-            const clickedCornerRef = ref.ref(`${idx}`);
-
-            maxLen = 4;
-            if (coord[0] <= 0 || grid.width  <= coord[0]) maxLen *= 0.5;
-            if (coord[1] <= 0 || grid.height <= coord[1]) maxLen *= 0.5;
-
-            if (true === clickedCornerRef.get()) {
-                // Delete empty.
-                clickedCornerRef.replace(null);
-                return;
-            }
-            // Otherwise clear or create new.
-            cornerRef = clickedCornerRef;
-            onDigitInput('Delete');
+            handleClick(touchPosition);
+        },
+        touchMove(_event: TouchEvent): void {
+        },
+        touchUp(_event: TouchEvent): void {
         },
     }
 }
