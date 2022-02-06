@@ -322,9 +322,6 @@
     <style>
         svg {
             font-family: "Mulish", "Muli", sans-serif;
-
-            -webkit-tap-highlight-color: transparent;
-            touch-action: none;
         }
         text {
             -webkit-user-select: none;

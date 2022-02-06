@@ -101,6 +101,9 @@ import { debounce } from "debounce";
                 width: vars.$sudoku-size-small; height: vars.$sudoku-size-small;
 
                 align-self: center;
+
+                -webkit-tap-highlight-color: transparent;
+                touch-action: none;
             }
             .left-panel {
                 display: none;
