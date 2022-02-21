@@ -44,10 +44,10 @@ export function changeHistory(redo: boolean): boolean {
 (window as any).changeHistory = changeHistory;
 
 window.addEventListener('keydown', (event: KeyboardEvent) => {
-    if ('KeyZ' === event.code && event.ctrlKey) {
+    if ('KeyZ' === event.code && (event.ctrlKey || event.metaKey)) {
         changeHistory(event.shiftKey);
     }
-    else if ('KeyY' === event.code && event.ctrlKey) {
+    else if ('KeyY' === event.code && (event.ctrlKey || event.metaKey)) {
         changeHistory(true);
     }
     else {
