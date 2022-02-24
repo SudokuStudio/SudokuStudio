@@ -20,6 +20,8 @@ Odd,parity odd even,Local Constraints > Line Constraints,Cells with a gray circl
 Palindrome,lines,Local Constraints > Line Constraints,Digits along palindromes must read the same from both ends.,
 Quadruple,,Local Constraints > Adjacency Constraints,Digits in quadruple circles must appear at least once in the 1–4 neighboring cells.,
 Ratio,black kropki dot pairs difference ratio,Local Constraints > Adjacency Constraints,"Cells separated by a black dot must have a ratio of 2, or the number given.",Difference
+Region,region box boxes,Local Constraints > Area Constraints,Digits may not repeat within bold bordered regions.,
+Region Sum Lines,region sum equal,Local Constraints > Line Constraints,"Digits along lines, within each region they pass through, must have equal sums",
 Renban,lines non-repeating,Local Constraints > Line Constraints,Digits along renban lines must be in a consecutive set in any order; digits may not repeat.,
 Sandwich,outside sums,Local Constraints > Outside Constraints,Sandwich clues outside the grid indicate the sum of the digits between the 1 and the 9 in the indicated row or column.,
 Skyscraper,outside towers,Local Constraints > Outside Constraints,Skyscraper clues outside the grid indicate the number of digits greater than all previous digits in that direction.,
