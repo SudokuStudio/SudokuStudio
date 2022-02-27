@@ -25,5 +25,14 @@ export const SatSolver: Solver = {
             .solveAsync(board, maxSolutions, Comlink.proxy(onSolutionFoundOrComplete));
 
         return () => taskIdPromise.then(getSolverWorker().cancel);
+    },
+
+    solveTrueCandidates(board: schema.Board,
+        onComplete: (solution: null | IdxMap<Geometry.CELL, Array<number>>) => void): () => Promise<boolean>
+    {
+        const taskIdPromise = getSolverWorker()
+            .solveTrueCandidatesAsync(board, Comlink.proxy(onComplete));
+
+        return () => taskIdPromise.then(getSolverWorker().cancel);
     }
 };

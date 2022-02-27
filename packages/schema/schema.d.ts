@@ -204,6 +204,10 @@ export declare namespace schema {
 
 export interface Solver {
     cantAttempt(board: schema.Board): Promise<null | string>;
+
     solve(board: schema.Board, maxSolutions: number,
         onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): () => Promise<boolean>;
+
+    solveTrueCandidates(board: schema.Board,
+        onComplete: (candidates: null | IdxMap<Geometry.CELL, Array<number>>) => void): () => Promise<boolean>;
 }
