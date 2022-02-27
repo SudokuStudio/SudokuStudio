@@ -1,6 +1,6 @@
 <script lang="ts">
     import { debounce } from "debounce";
-    import type { schema } from "@sudoku-studio/schema";
+    import type { schema, Geometry, IdxMap } from "@sudoku-studio/schema";
     import { boardState } from "../../../js/board";
     import { SatSolver } from "../../../js/solver/satSolver";
     import { solutionToString } from "@sudoku-studio/board-utils";
@@ -11,6 +11,11 @@
     let solutions: null | number = null;
     let running = false;
     let cancelFn: null | (() => Promise<boolean>) = null;
+
+    let trueCandidates = false;
+    let trueCandidatesResult: IdxMap<Geometry.CELL, Array<number>> = {};
+    let runningTC = false;
+    let cancelTCFn: null | (() => Promise<boolean>) = null;
 
     let message: string = 'Solutions: ?';
 
@@ -26,11 +31,27 @@
         }
     }
 
+    async function trueCandidatesToggled() {
+        const success = await cancelRunTrueCandidates();
+        // The change handler happens before the value has toggled.
+        if (!trueCandidates) {
+            if (success) {
+                await runTrueCandidates();
+            }
+        }
+    }
+
     boardState.watch(debounce(async (_path, _oldData, _newData) => {
         if (autoRun) {
             const success = await cancelRun();
             if (success) {
                 await run();
+            }
+        }
+        if (trueCandidates) {
+            const success = await cancelRunTrueCandidates();
+            if (success) {
+                await runTrueCandidates();
             }
         }
     }, 500), true, 'elements/*');
@@ -82,11 +103,56 @@
             }
         });
     }
+
+    async function cancelRunTrueCandidates(): Promise<boolean> {
+        if (!runningTC || null == cancelTCFn)
+            return true;
+
+        const success = await cancelTCFn();
+        if (success) {
+            runningTC = false;
+            cancelFn = null;
+        }
+        return success;
+    }
+
+    async function runTrueCandidates(): Promise<void> {
+        if (runningTC) return;
+
+        const board = boardState.get<schema.Board>()!;
+        const cantAttempt = await SatSolver.cantAttempt(board);
+        if (cantAttempt) {
+            message = 'Cannot solve: ' + cantAttempt;
+            runningTC = false;
+            return;
+        }
+
+        const START = Date.now();
+        runningTC = true;
+
+        cancelTCFn = SatSolver.solveTrueCandidates(board, candidates => {
+            if (null == trueCandidatesResult) {
+                console.warn('candidates null');
+                return;
+            }
+
+            const timeStr = `${Date.now() - START} ms`;
+            if (null !== candidates) {
+                console.log(`[${timeStr}] Candidates: `, candidates);
+            }
+            runningTC = false;
+            cancelTCFn = null;
+        });
+    }
 </script>
 
 <div class="solver-row-container">
     <div class="solver-row">
-        {running ? 'Running...' : 'Idle'}
+        {running || runningTC ? 'Running...' : 'Idle'}
+    </div>
+    <div class="solver-row">
+        <input id="sat-solver-truecandidates" type="checkbox" name="truecandidates" on:change={trueCandidatesToggled} bind:checked={trueCandidates} />
+        <label for="sat-solver-truecandidates">True Candidates</label>
     </div>
     <div class="solver-row">
         <input id="sat-solver-autorun" type="checkbox" name="autorun" bind:checked={autoRun} />

@@ -128,6 +128,123 @@ export async function solve(board: schema.Board, maxSolutions: number,
     }
 }
 
+export async function solveTrueCandidates(board: schema.Board,
+    onComplete: (candidates: null | IdxMap<Geometry.CELL, Array<number>>) => void,
+    cancellationToken: CancellationToken = {}): Promise<boolean>
+{
+    const pbLib = await pbLibPromise;
+
+    const size = board.grid.width;
+    const context: Context = {
+        clauses: [],
+        size,
+        grid: board.grid,
+        getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
+        pbLib,
+    }
+
+    const numBaseVars = Math.pow(context.size, 3);
+    let numLits = numBaseVars;
+
+    // Create a boolean array tracking which cells have givens
+    const givens: IdxMap<Geometry.CELL, number> = {};
+    for (const element of Object.values(board.elements)) {
+        if (cancellationToken.cancelled) return false;
+        if (element.type === 'filled') continue;
+        if (element.type === 'givens') {
+            for (const [ cellIdx, value1 ] of Object.entries(element.value || {})) {
+                givens[cellIdx] = value1!;
+            }
+        }
+
+        const handler: null | ((numLits: number, element: schema.Element, context: Context) => number) =
+            ELEMENT_HANDLERS[element.type as keyof typeof ELEMENT_HANDLERS] as any;
+        if (undefined === handler) console.warn(`Ignoring constraint: ${element.type}`);
+        if (null != handler) {
+            numLits = handler(numLits, element, context);
+        }
+    }
+
+    const neededCandidates: Array<Array<number>> = [];
+    const validCandidates: IdxMap<Geometry.CELL, Array<number>> = {};
+    for (let cellIdx = 0; cellIdx < size * size; cellIdx++) {
+        if (givens[cellIdx] === undefined) {
+            neededCandidates.push(Array.from({ length: size }, (_, v) => v + 1));
+        } else {
+            neededCandidates.push([]);
+        }
+        validCandidates[cellIdx] = [];
+    }
+
+    // TODO: Remove obviously invalid candidates
+
+    // Create solver instance.
+    const sat = await cryptoMiniSatPromise;
+
+    console.log(`Running SAT Solver: ${numLits} vars (${numBaseVars} base), ${context.clauses.length} clauses.`);
+
+    for (let testCellIdx = 0; testCellIdx < size * size; testCellIdx++) {
+        if (cancellationToken.cancelled) return false;
+        if (givens[testCellIdx] !== undefined) continue;
+
+        for (let testValue = 1; testValue <= size; testValue++) {
+            if (!neededCandidates[testCellIdx].includes(testValue)) continue;
+            if (validCandidates[testCellIdx]?.includes(testValue)) continue;
+
+            const satSolverPtr = sat.cmsat_new();
+            try {
+                sat.cmsat_new_vars(satSolverPtr, numLits);
+        
+                // Add clauses.
+                for (const clause of context.clauses) {
+                    sat.cmsat_add_clause(satSolverPtr, clause.map(literalToCms));
+                }
+
+                // Add additional clause for the value being tested
+                {
+                    const [ x, y ] = cellIdx2cellCoord(testCellIdx, context.grid);
+                    const literal = context.getLiteral(y, x, testValue - 1);
+                    sat.cmsat_add_clause(satSolverPtr, [ literalToCms(literal) ]);
+                }
+
+                let status = sat.cmsat_simplify(satSolverPtr);
+                do {
+                    await asyncYield();
+                    if (cancellationToken.cancelled) return false;
+
+                    sat.cmsat_set_max_time(satSolverPtr, 0.1);
+                    status = sat.cmsat_solve(satSolverPtr);
+                } while (lbool.UNDEF === status);
+
+                if (lbool.FALSE !== status) {
+                    // SOLVED!
+                    const model = sat.cmsat_get_model(satSolverPtr);
+                    for (const [ y, x, v ] of product(size, size, size)) {
+                        const literal = context.getLiteral(y, x, v);
+                        const litVal = model[literal - 1];
+                        if (lbool.TRUE === litVal) {
+                            const cellIdx = cellCoord2CellIdx([ x, y ], context.grid);
+
+                            // Update valid candidates.
+                            const value = v + 1;
+                            if (!validCandidates[cellIdx]?.includes(value)) {
+                                validCandidates[cellIdx]?.push(value);
+                            }
+                        }
+                    }
+                }
+            }
+            finally {
+                sat.cmsat_free(satSolverPtr);
+            }
+        }
+    }
+
+    // Complete.
+    onComplete(validCandidates);
+    return true;
+}
+
 export const ELEMENT_HANDLERS = {
     corner: null,
     center: null,
