@@ -2,7 +2,9 @@
     import { debounce } from "debounce";
     import type { schema, Geometry, IdxMap } from "@sudoku-studio/schema";
     import { boardState, getTypeForElementKey, setCellValue } from "../../../js/board";
+    import { Diff } from "@sudoku-studio/state-manager";
     import { MARK_TYPES } from "../../../js/user";
+    import { pushHistoryList } from "../../../js/history";
     import { SatSolver } from "../../../js/solver/satSolver";
     import { solutionToString } from "@sudoku-studio/board-utils";
 
@@ -143,6 +145,8 @@
             }
 
             if (null != candidates) {
+                let diffList: (Diff | null)[] = [];
+
                 for (const [cellIndex, possibleDigits] of Object.entries(candidates)) {
                     if (null == possibleDigits) {
                         continue;
@@ -150,8 +154,8 @@
 
                     const cellIndexNum = Number(cellIndex);
                     if (possibleDigits.length === 1) {
-                        setCellValue('filled', cellIndexNum, possibleDigits[0]);
-                        setCellValue('center', cellIndexNum, null);
+                        diffList.push(setCellValue('filled', cellIndexNum, possibleDigits[0]));
+                        diffList.push(setCellValue('center', cellIndexNum, null));
                     } else {
                         const updatedCenterMarks = possibleDigits.reduce(
                             (accumulator: {[key: number]: boolean}, digit) => {
@@ -160,10 +164,12 @@
                             },
                             {},
                         );
-                        setCellValue('center', cellIndexNum, updatedCenterMarks);
-                        setCellValue('filled', cellIndexNum, null);
+                        diffList.push(setCellValue('center', cellIndexNum, updatedCenterMarks));
+                        diffList.push(setCellValue('filled', cellIndexNum, null));
                     }
                 }
+
+                pushHistoryList(diffList);
             }
             runningTC = false;
             cancelTCFn = null;

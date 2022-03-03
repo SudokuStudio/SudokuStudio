@@ -1,5 +1,5 @@
 import type { Geometry, Idx, IdxMap, schema } from "@sudoku-studio/schema";
-import { Data, StateManager } from '@sudoku-studio/state-manager';
+import { Data, Diff, StateManager } from '@sudoku-studio/state-manager';
 import { getDigits as getDigitsHelper } from '@sudoku-studio/board-utils';
 import { writable } from "svelte/store";
 
@@ -36,7 +36,7 @@ export function getCellValue(markType: string, cellIndex: Idx<Geometry.CELL>): D
     return boardState.get('elements', elementKey, 'value', `${cellIndex}`);
 }
 
-export function setCellValue(markType: string, cellIndex: Idx<Geometry.CELL>, newValue: Data): void {
+export function setCellValue(markType: string, cellIndex: Idx<Geometry.CELL>, newValue: Data): Diff | null {
     const elements = getElements();
     const elementKey = getElementKey(elements!, markType);
 
@@ -45,7 +45,7 @@ export function setCellValue(markType: string, cellIndex: Idx<Geometry.CELL>, ne
     }
 
     const elementRef = boardState.ref('elements', elementKey, 'value', `${cellIndex}`);
-    elementRef.replace(newValue);
+    return elementRef.replace(newValue);
 }
 
 export const warningState = (window as any).warningState = new StateManager();

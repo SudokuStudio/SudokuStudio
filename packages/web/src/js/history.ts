@@ -12,6 +12,22 @@ export function pushHistory(history: Diff | null): boolean {
     return true;
 }
 
+/// Push a list of multiple diffs as a single history element
+export function pushHistoryList(historyList: (Diff | null)[]): boolean {
+    const combinedDiff: Diff = { undo: {}, redo: {} };
+
+    for (const diff of historyList) {
+        if (diff == null) {
+            continue;
+        }
+
+        Object.assign(combinedDiff.undo, diff.undo);
+        Object.assign(combinedDiff.redo, diff.redo);
+    }
+
+    return pushHistory(combinedDiff);
+}
+
 export function changeHistory(redo: boolean): boolean {
     const historyObject = userState.get<Record<string, string>>(redo ? 'historyUndone' : 'history') || {};
     const historyTimestampKeys = Object.keys(historyObject);
