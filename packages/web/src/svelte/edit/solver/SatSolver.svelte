@@ -1,7 +1,8 @@
 <script lang="ts">
     import { debounce } from "debounce";
     import type { schema, Geometry, IdxMap } from "@sudoku-studio/schema";
-    import { boardState } from "../../../js/board";
+    import { boardState, getTypeForElementKey, setCellValue } from "../../../js/board";
+    import { MARK_TYPES } from "../../../js/user";
     import { SatSolver } from "../../../js/solver/satSolver";
     import { solutionToString } from "@sudoku-studio/board-utils";
 
@@ -41,7 +42,13 @@
         }
     }
 
-    boardState.watch(debounce(async (_path, _oldData, _newData) => {
+    boardState.watch(debounce(async (path, _oldData, _newData) => {
+        const elementType = getTypeForElementKey(path[1]);
+        if (MARK_TYPES.some(type => elementType === type)) {
+            // Do not run solver for changes to pencil marks
+            return;
+        }
+
         if (autoRun) {
             const success = await cancelRun();
             if (success) {
@@ -127,7 +134,6 @@
             return;
         }
 
-        const START = Date.now();
         runningTC = true;
 
         cancelTCFn = SatSolver.solveTrueCandidates(board, candidates => {
@@ -136,9 +142,28 @@
                 return;
             }
 
-            const timeStr = `${Date.now() - START} ms`;
-            if (null !== candidates) {
-                console.log(`[${timeStr}] Candidates: `, candidates);
+            if (null != candidates) {
+                for (const [cellIndex, possibleDigits] of Object.entries(candidates)) {
+                    if (null == possibleDigits) {
+                        continue;
+                    }
+
+                    const cellIndexNum = Number(cellIndex);
+                    if (possibleDigits.length === 1) {
+                        setCellValue('filled', cellIndexNum, possibleDigits[0]);
+                        setCellValue('center', cellIndexNum, null);
+                    } else {
+                        const updatedCenterMarks = possibleDigits.reduce(
+                            (accumulator: {[key: number]: boolean}, digit) => {
+                                accumulator[digit] = true;
+                                return accumulator;
+                            },
+                            {},
+                        );
+                        setCellValue('center', cellIndexNum, updatedCenterMarks);
+                        setCellValue('filled', cellIndexNum, null);
+                    }
+                }
             }
             runningTC = false;
             cancelTCFn = null;
