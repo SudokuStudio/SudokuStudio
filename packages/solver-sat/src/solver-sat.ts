@@ -528,6 +528,9 @@ export const ELEMENT_HANDLERS = {
 
     arrow(numLits: number, element: schema.ArrowElement, context: Context): number {
         for (const { bulb, body } of Object.values(element.value || {})) {
+            // Arrow only has a bulb
+            if (null == body) continue;
+
             // Reverse so least significant digit first.
             const bulbArrReversed = arrayObj2array(bulb);
             bulbArrReversed.reverse();
