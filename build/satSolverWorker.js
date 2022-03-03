@@ -10948,6 +10948,110 @@ var satSolverWorker = (function () {
             sat.cmsat_free(satSolverPtr);
         }
     }
+    async function solveTrueCandidates(board, onComplete, cancellationToken = {}) {
+        var _a, _b, _c;
+        const pbLib = await pbLibPromise;
+        const size = board.grid.width;
+        const context = {
+            clauses: [],
+            size,
+            grid: board.grid,
+            getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
+            pbLib,
+        };
+        const numBaseVars = Math.pow(context.size, 3);
+        let numLits = numBaseVars;
+        // Create a boolean array tracking which cells have givens
+        const givens = {};
+        for (const element of Object.values(board.elements)) {
+            if (cancellationToken.cancelled)
+                return false;
+            if (element.type === 'filled')
+                continue;
+            if (element.type === 'givens') {
+                for (const [cellIdx, value1] of Object.entries(element.value || {})) {
+                    givens[cellIdx] = value1;
+                }
+            }
+            const handler = ELEMENT_HANDLERS[element.type];
+            if (undefined === handler)
+                console.warn(`Ignoring constraint: ${element.type}`);
+            if (null != handler) {
+                numLits = handler(numLits, element, context);
+            }
+        }
+        const neededCandidates = [];
+        const validCandidates = {};
+        for (let cellIdx = 0; cellIdx < size * size; cellIdx++) {
+            if (givens[cellIdx] === undefined) {
+                neededCandidates.push(Array.from({ length: size }, (_, v) => v + 1));
+            }
+            else {
+                neededCandidates.push([]);
+            }
+            validCandidates[cellIdx] = [];
+        }
+        // TODO: Remove obviously invalid candidates
+        // Create solver instance.
+        const sat = await cryptoMiniSatPromise;
+        console.log(`Running SAT Solver: ${numLits} vars (${numBaseVars} base), ${context.clauses.length} clauses.`);
+        for (let testCellIdx = 0; testCellIdx < size * size; testCellIdx++) {
+            if (cancellationToken.cancelled)
+                return false;
+            if (givens[testCellIdx] !== undefined)
+                continue;
+            for (let testValue = 1; testValue <= size; testValue++) {
+                if (!neededCandidates[testCellIdx].includes(testValue))
+                    continue;
+                if ((_a = validCandidates[testCellIdx]) === null || _a === void 0 ? void 0 : _a.includes(testValue))
+                    continue;
+                const satSolverPtr = sat.cmsat_new();
+                try {
+                    sat.cmsat_new_vars(satSolverPtr, numLits);
+                    // Add clauses.
+                    for (const clause of context.clauses) {
+                        sat.cmsat_add_clause(satSolverPtr, clause.map(literalToCms));
+                    }
+                    // Add additional clause for the value being tested
+                    {
+                        const [x, y] = cellIdx2cellCoord(testCellIdx, context.grid);
+                        const literal = context.getLiteral(y, x, testValue - 1);
+                        sat.cmsat_add_clause(satSolverPtr, [literalToCms(literal)]);
+                    }
+                    let status = sat.cmsat_simplify(satSolverPtr);
+                    do {
+                        await asyncYield();
+                        if (cancellationToken.cancelled)
+                            return false;
+                        sat.cmsat_set_max_time(satSolverPtr, 0.1);
+                        status = sat.cmsat_solve(satSolverPtr);
+                    } while (2 /* UNDEF */ === status);
+                    if (1 /* FALSE */ !== status) {
+                        // SOLVED!
+                        const model = sat.cmsat_get_model(satSolverPtr);
+                        for (const [y, x, v] of product(size, size, size)) {
+                            const literal = context.getLiteral(y, x, v);
+                            const litVal = model[literal - 1];
+                            if (0 /* TRUE */ === litVal) {
+                                const cellIdx = cellCoord2CellIdx([x, y], context.grid);
+                                // Update valid candidates.
+                                const value = v + 1;
+                                if (!((_b = validCandidates[cellIdx]) === null || _b === void 0 ? void 0 : _b.includes(value))) {
+                                    (_c = validCandidates[cellIdx]) === null || _c === void 0 ? void 0 : _c.push(value);
+                                }
+                            }
+                        }
+                    }
+                }
+                finally {
+                    sat.cmsat_free(satSolverPtr);
+                }
+            }
+        }
+        // Complete.
+        onComplete(validCandidates);
+        return true;
+    }
     const ELEMENT_HANDLERS = {
         corner: null,
         center: null,
@@ -11552,6 +11656,18 @@ var satSolverWorker = (function () {
         });
         return taskId;
     }
+    function solveTrueCandidatesAsync(board, onComplete) {
+        const taskId = makeUid();
+        const token = {};
+        CANCELLATION_TABLE[taskId] = token;
+        console.log(`[${taskId}] Starting.`);
+        solveTrueCandidates(board, onComplete, token)
+            .finally(() => {
+            delete CANCELLATION_TABLE[taskId];
+            console.log(`[${taskId}] Finished.`);
+        });
+        return taskId;
+    }
     function cancel(taskId) {
         if (taskId in CANCELLATION_TABLE) {
             console.log(`Cancelling ${taskId}.`);
@@ -11564,6 +11680,7 @@ var satSolverWorker = (function () {
     const DEFAULT = {
         cantAttempt,
         solveAsync,
+        solveTrueCandidatesAsync,
         cancel,
     };
     expose(DEFAULT);
