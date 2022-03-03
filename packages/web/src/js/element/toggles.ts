@@ -1,5 +1,5 @@
-import type { Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
-import { cellCoord2CellIdx, getMajorDiagonal, kingMoves, knightMoves, writeRepeatingDigits } from "../../../../board-utils/lib/board-utils";
+import type { Coord, Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
+import { cellCoord2CellIdx, getMajorDiagonal, getOrthogonallyAdjacentPairs, kingMoves, knightMoves, writeRepeatingDigits } from "../../../../board-utils/lib/board-utils";
 import type { ElementInfo } from "./element";
 
 export const diagonalInfo: ElementInfo = {
@@ -80,6 +80,16 @@ export const consecutiveInfo: ElementInfo = {
         ],
         icon: 'consec-orth',
     },
+    getWarnings(value: schema.ConsecutiveElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        if (value) {
+            if (value.diag) {
+                getConsecutiveWarnings(kingMoves(grid), grid, digits, warnings);
+            }
+            if (value.orth) {
+                getConsecutiveWarnings(getOrthogonallyAdjacentPairs(grid), grid, digits, warnings);
+            }
+        }
+    },
     meta: {
         description: '[Edge- | Corner-] adjacent digits may not be consecutive.',
         tags: [],
@@ -156,3 +166,24 @@ export const selfTaxicabInfo: ElementInfo = {
         icon: 'cityblock',
     },
 };
+
+function getConsecutiveWarnings(
+    cellPairs: Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void>,
+    grid: Grid,
+    digits: IdxMap<Geometry.CELL, number>,
+    warnings: IdxBitset<Geometry.CELL>,
+) {
+    for (const [cellA, cellB] of cellPairs) {
+        const indexA = cellCoord2CellIdx(cellA, grid);
+        const indexB = cellCoord2CellIdx(cellB, grid);
+        const digitA = digits[indexA];
+        const digitB = digits[indexB];
+
+        if (null == digitA || null == digitB) continue;
+
+        if (Math.abs(digitA - digitB) === 1) {
+            warnings[indexA] = true;
+            warnings[indexB] = true;
+        }
+    }
+}

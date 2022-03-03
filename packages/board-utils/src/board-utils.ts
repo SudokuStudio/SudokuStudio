@@ -813,7 +813,7 @@ export function* product(...args: number[]): Generator<number[], void, void> {
     }
 }
 
-export function *knightMoves({ width, height }: Grid): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
+export function* knightMoves({ width, height }: Grid): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
     for (const [ y0, x0, y1, x1 ] of product(height, width, height, width)) {
         if (y0 >= y1) continue; // Don't double-count.
         const dy = Math.abs(y0 - y1);
@@ -834,6 +834,21 @@ export function* kingMoves({ width, height }: Grid): Generator<[Coord<Geometry.C
         if (1 !== dy) continue;
         const dx = Math.abs(x0 - x1);
         if (1 !== dx) continue;
+
+        yield [
+            [ x0, y0 ],
+            [ x1, y1 ],
+        ];
+    }
+}
+
+export function* getOrthogonallyAdjacentPairs({ width, height }: Grid): Generator<[Coord<Geometry.CELL>, Coord<Geometry.CELL>], void, void> {
+    for (const [ y0, x0, y1, x1 ] of product(height, width, height, width)) {
+        if (y0 > y1 || x0 > x1) continue; // Don't double-count.
+        const dy = Math.abs(y0 - y1);
+        const dx = Math.abs(x0 - x1);
+        if (0 !== dy && 0 !== dx) continue;
+        if (1 !== dy && 1 !== dx) continue;
 
         yield [
             [ x0, y0 ],
