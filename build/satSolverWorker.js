@@ -11298,6 +11298,9 @@ var satSolverWorker = (function () {
         },
         arrow(numLits, element, context) {
             for (const { bulb, body } of Object.values(element.value || {})) {
+                // Arrow only has a bulb
+                if (null == body)
+                    continue;
                 // Reverse so least significant digit first.
                 const bulbArrReversed = arrayObj2array(bulb);
                 bulbArrReversed.reverse();
