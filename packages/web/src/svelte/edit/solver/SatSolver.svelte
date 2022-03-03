@@ -2,7 +2,7 @@
     import { debounce } from "debounce";
     import type { schema, Geometry, IdxMap } from "@sudoku-studio/schema";
     import { boardState, getTypeForElementKey, setCellValue } from "../../../js/board";
-    import { Diff } from "@sudoku-studio/state-manager";
+    import type { Diff } from "@sudoku-studio/state-manager";
     import { MARK_TYPES } from "../../../js/user";
     import { pushHistoryList } from "../../../js/history";
     import { SatSolver } from "../../../js/solver/satSolver";

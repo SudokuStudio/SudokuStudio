@@ -13,12 +13,12 @@ function getElements(): Record<string, schema.Element> | null {
     return boardState.get<schema.Board['elements']>('elements');
 }
 
-function getElementKey(elements: Record<string, schema.Element>, markType: string) {
+function getElementKey(elements: Record<string, schema.Element>, markType: string): string | undefined {
     return Object.keys(elements!).find((elementKey) => markType === elements![elementKey].type);
 }
 
-export function getTypeForElementKey(elementKey: string) {
-    return getElements()![elementKey].type;
+export function getTypeForElementKey(elementKey: string): schema.ElementType | undefined {
+    return getElements()![elementKey]?.type;
 }
 
 export function getDigits(includeGivens: boolean = true, includeFilled: boolean = true): IdxMap<Geometry.CELL, number> {
