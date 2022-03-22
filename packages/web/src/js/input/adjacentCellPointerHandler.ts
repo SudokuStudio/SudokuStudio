@@ -21,8 +21,10 @@ export class AdjacentCellPointerHandler {
     private _prevCell: Idx<Geometry.CELL> | null = null;
     private _isDown = false;
     private _isTap: boolean = false;
+
     private _lastTapTime: number = 0;
     private _tapCount: number = 0;
+    private _lastTapPosition: Coord<typeof Geometry.SVG> | null = null;
 
     constructor(interpolateOnReenter: boolean) {
         this._interpolateOnReender = interpolateOnReenter;
@@ -61,20 +63,28 @@ export class AdjacentCellPointerHandler {
         if (null == touchPosition) return;
 
         const currentTime = new Date().getTime();
+        const svgCoord = click2svgCoord(touchPosition, svg);
+
         const timeSinceLastTap = currentTime - this._lastTapTime;
         this._lastTapTime = currentTime;
 
-        // Increase the current tap count if the last tap happened within 500 ms
-        if (500 > timeSinceLastTap && 0 < timeSinceLastTap) {
+        let distanceFromLastTap = 0;
+        if (null != this._lastTapPosition) {
+            distanceFromLastTap = distSq(svgCoord, this._lastTapPosition);
+        }
+        this._lastTapPosition = svgCoord;
+
+        // Increase the current tap count if the last tap happened within 500 ms and is close enough
+        if (500 > timeSinceLastTap && 0 < timeSinceLastTap && 0.25 > distanceFromLastTap) {
             this._tapCount += 1;
         } else {
             this._tapCount = 1;
         }
 
         if (2 === this._tapCount) {
-            this._handleDoubleClick(event, touchPosition, grid, svg);
+            this._handleDoubleClick(event, svgCoord, grid, svg);
         } else {
-            this._handleClick(event, touchPosition, grid, svg);
+            this._handleClick(event, svgCoord, grid, svg);
         }
     }
 
@@ -85,11 +95,13 @@ export class AdjacentCellPointerHandler {
     }
 
     click(event: MouseEvent, grid: Grid, svg: SVGSVGElement) {
+        const svgCoord = click2svgCoord(event, svg);
+
         // event.detail represents the number of clicks (i.e. 2 = double click, 3 = triple click, etc.)
         if (2 === event.detail) {
-            this._handleDoubleClick(event, event, grid, svg);
+            this._handleDoubleClick(event, svgCoord, grid, svg);
         } else {
-            this._handleClick(event, event, grid, svg);
+            this._handleClick(event, svgCoord, grid, svg);
         }
     }
 
@@ -114,17 +126,17 @@ export class AdjacentCellPointerHandler {
         }
     }
 
-    private _handleClick(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
+    private _handleClick(event: MouseEvent | TouchEvent, svgCoord: Coord<typeof Geometry.SVG>, grid: Grid, svg: SVGSVGElement): void {
         if (this._isTap) {
-            const coord = svgCoord2cellCoord(click2svgCoord(mousePosition, svg), grid, false);
+            const coord = svgCoord2cellCoord(svgCoord, grid, false);
             if (null != coord) {
                 this.onTap && this.onTap({ event, coord, grid });
             }
         }
     }
 
-    private _handleDoubleClick(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
-        const coord = svgCoord2cellCoord(click2svgCoord(mousePosition, svg), grid, false);
+    private _handleDoubleClick(event: MouseEvent | TouchEvent, svgCoord: Coord<typeof Geometry.SVG>, grid: Grid, svg: SVGSVGElement): void {
+        const coord = svgCoord2cellCoord(svgCoord, grid, false);
         if (null != coord) {
             this.onDoubleTap && this.onDoubleTap({ event, coord, grid });
         }

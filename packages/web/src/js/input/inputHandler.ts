@@ -37,7 +37,7 @@ export function parseDigit(code: string): undefined | null | number {
     return undefined;
 }
 
-export function getTouchPosition(event: TouchEvent) {
+export function getTouchPosition(event: TouchEvent): { offsetX: number, offsetY: number } | null {
     const eventTarget = event.target;
 
     if (eventTarget instanceof Element) {
