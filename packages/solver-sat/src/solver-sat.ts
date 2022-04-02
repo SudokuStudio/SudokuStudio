@@ -840,10 +840,9 @@ function encodeCellsMustContain(numLits: number, cells: Coord<Geometry.CELL>[], 
         valueOccurrences.set(v, 1 + (valueOccurrences.get(v) || 0));
     }
 
-    const ones = Array(cells.length).fill(1);
     for (const [ v, occurrences ] of valueOccurrences) {
         const literals = writeLitsV(cells, +v, context);
-        numLits = context.pbLib.encodeBoth(ones, literals, occurrences, occurrences, context.clauses, 1 + numLits);
+        numLits = context.pbLib.encodeAtLeastK(literals, occurrences, context.clauses, 1 + numLits);
     }
 
     return numLits;
