@@ -100,6 +100,16 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         Space: nextMode,
     } as const;
 
+    function updateToolState(event: KeyboardEvent, newTool: string | null) {
+        // Add delay to handle numpad numbers force-releasing shift
+        // https://github.com/SudokuStudio/SudokuStudio/issues/24
+        if (!event.shiftKey && event.getModifierState('NumLock')) {
+            setTimeout(() => userToolState.replace(newTool), 1);
+        } else {
+            userToolState.replace(newTool);
+        }
+    }
+
     function onQuickshift(event: KeyboardEvent): boolean {
         if ('keydown' === event.type && event.code in MODE_SHORTCUTS) {
             const newToolState = userState.get(
@@ -117,23 +127,20 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         const oldTool = userToolState.get();
         if (event.shiftKey) {
             if (event.ctrlKey || event.metaKey) {
-                userToolState.replace(userState.get('marks', 'colors'));
+                updateToolState(event, userState.get('marks', 'colors'));
             }
             else {
-                userToolState.replace(userState.get('marks', 'corner'));
+                updateToolState(event, userState.get('marks', 'corner'));
             }
         }
         else if (event.ctrlKey || event.metaKey) {
-            userToolState.replace(userState.get('marks', 'center'));
+            updateToolState(event, userState.get('marks', 'center'));
         }
         else if (event.altKey) {
-            userToolState.replace(userState.get('marks', 'colors'));
+            updateToolState(event, userState.get('marks', 'colors'));
         }
         else {
-            // Only keyup case.
-            // Add delay to handle numpad numbers force-releasing shift.
-            // https://github.com/SudokuStudio/SudokuStudio/issues/24
-            setTimeout(() => userToolState.replace(userPrevToolState.get()), 1);
+            updateToolState(event, userPrevToolState.get());
             return true;
         }
 
