@@ -526,6 +526,36 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
+    doubleArrow(numLits: number, element: schema.LineElement, context: Context): number {
+        for (const cells of Object.values(element.value || {})) {
+            const lineCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            if (3 > lineCells.length) continue;
+
+            const head = lineCells.shift()!;
+            const tail = lineCells.pop()!;
+
+            const weights: number[] = [];
+            const lits: number[] = [];
+
+            // Double arrow circles
+            for (const [x, y] of [head, tail]) {
+                for (const [ v ] of product(context.size)) {
+                    const bulbDigitLiteral = context.getLiteral(y, x, v);
+                    const value = 1 + v;
+                    weights.push(-1 * value);
+                    lits.push(bulbDigitLiteral);
+                }
+            }
+
+            // Arrow body
+            writeSum(lineCells, context, weights, lits); // Write weights into existing arrays.
+
+            // Set -HEAD + BODY = 0;
+            numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, 1 + numLits);
+        }
+        return numLits;
+    },
+
     arrow(numLits: number, element: schema.ArrowElement, context: Context): number {
         for (const { bulb, body } of Object.values(element.value || {})) {
             // Arrow only has a bulb

@@ -149,6 +149,60 @@ export const betweenInfo: ElementInfo = {
     },
 };
 
+export const doubleArrowInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getLineInputHandler(ref, grid, svg, {
+            deletePrioritizeHead: true,
+            deletePrioritizeTail: true,
+            allowSelfIntersection: true,
+        });
+    },
+    order: 50,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Double Arrow',
+        icon: 'double-arrow',
+    },
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const cells of Object.values(value || {})) {
+            const lineCells = arrayObj2array(cells);
+            if (3 > lineCells.length) continue;
+
+            const headIdx = lineCells.shift()!;
+            const tailIdx = lineCells.pop()!;
+
+            const headVal = digits[headIdx];
+            const tailVal = digits[tailIdx];
+            if (null == headVal || null == tailVal) continue;
+
+            const targetSum = headVal + tailVal;
+            let actualSum = 0;
+            let allFilled = true;
+            for (const bodyIdx of lineCells) {
+                const digit = digits[bodyIdx];
+                if (null == digit) {
+                    allFilled = false;
+                }
+                else {
+                    actualSum += digit;
+                }
+            }
+
+            if (targetSum < actualSum || (allFilled && targetSum !== actualSum)) {
+                warnings[headIdx] = true;
+                warnings[tailIdx] = true;
+                lineCells.forEach(idx => warnings[idx] = true);
+            }
+        }
+    },
+    meta: {
+        description: 'Digits on the line must have the same sum as the two circles; digits may repeat.',
+        tags: [ 'line', 'sum' ],
+        category: [ 'local', 'line' ],
+    },
+};
+
 export const palindromeInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
