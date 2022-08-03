@@ -11018,6 +11018,18 @@ var satSolverWorker = (function () {
                         const literal = context.getLiteral(y, x, testValue - 1);
                         sat.cmsat_add_clause(satSolverPtr, [literalToCms(literal)]);
                     }
+                    // Add clauses for previous cells with only 1 candidate
+                    {
+                        for (let previousCellIndex = 0; previousCellIndex < testCellIdx; previousCellIndex++) {
+                            const previousCellCandidates = validCandidates[previousCellIndex];
+                            if (previousCellCandidates && 1 === previousCellCandidates.length) {
+                                const onlyCandidate = previousCellCandidates[0];
+                                const [x, y] = cellIdx2cellCoord(previousCellIndex, context.grid);
+                                const literal = context.getLiteral(y, x, onlyCandidate - 1);
+                                sat.cmsat_add_clause(satSolverPtr, [literalToCms(literal)]);
+                            }
+                        }
+                    }
                     let status = sat.cmsat_simplify(satSolverPtr);
                     do {
                         await asyncYield();
