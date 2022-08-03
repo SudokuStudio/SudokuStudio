@@ -34,10 +34,11 @@
         }
     }
 
-    async function trueCandidatesToggled() {
+    async function trueCandidatesToggled(event: Event) {
+        const updatedTrueCandidates = (event?.target as HTMLInputElement).checked;
         const success = await cancelRunTrueCandidates();
-        // The change handler happens before the value has toggled.
-        if (!trueCandidates) {
+
+        if (updatedTrueCandidates) {
             if (success) {
                 await runTrueCandidates();
             }
@@ -120,7 +121,7 @@
         const success = await cancelTCFn();
         if (success) {
             runningTC = false;
-            cancelFn = null;
+            cancelTCFn = null;
         }
         return success;
     }
