@@ -10878,39 +10878,15 @@ var satSolverWorker = (function () {
         }
         return null;
     }
-    async function solve(board, maxSolutions, onSolutionFoundOrComplete, cancellationToken = {}) {
-        const pbLib = await pbLibPromise;
-        const size = board.grid.width;
-        const context = {
-            clauses: [],
-            size,
-            grid: board.grid,
-            getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
-            pbLib,
-        };
-        const numBaseVars = Math.pow(context.size, 3);
-        let numLits = numBaseVars;
-        for (const element of Object.values(board.elements)) {
-            if (cancellationToken.cancelled)
-                return false;
-            const handler = ELEMENT_HANDLERS[element.type];
-            if (undefined === handler)
-                console.warn(`Ignoring constraint: ${element.type}`);
-            if (null != handler) {
-                numLits = handler(numLits, element, context);
-            }
-        }
+    async function solveHelper(sat, numLits, context, size, maxSolutions, additionalClauses, cancellationToken, onSolutionFound, onComplete) {
         // Create solver instance.
-        const sat = await cryptoMiniSatPromise;
         const satSolverPtr = sat.cmsat_new();
         try {
-            console.log(`Running SAT Solver: ${numLits} vars (${numBaseVars} base), ${context.clauses.length} clauses.`);
             sat.cmsat_new_vars(satSolverPtr, numLits);
             // Add clauses.
-            for (const clause of context.clauses) {
+            for (const clause of context.clauses.concat(additionalClauses)) {
                 sat.cmsat_add_clause(satSolverPtr, clause.map(literalToCms));
             }
-            context.clauses.length = 0; // Let the giant clause list be GC'd.
             for (let _i = 0; _i < maxSolutions; _i++) {
                 let status = sat.cmsat_simplify(satSolverPtr);
                 do {
@@ -10937,19 +10913,57 @@ var satSolverWorker = (function () {
                         solution[cellIdx] = 1 + v;
                     }
                 }
-                onSolutionFoundOrComplete(solution);
+                onSolutionFound(solution);
                 sat.cmsat_add_clause(satSolverPtr, excludeSolutionClause.map(literalToCms));
             }
             // Complete.
-            onSolutionFoundOrComplete(null);
+            onComplete();
             return true;
         }
         finally {
             sat.cmsat_free(satSolverPtr);
         }
     }
+    async function solve(board, maxSolutions, onSolutionFoundOrComplete, cancellationToken = {}) {
+        const pbLib = await pbLibPromise;
+        const size = board.grid.width;
+        const context = {
+            clauses: [],
+            size,
+            grid: board.grid,
+            getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
+            pbLib,
+        };
+        const numBaseVars = Math.pow(context.size, 3);
+        let numLits = numBaseVars;
+        for (const element of Object.values(board.elements)) {
+            if (cancellationToken.cancelled)
+                return false;
+            const handler = ELEMENT_HANDLERS[element.type];
+            if (undefined === handler)
+                console.warn(`Ignoring constraint: ${element.type}`);
+            if (null != handler) {
+                numLits = handler(numLits, element, context);
+            }
+        }
+        const sat = await cryptoMiniSatPromise;
+        return solveHelper(sat, numLits, context, size, maxSolutions, [], cancellationToken, onSolutionFoundOrComplete, () => onSolutionFoundOrComplete(null));
+    }
+    function updateValidCandidatesForSolutions(solutions, validCandidates, size) {
+        var _a, _b;
+        for (const solution of solutions) {
+            for (let cellIndex = 0; cellIndex < size * size; cellIndex++) {
+                const value = solution[cellIndex];
+                if (undefined === value)
+                    continue;
+                if (!((_a = validCandidates[cellIndex]) === null || _a === void 0 ? void 0 : _a.includes(value))) {
+                    (_b = validCandidates[cellIndex]) === null || _b === void 0 ? void 0 : _b.push(value);
+                }
+            }
+        }
+    }
     async function solveTrueCandidates(board, onComplete, cancellationToken = {}) {
-        var _a, _b, _c;
+        var _a;
         const pbLib = await pbLibPromise;
         const size = board.grid.width;
         const context = {
@@ -10994,7 +11008,17 @@ var satSolverWorker = (function () {
         // TODO: Remove obviously invalid candidates
         // Create solver instance.
         const sat = await cryptoMiniSatPromise;
-        console.log(`Running SAT Solver: ${numLits} vars (${numBaseVars} base), ${context.clauses.length} clauses.`);
+        const initialSolutions = [];
+        const maxSolutions = 10;
+        const returnValue = await solveHelper(sat, numLits, context, size, maxSolutions, [], cancellationToken, (solution) => initialSolutions.push(solution), () => { });
+        if (!returnValue) {
+            return false;
+        }
+        updateValidCandidatesForSolutions(initialSolutions, validCandidates, size);
+        if (initialSolutions.length < maxSolutions) {
+            onComplete(validCandidates);
+            return true;
+        }
         for (let testCellIdx = 0; testCellIdx < size * size; testCellIdx++) {
             if (cancellationToken.cancelled)
                 return false;
@@ -11005,59 +11029,31 @@ var satSolverWorker = (function () {
                     continue;
                 if ((_a = validCandidates[testCellIdx]) === null || _a === void 0 ? void 0 : _a.includes(testValue))
                     continue;
-                const satSolverPtr = sat.cmsat_new();
-                try {
-                    sat.cmsat_new_vars(satSolverPtr, numLits);
-                    // Add clauses.
-                    for (const clause of context.clauses) {
-                        sat.cmsat_add_clause(satSolverPtr, clause.map(literalToCms));
-                    }
-                    // Add additional clause for the value being tested
-                    {
-                        const [x, y] = cellIdx2cellCoord(testCellIdx, context.grid);
-                        const literal = context.getLiteral(y, x, testValue - 1);
-                        sat.cmsat_add_clause(satSolverPtr, [literalToCms(literal)]);
-                    }
-                    // Add clauses for previous cells with only 1 candidate
-                    {
-                        for (let previousCellIndex = 0; previousCellIndex < testCellIdx; previousCellIndex++) {
-                            const previousCellCandidates = validCandidates[previousCellIndex];
-                            if (previousCellCandidates && 1 === previousCellCandidates.length) {
-                                const onlyCandidate = previousCellCandidates[0];
-                                const [x, y] = cellIdx2cellCoord(previousCellIndex, context.grid);
-                                const literal = context.getLiteral(y, x, onlyCandidate - 1);
-                                sat.cmsat_add_clause(satSolverPtr, [literalToCms(literal)]);
-                            }
-                        }
-                    }
-                    let status = sat.cmsat_simplify(satSolverPtr);
-                    do {
-                        await asyncYield();
-                        if (cancellationToken.cancelled)
-                            return false;
-                        sat.cmsat_set_max_time(satSolverPtr, 0.1);
-                        status = sat.cmsat_solve(satSolverPtr);
-                    } while (2 /* UNDEF */ === status);
-                    if (1 /* FALSE */ !== status) {
-                        // SOLVED!
-                        const model = sat.cmsat_get_model(satSolverPtr);
-                        for (const [y, x, v] of product(size, size, size)) {
-                            const literal = context.getLiteral(y, x, v);
-                            const litVal = model[literal - 1];
-                            if (0 /* TRUE */ === litVal) {
-                                const cellIdx = cellCoord2CellIdx([x, y], context.grid);
-                                // Update valid candidates.
-                                const value = v + 1;
-                                if (!((_b = validCandidates[cellIdx]) === null || _b === void 0 ? void 0 : _b.includes(value))) {
-                                    (_c = validCandidates[cellIdx]) === null || _c === void 0 ? void 0 : _c.push(value);
-                                }
-                            }
+                const additionalClauses = [];
+                const solutions = [];
+                // Add additional clause for the value being tested
+                {
+                    const [x, y] = cellIdx2cellCoord(testCellIdx, context.grid);
+                    const literal = context.getLiteral(y, x, testValue - 1);
+                    additionalClauses.push([literal]);
+                }
+                // Add clauses for previous cells with only 1 candidate
+                {
+                    for (let previousCellIndex = 0; previousCellIndex < testCellIdx; previousCellIndex++) {
+                        const previousCellCandidates = validCandidates[previousCellIndex];
+                        if (previousCellCandidates && 1 === previousCellCandidates.length) {
+                            const onlyCandidate = previousCellCandidates[0];
+                            const [x, y] = cellIdx2cellCoord(previousCellIndex, context.grid);
+                            const literal = context.getLiteral(y, x, onlyCandidate - 1);
+                            additionalClauses.push([literal]);
                         }
                     }
                 }
-                finally {
-                    sat.cmsat_free(satSolverPtr);
+                const returnValue = await solveHelper(sat, numLits, context, size, 1, additionalClauses, cancellationToken, (solution) => solutions.push(solution), () => { });
+                if (!returnValue) {
+                    return false;
                 }
+                updateValidCandidatesForSolutions(solutions, validCandidates, size);
             }
         }
         // Complete.
