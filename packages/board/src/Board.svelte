@@ -15,6 +15,7 @@
     import ThermoRender from './svelte/ThermoRender.svelte';
     import BetweenRender from './svelte/BetweenRender.svelte';
     import DoubleArrowRender from './svelte/DoubleArrowRender.svelte';
+    import LockoutRender from './svelte/LockoutRender.svelte';
     import ArrowRender from './svelte/ArrowRender.svelte';
     import LineRender from "./svelte/LineRender.svelte";
 
@@ -157,6 +158,7 @@
         ['thermo']: ThermoRender,
         ['slowThermo']: SlowThermoRender,
         ['between']: BetweenRender,
+        ['lockout']: LockoutRender,
         ['doubleArrow']: DoubleArrowRender,
         ['palindrome']: PalindromeRender,
         ['whisper']: WhisperRender,

@@ -203,6 +203,60 @@ export const doubleArrowInfo: ElementInfo = {
     },
 };
 
+export const lockoutInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getLineInputHandler(ref, grid, svg, {
+            deletePrioritizeHead: true,
+            deletePrioritizeTail: true,
+            allowSelfIntersection: true,
+        });
+    },
+    order: 50,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Lockout',
+        icon: 'lockout',
+    },
+    getWarnings(value: schema.LineElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        const delta = ((grid.width + 1) >> 1) - 1; // TODO: make this configurable somehow.
+
+        for (const cells of Object.values(value || {})) {
+            const lineCells = arrayObj2array(cells);
+            if (3 > lineCells.length) continue;
+
+            const headIdx = lineCells.shift()!;
+            const tailIdx = lineCells.pop()!;
+
+            const headVal = digits[headIdx];
+            const tailVal = digits[tailIdx];
+            if (null == headVal || null == tailVal) continue;
+
+            const min = Math.min(headVal, tailVal);
+            const max = Math.max(headVal, tailVal);
+
+            if (max - min < delta) {
+                warnings[headIdx] = true;
+                warnings[tailIdx] = true;
+            }
+
+            for (const lineIdx of lineCells) {
+                const digit = digits[lineIdx];
+                if (null != digit && min <= digit && digit <= max) {
+                    warnings[lineIdx] = true;
+                    warnings[headIdx] = true;
+                    warnings[tailIdx] = true;
+                }
+            }
+        }
+    },
+    meta: {
+        description: 'Digits on lockout lines must not be between or equal to the digits in the circles. Circles must differ by at least 4. Digits may repeat.',
+        tags: [ 'line', 'range' ],
+        category: [ 'local', 'line' ],
+    },
+};
+
 export const palindromeInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
