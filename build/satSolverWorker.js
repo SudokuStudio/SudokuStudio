@@ -11329,6 +11329,37 @@ var satSolverWorker = (function () {
             }
             return numLits;
         },
+        lockout(numLits, element, context) {
+            const delta = ((context.size + 1) >> 1) - 1; // TODO: make this configurable somehow.
+            for (const cells of Object.values(element.value || {})) {
+                const lineCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+                if (3 > lineCells.length)
+                    continue;
+                const [headX, headY] = lineCells.shift();
+                const [tailX, tailY] = lineCells.pop();
+                for (const [lineX, lineY] of lineCells) {
+                    for (let large = 0; large < context.size; large++) {
+                        for (let medium = 0; medium <= large; medium++) {
+                            for (let small = 0; small <= medium; small++) {
+                                context.clauses.push(
+                                // Cannot be HEAD >= LINE >= TAIL
+                                [-context.getLiteral(headY, headX, large), -context.getLiteral(lineY, lineX, medium), -context.getLiteral(tailY, tailX, small)], 
+                                // Cannot be TAIL >= LINE >= HEAD
+                                [-context.getLiteral(tailY, tailX, large), -context.getLiteral(lineY, lineX, medium), -context.getLiteral(headY, headX, small)]);
+                            }
+                        }
+                    }
+                }
+                for (const [v0, v1] of product(context.size, context.size)) {
+                    if (Math.abs(v0 - v1) < delta) { // If the difference is too small, we can't have both.
+                        const lit0 = context.getLiteral(headY, headX, v0);
+                        const lit1 = context.getLiteral(tailY, tailX, v1);
+                        context.clauses.push([-lit0, -lit1]);
+                    }
+                }
+            }
+            return numLits;
+        },
         arrow(numLits, element, context) {
             for (const { bulb, body } of Object.values(element.value || {})) {
                 // Arrow only has a bulb
