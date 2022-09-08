@@ -618,7 +618,6 @@ export const ELEMENT_HANDLERS = {
 
         for (const cells of Object.values(element.value || {})) {
             const lineCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
-            if (3 > lineCells.length) continue;
 
             const [ headX, headY ] = lineCells.shift()!;
             const [ tailX, tailY ] = lineCells.pop()!;

@@ -223,7 +223,6 @@ export const lockoutInfo: ElementInfo = {
 
         for (const cells of Object.values(value || {})) {
             const lineCells = arrayObj2array(cells);
-            if (3 > lineCells.length) continue;
 
             const headIdx = lineCells.shift()!;
             const tailIdx = lineCells.pop()!;
