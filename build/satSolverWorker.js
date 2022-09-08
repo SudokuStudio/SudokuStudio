@@ -11333,8 +11333,6 @@ var satSolverWorker = (function () {
             const delta = ((context.size + 1) >> 1) - 1; // TODO: make this configurable somehow.
             for (const cells of Object.values(element.value || {})) {
                 const lineCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
-                if (3 > lineCells.length)
-                    continue;
                 const [headX, headY] = lineCells.shift();
                 const [tailX, tailY] = lineCells.pop();
                 for (const [lineX, lineY] of lineCells) {

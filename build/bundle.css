@@ -1090,10 +1090,6 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-.empty-placeholder.svelte-1hnsx93 {
-  padding: 0.25em 0 0.25em 1.75em;
-}
-
 .overlay.svelte-f3k5y2 {
   position: absolute;
   top: 0;
@@ -1105,6 +1101,10 @@ ul.header-buttons.right.svelte-1gtf4ed {
 
 .overlay.svelte-f3k5y2:focus {
   outline: none;
+}
+
+.empty-placeholder.svelte-1hnsx93 {
+  padding: 0.25em 0 0.25em 1.75em;
 }
 
 .info-input.svelte-fcgi7u.svelte-fcgi7u {
