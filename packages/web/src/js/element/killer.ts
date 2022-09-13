@@ -34,7 +34,7 @@ export const killerInfo: ElementInfo = {
 };
 
 function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
-    const pointerHandler = new AdjacentCellPointerHandler(true);
+    const pointerHandler = new AdjacentCellPointerHandler(false);
 
     let cageRef: null | StateRef = null;
 

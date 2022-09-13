@@ -51,9 +51,9 @@ export function svgCoord2cellCoord([ xf, yf ]: Coord<Geometry.SVG>, { width, hei
     if ((xf < 0 || width <= xf) || (yf < 0 || height <= yf)) return null;
 
     if (conservative) {
-      const xr = xf % 1 - 0.5;
-      const yr = yf % 1 - 0.5;
-      if (0.5 < Math.abs(xr) + Math.abs(yr)) return null;
+      const xr = Math.abs(xf % 1 - 0.5);
+      const yr = Math.abs(yf % 1 - 0.5);
+      if ((0.5 < xr + yr) || (0.35 < xr) || (0.35 < yr)) return null;
     }
 
     return [ Math.floor(xf), Math.floor(yf) ];

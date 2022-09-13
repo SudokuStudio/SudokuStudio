@@ -15,7 +15,7 @@ export class AdjacentCellPointerHandler {
     onDragStart: null | ((event: CellDragTapEvent) => void) = null;
     onDragEnd: null | (() => void) = null;
 
-    private readonly _interpolateOnReender: boolean;
+    private readonly _interpolateBetweenCells: boolean;
 
     private _prevPos: Coord<Geometry.SVG> | null = null;
     private _prevCell: Idx<Geometry.CELL> | null = null;
@@ -26,8 +26,8 @@ export class AdjacentCellPointerHandler {
     private _tapCount: number = 0;
     private _lastTapPosition: Coord<typeof Geometry.SVG> | null = null;
 
-    constructor(interpolateOnReenter: boolean) {
-        this._interpolateOnReender = interpolateOnReenter;
+    constructor(interpolateBetweenCells: boolean) {
+        this._interpolateBetweenCells = interpolateBetweenCells;
     }
 
     mouseDown(event: MouseEvent, grid: Grid, svg: SVGSVGElement): void {
@@ -146,12 +146,12 @@ export class AdjacentCellPointerHandler {
         const pos = click2svgCoord(mousePosition, svg);
 
         // Interpolate if mouse jumped cells within the board.
-        if (null != this._prevPos && 1 < distSq(this._prevPos, pos)) {
+        if (this._interpolateBetweenCells && null != this._prevPos && 1 < distSq(this._prevPos, pos)) {
             for (const coord of cellLine(this._prevPos, pos, grid)) {
                 this.onDrag && this.onDrag({ event, coord, grid });
                 this._prevCell = cellCoord2CellIdx(coord, grid);
             }
-            this._prevPos = (this._interpolateOnReender || isOnGrid(pos, grid)) ? pos : null;
+            this._prevPos = pos;
             this._isTap = false; // Cancel tap (jumped cells).
         }
         // Otherwise select the current cell.
@@ -180,12 +180,6 @@ export class AdjacentCellPointerHandler {
 
                 // Update previous cell to the cell where the mouse is
                 this._prevCell = currentCellIndex;
-            }
-            // Otherwise otherwise reset prevPos if pointer's off the grid.
-            else if (!(this._interpolateOnReender || isOnGrid(pos, grid))) {
-                this._prevCell = null;
-                this._prevPos = null;
-                this._isTap = false; // Cancel tap -- off grid.
             }
         }
     }
