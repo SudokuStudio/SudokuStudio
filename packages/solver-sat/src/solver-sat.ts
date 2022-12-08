@@ -507,16 +507,16 @@ export const ELEMENT_HANDLERS = {
             const cellCoords = arrayObj2array(renbanCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
             if (0 >= cellCoords.length) continue;
 
-			// 1: Ensure that no cell is included multiple times.
-			const uniqueCoords = cellCoords.filter(
-				(n,i, arr) => {
-					return arr.findIndex(
-						t => {
-							if(n === t)
-								return true;
-							return n[0] === t[0] && n[1] === t[1];
-						}) === i;
-				})
+            // 1: Ensure that no cell is included multiple times.
+            const uniqueCoords = cellCoords.filter(
+                (n,i, arr) => {
+                    return arr.findIndex(
+                        t => {
+                            if(n === t)
+                                return true;
+                            return n[0] === t[0] && n[1] === t[1];
+                        }) === i;
+                })
 
             // 2: Encode no repeats.
             numLits = encodeNoRepeats(numLits, uniqueCoords, context);
