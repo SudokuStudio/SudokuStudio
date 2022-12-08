@@ -353,8 +353,18 @@ export const renbanInfo: ElementInfo = {
         for (const cells of Object.values(value || {})) {
             const cellsArr = arrayObj2array(cells);
 
+			const uniqueCellsArr = cellsArr.filter(
+				(n,i, arr) => {
+					return arr.findIndex(
+						t => {
+							if(n === t)
+								return true;
+							return n[0] === t[0] && n[1] === t[1];
+						}) === i;
+				})
+
             const seen: number[] = [];
-            for (const cellIdx of cellsArr) {
+            for (const cellIdx of uniqueCellsArr) {
                 const digit = digits[cellIdx];
                 if (null == digit) {
                     continue outer; // Not complete.
@@ -365,7 +375,7 @@ export const renbanInfo: ElementInfo = {
             seen.sort((a, b) => a - b);
             for (let i = 1; i < seen.length; i++) {
                 if (seen[i - 1] + 1 !== seen[i]) {
-                    cellsArr.forEach(idx => warnings[idx] = true);
+                    uniqueCellsArr.forEach(idx => warnings[idx] = true);
                     continue outer;
                 }
             }
