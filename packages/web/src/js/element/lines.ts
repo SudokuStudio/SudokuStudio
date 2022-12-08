@@ -338,7 +338,7 @@ export const renbanInfo: ElementInfo = {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,
-            allowSelfIntersection: false,
+            allowSelfIntersection: true,
         });
     },
     order: 80,
