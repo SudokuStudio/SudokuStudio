@@ -11239,14 +11239,22 @@ var satSolverWorker = (function () {
                 const cellCoords = arrayObj2array(renbanCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
                 if (0 >= cellCoords.length)
                     continue;
-                // 1: Encode no repeats.
-                numLits = encodeNoRepeats(numLits, cellCoords, context);
-                // 2: CREATE LITERALS to mark if V is in the region.
+                // 1: Ensure that no cell is included multiple times.
+                const uniqueCoords = cellCoords.filter((n, i, arr) => {
+                    return arr.findIndex(t => {
+                        if (n === t)
+                            return true;
+                        return n[0] === t[0] && n[1] === t[1];
+                    }) === i;
+                });
+                // 2: Encode no repeats.
+                numLits = encodeNoRepeats(numLits, uniqueCoords, context);
+                // 3: CREATE LITERALS to mark if V is in the region.
                 const isVInRegion = Array(context.size).fill().map(() => ++numLits);
                 for (const [v] of product(context.size)) {
                     // Forward: if isVInRegion then some cell must contain v.
                     const forwardClause = [-isVInRegion[v]];
-                    for (const [x, y] of cellCoords) {
+                    for (const [x, y] of uniqueCoords) {
                         const cellIsV = context.getLiteral(y, x, v);
                         // Backward: if some cell contains v, then isVInRegion is true.
                         context.clauses.push([-cellIsV, isVInRegion[v]]);
@@ -11254,7 +11262,7 @@ var satSolverWorker = (function () {
                     }
                     context.clauses.push(forwardClause);
                 }
-                // 3: For all SMALL < MEDIUM < LARGE:
+                // 4: For all SMALL < MEDIUM < LARGE:
                 // If both SMALL and LARGE are in the region then MEDIUM is in the region.
                 for (let large = 2; large < context.size; large++) {
                     for (let medium = 1; medium < large; medium++) {
