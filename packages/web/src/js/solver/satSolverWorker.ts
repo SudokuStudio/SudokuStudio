@@ -25,7 +25,7 @@ function solveAsync(board: schema.Board, maxSolutions: number,
 }
 
 function solveTrueCandidatesAsync(board: schema.Board,
-    onComplete: (candidates: null | IdxMap<Geometry.CELL, Array<number>>) => void): string
+    onComplete: (candidates: null | IdxMap<Geometry.CELL, Map<number, number>>) => void): string
 {
     const taskId = boardRepr.makeUid();
     const token: CancellationToken = {};

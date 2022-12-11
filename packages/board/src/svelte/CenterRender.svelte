@@ -7,25 +7,35 @@
     export let ref: StateRef;
     export let grid: { width: number, height: number };
 
-    function getMarks(cells: IdxMap<Geometry.CELL, Record<string, boolean>>): { idx: number, x: number, y: number, nums: Idx<Geometry.CELL>[] }[] {
-        const out: { idx: number, x: number, y: number, nums: Idx<Geometry.CELL>[] }[] = [];
+    function getMarks(cells: IdxMap<Geometry.CELL, Record<string, number>>): { idx: number, x: number, y: number, keys: Idx<Geometry.CELL>[], nums: Record<string, number>}[] {
+        const out: { idx: number, x: number, y: number, keys: Idx<Geometry.CELL>[], nums: Record<string, number> }[] = [];
         for (const [ idx, nums ] of Object.entries(cells)) {
             const [ x, y ] = cellIdx2cellCoord(+idx, grid).map(x => x + 0.5);
             out.push({
                 idx: +idx, x, y,
-                nums: idxMapToKeysArray(nums),
+                keys: idxMapToKeysArray(nums),
+                nums: nums || {}
             })
         }
 
         return out;
     }
+
+    function color(count: number): string {
+        if(count === 1) {
+            return "#00ff00";
+        }
+        return "#4e72b0";
+    }
 </script>
 
 <g {id} mask="url(#SUDOKU_MASK_GIVENS_FILLED)">
-    {#each getMarks($ref || {}) as { idx, x, y, nums } (idx)}
+    {#each getMarks($ref || {}) as { idx, x, y, keys, nums } (idx)}
         <text {x} {y} fill="#4e72b0" text-anchor="middle" dominant-baseline="central" font-size="0.3" font-weight="600"
-                textLength={nums.length > 5 ? '0.9' : undefined} lengthAdjust="spacingAndGlyphs">
-            {nums.join('')}
+                textLength={keys.length > 5 ? '0.9' : undefined} lengthAdjust="spacingAndGlyphs">
+            {#each keys as key}
+                <tspan fill="{color(nums[key])}">{key}</tspan>
+            {/each}
         </text>
     {/each}
 </g>

@@ -149,16 +149,19 @@
                 let diffList: (Diff | null)[] = [];
 
                 for (const [cellIndex, possibleDigits] of Object.entries(candidates)) {
+                    // cellIndex: Geometry.CELL
+                    // possibleDigits: Map<number, number>
                     if (null == possibleDigits) {
                         continue;
                     }
 
                     const cellIndexNum = Number(cellIndex);
-                    if (possibleDigits.length === 1) {
-                        diffList.push(setCellValue('filled', cellIndexNum, possibleDigits[0]));
+                    if (possibleDigits.size === 1) {
+                        const val = possibleDigits.keys().next().value;
+                        diffList.push(setCellValue('filled', cellIndexNum, val));
                         diffList.push(setCellValue('center', cellIndexNum, null));
                     } else {
-                        const updatedCenterMarks = possibleDigits.reduce(
+                        const updatedCenterMarks = [...possibleDigits.keys()].reduce(
                             (accumulator: {[key: number]: boolean}, digit) => {
                                 accumulator[digit] = true;
                                 return accumulator;

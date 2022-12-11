@@ -152,7 +152,7 @@ export async function solve(board: schema.Board, maxSolutions: number,
 
 function updateValidCandidatesForSolutions(
     solutions: IdxMap<typeof Geometry.CELL, number>[],
-    validCandidates: IdxMap<Geometry.CELL, Array<number>>,
+    validCandidates: IdxMap<Geometry.CELL, Map<number, number>>,
     size: number,
 ) {
     for (const solution of solutions) {
@@ -160,15 +160,14 @@ function updateValidCandidatesForSolutions(
             const value = solution[cellIndex];
             if (undefined === value) continue;
 
-            if (!validCandidates[cellIndex]?.includes(value)) {
-                validCandidates[cellIndex]?.push(value);
-            }
+            const count = validCandidates[cellIndex]?.get(value) || 0;
+            validCandidates[cellIndex]?.set(value, count+1);
         }
     }
 }
 
 export async function solveTrueCandidates(board: schema.Board,
-    onComplete: (candidates: null | IdxMap<Geometry.CELL, Array<number>>) => void,
+    onComplete: (candidates: null | IdxMap<Geometry.CELL, Map<number, number>>) => void,
     cancellationToken: CancellationToken = {}): Promise<boolean>
 {
     const pbLib = await pbLibPromise;
@@ -205,14 +204,14 @@ export async function solveTrueCandidates(board: schema.Board,
     }
 
     const neededCandidates: Array<Array<number>> = [];
-    const validCandidates: IdxMap<Geometry.CELL, Array<number>> = {};
+    const validCandidates: IdxMap<Geometry.CELL, Map<number, number>> = {};
     for (let cellIdx = 0; cellIdx < size * size; cellIdx++) {
         if (givens[cellIdx] === undefined) {
             neededCandidates.push(Array.from({ length: size }, (_, v) => v + 1));
         } else {
             neededCandidates.push([]);
         }
-        validCandidates[cellIdx] = [];
+        validCandidates[cellIdx] = new Map<number, number>();
     }
 
     // TODO: Remove obviously invalid candidates
@@ -252,7 +251,7 @@ export async function solveTrueCandidates(board: schema.Board,
 
         for (let testValue = 1; testValue <= size; testValue++) {
             if (!neededCandidates[testCellIdx].includes(testValue)) continue;
-            if (validCandidates[testCellIdx]?.includes(testValue)) continue;
+            if (validCandidates[testCellIdx]?.has(testValue)) continue;
 
             const additionalClauses = [];
             const solutions: IdxMap<typeof Geometry.CELL, number>[] = [];
@@ -268,8 +267,8 @@ export async function solveTrueCandidates(board: schema.Board,
             {
                 for (let previousCellIndex = 0; previousCellIndex < testCellIdx; previousCellIndex++) {
                     const previousCellCandidates = validCandidates[previousCellIndex];
-                    if (previousCellCandidates && 1 === previousCellCandidates.length) {
-                        const onlyCandidate = previousCellCandidates[0];
+                    if (previousCellCandidates && 1 === previousCellCandidates.size) {
+                        const onlyCandidate = previousCellCandidates.keys().next().value;
                         const [ x, y ] = cellIdx2cellCoord(previousCellIndex, context.grid);
                         const literal = context.getLiteral(y, x, onlyCandidate - 1);
                         additionalClauses.push([ literal ]);

@@ -209,5 +209,5 @@ export interface Solver {
         onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): () => Promise<boolean>;
 
     solveTrueCandidates(board: schema.Board,
-        onComplete: (candidates: null | IdxMap<Geometry.CELL, Array<number>>) => void): () => Promise<boolean>;
+        onComplete: (candidates: null | IdxMap<Geometry.CELL, Map<number, number>>) => void): () => Promise<boolean>;
 }
