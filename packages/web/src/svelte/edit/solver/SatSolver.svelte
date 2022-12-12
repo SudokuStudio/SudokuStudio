@@ -149,8 +149,6 @@
                 let diffList: (Diff | null)[] = [];
 
                 for (const [cellIndex, possibleDigits] of Object.entries(candidates)) {
-                    // cellIndex: Geometry.CELL
-                    // possibleDigits: Map<number, number>
                     if (null == possibleDigits) {
                         continue;
                     }
@@ -162,8 +160,11 @@
                         diffList.push(setCellValue('center', cellIndexNum, null));
                     } else {
                         const updatedCenterMarks = [...possibleDigits.keys()].reduce(
-                            (accumulator: {[key: number]: boolean}, digit) => {
-                                accumulator[digit] = true;
+                            (accumulator: {[key: number]: number}, digit) => {
+                                const count = possibleDigits.get(digit) || 0;
+                                if(count > 0) {
+                                    accumulator[digit] = count;
+                                }
                                 return accumulator;
                             },
                             {},
