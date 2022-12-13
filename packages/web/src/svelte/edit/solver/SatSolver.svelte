@@ -162,7 +162,7 @@
                         const updatedCenterMarks = [...possibleDigits.keys()].reduce(
                             (accumulator: {[key: number]: number}, digit) => {
                                 const count = possibleDigits.get(digit) || 0;
-                                if(count > 0) {
+                                if (count > 0) {
                                     accumulator[digit] = count;
                                 }
                                 return accumulator;

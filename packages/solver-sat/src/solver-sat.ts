@@ -153,13 +153,13 @@ export async function solve(board: schema.Board, maxSolutions: number,
 function updateValidCandidatesForSolutions(
     solutions: IdxMap<typeof Geometry.CELL, number>[],
     validCandidates: IdxMap<Geometry.CELL, Map<number, number>>,
-	foundSolutions: Record<string, boolean>,
-	grid: Grid,
+    foundSolutions: Record<string, boolean>,
+    grid: Grid,
     size: number,
 ) {
     for (const solution of solutions) {
-		const representation = solutionToString(solution, grid);
-		if(representation in foundSolutions) continue;
+        const representation = solutionToString(solution, grid);
+        if (representation in foundSolutions) continue;
 
         for (let cellIndex = 0; cellIndex < size * size; cellIndex++) {
             const value = solution[cellIndex];
@@ -168,7 +168,7 @@ function updateValidCandidatesForSolutions(
             const count = validCandidates[cellIndex]?.get(value) || 0;
             validCandidates[cellIndex]?.set(value, count+1);
         }
-		foundSolutions[representation] = true;
+        foundSolutions[representation] = true;
     }
 }
 
@@ -244,7 +244,7 @@ export async function solveTrueCandidates(board: schema.Board,
         return false;
     }
 
-	const foundSolutions: Record<string, boolean> = {};
+    const foundSolutions: Record<string, boolean> = {};
     updateValidCandidatesForSolutions(initialSolutions, validCandidates, foundSolutions, context.grid, size);
 
     if (initialSolutions.length < maxSolutions) {
@@ -258,7 +258,7 @@ export async function solveTrueCandidates(board: schema.Board,
 
         for (let testValue = 1; testValue <= size; testValue++) {
             if (!neededCandidates[testCellIdx].includes(testValue)) continue;
-			const currentCount = validCandidates[testCellIdx]?.get(testValue) || 0;
+            const currentCount = validCandidates[testCellIdx]?.get(testValue) || 0;
             if (currentCount >= maxSolutions) continue;
 
             const additionalClauses = [];
@@ -519,7 +519,7 @@ export const ELEMENT_HANDLERS = {
                 (n,i, arr) => {
                     return arr.findIndex(
                         t => {
-                            if(n === t)
+                            if (n === t)
                                 return true;
                             return n[0] === t[0] && n[1] === t[1];
                         }) === i;

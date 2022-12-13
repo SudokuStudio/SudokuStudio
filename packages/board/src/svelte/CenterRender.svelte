@@ -22,11 +22,11 @@
     }
 
     function color(count: number): string {
-        if(count === 1) {
+        if (count === 1) {
             return "#00ff00";
-        } else if(count === 2) {
+        } else if (count === 2) {
             return "#c4d0e4";
-        } else if(count < 5) {
+        } else if (count < 5) {
             return "#89a1ca";
         }
         return "#4e72b0";
