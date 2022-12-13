@@ -1090,10 +1090,6 @@ ul.header-buttons.right.svelte-1gtf4ed {
   justify-content: flex-end;
 }
 
-.empty-placeholder.svelte-1hnsx93 {
-  padding: 0.25em 0 0.25em 1.75em;
-}
-
 .overlay.svelte-f3k5y2 {
   position: absolute;
   top: 0;
@@ -1105,6 +1101,10 @@ ul.header-buttons.right.svelte-1gtf4ed {
 
 .overlay.svelte-f3k5y2:focus {
   outline: none;
+}
+
+.empty-placeholder.svelte-1hnsx93 {
+  padding: 0.25em 0 0.25em 1.75em;
 }
 
 .info-input.svelte-fcgi7u.svelte-fcgi7u {
@@ -1501,6 +1501,16 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
   border-radius: 0.3rem;
 }
 
+.lockout-diamond.svelte-1d24fge {
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+line.svelte-1qd4hgf {
+  stroke: rgba(0, 0, 0, 0.2);
+  stroke-width: 0.02;
+}
+
 .padbutton.svelte-14edasu.svelte-14edasu {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -1560,16 +1570,6 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
 .padbutton.colors.svelte-14edasu .pad-color.svelte-14edasu {
   width: 100%;
   height: 100%;
-}
-
-.lockout-diamond.svelte-1d24fge {
-  transform-origin: center;
-  transform-box: fill-box;
-}
-
-line.svelte-1qd4hgf {
-  stroke: rgba(0, 0, 0, 0.2);
-  stroke-width: 0.02;
 }
 
 .constraint-checkbox.svelte-1ns67sk {

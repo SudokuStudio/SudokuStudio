@@ -10657,6 +10657,18 @@ var satSolverWorker = (function () {
     );
     })();
 
+    function solutionToString(solution, grid) {
+        const rows = [];
+        for (let y = 0; y < grid.height; y++) {
+            const row = [];
+            for (let x = 0; x < grid.width; x++) {
+                const idx = cellCoord2CellIdx([x, y], grid);
+                row.push(`${solution[idx] || '_'}`);
+            }
+            rows.push(row.join(' '));
+        }
+        return rows.join('\n');
+    }
     function arrayObj2array(arrayObj) {
         const arr = [];
         for (let i = 0; null != arrayObj[i]; i++) {
@@ -10949,17 +10961,20 @@ var satSolverWorker = (function () {
         const sat = await cryptoMiniSatPromise;
         return solveHelper(sat, numLits, context, size, maxSolutions, [], cancellationToken, onSolutionFoundOrComplete, () => onSolutionFoundOrComplete(null));
     }
-    function updateValidCandidatesForSolutions(solutions, validCandidates, size) {
+    function updateValidCandidatesForSolutions(solutions, validCandidates, foundSolutions, grid, size) {
         var _a, _b;
         for (const solution of solutions) {
+            const representation = solutionToString(solution, grid);
+            if (representation in foundSolutions)
+                continue;
             for (let cellIndex = 0; cellIndex < size * size; cellIndex++) {
                 const value = solution[cellIndex];
                 if (undefined === value)
                     continue;
-                if (!((_a = validCandidates[cellIndex]) === null || _a === void 0 ? void 0 : _a.includes(value))) {
-                    (_b = validCandidates[cellIndex]) === null || _b === void 0 ? void 0 : _b.push(value);
-                }
+                const count = ((_a = validCandidates[cellIndex]) === null || _a === void 0 ? void 0 : _a.get(value)) || 0;
+                (_b = validCandidates[cellIndex]) === null || _b === void 0 ? void 0 : _b.set(value, count + 1);
             }
+            foundSolutions[representation] = true;
         }
     }
     async function solveTrueCandidates(board, onComplete, cancellationToken = {}) {
@@ -11003,7 +11018,7 @@ var satSolverWorker = (function () {
             else {
                 neededCandidates.push([]);
             }
-            validCandidates[cellIdx] = [];
+            validCandidates[cellIdx] = new Map();
         }
         // TODO: Remove obviously invalid candidates
         // Create solver instance.
@@ -11014,7 +11029,8 @@ var satSolverWorker = (function () {
         if (!returnValue) {
             return false;
         }
-        updateValidCandidatesForSolutions(initialSolutions, validCandidates, size);
+        const foundSolutions = {};
+        updateValidCandidatesForSolutions(initialSolutions, validCandidates, foundSolutions, context.grid, size);
         if (initialSolutions.length < maxSolutions) {
             onComplete(validCandidates);
             return true;
@@ -11027,7 +11043,8 @@ var satSolverWorker = (function () {
             for (let testValue = 1; testValue <= size; testValue++) {
                 if (!neededCandidates[testCellIdx].includes(testValue))
                     continue;
-                if ((_a = validCandidates[testCellIdx]) === null || _a === void 0 ? void 0 : _a.includes(testValue))
+                const currentCount = ((_a = validCandidates[testCellIdx]) === null || _a === void 0 ? void 0 : _a.get(testValue)) || 0;
+                if (currentCount >= maxSolutions)
                     continue;
                 const additionalClauses = [];
                 const solutions = [];
@@ -11041,19 +11058,19 @@ var satSolverWorker = (function () {
                 {
                     for (let previousCellIndex = 0; previousCellIndex < testCellIdx; previousCellIndex++) {
                         const previousCellCandidates = validCandidates[previousCellIndex];
-                        if (previousCellCandidates && 1 === previousCellCandidates.length) {
-                            const onlyCandidate = previousCellCandidates[0];
+                        if (previousCellCandidates && 1 === previousCellCandidates.size) {
+                            const onlyCandidate = previousCellCandidates.keys().next().value;
                             const [x, y] = cellIdx2cellCoord(previousCellIndex, context.grid);
                             const literal = context.getLiteral(y, x, onlyCandidate - 1);
                             additionalClauses.push([literal]);
                         }
                     }
                 }
-                const returnValue = await solveHelper(sat, numLits, context, size, 1, additionalClauses, cancellationToken, (solution) => solutions.push(solution), () => { });
+                const returnValue = await solveHelper(sat, numLits, context, size, maxSolutions - currentCount, additionalClauses, cancellationToken, (solution) => solutions.push(solution), () => { });
                 if (!returnValue) {
                     return false;
                 }
-                updateValidCandidatesForSolutions(solutions, validCandidates, size);
+                updateValidCandidatesForSolutions(solutions, validCandidates, foundSolutions, context.grid, size);
             }
         }
         // Complete.
