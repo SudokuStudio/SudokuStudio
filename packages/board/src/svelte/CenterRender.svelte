@@ -23,7 +23,7 @@
 
     function color(count: number): string {
         if (count === 1) {
-            return "#00ff00";
+            return "#299b20";
         } else if (count === 2) {
             return "#c4d0e4";
         } else if (count < 5) {
