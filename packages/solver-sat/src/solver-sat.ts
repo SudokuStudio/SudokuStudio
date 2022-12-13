@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool, Module } from '@sudoku-studio/cryptominisat';
 import loadPbLib from '@sudoku-studio/pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getBoxCellIdxes, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getBoxCellIdxes, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 type Context = {
@@ -153,9 +153,14 @@ export async function solve(board: schema.Board, maxSolutions: number,
 function updateValidCandidatesForSolutions(
     solutions: IdxMap<typeof Geometry.CELL, number>[],
     validCandidates: IdxMap<Geometry.CELL, Map<number, number>>,
+	foundSolutions: Record<string, boolean>,
+	grid: Grid,
     size: number,
 ) {
     for (const solution of solutions) {
+		const representation = solutionToString(solution, grid);
+		if(representation in foundSolutions) continue;
+
         for (let cellIndex = 0; cellIndex < size * size; cellIndex++) {
             const value = solution[cellIndex];
             if (undefined === value) continue;
@@ -163,6 +168,7 @@ function updateValidCandidatesForSolutions(
             const count = validCandidates[cellIndex]?.get(value) || 0;
             validCandidates[cellIndex]?.set(value, count+1);
         }
+		foundSolutions[representation] = true;
     }
 }
 
@@ -238,7 +244,8 @@ export async function solveTrueCandidates(board: schema.Board,
         return false;
     }
 
-    updateValidCandidatesForSolutions(initialSolutions, validCandidates, size);
+	const foundSolutions: Record<string, boolean> = {};
+    updateValidCandidatesForSolutions(initialSolutions, validCandidates, foundSolutions, context.grid, size);
 
     if (initialSolutions.length < maxSolutions) {
         onComplete(validCandidates);
@@ -251,7 +258,8 @@ export async function solveTrueCandidates(board: schema.Board,
 
         for (let testValue = 1; testValue <= size; testValue++) {
             if (!neededCandidates[testCellIdx].includes(testValue)) continue;
-            if (validCandidates[testCellIdx]?.has(testValue)) continue;
+			const currentCount = validCandidates[testCellIdx]?.get(testValue) || 0;
+            if (currentCount >= maxSolutions) continue;
 
             const additionalClauses = [];
             const solutions: IdxMap<typeof Geometry.CELL, number>[] = [];
@@ -281,7 +289,7 @@ export async function solveTrueCandidates(board: schema.Board,
                 numLits,
                 context,
                 size,
-                1,
+                maxSolutions - currentCount,
                 additionalClauses,
                 cancellationToken,
                 (solution: IdxMap<Geometry.CELL, number>) => solutions.push(solution),
@@ -292,7 +300,7 @@ export async function solveTrueCandidates(board: schema.Board,
                 return false;
             }
 
-            updateValidCandidatesForSolutions(solutions, validCandidates, size);
+            updateValidCandidatesForSolutions(solutions, validCandidates, foundSolutions, context.grid, size);
         }
     }
 
