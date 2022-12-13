@@ -21,21 +21,23 @@
         return out;
     }
 
-    function color(count: number): string {
+    function color(count: number | boolean): string {
+        // count is a boolean when center marks are entered manually
+        if (count === true || count > 8) {
+            return "#4e72b0";
+        }
         if (count === 1) {
             return "#299b20";
-        } else if (count === 2) {
+        } else if (count <= 3) {
             return "#c4d0e4";
-        } else if (count < 5) {
-            return "#89a1ca";
         }
-        return "#4e72b0";
+        return "#89a1ca";
     }
 </script>
 
 <g {id} mask="url(#SUDOKU_MASK_GIVENS_FILLED)">
     {#each getMarks($ref || {}) as { idx, x, y, keys, nums } (idx)}
-        <text {x} {y} fill="#4e72b0" text-anchor="middle" dominant-baseline="central" font-size="0.3" font-weight="600"
+        <text {x} {y} text-anchor="middle" dominant-baseline="central" font-size="0.3" font-weight="600"
                 textLength={keys.length > 5 ? '0.9' : undefined} lengthAdjust="spacingAndGlyphs">
             {#each keys as key}
                 <tspan fill="{color(nums[key])}">{key}</tspan>
