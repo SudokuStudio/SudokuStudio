@@ -1,5 +1,5 @@
-import type { Coord, Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
-import { cellCoord2CellIdx, getMajorDiagonal, getOrthogonallyAdjacentPairs, kingMoves, knightMoves, writeRepeatingDigits } from "../../../../board-utils/lib/board-utils";
+import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
+import { cellCoord2CellIdx, getMajorDiagonal, getOrthogonallyAdjacentPairs, kingMoves, knightMoves, product, writeRepeatingDigits } from "../../../../board-utils/lib/board-utils";
 import type { ElementInfo } from "./element";
 
 export const diagonalInfo: ElementInfo = {
@@ -52,6 +52,17 @@ export const disjointGroupsInfo: ElementInfo = {
             icon: 'disjoint',
         },
         icon: 'disjoint',
+    },
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        if (value) {
+            for (const [ pos ] of product(grid.width)) {
+                const cells: Idx<Geometry.CELL>[] = [];
+                for (const [ bx ] of product(grid.width)) {
+                    cells.push(cellCoord2CellIdx([ Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3)], grid));
+                }
+                writeRepeatingDigits(digits, cells, warnings);
+            }
+        }
     },
     meta: {
         description: 'Digits in the same relative position to their box may not repeat.',

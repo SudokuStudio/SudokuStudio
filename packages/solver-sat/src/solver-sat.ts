@@ -348,7 +348,7 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
-    disjointGroups(numLits: number, element: schema.BoxElement, context: Context): number {
+    disjointGroups(numLits: number, element: schema.BooleanElement, context: Context): number {
         if (element.value) {
             const ones = Array(context.size).fill(1);
             for (const [ val, pos ] of product(context.size, context.size)) {
