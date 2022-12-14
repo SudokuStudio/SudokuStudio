@@ -107,9 +107,22 @@
         return new LineRender(args);
     }
 
-    function WhisperRender(args: any) {
+    function GermanWhisperRender(args: any) {
         Object.assign(args.props, {
             stroke: '#8c8',
+            strokeWidth: 0.1,
+            pathOptions: {
+                shortenHead: 0.15,
+                shortenTail: 0.15,
+                bezierRounding: 0.15,
+            },
+        });
+        return new LineRender(args);
+    }
+
+    function DutchWhisperRender(args: any) {
+        Object.assign(args.props, {
+            stroke: '#ff8c00',
             strokeWidth: 0.1,
             pathOptions: {
                 shortenHead: 0.15,
@@ -161,7 +174,8 @@
         ['lockout']: LockoutRender,
         ['doubleArrow']: DoubleArrowRender,
         ['palindrome']: PalindromeRender,
-        ['whisper']: WhisperRender,
+        ['whisper']: GermanWhisperRender,
+        ['dutchWhisper']: DutchWhisperRender,
         ['renban']: RenbanRender,
         ['arrow']: ArrowRender,
 

@@ -289,49 +289,67 @@ export const palindromeInfo: ElementInfo = {
     },
 };
 
-export const whisperInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: false,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: true,
-        });
-    },
-    order: 70,
-    inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Whisper',
-        icon: 'whisper',
-    },
-    getWarnings(value: schema.LineElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
-        const delta = (grid.width + 1) >> 1; // TODO: make this configurable somehow.
-
-        for (const cells of Object.values(value || {})) {
-            const cellsArr = arrayObj2array(cells);
-
-            for (let i = 1; i < cellsArr.length; i++) {
-                const prevIdx = cellsArr[i - 1];
-                const nextIdx = cellsArr[i];
-
-                const prevDigit = digits[prevIdx];
-                const nextDigit = digits[nextIdx];
-
-                if (null == prevDigit || null == nextDigit) continue;
-
-                if (Math.abs(prevDigit - nextDigit) < delta) {
-                    warnings[prevIdx] = true;
-                    warnings[nextIdx] = true;
+function getWhisperInfo(deltaFunc: (gridWidth: number) => number, constraintName: string, icon: string, description: string, tags: string[]): ElementInfo {
+    return {
+        getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+            return getLineInputHandler(ref, grid, svg, {
+                deletePrioritizeHead: false,
+                deletePrioritizeTail: false,
+                allowSelfIntersection: true,
+            });
+        },
+        order: 70,
+        inGlobalMenu: false,
+        menu: {
+            type: 'select',
+            name: constraintName,
+            icon: icon,
+        },
+        getWarnings(value: schema.LineElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+            const delta = deltaFunc(grid.width); // TODO: make this configurable somehow.
+    
+            for (const cells of Object.values(value || {})) {
+                const cellsArr = arrayObj2array(cells);
+    
+                for (let i = 1; i < cellsArr.length; i++) {
+                    const prevIdx = cellsArr[i - 1];
+                    const nextIdx = cellsArr[i];
+    
+                    const prevDigit = digits[prevIdx];
+                    const nextDigit = digits[nextIdx];
+    
+                    if (null == prevDigit || null == nextDigit) continue;
+    
+                    if (Math.abs(prevDigit - nextDigit) < delta) {
+                        warnings[prevIdx] = true;
+                        warnings[nextIdx] = true;
+                    }
                 }
             }
-        }
-    },
-    meta: {
-        description: 'Adjacent digits along whispers must differ by at least 5; digits may repeat.',
-        tags: [ 'line', 'german', 'five', '5' ],
-        category: [ 'local', 'line' ],
-    },
+        },
+        meta: {
+            description: description,
+            tags: tags,
+            category: [ 'local', 'line' ],
+        },
+    };
 };
+
+export const germanWhisperInfo: ElementInfo = getWhisperInfo(
+    (gridWidth) => (gridWidth + 1) >> 1,
+    'German Whisper',
+    'whisper',
+    'Adjacent digits along German Whispers must differ by at least 5; digits may repeat.',
+    [ 'line', 'german', 'five', '5' ],
+);
+
+export const dutchWhisperInfo: ElementInfo = getWhisperInfo(
+    (gridWidth) => ((gridWidth + 1) >> 1) - 1,
+    'Dutch Whisper',
+    'dutch-whisper',
+    'Adjacent digits along Dutch Whispers must differ by at least 4; digits may repeat.',
+    [ 'line', 'dutch', 'five', '4' ],
+);
 
 export const renbanInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
