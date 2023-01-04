@@ -1,7 +1,15 @@
+<script lang="ts">
+    import NewGrid from "./NewGrid.svelte";
+
+    let showNewGrid: boolean = false;
+</script>
+
 <div class="header-left">
     <ul class="header-buttons left">
         <li>Solving/Setting</li>
-        <li>New Grid</li>
+        <li>
+            <button class="nobutton" on:click={() => {showNewGrid = true;}}>New Grid</button>
+        </li>
         <li>Export</li>
     </ul>
 </div>
@@ -12,6 +20,8 @@
         <li>Settings</li>
     </ul>
 </div>
+
+<NewGrid bind:visible={showNewGrid} />
 
 <style lang="scss">
     @use 'src/css/vars';
@@ -59,4 +69,14 @@
             justify-content: flex-end;
         }
     }
+
+    ul.header-buttons button {
+        text-align: inherit;
+
+        @include vars.hoverborder();
+        &:hover, &:focus-visible {
+            @include vars.hoverborder-hover();
+        }
+    }
+
 </style>

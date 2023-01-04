@@ -1,6 +1,7 @@
 <script lang="ts">
+    import type { StateManager } from "@sudoku-studio/state-manager";
     import { Board } from "@sudoku-studio/board";
-    import { boardDiv, boardState, boardSvg, warningState } from "../../js/board";
+    import { boardDiv, boardSvg, warningState } from "../../js/board";
     import { currentInputHandler } from "../../js/elementStores";
     import type { InputHandler } from "../../js/input/inputHandler";
     import { userState } from "../../js/user";
@@ -11,6 +12,8 @@
                 inputHandler[key](event);
         };
     }
+
+    export let boardState: StateManager;
 
 </script>
 

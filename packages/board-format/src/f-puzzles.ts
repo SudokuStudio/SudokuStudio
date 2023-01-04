@@ -88,7 +88,7 @@ type FPuzzlesQuadruple = {
 
 
 
-const fpuzzlesSizes = {
+export const fpuzzlesSizes = {
     3:  [  3, 1 ],
     4:  [  2, 2 ],
     5:  [  5, 1 ],
