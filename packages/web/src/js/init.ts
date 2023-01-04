@@ -2,7 +2,7 @@ import { debounce } from "debounce";
 import LZString from "lz-string";
 import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
 import { boardState } from "./board";
-import { MARK_TYPES, userState } from "./user";
+import { setupUserState } from "./user";
 import { fPuzzles } from "@sudoku-studio/board-format";
 import { createElement } from "./elements";
 
@@ -45,19 +45,6 @@ import { boardRepr, solutionToString } from "@sudoku-studio/board-utils";
         timeout = window.setTimeout(cancelLog, maxTimeMillis, 'TIMED OUT');
 
     return () => cancelLog('CANCELLED');
-}
-
-/** Load tools and pencil marks for the user. */
-function setupUserState(board: schema.Board) {
-    for (const [ id, { type }] of Object.entries(board.elements)) {
-        if ((MARK_TYPES as readonly string[]).includes(type)) {
-            userState.ref('marks', type).replace(id);
-            if ('filled' === type) {
-                userState.ref('tool').replace(id);
-                userState.ref('prevTool').replace(id);
-            }
-        }
-    }
 }
 
 export function initUserAndBoard(): void {

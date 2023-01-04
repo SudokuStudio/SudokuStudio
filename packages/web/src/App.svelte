@@ -1,12 +1,12 @@
 <script lang="ts">
 import { debounce } from "debounce";
 
-    import { boardDiv } from "./js/board";
+    import { boardDiv, boardState } from "./js/board";
     import { URL_REQUEST_FEATURE, URL_REPORT_BUG } from "./js/github";
     import BoardContainer from "./svelte/board/BoardContainer.svelte";
     import EditPanel from "./svelte/edit/EditPanel.svelte";
     import EntryPanel from "./svelte/entry/EntryPanel.svelte";
-    import Header from "./svelte/Header.svelte";
+    import Header from "./svelte/header/Header.svelte";
 
     function updateBugReportUrl(event: MouseEvent & { currentTarget: EventTarget & HTMLAnchorElement}): void {
         const url = new URL(URL_REPORT_BUG);
@@ -33,7 +33,7 @@ import { debounce } from "debounce";
                 <EditPanel />
             </div>
             <div class="center-panel">
-                <BoardContainer />
+                <BoardContainer {boardState} />
             </div>
             <div class="right-panel">
                 <EntryPanel />

@@ -1,4 +1,5 @@
 import { StateManager, StateRef } from '@sudoku-studio/state-manager';
+import type { schema } from "@sudoku-studio/schema";
 
 export const MARK_TYPES = [
     'filled', 'corner', 'center', 'colors',
@@ -46,3 +47,16 @@ export const userCursorIsShownState = userState.ref('cursor', 'isShown');
 export const userPrevToolState = userState.ref('prevTool');
 export const userToolState = userState.ref('tool');
 export const TOOL_INPUT_NAME = 'tool';
+
+/** Load tools and pencil marks for the user. */
+export function setupUserState(board: schema.Board) {
+    for (const [ id, { type }] of Object.entries(board.elements)) {
+        if ((MARK_TYPES as readonly string[]).includes(type)) {
+            userState.ref('marks', type).replace(id);
+            if ('filled' === type) {
+                userState.ref('tool').replace(id);
+                userState.ref('prevTool').replace(id);
+            }
+        }
+    }
+}
