@@ -3,8 +3,6 @@
     import { boardRepr, solutionToString } from "@sudoku-studio/board-utils";
     import { setupUserState } from "../../js/user";
     import { createElement } from "../../js/elements";
-
-    // import { fpuzzlesSizes } from "@sudoku-studio/board-format";
     import { fPuzzles } from "@sudoku-studio/board-format";
 
     export let visible: boolean;
