@@ -1,9 +1,8 @@
 <script lang="ts">
     import Modal from "../Modal.svelte";
-    import { boardRepr, solutionToString } from "@sudoku-studio/board-utils";
+    import { boardRepr, solutionToString, gridToBoxSizeMap } from "@sudoku-studio/board-utils";
     import { setupUserState } from "../../js/user";
     import { createElement } from "../../js/elements";
-    import { fPuzzles } from "@sudoku-studio/board-format";
 
     export let visible: boolean;
 
@@ -18,7 +17,7 @@
 <Modal bind:visible={visible}>
     <div class="size-choices">
         <ol class="nolist">
-            {#each Object.entries(fPuzzles.fpuzzlesSizes) as [size, dimensions]}
+            {#each Object.entries(gridToBoxSizeMap) as [size, dimensions]}
                 <li>
                     <button class="size-item nobutton" on:click={() => resetGrid(dimensions)}>
                         {size}x{size}
