@@ -1,5 +1,5 @@
 import * as LZString from "lz-string";
-import { boardRepr, cellCoord2CellIdx, svgCoord2diagonalIdx, svgCoord2edgeIdx, roman2num, svgCoord2seriesIdx, cellIdx2cellCoord, svgCoord2cornerCoord, cornerCoord2cornerIdx } from "@sudoku-studio/board-utils";
+import { boardRepr, cellCoord2CellIdx, svgCoord2diagonalIdx, svgCoord2edgeIdx, roman2num, svgCoord2seriesIdx, cellIdx2cellCoord, svgCoord2cornerCoord, cornerCoord2cornerIdx, gridToBoxSizeMap } from "@sudoku-studio/board-utils";
 import type { Coord, Geometry, Grid, Idx, IdxBitset, schema } from "@sudoku-studio/schema";
 import { hexToHsluv, hsluvToHex } from "hsluv";
 
@@ -88,23 +88,6 @@ type FPuzzlesQuadruple = {
 
 
 
-export const fpuzzlesSizes = {
-    3:  [  3, 1 ],
-    4:  [  2, 2 ],
-    5:  [  5, 1 ],
-    6:  [  3, 2 ],
-    7:  [  7, 1 ],
-    8:  [  4, 2 ],
-    9:  [  3, 3 ],
-    10: [  5, 2 ],
-    11: [ 11, 1 ],
-    12: [  4, 3 ],
-    13: [ 13, 1 ],
-    14: [  7, 2 ],
-    15: [  5, 3 ],
-    16: [  4, 4 ],
-} as const;
-
 const RC_REGEX = /R(\d+)C(\d+)/i;
 function parseRCNotation(rc: string): Coord<Geometry.CELL> {
     const match = RC_REGEX.exec(rc);
@@ -122,10 +105,10 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
     if (null == json) throw Error('Failed to LZString decompress fpuzzles board.');
     const fBoard: FPuzzlesBoard = JSON.parse(json);
 
-    const size = fBoard.size as undefined | keyof typeof fpuzzlesSizes;
-    if (null == size || !(size in fpuzzlesSizes)) throw Error(`Unknown size: ${size})`);
+    const size = fBoard.size as undefined | keyof typeof gridToBoxSizeMap;
+    if (null == size || !(size in gridToBoxSizeMap)) throw Error(`Unknown size: ${size})`);
 
-    const board = boardRepr.createNewBoard(createElement, ...fpuzzlesSizes[size]);
+    const board = boardRepr.createNewBoard(createElement, ...gridToBoxSizeMap[size]);
     const grid: Grid = { width: size, height: size };
 
 

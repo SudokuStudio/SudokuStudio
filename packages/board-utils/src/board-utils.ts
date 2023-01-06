@@ -856,3 +856,20 @@ export function* getOrthogonallyAdjacentPairs({ width, height }: Grid): Generato
         ];
     }
 }
+
+export const gridToBoxSizeMap = {
+    3:  [  3, 1 ],
+    4:  [  2, 2 ],
+    5:  [  5, 1 ],
+    6:  [  3, 2 ],
+    7:  [  7, 1 ],
+    8:  [  4, 2 ],
+    9:  [  3, 3 ],
+    10: [  5, 2 ],
+    11: [ 11, 1 ],
+    12: [  4, 3 ],
+    13: [ 13, 1 ],
+    14: [  7, 2 ],
+    15: [  5, 3 ],
+    16: [  4, 4 ],
+} as const;
