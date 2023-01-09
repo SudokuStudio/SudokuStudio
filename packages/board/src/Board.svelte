@@ -115,6 +115,7 @@
                 shortenHead: 0.15,
                 shortenTail: 0.15,
                 bezierRounding: 0.15,
+                closeLoops: true,
             },
         });
         return new LineRender(args);
@@ -128,6 +129,7 @@
                 shortenHead: 0.15,
                 shortenTail: 0.15,
                 bezierRounding: 0.15,
+                closeLoops: true,
             },
         });
         return new LineRender(args);
@@ -141,6 +143,7 @@
                 shortenHead: 0.15,
                 shortenTail: 0.15,
                 bezierRounding: 0.15,
+                closeLoops: true,
             },
         });
         return new LineRender(args);

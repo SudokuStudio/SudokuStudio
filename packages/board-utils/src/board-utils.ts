@@ -341,9 +341,14 @@ export type MakePathOptions = {
     shortenHead?: number,
     shortenTail?: number,
     bezierRounding?: number,
+    closeLoops?: boolean,
 };
-export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, { shortenHead, shortenTail, bezierRounding }: MakePathOptions = {}): string {
+export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, { shortenHead, shortenTail, bezierRounding, closeLoops }: MakePathOptions = {}): string {
     if (0 >= idxArr.length) return '';
+
+    if (closeLoops && (1 < idxArr.length) && (idxArr[0] === idxArr[idxArr.length-1])) {
+        idxArr.push(idxArr[1]);
+    }
 
     const points: [ number, number ][] = [];
 
