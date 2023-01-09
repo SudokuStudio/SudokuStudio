@@ -1,5 +1,5 @@
 import type { Grid, Coord, Geometry, Idx } from "@sudoku-studio/schema";
-import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, distSq, cellLine, isOnGrid } from "@sudoku-studio/board-utils";
+import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, distSq, cellLine } from "@sudoku-studio/board-utils";
 import { getTouchPosition } from "./inputHandler";
 
 export type CellDragTapEvent = {
@@ -126,7 +126,7 @@ export class AdjacentCellPointerHandler {
         }
     }
 
-    private _handleClick(event: MouseEvent | TouchEvent, svgCoord: Coord<typeof Geometry.SVG>, grid: Grid, svg: SVGSVGElement): void {
+    private _handleClick(event: MouseEvent | TouchEvent, svgCoord: Coord<typeof Geometry.SVG>, grid: Grid, _svg: SVGSVGElement): void {
         if (this._isTap) {
             const coord = svgCoord2cellCoord(svgCoord, grid, false);
             if (null != coord) {
@@ -135,7 +135,7 @@ export class AdjacentCellPointerHandler {
         }
     }
 
-    private _handleDoubleClick(event: MouseEvent | TouchEvent, svgCoord: Coord<typeof Geometry.SVG>, grid: Grid, svg: SVGSVGElement): void {
+    private _handleDoubleClick(event: MouseEvent | TouchEvent, svgCoord: Coord<typeof Geometry.SVG>, grid: Grid, _svg: SVGSVGElement): void {
         const coord = svgCoord2cellCoord(svgCoord, grid, false);
         if (null != coord) {
             this.onDoubleTap && this.onDoubleTap({ event, coord, grid });

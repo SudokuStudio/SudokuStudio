@@ -369,17 +369,7 @@ export const renbanInfo: ElementInfo = {
     getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         outer:
         for (const cells of Object.values(value || {})) {
-            const cellsArr = arrayObj2array(cells);
-
-            const uniqueCellsArr = cellsArr.filter(
-                (n,i, arr) => {
-                    return arr.findIndex(
-                        t => {
-                            if(n === t)
-                                return true;
-                            return n[0] === t[0] && n[1] === t[1];
-                        }) === i;
-                })
+            const uniqueCellsArr = [...new Set(arrayObj2array(cells))];
 
             const seen: number[] = [];
             for (const cellIdx of uniqueCellsArr) {
