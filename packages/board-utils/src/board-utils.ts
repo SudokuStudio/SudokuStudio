@@ -346,8 +346,22 @@ export type MakePathOptions = {
 export function makePath(idxArr: Idx<Geometry.CELL>[], grid: Grid, { shortenHead, shortenTail, bezierRounding, closeLoops }: MakePathOptions = {}): string {
     if (0 >= idxArr.length) return '';
 
-    if (closeLoops && (1 < idxArr.length) && (idxArr[0] === idxArr[idxArr.length-1])) {
-        idxArr.push(idxArr[1]);
+    if (closeLoops && (1 < idxArr.length)) {
+        const lastIdx = idxArr[idxArr.length-1];
+        for (let i = 0; i < idxArr.length-1; i++) {
+            if (idxArr[i] === lastIdx) {
+                idxArr.push(idxArr[i+1]);
+                break;
+            }
+        }
+
+        const firstIdx = idxArr[0];
+        for (let i=1; i < idxArr.length; i++) {
+            if (idxArr[i] === firstIdx) {
+                idxArr = [idxArr[i-1], ...idxArr];
+                break;
+            }
+        }
     }
 
     const points: [ number, number ][] = [];
