@@ -1063,37 +1063,6 @@ template {
   display: none;
 }
 
-.header-left.svelte-1gtf4ed {
-  flex: 1 1 100%;
-  align-self: baseline;
-}
-
-.header-right.svelte-1gtf4ed {
-  flex: 1 1 100%;
-  align-self: baseline;
-  text-align: right;
-}
-
-@media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
-  .header-left.svelte-1gtf4ed, .header-right.svelte-1gtf4ed {
-    display: none;
-  }
-}
-ul.header-buttons.svelte-1gtf4ed {
-  display: flex;
-  gap: 1rem;
-  padding: 0;
-  list-style-type: none;
-}
-
-ul.header-buttons.left.svelte-1gtf4ed {
-  justify-content: flex-start;
-}
-
-ul.header-buttons.right.svelte-1gtf4ed {
-  justify-content: flex-end;
-}
-
 .empty-placeholder.svelte-1hnsx93 {
   padding: 0.25em 0 0.25em 1.75em;
 }
@@ -1109,6 +1078,48 @@ ul.header-buttons.right.svelte-1gtf4ed {
 
 .overlay.svelte-f3k5y2:focus {
   outline: none;
+}
+
+.header-left.svelte-upxvyy.svelte-upxvyy {
+  flex: 1 1 100%;
+  align-self: baseline;
+}
+
+.header-right.svelte-upxvyy.svelte-upxvyy {
+  flex: 1 1 100%;
+  align-self: baseline;
+  text-align: right;
+}
+
+@media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
+  .header-left.svelte-upxvyy.svelte-upxvyy, .header-right.svelte-upxvyy.svelte-upxvyy {
+    display: none;
+  }
+}
+ul.header-buttons.svelte-upxvyy.svelte-upxvyy {
+  display: flex;
+  gap: 1rem;
+  padding: 0;
+  list-style-type: none;
+}
+
+ul.header-buttons.left.svelte-upxvyy.svelte-upxvyy {
+  justify-content: flex-start;
+}
+
+ul.header-buttons.right.svelte-upxvyy.svelte-upxvyy {
+  justify-content: flex-end;
+}
+
+ul.header-buttons.svelte-upxvyy button.svelte-upxvyy {
+  text-align: inherit;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
+}
+
+ul.header-buttons.svelte-upxvyy button.svelte-upxvyy:hover, ul.header-buttons.svelte-upxvyy button.svelte-upxvyy:focus-visible {
+  border-color: #637691;
 }
 
 .info-input.svelte-fcgi7u.svelte-fcgi7u {
@@ -1196,6 +1207,25 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
     margin: 1em 0 0 0;
   }
 }
+.size-choices.svelte-1ecirgf {
+  height: 75vh;
+  overflow: auto;
+}
+
+.size-item.svelte-1ecirgf {
+  width: 100%;
+  margin: 0.25em 0 0 0;
+  padding: 0.25em;
+  text-align: inherit;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
+}
+
+.size-item.svelte-1ecirgf:hover, .size-item.svelte-1ecirgf:focus-visible {
+  border-color: #637691;
+}
+
 .search-input-container.svelte-13xysja {
   padding: 0.5em;
   margin-bottom: 0.5em;
