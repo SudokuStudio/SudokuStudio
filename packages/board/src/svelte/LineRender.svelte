@@ -15,6 +15,7 @@
         shortenHead: 0.2,
         shortenTail: 0.2,
         bezierRounding: 0.2,
+        closeLoops: false,
     };
 
     type Item = { itemId: string, d: string };
