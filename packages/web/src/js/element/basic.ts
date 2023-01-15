@@ -1,5 +1,5 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
-import { getColCellIdxes, getRowCellIdxes, getBoxCellIdxes, writeRepeatingDigits } from "@sudoku-studio/board-utils";
+import { arrayObj2array, getColCellIdxes, getRowCellIdxes, idxMapToKeysArray, writeRepeatingDigits } from "@sudoku-studio/board-utils";
 import type { ElementInfo } from "./element";
 
 export const gridInfo: ElementInfo = {
@@ -20,14 +20,12 @@ export const boxInfo: ElementInfo = {
     order: 100,
     permanent: true,
 
-    getWarnings(value: schema.BoxElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.BoxElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (null == value) return;
 
-        const numBoxes = (grid.width / value.width) * (grid.height / value.height);
-        if (!Number.isInteger(numBoxes)) throw Error('Invalid box sizing');
-
-        for (let box = 0; box < numBoxes; box++) {
-            writeRepeatingDigits(digits, getBoxCellIdxes(box, value, grid), warnings);
+        const boxes = arrayObj2array(value || {});
+        for (const box of boxes) {
+            writeRepeatingDigits(digits, idxMapToKeysArray(box), warnings);
         }
     }
 } as const;

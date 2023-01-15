@@ -108,7 +108,8 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
     const size = fBoard.size as undefined | keyof typeof gridToBoxSizeMap;
     if (null == size || !(size in gridToBoxSizeMap)) throw Error(`Unknown size: ${size})`);
 
-    const board = boardRepr.createNewBoard(createElement, ...gridToBoxSizeMap[size]);
+    const boxSize = gridToBoxSizeMap[size];
+    const board = boardRepr.createNewBoard(createElement, ...boxSize);
     const grid: Grid = { width: size, height: size };
 
 

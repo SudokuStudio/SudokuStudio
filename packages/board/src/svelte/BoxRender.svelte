@@ -1,18 +1,21 @@
 <script lang="ts">
-    import { BOX_THICKNESS, BOX_THICKNESS_HALF } from "@sudoku-studio/board-utils";
+    import { arrayObj2array, getBorderPath, idxMapToKeysArray, BOX_THICKNESS, BOX_THICKNESS_HALF } from "@sudoku-studio/board-utils";
     import type { StateRef } from "@sudoku-studio/state-manager";
 
     export let id: string;
-    export let ref: StateRef;
+    export let ref: StateRef;    // schema.BoxElement
     export let grid: { width: number, height: number };
+
+    function each(regions: ArrayObj<IdxBitset<Geometry.CELL>>): string[] {
+        return arrayObj2array(regions)
+            .map((r) => getBorderPath(idxMapToKeysArray(r), grid, 0, false))
+            .filter(v => v);
+    }
+
 </script>
 
-<pattern id="box-{id}" width={$ref.width} height={$ref.height} patternUnits="userSpaceOnUse">
-    <rect width={$ref.width} height={$ref.height} stroke="#000" fill="none" stroke-width={BOX_THICKNESS} />
-</pattern>
-<rect {id}
-    x={-BOX_THICKNESS_HALF}
-    y={-BOX_THICKNESS_HALF}
-    width={grid.width + BOX_THICKNESS}
-    height={grid.height + BOX_THICKNESS}
-    fill="url(#box-{id})" stroke="none" />
+<g {id}>
+    {#each each($ref) as d}
+        <path {d} fill="none" stroke="#000" stroke-width={BOX_THICKNESS } />
+    {/each}
+</g>

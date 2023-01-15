@@ -261,20 +261,6 @@ export function getColCellIdxes(col: number, { width, height }: Grid): Idx<Geome
     return Array<void>(height).fill().map((_, i) => col + i * width);
 }
 
-export function getBoxCellIdxes(bx: number, boxInfo: NonNullable<schema.BoxElement['value']>, grid: Grid): Idx<Geometry.CELL>[] {
-    const out: Idx<Geometry.CELL>[] = [];
-
-    const horizontalBoxes = grid.width / boxInfo.width;
-
-    const positions = boxInfo.width * boxInfo.height;
-    for (let pos = 0; pos < positions; pos++) {
-        const y = Math.floor(bx / horizontalBoxes) * boxInfo.height + Math.floor(pos / boxInfo.width);
-        const x = (bx % horizontalBoxes) * boxInfo.width + (pos % boxInfo.width);
-        out.push(cellCoord2CellIdx([ x, y ], grid));
-    }
-    return out;
-}
-
 export function writeRepeatingDigits(digits: IdxMap<Geometry.CELL, number>, cells: Idx<Geometry.CELL>[], output: IdxBitset<Geometry.CELL>): void {
     const seen = new Map<number, Idx<Geometry.CELL>>();
     for (const cellIdx of cells) {

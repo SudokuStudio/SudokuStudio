@@ -3,7 +3,7 @@
   "private": true,
   "description": "Board Svelte component for Sudoku Studio",
   "scripts": {
-    "clean": "rm -r public/build",
+    "clean": "rm -r lib",
     "build": "rollup -c",
     "test": ""
   },

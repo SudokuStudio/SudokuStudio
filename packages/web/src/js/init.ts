@@ -70,13 +70,15 @@ export function initUserAndBoard(): void {
         }
         catch (e) {
             console.error('Failed to parse f-puzzles board', e);
+            console.error(e);
         }
     }
 
     if (thisUrl.searchParams.has('c')) {
         const DIGIT_REGEX = /[1-9]/;
         const digitsString = thisUrl.searchParams.get('c')!;
-        if (81 === digitsString.length) {
+        const size = 9;
+        if (size * size === digitsString.length) {
             const digits = Array.from(digitsString).map(char => DIGIT_REGEX.test(char) ? +char : undefined);
 
             const newBoardState = boardRepr.createNewBoard(createElement);
@@ -101,16 +103,18 @@ export function initUserAndBoard(): void {
         try {
             const json = LZString.decompressFromBase64(boardString);
             if (null != json) {
-                const newBoardState = JSON.parse(json);
+                const newBoardState: schema.Board = JSON.parse(json);
                 setupUserState(newBoardState);
-                boardState.update(newBoardState);
+                boardState.update(newBoardState as any);
                 return;
             }
         }
         catch (e) {
             console.error('Failed to update board from `b` param.');
+            console.error(e);
         }
     }
+
     const newBoardState = boardRepr.createNewBoard(createElement);
     setupUserState(newBoardState);
     boardState.update(newBoardState as any);

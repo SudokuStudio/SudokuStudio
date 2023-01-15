@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool, Module } from '@sudoku-studio/cryptominisat';
 import loadPbLib from '@sudoku-studio/pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getBoxCellIdxes, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 type Context = {
@@ -334,15 +334,17 @@ export const ELEMENT_HANDLERS = {
     },
 
     box(numLits: number, element: schema.BoxElement, context: Context): number {
-        const { width, height } = element.value || {};
-        if (!width || !height) throw Error(`Invalid box, width: ${width}, height: ${height}.`);
-
+        const regions = element.value || {};
+        if (!regions) throw Error(`Invalid box with no regions.`);
         const ones = Array(context.size).fill(1);
-        for (const [ val, bx ] of product(context.size, context.size)) {
-            const literals = getBoxCellIdxes(bx, { width, height }, context.grid)
+
+        for (const bx of arrayObj2array(regions)) {
+            const coords = idxMapToKeysArray(bx)
                 .map(idx => cellIdx2cellCoord(idx, context.grid))
-                .map(([ x, y ]) => context.getLiteral(y, x, val));
-            numLits = context.pbLib.encodeBoth(ones, literals, 1, 1, context.clauses, 1 + numLits);
+            for (let val = 0; val < context.size; val++) {
+                const literals = coords.map(([ x, y ]) => context.getLiteral(y, x, val));
+                numLits = context.pbLib.encodeBoth(ones, literals, 1, 1, context.clauses, 1 + numLits);
+            }
         }
 
         return numLits;
