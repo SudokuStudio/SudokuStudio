@@ -214,8 +214,15 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
             const cellIdx = cellCoord2CellIdx([ x, y ], grid);
 
             if (null != gridEntry.region) {
-                // TODO
-                console.error('Cannot handle f-puzzles regions.');
+                let elem: schema.GridRegionElement;
+                elem = findOrAddElement('gridRegion', {});
+                const regions = elem.value!;
+                for (let i = 0; i < size; i++) {
+                    if (null != regions[i][cellIdx]) {
+                        regions[i][cellIdx] = false;
+                    }
+                }
+                regions[gridEntry.region][cellIdx] = true;
             }
 
             if (null != gridEntry.value) {
