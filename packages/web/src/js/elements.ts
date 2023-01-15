@@ -9,7 +9,7 @@ import { evenInfo, maxInfo, minInfo, oddInfo } from "./element/region";
 import { quadrupleInfo } from "./element/quadruple";
 import { differenceInfo, ratioInfo, xvInfo, sandwichInfo, skyscraperInfo, xsumInfo, littleKillerInfo } from "./element/positionNumbers";
 import type { schema } from "@sudoku-studio/schema";
-import { boxInfo, gridInfo } from "./element/basic";
+import { gridRegionInfo, gridInfo } from "./element/basic";
 import { arrowInfo } from "./element/arrow";
 import { killerInfo } from "./element/killer";
 import { cloneInfo } from "./element/clone";
@@ -22,7 +22,7 @@ export const ELEMENT_HANDLERS = {
     ['colors']: colorsInfo,
 
     ['grid']: gridInfo,
-    ['box']: boxInfo,
+    ['gridRegion']: gridRegionInfo,
 
     ['thermo']: thermoInfo,
     ['slowThermo']: slowThermoInfo,

@@ -16,11 +16,11 @@ export const gridInfo: ElementInfo = {
     }
 } as const;
 
-export const boxInfo: ElementInfo = {
+export const gridRegionInfo: ElementInfo = {
     order: 100,
     permanent: true,
 
-    getWarnings(value: schema.BoxElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.GridRegionElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (null == value) return;
 
         const boxes = arrayObj2array(value || {});

@@ -70,7 +70,7 @@ export declare namespace schema {
     }
 
     export type Element =
-        GridElement | BoxElement | DigitElement | PencilMarksElement | ColorsElement
+        GridElement | GridRegionElement | DigitElement | PencilMarksElement | ColorsElement
         | BooleanElement | ConsecutiveElement | DiagonalElement | KillerElement
         | KillerElement | CloneElement | QuadrupleElement | LineElement | ArrowElement
         | EdgeNumberElement | SeriesNumberElement | LittleKillerElement | RegionElement
@@ -87,8 +87,8 @@ export declare namespace schema {
         type: 'grid',
         value?: null,
     }
-    export interface BoxElement extends AbstractElement {
-        type: 'box',
+    export interface GridRegionElement extends AbstractElement {
+        type: 'gridRegion',
         value?: ArrayObj<IdxBitset<Geometry.CELL>>,
     }
     export interface DigitElement extends AbstractElement {
