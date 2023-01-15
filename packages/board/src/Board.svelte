@@ -2,14 +2,14 @@
     import type { Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
     import type { StateManager, StateRef } from "@sudoku-studio/state-manager";
 
-    import { idxMapToKeysArray, BOX_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getBorderPath, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils";
+    import { idxMapToKeysArray, GRID_REGION_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getBorderPath, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils";
     import { derived, readable } from "svelte/store";
 
     import SelectRender from './svelte/SelectRender.svelte';
     import CursorRender from "./svelte/CursorRender.svelte";
 
     import GridRender from './svelte/GridRender.svelte';
-    import BoxRender from './svelte/BoxRender.svelte';
+    import GridRegionRender from './svelte/GridRegionRender.svelte';
     import DigitRender from './svelte/DigitRender.svelte';
 
     import ThermoRender from './svelte/ThermoRender.svelte';
@@ -163,7 +163,7 @@
         ['warning']: WarningRender,
 
         ['grid']: GridRender,
-        ['box']: BoxRender,
+        ['gridRegion']: GridRegionRender,
 
         ['givens']: DigitRender,
         ['filled']: FilledRender,
@@ -212,7 +212,7 @@
     // TODO denormalize this.
     const MARGINS = {
         ['grid']: GRID_THICKNESS_HALF,
-        ['box']: BOX_THICKNESS_HALF,
+        ['gridRegion']: GRID_REGION_THICKNESS_HALF,
 
         ['sandwich']: 1,
         ['xsum']: 1,

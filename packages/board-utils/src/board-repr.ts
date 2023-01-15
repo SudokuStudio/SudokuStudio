@@ -41,7 +41,7 @@ export function createNewBoard(createElement: CreateElementFn, boxWidth: number 
     };
 
     board.elements['1'] = createElement<schema.GridElement>('grid');
-    board.elements['2'] = createElement<schema.BoxElement>('box',
+    board.elements['2'] = createElement<schema.GridRegionElement>('gridRegion',
         defaultRegions(size, boxWidth, boxHeight)
     );
     board.elements['10'] = createElement<schema.DigitElement>('givens', {});

@@ -333,14 +333,14 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
-    box(numLits: number, element: schema.BoxElement, context: Context): number {
+    gridRegion(numLits: number, element: schema.GridRegionElement, context: Context): number {
         const regions = element.value || {};
-        if (!regions) throw Error(`Invalid box with no regions.`);
-        const ones = Array(context.size).fill(1);
+        if (!regions) throw Error(`Invalid region with no cells.`);
 
         for (const bx of arrayObj2array(regions)) {
             const coords = idxMapToKeysArray(bx)
                 .map(idx => cellIdx2cellCoord(idx, context.grid))
+            const ones = Array(coords.length).fill(1);
             for (let val = 0; val < context.size; val++) {
                 const literals = coords.map(([ x, y ]) => context.getLiteral(y, x, val));
                 numLits = context.pbLib.encodeBoth(ones, literals, 1, 1, context.clauses, 1 + numLits);

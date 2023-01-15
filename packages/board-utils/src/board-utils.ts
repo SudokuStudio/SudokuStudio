@@ -18,8 +18,8 @@ export function solutionToString(solution: IdxMap<Geometry.CELL, number>, grid: 
 export const GRID_THICKNESS = 0.01;
 export const GRID_THICKNESS_HALF = 0.5 * GRID_THICKNESS;
 
-export const BOX_THICKNESS = 4 * GRID_THICKNESS;
-export const BOX_THICKNESS_HALF = 0.5 * BOX_THICKNESS;
+export const GRID_REGION_THICKNESS = 4 * GRID_THICKNESS;
+export const GRID_REGION_THICKNESS_HALF = 0.5 * GRID_REGION_THICKNESS;
 
 
 export function arrayObj2array<T>(arrayObj: ArrayObj<T>): T[] {
