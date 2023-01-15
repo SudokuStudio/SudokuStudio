@@ -89,10 +89,7 @@ export declare namespace schema {
     }
     export interface BoxElement extends AbstractElement {
         type: 'box',
-        value?: {
-            width: number,
-            height: number,
-        },
+        value?: ArrayObj<IdxBitset<Geometry.CELL>>,
     }
     export interface DigitElement extends AbstractElement {
         type: 'givens' | 'filled',
