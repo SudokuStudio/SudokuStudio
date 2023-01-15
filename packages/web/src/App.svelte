@@ -43,7 +43,7 @@ import { debounce } from "debounce";
 </main>
 <footer>
     <div class="footer-text">
-        <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio">
+        <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio/commit/{__replace.SUDOKU_STUDIO_VERSION}">
             Sudoku Studio v.{__replace.SUDOKU_STUDIO_VERSION}
         </a>
         <a target="_blank" href={URL_REPORT_BUG} on:mouseover={debounce(updateBugReportUrl, 500, true)}>
