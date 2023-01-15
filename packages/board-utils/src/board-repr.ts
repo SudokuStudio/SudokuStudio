@@ -15,13 +15,10 @@ function defaultRegions(size: number = 9, boxWidth: number = 3, boxHeight: numbe
 
     for (let y = 0; y < size; y++) {
         for (let x = 0; x < size; x++) {
-            // Inlined to prevent circular dependency.
-            // const grid: schema.Grid = { width: size, height: size };
-            // const cellIdx = cellCoord2CellIdx([ x, y ], grid);
             const cellIdx = y * size + x;
             const by = Math.floor(y / boxHeight );
             const bx = Math.floor(x / boxWidth );
-            regions[by * boxWidth + bx][cellIdx] = true;
+            regions[by * boxHeight + bx][cellIdx] = true;
         }
     }
     return regions;
