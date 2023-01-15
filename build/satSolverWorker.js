@@ -10774,17 +10774,6 @@ var satSolverWorker = (function () {
         return Array(grid.width).fill(null)
             .map((_, i) => [i, positive ? (grid.width - 1 - i) : i]);
     }
-    function getBoxCellIdxes(bx, boxInfo, grid) {
-        const out = [];
-        const horizontalBoxes = grid.width / boxInfo.width;
-        const positions = boxInfo.width * boxInfo.height;
-        for (let pos = 0; pos < positions; pos++) {
-            const y = Math.floor(bx / horizontalBoxes) * boxInfo.height + Math.floor(pos / boxInfo.width);
-            const x = (bx % horizontalBoxes) * boxInfo.width + (pos % boxInfo.width);
-            out.push(cellCoord2CellIdx([x, y], grid));
-        }
-        return out;
-    }
     function getOrthogonallyAdjacentCells([x, y], { width, height }) {
         const out = [];
         if (0 < x)
@@ -11098,16 +11087,18 @@ var satSolverWorker = (function () {
             }
             return numLits;
         },
-        box(numLits, element, context) {
-            const { width, height } = element.value || {};
-            if (!width || !height)
-                throw Error(`Invalid box, width: ${width}, height: ${height}.`);
-            const ones = Array(context.size).fill(1);
-            for (const [val, bx] of product(context.size, context.size)) {
-                const literals = getBoxCellIdxes(bx, { width, height }, context.grid)
-                    .map(idx => cellIdx2cellCoord(idx, context.grid))
-                    .map(([x, y]) => context.getLiteral(y, x, val));
-                numLits = context.pbLib.encodeBoth(ones, literals, 1, 1, context.clauses, 1 + numLits);
+        gridRegion(numLits, element, context) {
+            const regions = element.value || {};
+            if (!regions)
+                throw Error(`Invalid region with no cells.`);
+            for (const bx of arrayObj2array(regions)) {
+                const coords = idxMapToKeysArray(bx)
+                    .map(idx => cellIdx2cellCoord(idx, context.grid));
+                const ones = Array(coords.length).fill(1);
+                for (let val = 0; val < context.size; val++) {
+                    const literals = coords.map(([x, y]) => context.getLiteral(y, x, val));
+                    numLits = context.pbLib.encodeBoth(ones, literals, 1, 1, context.clauses, 1 + numLits);
+                }
             }
             return numLits;
         },
