@@ -10855,6 +10855,22 @@ var satSolverWorker = (function () {
             ];
         }
     }
+    function* getOrthogonallyAdjacentPairs({ width, height }) {
+        for (const [y0, x0, y1, x1] of product(height, width, height, width)) {
+            if (y0 > y1 || x0 > x1)
+                continue; // Don't double-count.
+            const dy = Math.abs(y0 - y1);
+            const dx = Math.abs(x0 - x1);
+            if (0 !== dy && 0 !== dx)
+                continue;
+            if (1 !== dy && 1 !== dx)
+                continue;
+            yield [
+                [x0, y0],
+                [x1, y1],
+            ];
+        }
+    }
 
     const cryptoMiniSatPromise = load();
     const pbLibPromise = Module();
@@ -11129,10 +11145,40 @@ var satSolverWorker = (function () {
             return ELEMENT_HANDLERS.givens(numLits, element, context);
         },
         knight(numLits, element, context) {
-            return encodeMoves(numLits, element, context, knightMoves);
+            if (element.value) {
+                numLits = encodeGlobalCellPairs(numLits, context, knightMoves, (v0, v1) => v0 === v1);
+            }
+            return numLits;
         },
         king(numLits, element, context) {
-            return encodeMoves(numLits, element, context, kingMoves);
+            if (element.value) {
+                numLits = encodeGlobalCellPairs(numLits, context, kingMoves, (v0, v1) => v0 === v1);
+            }
+            return numLits;
+        },
+        consecutive(numLits, element, context) {
+            if (element.value) {
+                const isConsecutiveFunc = (v0, v1) => Math.abs(v0 - v1) === 1;
+                if (element.value.diag) {
+                    numLits = encodeGlobalCellPairs(numLits, context, kingMoves, isConsecutiveFunc);
+                }
+                if (element.value.orth) {
+                    numLits = encodeGlobalCellPairs(numLits, context, getOrthogonallyAdjacentPairs, isConsecutiveFunc);
+                }
+            }
+            return numLits;
+        },
+        antiX(numLits, element, context) {
+            if (element.value) {
+                numLits = encodeGlobalCellPairs(numLits, context, getOrthogonallyAdjacentPairs, (v0, v1) => (v0 + v1) === 10);
+            }
+            return numLits;
+        },
+        antiV(numLits, element, context) {
+            if (element.value) {
+                numLits = encodeGlobalCellPairs(numLits, context, getOrthogonallyAdjacentPairs, (v0, v1) => (v0 + v1) === 5);
+            }
+            return numLits;
         },
         diagonal(numLits, element, context) {
             if (element.value) {
@@ -11683,12 +11729,12 @@ var satSolverWorker = (function () {
         }
         return [weights, literals];
     }
-    function encodeMoves(numLits, element, context, func) {
-        if (element.value) {
-            for (const [[x0, y0], [x1, y1]] of func(context.grid)) {
-                for (const [v] of product(context.size)) {
-                    const aLit = context.getLiteral(y0, x0, v);
-                    const bLit = context.getLiteral(y1, x1, v);
+    function encodeGlobalCellPairs(numLits, context, cellPairsFunc, constraintFunc) {
+        for (const [[x0, y0], [x1, y1]] of cellPairsFunc(context.grid)) {
+            for (const [v0, v1] of product(context.size, context.size)) {
+                if (constraintFunc(v0 + 1, v1 + 1)) {
+                    const aLit = context.getLiteral(y0, x0, v0);
+                    const bLit = context.getLiteral(y1, x1, v1);
                     context.clauses.push([-aLit, -bLit]); // Cannot both be true.
                 }
             }
