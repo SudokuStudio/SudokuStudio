@@ -109,7 +109,7 @@ export declare namespace schema {
     }
 
     export interface BooleanElement extends AbstractElement {
-        type: 'knight' | 'king' | 'disjointGroups' | 'selfTaxicab',
+        type: 'knight' | 'king' | 'disjointGroups' | 'antiX' | 'antiV' | 'selfTaxicab',
         value?: {
             positive: boolean,
             negative: boolean,

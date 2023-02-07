@@ -4,7 +4,7 @@ import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
 import { betweenInfo, doubleArrowInfo, lockoutInfo, palindromeInfo, renbanInfo, slowThermoInfo, thermoInfo, dutchWhisperInfo, germanWhisperInfo } from "./element/lines";
-import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo, selfTaxicabInfo } from "./element/toggles";
+import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo, antiXInfo, antiVInfo, selfTaxicabInfo } from "./element/toggles";
 import { evenInfo, maxInfo, minInfo, oddInfo } from "./element/region";
 import { quadrupleInfo } from "./element/quadruple";
 import { differenceInfo, ratioInfo, xvInfo, sandwichInfo, skyscraperInfo, xsumInfo, littleKillerInfo } from "./element/positionNumbers";
@@ -58,6 +58,8 @@ export const ELEMENT_HANDLERS = {
     ['king']: kingInfo,
     ['disjointGroups']: disjointGroupsInfo,
     ['consecutive']: consecutiveInfo,
+    ['antiX']: antiXInfo,
+    ['antiV']: antiVInfo,
     ['selfTaxicab']: selfTaxicabInfo,
 } as Record<schema.ElementType, ElementInfo>;
 

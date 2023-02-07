@@ -1,6 +1,6 @@
 import { load as loadCryptoMiniSat, lbool, Module } from '@sudoku-studio/cryptominisat';
 import loadPbLib from '@sudoku-studio/pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
+import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
 import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 type Context = {
@@ -338,7 +338,7 @@ export const ELEMENT_HANDLERS = {
         if (!regions) throw Error(`Invalid region with no cells.`);
 
         for (const bx of arrayObj2array(regions)) {
-            const coords = idxMapToKeysArray(bx)
+            const coords = idxMapToKeysArray<Geometry.CELL>(bx)
                 .map(idx => cellIdx2cellCoord(idx, context.grid))
             const ones = Array(coords.length).fill(1);
             for (let val = 0; val < context.size; val++) {
@@ -381,11 +381,65 @@ export const ELEMENT_HANDLERS = {
     },
 
     knight(numLits: number, element: schema.BooleanElement, context: Context): number {
-        return encodeMoves(numLits, element, context, knightMoves);
+        if (element.value) {
+            numLits = encodeGlobalCellPairs(
+                numLits,
+                context,
+                knightMoves,
+                (v0, v1) => v0 === v1,
+            );
+        }
+        return numLits;
     },
 
     king(numLits: number, element: schema.BooleanElement, context: Context): number {
-        return encodeMoves(numLits, element, context, kingMoves);
+        if (element.value) {
+            numLits = encodeGlobalCellPairs(
+                numLits,
+                context,
+                kingMoves,
+                (v0, v1) => v0 === v1,
+            );
+        }
+        return numLits;
+    },
+
+    consecutive(numLits: number, element: schema.ConsecutiveElement, context: Context): number {
+        if (element.value) {
+            const isConsecutiveFunc = (v0: number, v1: number) => Math.abs(v0 - v1) === 1;
+
+            if (element.value.diag) {
+                numLits = encodeGlobalCellPairs(numLits, context, kingMoves, isConsecutiveFunc);
+            }
+            if (element.value.orth) {
+                numLits = encodeGlobalCellPairs(numLits, context, getOrthogonallyAdjacentPairs, isConsecutiveFunc);
+            }
+        }
+        return numLits;
+    },
+
+    antiX(numLits: number, element: schema.BooleanElement, context: Context): number {
+        if (element.value) {
+            numLits = encodeGlobalCellPairs(
+                numLits,
+                context,
+                getOrthogonallyAdjacentPairs,
+                (v0, v1) => (v0 + v1) === 10,
+            );
+        }
+        return numLits;
+    },
+
+    antiV(numLits: number, element: schema.BooleanElement, context: Context): number {
+        if (element.value) {
+            numLits = encodeGlobalCellPairs(
+                numLits,
+                context,
+                getOrthogonallyAdjacentPairs,
+                (v0, v1) => (v0 + v1) === 5,
+            );
+        }
+        return numLits;
     },
 
     diagonal(numLits: number, element: schema.DiagonalElement, context: Context): number {
@@ -1024,12 +1078,16 @@ function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: numb
     return [ weights, literals ];
 }
 
-function encodeMoves(numLits: number, element: schema.BooleanElement, context: Context, func: typeof knightMoves): number {
-    if (element.value) {
-        for (const [ [ x0, y0 ], [ x1, y1 ] ] of func(context.grid)) {
-            for (const [ v ] of product(context.size)) {
-                const aLit = context.getLiteral(y0, x0, v);
-                const bLit = context.getLiteral(y1, x1, v);
+function encodeGlobalCellPairs(
+    numLits: number,
+    context: Context, cellPairsFunc: typeof knightMoves,
+    constraintFunc: (v0: number, v1: number) => boolean
+): number {
+    for (const [ [ x0, y0 ], [ x1, y1 ] ] of cellPairsFunc(context.grid)) {
+        for (const [ v0, v1 ] of product(context.size, context.size)) {
+            if (constraintFunc(v0 + 1, v1 + 1)) {
+                const aLit = context.getLiteral(y0, x0, v0);
+                const bLit = context.getLiteral(y1, x1, v1);
                 context.clauses.push([ -aLit, -bLit ]); // Cannot both be true.
             }
         }

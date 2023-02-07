@@ -108,6 +108,54 @@ export const consecutiveInfo: ElementInfo = {
     },
 };
 
+export const antiXInfo: ElementInfo = {
+    inGlobalMenu: true,
+    order: 0,
+    menu: {
+        type: 'checkbox',
+        name: 'Anti-X',
+        checkbox: {
+            name: 'Anti-X',
+            icon: 'anti-x',
+        },
+        icon: 'anti-x',
+    },
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        if (value) {
+            getAntiRomanSumWarnings(grid, digits, warnings, 10);
+        }
+    },
+    meta: {
+        description: 'Adjacent digits may not sum to 10.',
+        tags: [],
+        category: [ 'global' ],
+    },
+};
+
+export const antiVInfo: ElementInfo = {
+    inGlobalMenu: true,
+    order: 0,
+    menu: {
+        type: 'checkbox',
+        name: 'Anti-V',
+        checkbox: {
+            name: 'Anti-V',
+            icon: 'anti-v',
+        },
+        icon: 'anti-v',
+    },
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        if (value) {
+            getAntiRomanSumWarnings(grid, digits, warnings, 5);
+        }
+    },
+    meta: {
+        description: 'Adjacent digits may not sum to 5.',
+        tags: [],
+        category: [ 'global' ],
+    },
+};
+
 export const kingInfo: ElementInfo = {
     inGlobalMenu: true,
     order: 0,
@@ -193,6 +241,29 @@ function getConsecutiveWarnings(
         if (null == digitA || null == digitB) continue;
 
         if (Math.abs(digitA - digitB) === 1) {
+            warnings[indexA] = true;
+            warnings[indexB] = true;
+        }
+    }
+}
+
+function getAntiRomanSumWarnings(
+    grid: Grid,
+    digits: IdxMap<Geometry.CELL, number>,
+    warnings: IdxBitset<Geometry.CELL>,
+    disallowedSum: number,
+) {
+    const cellPairs = getOrthogonallyAdjacentPairs(grid);
+
+    for (const [cellA, cellB] of cellPairs) {
+        const indexA = cellCoord2CellIdx(cellA, grid);
+        const indexB = cellCoord2CellIdx(cellB, grid);
+        const digitA = digits[indexA];
+        const digitB = digits[indexB];
+
+        if (null == digitA || null == digitB) continue;
+
+        if (digitA + digitB === disallowedSum) {
             warnings[indexA] = true;
             warnings[indexB] = true;
         }

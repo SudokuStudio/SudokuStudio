@@ -206,6 +206,8 @@
         ['king']: NullRender,
         ['disjointGroups']: NullRender,
         ['consecutive']: NullRender,
+        ['antiX']: NullRender,
+        ['antiV']: NullRender,
         ['selfTaxicab']: NullRender,
     } as const;
 
