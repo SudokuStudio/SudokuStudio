@@ -128,11 +128,9 @@ export const columnIndexerInfo: ElementInfo = {
         for (const indexer of cells) {
             const indexerValue = digits[indexer];
             if (null == indexerValue) continue;
-            console.log(indexer, indexerValue);
             const [ c, r ] = cellIdx2cellCoord(indexer, grid);
             const indexee = cellCoord2CellIdx([ indexerValue - 1, r ], grid);
             const indexeeValue = digits[indexee];
-            console.log(r, c, indexee, indexeeValue);
             if (null == indexeeValue) continue;
             if (indexeeValue != c + 1) {
                 warnings[indexer] = true;
