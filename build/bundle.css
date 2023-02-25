@@ -1215,6 +1215,25 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
     margin: 1em 0 0 0;
   }
 }
+.size-choices.svelte-1ecirgf {
+  height: 75vh;
+  overflow: auto;
+}
+
+.size-item.svelte-1ecirgf {
+  width: 100%;
+  margin: 0.25em 0 0 0;
+  padding: 0.25em;
+  text-align: inherit;
+  border-radius: 0.3rem;
+  border: 0.1rem solid transparent;
+  transition: border-color 0.1s linear;
+}
+
+.size-item.svelte-1ecirgf:hover, .size-item.svelte-1ecirgf:focus-visible {
+  border-color: #637691;
+}
+
 .search-input-container.svelte-13xysja {
   padding: 0.5em;
   margin-bottom: 0.5em;
@@ -1340,25 +1359,6 @@ textarea.rules-text.svelte-fcgi7u.svelte-fcgi7u {
 
 .container.svelte-v1vuhq.svelte-v1vuhq.svelte-v1vuhq {
   margin-bottom: 0.5em;
-}
-
-.size-choices.svelte-1ecirgf {
-  height: 75vh;
-  overflow: auto;
-}
-
-.size-item.svelte-1ecirgf {
-  width: 100%;
-  margin: 0.25em 0 0 0;
-  padding: 0.25em;
-  text-align: inherit;
-  border-radius: 0.3rem;
-  border: 0.1rem solid transparent;
-  transition: border-color 0.1s linear;
-}
-
-.size-item.svelte-1ecirgf:hover, .size-item.svelte-1ecirgf:focus-visible {
-  border-color: #637691;
 }
 
 .padbutton.svelte-1hvlbtp.svelte-1hvlbtp.svelte-1hvlbtp {

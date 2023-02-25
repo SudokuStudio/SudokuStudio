@@ -11630,6 +11630,17 @@ var satSolverWorker = (function () {
             }
             return numLits;
         },
+        columnIndexer(numLits, element, context) {
+            const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            for (const [c, r] of cellCoords) {
+                for (const [v] of product(context.size)) {
+                    const indexer = context.getLiteral(r, c, v);
+                    const indexee = context.getLiteral(r, v, c);
+                    context.clauses.push([-indexer, indexee], [-indexee, indexer]);
+                }
+            }
+            return numLits;
+        },
     };
     /**
      * Modifies the CLAUSES in-place such that they only need be satisfied if ALL of the CONDITION_CONJUNCTION literals are true.
