@@ -23,6 +23,7 @@
     import MaxRender from './svelte/MaxRender.svelte';
     import OddRender from "./svelte/OddRender.svelte";
     import EvenRender from "./svelte/EvenRender.svelte";
+    import IndexerRender from "./svelte/IndexerRender.svelte";
 
     import KillerRender from './svelte/KillerRender.svelte';
     import QuadrupleRender from './svelte/QuadrupleRender.svelte';
@@ -156,6 +157,13 @@
         return new ThermoRender(args);
     }
 
+    function ColumnIndexerRender(args: any) {
+        Object.assign(args.props, {
+            color: "#C77C7C",
+        });
+        return new IndexerRender(args);
+    }
+
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
         ['select']: SelectRender,
@@ -186,6 +194,7 @@
         ['max']: MaxRender,
         ['odd']: OddRender,
         ['even']: EvenRender,
+        ['columnIndexer']: ColumnIndexerRender,
 
         ['killer']: KillerRender,
         ['clone']: CloneRender,

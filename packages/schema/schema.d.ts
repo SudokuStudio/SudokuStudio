@@ -189,7 +189,7 @@ export declare namespace schema {
     }
 
     export interface RegionElement extends AbstractElement {
-        type: 'min' | 'max' | 'odd' | 'even',
+        type: 'min' | 'max' | 'odd' | 'even' | 'columnIndexer',
         value?: IdxMap<Geometry.CELL, true>,
     }
 

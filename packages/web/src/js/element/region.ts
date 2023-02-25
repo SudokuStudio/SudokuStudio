@@ -3,11 +3,10 @@ import type { Diff, StateRef } from "@sudoku-studio/state-manager";
 import { getCellValue } from "../board";
 import { AdjacentCellPointerHandler, CellDragTapEvent } from "../input/adjacentCellPointerHandler";
 import type { InputHandler } from "../input/inputHandler";
-import { cellCoord2CellIdx, getBorderCellPairs, idxMapToKeysArray } from "@sudoku-studio/board-utils";
+import { cellCoord2CellIdx, cellIdx2cellCoord, getBorderCellPairs, idxMapToKeysArray, markDigitsFailingCondition } from "@sudoku-studio/board-utils";
 import { pushHistory } from "../history";
 import { userCursorIsShownState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
-import { markDigitsFailingCondition } from "@sudoku-studio/board-utils";
 
 export const minInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
@@ -109,6 +108,41 @@ export const oddInfo: ElementInfo = {
     meta: {
         description: 'Cells with a gray circle must be odd.',
         tags: [ 'parity', 'modulo', 'remainder' ],
+        category: [ 'local', 'cell' ],
+    },
+};
+
+export const columnIndexerInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, '');
+    },
+    order: 42,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Column Indexer',
+        icon: 'odd-even',
+    },
+    getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        const cells = idxMapToKeysArray(value || {});
+        for (const indexer of cells) {
+            const indexerValue = digits[indexer];
+            if (null == indexerValue) continue;
+            console.log(indexer, indexerValue);
+            const [ c, r ] = cellIdx2cellCoord(indexer, grid);
+            const indexee = cellCoord2CellIdx([ indexerValue - 1, r ], grid);
+            const indexeeValue = digits[indexee];
+            console.log(r, c, indexee, indexeeValue);
+            if (null == indexeeValue) continue;
+            if (indexeeValue != c + 1) {
+                warnings[indexer] = true;
+                warnings[indexee] = true;
+            }
+        }
+    },
+    meta: {
+        description: 'If the cell with this constraint is at row R, column C and has digit V, then the cell at Row R, column V has digit C.',
+        tags: [ 'indexer' ],
         category: [ 'local', 'cell' ],
     },
 };

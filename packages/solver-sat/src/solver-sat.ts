@@ -967,6 +967,21 @@ export const ELEMENT_HANDLERS = {
         }
         return numLits;
     },
+
+    columnIndexer(numLits: number, element: schema.RegionElement, context: Context): number {
+        const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+        for (const [ c, r ] of cellCoords) {
+            for (const [ v ] of product(context.size)) {
+                const indexer = context.getLiteral(r, c, v);
+                const indexee = context.getLiteral(r, v, c);
+                context.clauses.push(
+                    [ -indexer, indexee ],
+                    [ -indexee, indexer ],
+                );
+            }
+        }
+        return numLits;
+    },
 } as const;
 
 /**
