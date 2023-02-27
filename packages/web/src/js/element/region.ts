@@ -124,22 +124,35 @@ export const columnIndexerInfo: ElementInfo = {
         icon: 'odd-even',
     },
     getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
-        const cells = idxMapToKeysArray(value || {});
-        for (const indexer of cells) {
-            const indexerValue = digits[indexer];
-            if (null == indexerValue) continue;
-            const [ c, r ] = cellIdx2cellCoord(indexer, grid);
-            const indexee = cellCoord2CellIdx([ indexerValue - 1, r ], grid);
-            const indexeeValue = digits[indexee];
-            if (null == indexeeValue) continue;
-            if (indexeeValue != c + 1) {
-                warnings[indexer] = true;
-                warnings[indexee] = true;
-            }
-        }
+        indexerWarnings(value, grid, digits, warnings,
+                        (r, _c, indexerValue) => [indexerValue - 1, r],
+                            (_r, c, indexeeValue) => (indexeeValue != c + 1));
     },
     meta: {
         description: 'If the cell with this constraint is at row R, column C and has digit V, then the cell at Row R, column V has digit C.',
+        tags: [ 'indexer' ],
+        category: [ 'local', 'cell' ],
+    },
+};
+
+export const rowIndexerInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg, '');
+    },
+    order: 42,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Row Indexer',
+        icon: 'odd-even',
+    },
+    getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        indexerWarnings(value, grid, digits, warnings,
+                        (_r, c, indexerValue) => [c, indexerValue - 1],
+                            (r, _c, indexeeValue) => (indexeeValue != r + 1));
+    },
+    meta: {
+        description: 'If the cell with this constraint is at row R, column C and has digit V, then the cell at Row V, column C has digit R.',
         tags: [ 'indexer' ],
         category: [ 'local', 'cell' ],
     },
@@ -244,4 +257,22 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, opp
             pointerHandler.touchUp(event, grid, svg);
         },
     } as const;
+}
+
+function indexerWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>,
+                        f: (r: number, c: number, indexerValue: number) => [number, number],
+                        testValue: (r: number, c: number, indexeeValue: number) => boolean): void {
+    const cells = idxMapToKeysArray(value || {});
+    for (const indexer of cells) {
+        const indexerValue = digits[indexer];
+        if (null == indexerValue) continue;
+        const [ c, r ] = cellIdx2cellCoord(indexer, grid);
+        const indexee = cellCoord2CellIdx(f(r, c, indexerValue), grid);
+        const indexeeValue = digits[indexee];
+        if (null == indexeeValue) continue;
+        if (testValue(r, c, indexeeValue)) {
+            warnings[indexer] = true;
+            warnings[indexee] = true;
+        }
+    }
 }

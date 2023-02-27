@@ -164,6 +164,13 @@
         return new IndexerRender(args);
     }
 
+    function RowIndexerRender(args: any) {
+        Object.assign(args.props, {
+            color: "#7CC77C",
+        });
+        return new IndexerRender(args);
+    }
+
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
         ['select']: SelectRender,
@@ -195,6 +202,7 @@
         ['odd']: OddRender,
         ['even']: EvenRender,
         ['columnIndexer']: ColumnIndexerRender,
+        ['rowIndexer']: RowIndexerRender,
 
         ['killer']: KillerRender,
         ['clone']: CloneRender,
