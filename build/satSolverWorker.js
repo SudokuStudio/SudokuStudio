@@ -11631,14 +11631,11 @@ var satSolverWorker = (function () {
             return numLits;
         },
         columnIndexer(numLits, element, context) {
-            const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
-            for (const [c, r] of cellCoords) {
-                for (const [v] of product(context.size)) {
-                    const indexer = context.getLiteral(r, c, v);
-                    const indexee = context.getLiteral(r, v, c);
-                    context.clauses.push([-indexer, indexee], [-indexee, indexer]);
-                }
-            }
+            generalIndexer(element, context, (r, c, v) => [r, v, c]);
+            return numLits;
+        },
+        rowIndexer(numLits, element, context) {
+            generalIndexer(element, context, (r, c, v) => [v, c, r]);
             return numLits;
         },
     };
@@ -11780,6 +11777,16 @@ var satSolverWorker = (function () {
             }
         }
         return numLits;
+    }
+    function generalIndexer(element, context, f) {
+        const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+        for (const [c, r] of cellCoords) {
+            for (const [v] of product(context.size)) {
+                const indexer = context.getLiteral(r, c, v);
+                const indexee = context.getLiteral(...f(r, c, v));
+                context.clauses.push([-indexer, indexee], [-indexee, indexer]);
+            }
+        }
     }
 
     function makeUid() {
