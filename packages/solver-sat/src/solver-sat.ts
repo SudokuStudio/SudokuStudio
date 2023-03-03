@@ -1,12 +1,13 @@
 import { load as loadCryptoMiniSat, lbool, Module } from '@sudoku-studio/cryptominisat';
 import loadPbLib from '@sudoku-studio/pblib';
 import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
-import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
+import { ArrayObj, Coord, Geometry, Grid, IdxMap, IdxBitset, schema } from '@sudoku-studio/schema';
 
 type Context = {
     clauses: number[][],
     size: number,
     grid: Grid,
+    regionMap: IdxMap<Geometry.CELL, number>,
     getLiteral: (y: number, x: number, v: number) => number,
     pbLib: ReturnType<typeof loadPbLib> extends Promise<infer T> ? T : never,
 };
@@ -117,6 +118,7 @@ export async function solve(board: schema.Board, maxSolutions: number,
         clauses: [],
         size,
         grid: board.grid,
+        regionMap: buildRegionMap(board),
         getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
         pbLib,
     }
@@ -183,6 +185,7 @@ export async function solveTrueCandidates(board: schema.Board,
         clauses: [],
         size,
         grid: board.grid,
+        regionMap: buildRegionMap(board),
         getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
         pbLib,
     }
@@ -719,6 +722,68 @@ export const ELEMENT_HANDLERS = {
         return numLits;
     },
 
+    regionSum(numLits: number, element: schema.LineElement, context: Context): number {
+        console.log(context.clauses.length);
+        const start = Date.now();
+        for (const line of Object.values(element.value || {})) {
+            const lineCells = arrayObj2array(line || {});
+            if (lineCells.length == 0) continue;
+            const weights: number[] = [];
+            const lits: number[] = [];
+
+            // Construct the sum for the first region that the line passes through, but make it negative.
+            let i = 0;
+            let regionNumber = context.regionMap[lineCells[0]];
+            for (; i < lineCells.length; i++) {
+                if (regionNumber != context.regionMap[lineCells[i]]) {
+                    regionNumber = context.regionMap[lineCells[i]];
+                    break;
+                }
+                const [ x, y ] = cellIdx2cellCoord(lineCells[i], context.grid);
+                for (const [ v ] of product(context.size)) {
+                    weights.push(-v - 1);
+                    lits.push(context.getLiteral(y, x, v));
+                }
+            }
+            // If that's the entire line, then we can move on to the next line.
+            if (i == lineCells.length) continue;
+
+            // For each additional region, contruct the sum, as a positive
+            let weightsCopy = [...weights];
+            let litsCopy = [...lits];
+            for (; i < lineCells.length; i++) {
+                if (regionNumber != context.regionMap[lineCells[i]]) {
+                    // New region, encode that (sum of the last region) - (sum of the first region) = 0
+                    const weightsTemp = [...weightsCopy];
+                    const litsTemp = [...litsCopy];
+                    numLits = context.pbLib.encodeBoth(weightsTemp, litsTemp, 0, 0, context.clauses, 1 + numLits);
+                    // reset the current region.
+                    weightsCopy = [...weights];
+                    litsCopy = [...lits];
+                    regionNumber = context.regionMap[lineCells[i]];
+                }
+                const [ x, y ] = cellIdx2cellCoord(lineCells[i], context.grid);
+                for (const [ v ] of product(context.size)) {
+                    weightsCopy.push(v + 1);
+                    litsCopy.push(context.getLiteral(y, x, v));
+                }
+            }
+            // Encode the final region for this line.
+            numLits = context.pbLib.encodeBoth(weightsCopy, litsCopy, 0, 0, context.clauses, 1 + numLits);
+        }
+        const end = Date.now();
+        console.log(context.clauses.length);
+        console.log(`Region Sum encoding time: ${end - start} ms`);
+        /* Puzzle used for performance testing: https://logic-masters.de/Raetselportal/Raetsel/zeigen.php?id=000CQH
+            Encoding time        Reported time        clauses.length
+            1373 ms                5531 ms                53356
+            1057 ms                4924 ms                53356
+            1153 ms                4979 ms                53356
+            1080 ms                4887 ms                53356
+        */
+        return numLits;
+    },
+
     arrow(numLits: number, element: schema.ArrowElement, context: Context): number {
         for (const { bulb, body } of Object.values(element.value || {})) {
             // Arrow only has a bulb
@@ -1150,4 +1215,23 @@ function generalIndexer(element: schema.RegionElement, context: Context, f:(r: n
             );
         }
     }
+}
+
+function buildRegionMap(board: schema.Board): IdxMap<Geometry.CELL, number> {
+    for (const element of Object.values(board.elements)) {
+        if ('gridRegion' == element.type) {
+            const ret = {} as IdxMap<Geometry.CELL, number>;
+
+            const regions = arrayObj2array(element.value! as ArrayObj<IdxBitset<Geometry.CELL>>);
+            for (let idx = 0; idx < regions.length; idx++) {
+                const region = idxMapToKeysArray(regions[idx]);
+                for (const cell of region) {
+                    ret[cell] = idx;
+                }
+            }
+
+            return ret;
+        }
+    }
+    return {};
 }

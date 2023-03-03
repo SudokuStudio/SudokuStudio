@@ -3,7 +3,7 @@ import Fuse from 'fuse.js';
 import type { ElementInfo } from "./element/element";
 
 import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from "./element/digit";
-import { betweenInfo, doubleArrowInfo, lockoutInfo, palindromeInfo, renbanInfo, slowThermoInfo, thermoInfo, dutchWhisperInfo, germanWhisperInfo } from "./element/lines";
+import { betweenInfo, doubleArrowInfo, lockoutInfo, palindromeInfo, regionSumInfo, renbanInfo, slowThermoInfo, thermoInfo, dutchWhisperInfo, germanWhisperInfo } from "./element/lines";
 import { consecutiveInfo, disjointGroupsInfo, diagonalInfo, knightInfo, kingInfo, antiXInfo, antiVInfo, selfTaxicabInfo } from "./element/toggles";
 import { columnIndexerInfo, evenInfo, maxInfo, minInfo, oddInfo, rowIndexerInfo } from "./element/region";
 import { quadrupleInfo } from "./element/quadruple";
@@ -33,6 +33,7 @@ export const ELEMENT_HANDLERS = {
     ['whisper']: germanWhisperInfo,
     ['dutchWhisper']: dutchWhisperInfo,
     ['renban']: renbanInfo,
+    ['regionSum']: regionSumInfo,
     ['arrow']: arrowInfo,
 
     ['min']: minInfo,

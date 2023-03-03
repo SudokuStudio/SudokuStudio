@@ -150,6 +150,20 @@
         return new LineRender(args);
     }
 
+    function RegionSumRender(args: any) {
+        Object.assign(args.props, {
+            stroke: '#2ECBFF',
+            strokeWidth: 0.125,
+            pathOptions: {
+                shortenHead: 0.15,
+                shortenTail: 0.15,
+                bezierRounding: 0.15,
+                closeLoops: true,
+            },
+        });
+        return new LineRender(args);
+    }
+
     function SlowThermoRender(args: any) {
         Object.assign(args.props, {
             isSlow: true,
@@ -195,6 +209,7 @@
         ['whisper']: GermanWhisperRender,
         ['dutchWhisper']: DutchWhisperRender,
         ['renban']: RenbanRender,
+        ['regionSum']: RegionSumRender,
         ['arrow']: ArrowRender,
 
         ['min']: MinRender,
