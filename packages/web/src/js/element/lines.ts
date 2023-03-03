@@ -395,3 +395,30 @@ export const renbanInfo: ElementInfo = {
         category: [ 'local', 'line' ],
     },
 };
+
+export const regionSumInfo: ElementInfo = {
+    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getLineInputHandler(ref, grid, svg, {
+            deletePrioritizeHead: false,
+            deletePrioritizeTail: false,
+            allowSelfIntersection: true,
+        });
+    },
+    order: 80,
+    inGlobalMenu: false,
+    menu: {
+        type: 'select',
+        name: 'Region Sum',
+        icon: 'region-sum',
+    },
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        // TODO
+    },
+    meta: {
+        description: 'Digits along region sum lines sum to the same value in each region it passes through. \
+            Each instance of a single line that passes through a box is counted separately. \
+            Different lines may have different sums.',
+        tags: [ 'line', 'region sum' ],
+        category: [ 'local', 'line' ],
+    },
+};
