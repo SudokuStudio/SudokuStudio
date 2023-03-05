@@ -19,7 +19,7 @@ export const minInfo: ElementInfo = {
         name: 'Min',
         icon: 'min',
     },
-    getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.RegionElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         const cells = idxMapToKeysArray(value || {});
         for (const [ inCell, outCell ] of getBorderCellPairs(cells, grid)) {
             const inDigit = digits[inCell];
@@ -49,7 +49,7 @@ export const maxInfo: ElementInfo = {
         name: 'Max',
         icon: 'max',
     },
-    getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.RegionElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         const cells = idxMapToKeysArray(value || {});
         for (const [ inCell, outCell ] of getBorderCellPairs(cells, grid)) {
             const inDigit = digits[inCell];
@@ -79,7 +79,7 @@ export const evenInfo: ElementInfo = {
         name: 'Even',
         icon: 'odd-even',
     },
-    getWarnings(value: schema.RegionElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.RegionElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         const cells = idxMapToKeysArray(value || {});
         markDigitsFailingCondition(digits, cells, warnings, x => 0 == x % 2);
     },
@@ -101,7 +101,7 @@ export const oddInfo: ElementInfo = {
         name: 'Odd',
         icon: 'odd-even',
     },
-    getWarnings(value: schema.RegionElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.RegionElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         const cells = idxMapToKeysArray(value || {});
         markDigitsFailingCondition(digits, cells, warnings, x => 1 == x % 2);
     },
@@ -123,7 +123,7 @@ export const columnIndexerInfo: ElementInfo = {
         name: 'Column Indexer',
         icon: 'odd-even',
     },
-    getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.RegionElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         indexerWarnings(value, grid, digits, warnings,
                         (r, _c, indexerValue) => [indexerValue - 1, r],
                             (_r, c, indexeeValue) => (indexeeValue != c + 1));
@@ -146,7 +146,7 @@ export const rowIndexerInfo: ElementInfo = {
         name: 'Row Indexer',
         icon: 'odd-even',
     },
-    getWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.RegionElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         indexerWarnings(value, grid, digits, warnings,
                         (_r, c, indexerValue) => [c, indexerValue - 1],
                             (r, _c, indexeeValue) => (indexeeValue != r + 1));

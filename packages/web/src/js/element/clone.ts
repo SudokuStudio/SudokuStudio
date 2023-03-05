@@ -19,7 +19,7 @@ export const cloneInfo: ElementInfo = {
         name: 'Clone',
         icon: 'clone',
     },
-    getWarnings(value: schema.CloneElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.CloneElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const { a, b } of Object.values(value || {})) {
             if (null == a || null == b) continue;
 

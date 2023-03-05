@@ -1,7 +1,7 @@
 import { load as loadCryptoMiniSat, lbool, Module } from '@sudoku-studio/cryptominisat';
 import loadPbLib from '@sudoku-studio/pblib';
-import { arrayObj2array, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
-import { ArrayObj, Coord, Geometry, Grid, IdxMap, IdxBitset, schema } from '@sudoku-studio/schema';
+import { arrayObj2array, buildRegionMap, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
+import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
 
 type Context = {
     clauses: number[][],
@@ -118,7 +118,7 @@ export async function solve(board: schema.Board, maxSolutions: number,
         clauses: [],
         size,
         grid: board.grid,
-        regionMap: buildRegionMap(board),
+        regionMap: buildRegionMap(board.elements),
         getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
         pbLib,
     }
@@ -185,7 +185,7 @@ export async function solveTrueCandidates(board: schema.Board,
         clauses: [],
         size,
         grid: board.grid,
-        regionMap: buildRegionMap(board),
+        regionMap: buildRegionMap(board.elements),
         getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
         pbLib,
     }
@@ -1215,23 +1215,4 @@ function generalIndexer(element: schema.RegionElement, context: Context, f:(r: n
             );
         }
     }
-}
-
-function buildRegionMap(board: schema.Board): IdxMap<Geometry.CELL, number> {
-    for (const element of Object.values(board.elements)) {
-        if ('gridRegion' == element.type) {
-            const ret = {} as IdxMap<Geometry.CELL, number>;
-
-            const regions = arrayObj2array(element.value! as ArrayObj<IdxBitset<Geometry.CELL>>);
-            for (let idx = 0; idx < regions.length; idx++) {
-                const region = idxMapToKeysArray(regions[idx]);
-                for (const cell of region) {
-                    ret[cell] = idx;
-                }
-            }
-
-            return ret;
-        }
-    }
-    return {};
 }

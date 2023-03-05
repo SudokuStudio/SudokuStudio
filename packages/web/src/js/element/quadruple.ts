@@ -15,7 +15,7 @@ export const quadrupleInfo: ElementInfo = {
         name: 'Quadruple',
         icon: 'quadruple',
     },
-    getWarnings(value: schema.QuadrupleElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.QuadrupleElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ cornerIdx, reqValues ] of Object.entries(value || {})) {
             const reqValuesArr = arrayObj2array((reqValues || {}) as ArrayObj<number>);
 

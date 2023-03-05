@@ -22,7 +22,7 @@ export const diagonalInfo: ElementInfo = {
         ],
         icon: 'positive-diagonal',
     },
-    getWarnings(value: schema.DiagonalElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.DiagonalElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
             if (value.positive) {
                 const cells = getMajorDiagonal(true, grid).map(coord => cellCoord2CellIdx(coord, grid));
@@ -53,7 +53,7 @@ export const disjointGroupsInfo: ElementInfo = {
         },
         icon: 'disjoint',
     },
-    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
             for (const [ pos ] of product(grid.width)) {
                 const cells: Idx<Geometry.CELL>[] = [];
@@ -91,7 +91,7 @@ export const consecutiveInfo: ElementInfo = {
         ],
         icon: 'consec-orth',
     },
-    getWarnings(value: schema.ConsecutiveElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.ConsecutiveElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
             if (value.diag) {
                 getConsecutiveWarnings(kingMoves(grid), grid, digits, warnings);
@@ -120,7 +120,7 @@ export const antiXInfo: ElementInfo = {
         },
         icon: 'anti-x',
     },
-    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
             getAntiRomanSumWarnings(grid, digits, warnings, 10);
         }
@@ -144,7 +144,7 @@ export const antiVInfo: ElementInfo = {
         },
         icon: 'anti-v',
     },
-    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
             getAntiRomanSumWarnings(grid, digits, warnings, 5);
         }
@@ -168,7 +168,7 @@ export const kingInfo: ElementInfo = {
         },
         icon: 'king',
     },
-    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
             for (const coords of kingMoves(grid)) {
                 // Length-two array.
@@ -196,7 +196,7 @@ export const knightInfo: ElementInfo = {
         },
         icon: 'knight',
     },
-    getWarnings(value: schema.BooleanElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.BooleanElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (value) {
             for (const coords of knightMoves(grid)) {
                 // Length-two array.

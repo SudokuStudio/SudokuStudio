@@ -20,7 +20,7 @@ export const differenceInfo: ElementInfo = {
         name: 'Difference',
         icon: 'kropki',
     },
-    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ edgeIdx, differenceOrTrue ] of Object.entries(value || {})) {
             if (null == differenceOrTrue) continue;
             const difference = true === differenceOrTrue ? 1 : differenceOrTrue;
@@ -57,7 +57,7 @@ export const ratioInfo: ElementInfo = {
         name: 'Ratio',
         icon: 'kropki',
     },
-    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ edgeIdx, ratioOrTrue ] of Object.entries(value || {})) {
             if (null == ratioOrTrue) continue;
             const ratio = true === ratioOrTrue ? 2 : ratioOrTrue;
@@ -99,7 +99,7 @@ export const xvInfo: ElementInfo = {
         name: 'XV Sum',
         icon: 'xv',
     },
-    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.EdgeNumberElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ edgeIdx, sum ] of Object.entries(value || {})) {
             if ('number' !== typeof sum) continue;
 
@@ -135,7 +135,7 @@ export const littleKillerInfo: ElementInfo = {
         name: 'Little Killer',
         icon: 'little-killer',
     },
-    getWarnings(value: schema.LittleKillerElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.LittleKillerElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ diagonalIdx, sum ] of Object.entries(value || {})) {
             if ('number' !== typeof sum) continue;
 
@@ -164,7 +164,7 @@ export const sandwichInfo: ElementInfo = {
         name: 'Sandwich',
         icon: 'sandwich',
     },
-    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ seriesIdx, sum ] of Object.entries(value || {})) {
             if ('number' !== typeof sum) continue;
 
@@ -205,7 +205,7 @@ export const skyscraperInfo: ElementInfo = {
         name: 'Skyscraper',
         icon: 'skyscraper',
     },
-    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ seriesIdx, numVisible ] of Object.entries(value || {})) {
             if ('number' !== typeof numVisible) continue;
 
@@ -254,7 +254,7 @@ export const xsumInfo: ElementInfo = {
         name: 'X-Sum',
         icon: 'xsum',
     },
-    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.SeriesNumberElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const [ seriesIdx, xsum ] of Object.entries(value || {})) {
             if ('number' !== typeof xsum) continue;
 

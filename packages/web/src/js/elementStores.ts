@@ -7,7 +7,7 @@ import { createElement, ELEMENT_HANDLERS } from "./elements";
 import { userPrevToolState, userState, userToolState } from "./user";
 import type { InputHandler } from "./input/inputHandler";
 import { pushHistory } from "./history";
-import { boardRepr, getDigits } from "@sudoku-studio/board-utils";
+import { boardRepr, buildRegionMap, getDigits } from "@sudoku-studio/board-utils";
 
 export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo, type: schema.ElementType };
 export type ElementHandlerList = ElementHandlerItem[];
@@ -125,11 +125,12 @@ boardState.ref('elements').watch<schema.Board['elements']>((_path, _oldElements,
 
     const warnings: IdxBitset<Geometry.CELL> = {};
     const grid = boardGridRef.get<Grid>();
+    const gridRegionMap = buildRegionMap(newElements);
     for (const { type, value } of Object.values(newElements)) {
         const handler = ELEMENT_HANDLERS[type];
         if (null == handler || null == handler.getWarnings) continue;
 
-        handler.getWarnings(value, grid, digits, warnings);
+        handler.getWarnings(value, grid, gridRegionMap, digits, warnings);
     }
     warningState.update({ 'cells': warnings });
 }, true);
