@@ -6,7 +6,7 @@ export const gridInfo: ElementInfo = {
     order: 101,
     permanent: true,
 
-    getWarnings(_value: any, grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(_value: any, grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (let row = 0; row < grid.height; row++) {
             writeRepeatingDigits(digits, getRowCellIdxes(row, grid), warnings);
         }
@@ -20,7 +20,7 @@ export const gridRegionInfo: ElementInfo = {
     order: 100,
     permanent: true,
 
-    getWarnings(value: schema.GridRegionElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.GridRegionElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         if (null == value) return;
 
         const boxes = arrayObj2array(value || {});

@@ -878,3 +878,24 @@ export const gridToBoxSizeMap = {
     15: [  5, 3 ],
     16: [  4, 4 ],
 } as const;
+
+export function buildRegionMap(elements: schema.Board['elements']): IdxMap<Geometry.CELL, number> {
+    const gridRegionElement = ((elements) => {
+        for (const element of Object.values(elements)) {
+            if ('gridRegion' === element.type)
+                return element;
+        }
+        return {};
+    })(elements) as schema.GridRegionElement;
+    const ret = {} as IdxMap<Geometry.CELL, number>;
+
+    const regions = arrayObj2array((gridRegionElement.value || {}) as ArrayObj<IdxBitset<Geometry.CELL>>);
+    for (let idx = 0; idx < regions.length; idx++) {
+        const region = idxMapToKeysArray(regions[idx]);
+        for (const cell of region) {
+            ret[cell] = idx;
+        }
+    }
+
+    return ret;
+}

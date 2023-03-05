@@ -16,7 +16,7 @@ export const arrowInfo: ElementInfo = {
         name: 'Arrow',
         icon: 'arrow',
     },
-    getWarnings(value: schema.ArrowElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.ArrowElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         outer:
         for (const { bulb, body } of Object.values(value || {})) {
             const bulbArrReversed = arrayObj2array(bulb);

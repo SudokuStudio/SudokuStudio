@@ -17,7 +17,7 @@ export const killerInfo: ElementInfo = {
         name: 'Killer Cage',
         icon: 'killer',
     },
-    getWarnings(value: schema.KillerElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.KillerElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const { sum, cells } of Object.values(value || {})) {
             const cellsArr = idxMapToKeysArray<Geometry.CELL>(cells);
             writeRepeatingDigits(digits, cellsArr, warnings);

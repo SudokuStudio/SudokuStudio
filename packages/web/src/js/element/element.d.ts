@@ -38,7 +38,7 @@ export type ElementInfo = {
     inGlobalMenu?: null | boolean,
     menu?: null | MenuComponent,
 
-    getWarnings?: null | ((value: any, grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>) => void);
+    getWarnings?: null | ((value: any, grid: Grid, regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>) => void);
 
     /** Meta info, for seach. */
     meta?: null | {

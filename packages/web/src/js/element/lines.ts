@@ -20,7 +20,7 @@ export const thermoInfo: ElementInfo = {
         name: 'Thermo',
         icon: 'thermo',
     },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         getThermoWarnings(value, digits, warnings, true);
     },
     meta: {
@@ -45,7 +45,7 @@ export const slowThermoInfo: ElementInfo = {
         name: 'Slow Thermo',
         icon: 'slow-thermo',
     },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         getThermoWarnings(value, digits, warnings, false);
     },
     meta: {
@@ -117,7 +117,7 @@ export const betweenInfo: ElementInfo = {
         name: 'Between',
         icon: 'between',
     },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const cells of Object.values(value || {})) {
             const betweenCells = arrayObj2array(cells);
             if (3 > betweenCells.length) continue;
@@ -164,7 +164,7 @@ export const doubleArrowInfo: ElementInfo = {
         name: 'Double Arrow',
         icon: 'double-arrow',
     },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const cells of Object.values(value || {})) {
             const lineCells = arrayObj2array(cells);
             if (3 > lineCells.length) continue;
@@ -218,7 +218,7 @@ export const lockoutInfo: ElementInfo = {
         name: 'Lockout',
         icon: 'lockout',
     },
-    getWarnings(value: schema.LineElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.LineElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         const delta = ((grid.width + 1) >> 1) - 1; // TODO: make this configurable somehow.
 
         for (const cells of Object.values(value || {})) {
@@ -271,7 +271,7 @@ export const palindromeInfo: ElementInfo = {
         name: 'Palindrome',
         icon: 'palindrome',
     },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         for (const cells of Object.values(value || {})) {
             const cellsArr = arrayObj2array(cells);
 
@@ -305,7 +305,7 @@ function getWhisperInfo(deltaFunc: (gridWidth: number) => number, constraintName
             name: constraintName,
             icon: icon,
         },
-        getWarnings(value: schema.LineElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        getWarnings(value: schema.LineElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
             const delta = deltaFunc(grid.width); // TODO: make this configurable somehow.
     
             for (const cells of Object.values(value || {})) {
@@ -366,7 +366,7 @@ export const renbanInfo: ElementInfo = {
         name: 'Renban',
         icon: 'renban',
     },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
         outer:
         for (const cells of Object.values(value || {})) {
             const uniqueCellsArr = [...new Set(arrayObj2array(cells))];
@@ -411,13 +411,51 @@ export const regionSumInfo: ElementInfo = {
         name: 'Region Sum',
         icon: 'region-sum',
     },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
-        // TODO
+    getWarnings(value: schema.LineElement['value'], _grid: Grid, regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        for (const line of Object.values(value || {})) {
+            const cells = arrayObj2array(line);
+            if (cells.length === 0) continue;
+
+            const regionLines = [] as {startIdx: number, endIdx: number, sum: number}[]
+            let startIdx = 0;
+            let region = regionMap[cells[0]]!;
+            let sum = 0;
+
+            for (let i = 0; i < cells.length; i++) {
+                const idx = cells[i];
+                if(regionMap[idx] != region) {
+                    regionLines.push({startIdx: startIdx, endIdx: i, sum: sum});
+                    startIdx = i;
+                    region = regionMap[idx]!;
+                    sum = 0;
+                }
+                const digit = digits[idx];
+                if (null == digit) {
+                    while ((i < cells.length) && (regionMap[cells[i]] === region)) i++;
+                    startIdx = i;
+                    region = regionMap[cells[i]]!;
+                    sum = 0;
+                    i--;    // Undo last increment. The for loop will redo this.
+                } else {
+                    sum += digit;
+                }
+            }
+
+            if (startIdx !== cells.length)
+                regionLines.push({startIdx: startIdx, endIdx: cells.length, sum: sum});
+            if (!regionLines.every( v => v.sum === regionLines[0].sum)) {
+                regionLines.forEach((v) => {
+                    for (let i = v.startIdx; i < v.endIdx; i++) {
+                        warnings[cells[i]] = true;
+                    }
+                });
+            }
+        }
     },
     meta: {
         description: 'Digits along region sum lines sum to the same value in each region it passes through. \
-            Each instance of a single line that passes through a box is counted separately. \
-            Different lines may have different sums.',
+Each instance of a single line that passes through a box is counted separately. \
+Different lines may have different sums.',
         tags: [ 'line', 'region sum' ],
         category: [ 'local', 'line' ],
     },
