@@ -723,8 +723,6 @@ export const ELEMENT_HANDLERS = {
     },
 
     regionSum(numLits: number, element: schema.LineElement, context: Context): number {
-        console.log(context.clauses.length);
-        const start = Date.now();
         for (const line of Object.values(element.value || {})) {
             const lineCells = arrayObj2array(line || {});
             if (lineCells.length == 0) continue;
@@ -749,38 +747,25 @@ export const ELEMENT_HANDLERS = {
             if (i == lineCells.length) continue;
 
             // For each additional region, contruct the sum, as a positive
-            let weightsCopy = [...weights];
-            let litsCopy = [...lits];
+            const weightsLength = weights.length;
             for (; i < lineCells.length; i++) {
                 if (regionNumber != context.regionMap[lineCells[i]]) {
                     // New region, encode that (sum of the last region) - (sum of the first region) = 0
-                    const weightsTemp = [...weightsCopy];
-                    const litsTemp = [...litsCopy];
-                    numLits = context.pbLib.encodeBoth(weightsTemp, litsTemp, 0, 0, context.clauses, 1 + numLits);
+                    numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, 1 + numLits);
                     // reset the current region.
-                    weightsCopy = [...weights];
-                    litsCopy = [...lits];
+                    weights.length = weightsLength;
+                    lits.length = weightsLength;
                     regionNumber = context.regionMap[lineCells[i]];
                 }
                 const [ x, y ] = cellIdx2cellCoord(lineCells[i], context.grid);
                 for (const [ v ] of product(context.size)) {
-                    weightsCopy.push(v + 1);
-                    litsCopy.push(context.getLiteral(y, x, v));
+                    weights.push(v + 1);
+                    lits.push(context.getLiteral(y, x, v));
                 }
             }
             // Encode the final region for this line.
-            numLits = context.pbLib.encodeBoth(weightsCopy, litsCopy, 0, 0, context.clauses, 1 + numLits);
+            numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, 1 + numLits);
         }
-        const end = Date.now();
-        console.log(context.clauses.length);
-        console.log(`Region Sum encoding time: ${end - start} ms`);
-        /* Puzzle used for performance testing: https://logic-masters.de/Raetselportal/Raetsel/zeigen.php?id=000CQH
-            Encoding time        Reported time        clauses.length
-            1373 ms                5531 ms                53356
-            1057 ms                4924 ms                53356
-            1153 ms                4979 ms                53356
-            1080 ms                4887 ms                53356
-        */
         return numLits;
     },
 
