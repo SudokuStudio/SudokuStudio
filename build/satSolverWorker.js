@@ -10871,6 +10871,24 @@ var satSolverWorker = (function () {
             ];
         }
     }
+    function buildRegionMap(elements) {
+        const gridRegionElement = ((elements) => {
+            for (const element of Object.values(elements)) {
+                if ('gridRegion' === element.type)
+                    return element;
+            }
+            return {};
+        })(elements);
+        const ret = {};
+        const regions = arrayObj2array((gridRegionElement.value || {}));
+        for (let idx = 0; idx < regions.length; idx++) {
+            const region = idxMapToKeysArray(regions[idx]);
+            for (const cell of region) {
+                ret[cell] = idx;
+            }
+        }
+        return ret;
+    }
 
     const cryptoMiniSatPromise = load();
     const pbLibPromise = Module();
@@ -10948,6 +10966,7 @@ var satSolverWorker = (function () {
             clauses: [],
             size,
             grid: board.grid,
+            regionMap: buildRegionMap(board.elements),
             getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
             pbLib,
         };
@@ -10990,6 +11009,7 @@ var satSolverWorker = (function () {
             clauses: [],
             size,
             grid: board.grid,
+            regionMap: buildRegionMap(board.elements),
             getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
             pbLib,
         };
@@ -11405,6 +11425,52 @@ var satSolverWorker = (function () {
                         context.clauses.push([-lit0, -lit1]);
                     }
                 }
+            }
+            return numLits;
+        },
+        regionSum(numLits, element, context) {
+            for (const line of Object.values(element.value || {})) {
+                const lineCells = arrayObj2array(line || {});
+                if (lineCells.length == 0)
+                    continue;
+                const weights = [];
+                const lits = [];
+                // Construct the sum for the first region that the line passes through, but make it negative.
+                let i = 0;
+                let regionNumber = context.regionMap[lineCells[0]];
+                for (; i < lineCells.length; i++) {
+                    if (regionNumber != context.regionMap[lineCells[i]]) {
+                        regionNumber = context.regionMap[lineCells[i]];
+                        break;
+                    }
+                    const [x, y] = cellIdx2cellCoord(lineCells[i], context.grid);
+                    for (const [v] of product(context.size)) {
+                        weights.push(-v - 1);
+                        lits.push(context.getLiteral(y, x, v));
+                    }
+                }
+                // If that's the entire line, then we can move on to the next line.
+                if (i == lineCells.length)
+                    continue;
+                // For each additional region, contruct the sum, as a positive
+                const weightsLength = weights.length;
+                for (; i < lineCells.length; i++) {
+                    if (regionNumber != context.regionMap[lineCells[i]]) {
+                        // New region, encode that (sum of the last region) - (sum of the first region) = 0
+                        numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, 1 + numLits);
+                        // reset the current region.
+                        weights.length = weightsLength;
+                        lits.length = weightsLength;
+                        regionNumber = context.regionMap[lineCells[i]];
+                    }
+                    const [x, y] = cellIdx2cellCoord(lineCells[i], context.grid);
+                    for (const [v] of product(context.size)) {
+                        weights.push(v + 1);
+                        lits.push(context.getLiteral(y, x, v));
+                    }
+                }
+                // Encode the final region for this line.
+                numLits = context.pbLib.encodeBoth(weights, lits, 0, 0, context.clauses, 1 + numLits);
             }
             return numLits;
         },
