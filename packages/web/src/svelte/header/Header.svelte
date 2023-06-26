@@ -6,18 +6,20 @@
 
 <div class="header-left">
     <ul class="header-buttons left">
-        <li>Solving/Setting</li>
+        <!-- TODO: add buttons -->
+        <!-- Solving/Setting -->
+        <!-- Export -->
         <li>
             <button class="nobutton" on:click={() => {showNewGrid = true;}}>New Grid</button>
         </li>
-        <li>Export</li>
     </ul>
 </div>
 <div class="header-right">
     <ul class="header-buttons right">
-        <li>Light/dark</li>
-        <li>Help</li>
-        <li>Settings</li>
+        <!-- TODO: add buttons -->
+        <!-- Light/dark -->
+        <!-- Help -->
+        <!-- Settings -->
     </ul>
 </div>
 
