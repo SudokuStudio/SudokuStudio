@@ -10,7 +10,7 @@ jobs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
       - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v3.4.0
+        uses: fkirc/skip-duplicate-actions@v5.3.1
         with:
           cancel_others: 'true'
 
@@ -23,14 +23,14 @@ jobs:
     steps:
 
     - name: Checkout sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules: recursive
 
     - name: Setup node
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
-        node-version: '16'
+        node-version: '22'
 
     - name: Install packages
       run: npm ci

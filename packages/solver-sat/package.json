@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rm -r lib",
     "build": "rollup -c",
-    "test": "node --experimental-wasm-threads --trace-warnings ../../node_modules/jest/bin/jest.js --maxWorkers=100%"
+    "test": "node --trace-warnings ../../node_modules/jest/bin/jest.js --maxWorkers=100%"
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",
