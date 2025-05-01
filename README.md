@@ -11,14 +11,9 @@ This is a basic web UI for a sudoku solving/setting tool.
 
 ## Development
 
-Ensure you have NodeJS and `npm@^7.0.0`.
+Ensure you have NodeJS and `npm`.
 
-If your `npm --version` is below 7.0.0 you can update it. You may need to use `sudo`:
-```
-npm i -g npm@^7.0.0
-```
-
-Clone the project with submodules, and `cd` inside.
+Clone the project and `cd` inside.
 ```
 git clone https://github.com/SudokuStudio/SudokuStudio.git
 cd SudokuStudio
@@ -26,7 +21,7 @@ cd SudokuStudio
 
 To install the dependencies run:
 ```
-npm ci
+npm i
 ```
 
 For a live-reloading development server run:
@@ -55,7 +50,7 @@ repository root when they are actually relative to each package's `rollup.config
 ## License
 
 Sudoku Studio
-Copyright (C) 2021 Sudoku Studio Contributors
+Copyright (C) 2021-2025 Sudoku Studio Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -69,4 +64,5 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # Sudoku-Assets
