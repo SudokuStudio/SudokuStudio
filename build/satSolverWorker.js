@@ -445,7 +445,7 @@ var satSolverWorker = (function () {
     // expected to arrive, and second, by using a local everywhere else that can be
     // minified.
 
-    if (Module['arguments']) ;
+    if (Module['arguments']) Module['arguments'];
 
     if (Module['thisProgram']) thisProgram = Module['thisProgram'];
 
@@ -2347,7 +2347,9 @@ var satSolverWorker = (function () {
               }
             }
             try {
-              if (FS.trackingDelegate['willMovePath']) ;
+              if (FS.trackingDelegate['willMovePath']) {
+                FS.trackingDelegate['willMovePath'](old_path, new_path);
+              }
             } catch(e) {
               err("FS.trackingDelegate['willMovePath']('"+old_path+"', '"+new_path+"') threw an exception: " + e.message);
             }
@@ -2364,7 +2366,7 @@ var satSolverWorker = (function () {
               FS.hashAddNode(old_node);
             }
             try {
-              if (FS.trackingDelegate['onMovePath']) ;
+              if (FS.trackingDelegate['onMovePath']) FS.trackingDelegate['onMovePath'](old_path, new_path);
             } catch(e) {
               err("FS.trackingDelegate['onMovePath']('"+old_path+"', '"+new_path+"') threw an exception: " + e.message);
             }
@@ -2384,14 +2386,16 @@ var satSolverWorker = (function () {
               throw new FS.ErrnoError(10);
             }
             try {
-              if (FS.trackingDelegate['willDeletePath']) ;
+              if (FS.trackingDelegate['willDeletePath']) {
+                FS.trackingDelegate['willDeletePath'](path);
+              }
             } catch(e) {
               err("FS.trackingDelegate['willDeletePath']('"+path+"') threw an exception: " + e.message);
             }
             parent.node_ops.rmdir(parent, name);
             FS.destroyNode(node);
             try {
-              if (FS.trackingDelegate['onDeletePath']) ;
+              if (FS.trackingDelegate['onDeletePath']) FS.trackingDelegate['onDeletePath'](path);
             } catch(e) {
               err("FS.trackingDelegate['onDeletePath']('"+path+"') threw an exception: " + e.message);
             }
@@ -2421,14 +2425,16 @@ var satSolverWorker = (function () {
               throw new FS.ErrnoError(10);
             }
             try {
-              if (FS.trackingDelegate['willDeletePath']) ;
+              if (FS.trackingDelegate['willDeletePath']) {
+                FS.trackingDelegate['willDeletePath'](path);
+              }
             } catch(e) {
               err("FS.trackingDelegate['willDeletePath']('"+path+"') threw an exception: " + e.message);
             }
             parent.node_ops.unlink(parent, name);
             FS.destroyNode(node);
             try {
-              if (FS.trackingDelegate['onDeletePath']) ;
+              if (FS.trackingDelegate['onDeletePath']) FS.trackingDelegate['onDeletePath'](path);
             } catch(e) {
               err("FS.trackingDelegate['onDeletePath']('"+path+"') threw an exception: " + e.message);
             }
@@ -2633,7 +2639,16 @@ var satSolverWorker = (function () {
               }
             }
             try {
-              var trackingFlags; if (FS.trackingDelegate['onOpenFile']) ;
+              if (FS.trackingDelegate['onOpenFile']) {
+                var trackingFlags = 0;
+                if ((flags & 2097155) !== 1) {
+                  trackingFlags |= FS.tracking.openFlags.READ;
+                }
+                if ((flags & 2097155) !== 0) {
+                  trackingFlags |= FS.tracking.openFlags.WRITE;
+                }
+                FS.trackingDelegate['onOpenFile'](path, trackingFlags);
+              }
             } catch(e) {
               err("FS.trackingDelegate['onOpenFile']('"+path+"', flags) threw an exception: " + e.message);
             }
@@ -4967,7 +4982,7 @@ var satSolverWorker = (function () {
     // expected to arrive, and second, by using a local everywhere else that can be
     // minified.
 
-    if (Module['arguments']) ;
+    if (Module['arguments']) Module['arguments'];
     if (!Object.getOwnPropertyDescriptor(Module, 'arguments')) {
       Object.defineProperty(Module, 'arguments', {
         configurable: true,
@@ -8345,7 +8360,9 @@ var satSolverWorker = (function () {
               }
             }
             try {
-              if (FS.trackingDelegate['willMovePath']) ;
+              if (FS.trackingDelegate['willMovePath']) {
+                FS.trackingDelegate['willMovePath'](old_path, new_path);
+              }
             } catch(e) {
               err("FS.trackingDelegate['willMovePath']('"+old_path+"', '"+new_path+"') threw an exception: " + e.message);
             }
@@ -8362,7 +8379,7 @@ var satSolverWorker = (function () {
               FS.hashAddNode(old_node);
             }
             try {
-              if (FS.trackingDelegate['onMovePath']) ;
+              if (FS.trackingDelegate['onMovePath']) FS.trackingDelegate['onMovePath'](old_path, new_path);
             } catch(e) {
               err("FS.trackingDelegate['onMovePath']('"+old_path+"', '"+new_path+"') threw an exception: " + e.message);
             }
@@ -8382,14 +8399,16 @@ var satSolverWorker = (function () {
               throw new FS.ErrnoError(10);
             }
             try {
-              if (FS.trackingDelegate['willDeletePath']) ;
+              if (FS.trackingDelegate['willDeletePath']) {
+                FS.trackingDelegate['willDeletePath'](path);
+              }
             } catch(e) {
               err("FS.trackingDelegate['willDeletePath']('"+path+"') threw an exception: " + e.message);
             }
             parent.node_ops.rmdir(parent, name);
             FS.destroyNode(node);
             try {
-              if (FS.trackingDelegate['onDeletePath']) ;
+              if (FS.trackingDelegate['onDeletePath']) FS.trackingDelegate['onDeletePath'](path);
             } catch(e) {
               err("FS.trackingDelegate['onDeletePath']('"+path+"') threw an exception: " + e.message);
             }
@@ -8419,14 +8438,16 @@ var satSolverWorker = (function () {
               throw new FS.ErrnoError(10);
             }
             try {
-              if (FS.trackingDelegate['willDeletePath']) ;
+              if (FS.trackingDelegate['willDeletePath']) {
+                FS.trackingDelegate['willDeletePath'](path);
+              }
             } catch(e) {
               err("FS.trackingDelegate['willDeletePath']('"+path+"') threw an exception: " + e.message);
             }
             parent.node_ops.unlink(parent, name);
             FS.destroyNode(node);
             try {
-              if (FS.trackingDelegate['onDeletePath']) ;
+              if (FS.trackingDelegate['onDeletePath']) FS.trackingDelegate['onDeletePath'](path);
             } catch(e) {
               err("FS.trackingDelegate['onDeletePath']('"+path+"') threw an exception: " + e.message);
             }
@@ -8631,7 +8652,16 @@ var satSolverWorker = (function () {
               }
             }
             try {
-              var trackingFlags; if (FS.trackingDelegate['onOpenFile']) ;
+              if (FS.trackingDelegate['onOpenFile']) {
+                var trackingFlags = 0;
+                if ((flags & 2097155) !== 1) {
+                  trackingFlags |= FS.tracking.openFlags.READ;
+                }
+                if ((flags & 2097155) !== 0) {
+                  trackingFlags |= FS.tracking.openFlags.WRITE;
+                }
+                FS.trackingDelegate['onOpenFile'](path, trackingFlags);
+              }
             } catch(e) {
               err("FS.trackingDelegate['onOpenFile']('"+path+"', flags) threw an exception: " + e.message);
             }
@@ -11903,5 +11933,5 @@ var satSolverWorker = (function () {
 
     return DEFAULT;
 
-}());
+})();
 //# sourceMappingURL=satSolverWorker.js.map
