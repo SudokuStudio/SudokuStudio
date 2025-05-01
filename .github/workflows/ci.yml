@@ -27,10 +27,10 @@ jobs:
       with:
         submodules: recursive
 
-    # - name: Setup node
-    #   uses: actions/setup-node@v4
-    #   with:
-    #     node-version: 'latest'
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
 
     - name: Install packages
       run: npm ci
