@@ -1,3 +1,7 @@
+<script context="module" lang="ts">
+    import { initUserAndBoard } from '$lib/js/init';
+    initUserAndBoard();
+</script>
 <script lang="ts">
     import debounce from "debounce";
 
@@ -56,6 +60,9 @@
 </footer>
 
 <style lang="scss">
+    @use '$lib/css/index.scss';
+    @use 'normalize.css';
+    // @use '../../../node_modules/@material/ripple/dist/mdc.ripple.min.css';
     @use '$lib/css/vars.scss' as vars;
 
     header {

@@ -37,11 +37,13 @@
     import CloneRender from "./svelte/CloneRender.svelte";
 
     function WarningRender(args: any) {
-        Object.assign(args.props, {
-            fill: '#f33',
-            outlineOpacity: '#eee',
-            innerOpacity: '#333',
-        });
+        if (null != args.props) {
+            Object.assign(args.props, {
+                fill: '#f33',
+                outlineOpacity: '#eee',
+                innerOpacity: '#333',
+            });
+        }
         return new SelectRender(args);
     }
 
@@ -187,60 +189,60 @@
 
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
-        ['select']: SelectRender,
-        ['cursor']: CursorRender,
-        ['warning']: WarningRender,
+        // ['select']: SelectRender,
+        // ['cursor']: CursorRender,
+        // // ['warning']: WarningRender,
 
-        ['grid']: GridRender,
-        ['gridRegion']: GridRegionRender,
+        // ['grid']: GridRender,
+        // ['gridRegion']: GridRegionRender,
 
-        ['givens']: DigitRender,
-        ['filled']: FilledRender,
-        ['corner']: CornerRender,
-        ['center']: CenterRender,
-        ['colors']: ColorsRender,
+        // ['givens']: DigitRender,
+        // // ['filled']: FilledRender,
+        // ['corner']: CornerRender,
+        // ['center']: CenterRender,
+        // ['colors']: ColorsRender,
 
-        ['thermo']: ThermoRender,
-        ['slowThermo']: SlowThermoRender,
-        ['between']: BetweenRender,
-        ['lockout']: LockoutRender,
-        ['doubleArrow']: DoubleArrowRender,
-        ['palindrome']: PalindromeRender,
-        ['whisper']: GermanWhisperRender,
-        ['dutchWhisper']: DutchWhisperRender,
-        ['renban']: RenbanRender,
-        ['regionSum']: RegionSumRender,
-        ['arrow']: ArrowRender,
+        // ['thermo']: ThermoRender,
+        // // ['slowThermo']: SlowThermoRender,
+        // ['between']: BetweenRender,
+        // ['lockout']: LockoutRender,
+        // ['doubleArrow']: DoubleArrowRender,
+        // // ['palindrome']: PalindromeRender,
+        // // ['whisper']: GermanWhisperRender,
+        // // ['dutchWhisper']: DutchWhisperRender,
+        // // ['renban']: RenbanRender,
+        // // ['regionSum']: RegionSumRender,
+        // ['arrow']: ArrowRender,
 
-        ['min']: MinRender,
-        ['max']: MaxRender,
-        ['odd']: OddRender,
-        ['even']: EvenRender,
-        ['columnIndexer']: ColumnIndexerRender,
-        ['rowIndexer']: RowIndexerRender,
+        // ['min']: MinRender,
+        // ['max']: MaxRender,
+        // ['odd']: OddRender,
+        // ['even']: EvenRender,
+        // // ['columnIndexer']: ColumnIndexerRender,
+        // // ['rowIndexer']: RowIndexerRender,
 
-        ['killer']: KillerRender,
-        ['clone']: CloneRender,
+        // ['killer']: KillerRender,
+        // ['clone']: CloneRender,
 
-        ['quadruple']: QuadrupleRender,
-        ['difference']: DifferenceRender,
-        ['ratio']: RatioRender,
-        ['xv']: XVRender,
+        // ['quadruple']: QuadrupleRender,
+        // // ['difference']: DifferenceRender,
+        // // ['ratio']: RatioRender,
+        // // ['xv']: XVRender,
 
-        ['littleKiller']: LittleKillerRender,
-        ['sandwich']: SeriesRender,
-        ['xsum']: SeriesRender,
-        ['skyscraper']: SeriesRender,
+        // ['littleKiller']: LittleKillerRender,
+        // // ['sandwich']: SeriesRender,
+        // // ['xsum']: SeriesRender,
+        // // ['skyscraper']: SeriesRender,
 
-        ['diagonal']: DiagonalRender,
+        // ['diagonal']: DiagonalRender,
 
-        ['knight']: NullRender,
-        ['king']: NullRender,
-        ['disjointGroups']: NullRender,
-        ['consecutive']: NullRender,
-        ['antiX']: NullRender,
-        ['antiV']: NullRender,
-        ['selfTaxicab']: NullRender,
+        // ['knight']: NullRender,
+        // ['king']: NullRender,
+        // ['disjointGroups']: NullRender,
+        // ['consecutive']: NullRender,
+        // ['antiX']: NullRender,
+        // ['antiV']: NullRender,
+        // ['selfTaxicab']: NullRender,
     } as const;
 
     // TODO denormalize this.
@@ -256,10 +258,6 @@
 
 </script>
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { initUserAndBoard } from '$lib/js/init';
-    initUserAndBoard();
-
     export let userState:  undefined | null | StateManager;
     export let warningState: undefined | null | StateManager;
     export let boardState: StateManager;
@@ -408,8 +406,8 @@
             <rect x="0" y="0" width={$grid?.width} height={$grid?.height} fill="#fff" />
             <path d={$givensFilledMaskPath} fill="#000" stroke="none" />
         </mask>
-        {#each $list as { id, ref, element: Element } (id)}
-            <Element {id} {ref} grid={$grid} />
+        {#each $list as { id, ref, element } (id)}
+            <svelte:component this={element} {id} {ref} grid={$grid} />
         {/each}
     </defs>
     {#each $list as { id } (id)}

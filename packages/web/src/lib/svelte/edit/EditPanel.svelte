@@ -41,6 +41,10 @@
         const menuInfo = element.menu;
         if (null == menuInfo) return null;
         return function(args: any) {
+            if (null == args.props) {
+                console.warn("`args.props` unset for `componentFor` builder.");
+                return null;
+            }
             if ('select' === menuInfo.type) {
                 args.props.info = menuInfo;
                 return new SelectMenuComponent(args);
