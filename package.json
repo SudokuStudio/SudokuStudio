@@ -1,0 +1,19 @@
+{
+  "name": "sudoku-studio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.10.0",
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "prettier-plugin-svelte": "^3.3.3",
+    "typescript": "^5.8.3"
+  }
+}
