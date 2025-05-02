@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write ."
+    "build": "pnpm -r run build",
+    "dev": "pnpm --filter @sudoku-studio/web run dev",
+    "test": "pnpm -r run test",
+    "check": "pnpm -r run check",
+    "format": "prettier --write .",
+    "lint": "prettier --check ."
   },
   "keywords": [],
   "author": "",
@@ -15,5 +19,10 @@
     "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.3.3",
     "typescript": "^5.8.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

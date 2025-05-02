@@ -1,0 +1,25 @@
+{
+  "name": "@sudoku-studio/state-manager",
+  "version": "0.0.0",
+  "exports": {
+    ".": {
+      "types": "./lib/state-manager.d.ts",
+      "import": "./lib/state-manager.js"
+    },
+    "./src": {
+      "import": "./src/state-manager.ts"
+    }
+  },
+  "scripts": {
+    "clean": "rm -r dist",
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  }
+}
