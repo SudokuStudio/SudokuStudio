@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
-import { Board } from "@sudoku-studio/board";
-import { StateManager } from "@sudoku-studio/state-manager";
+import { Board } from "@sudoku-studio/board/src";
+import { StateManager } from "@sudoku-studio/state-manager/src";
 import { promisify } from "util";
 import fs from "fs";
 

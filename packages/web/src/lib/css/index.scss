@@ -1,0 +1,100 @@
+// @import "./debug.scss";
+@import "./vars.scss";
+@import "./icons.scss";
+@import "./checkbox.scss";
+
+@import "./mulish.scss";
+
+html {
+    font-size: $font-size;
+    font-family: 'Mulish', 'Muli', sans-serif;
+    font-weight: $font-weight-normal;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+
+    height: 100vh;
+}
+
+.anchor, a, a:visited {
+    color: $color-clickable;
+    text-decoration: underline;
+    &:hover {
+        color: $color-clickable-light;
+    }
+}
+
+// Flexbox shared between header and main.
+.content {
+    max-width: $max-aspect-ratio * 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex: 1;
+}
+.content-row {
+    display: flex;
+    flex: 1;
+
+    margin: 0 $content-margin;
+
+    display: flex;
+    align-items: stretch;
+    flex-direction: row;
+    justify-content: space-between;
+
+    @include gap($content-gap);
+    @include breakpoint-mobile {
+        > * {
+            margin: 0;
+        }
+    }
+}
+
+.hide {
+    display: none;
+}
+
+.nolist {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.nobutton {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    display: inline-block;
+    font-size: 1em;
+    font-family: inherit;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.focus-skip {
+    position: absolute;
+    top: 0;
+    left: -900vw;
+
+    font-size: 0.7rem;
+    padding: 0.1rem;
+    background-color: #fff;
+    text-decoration: underline;
+    z-index: 999;
+
+    pointer-events: none;
+
+    &:focus {
+        left: 0;
+    }
+}

@@ -11,13 +11,12 @@
     "format": "prettier --write .",
     "lint": "prettier --check ."
   },
-  "keywords": [
-    
-  ],
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.10.0",
   "devDependencies": {
+    "@material/ripple": "^11.0.0",
     "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.3.3",
     "typescript": "^5.8.3"
