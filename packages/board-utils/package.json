@@ -17,7 +17,7 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@sudoku-studio/schema": "workspace:^"
+    "@sudoku-studio/schema": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
