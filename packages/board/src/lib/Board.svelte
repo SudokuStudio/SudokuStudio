@@ -256,14 +256,18 @@
 
 </script>
 <script lang="ts">
+    import { onMount } from "svelte";
+    import { initUserAndBoard } from '$lib/js/init';
+    initUserAndBoard();
+
     export let userState:  undefined | null | StateManager;
     export let warningState: undefined | null | StateManager;
     export let boardState: StateManager;
     export let svg: SVGSVGElement = null!;
 
-
     const grid = boardState.ref('grid');
     console.log('Grid:', grid);
+    console.log('$grid:', $grid);
 
     const elementsRef = boardState.ref('elements');
     const givensMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
@@ -368,8 +372,8 @@
         return {
             x: -margin,
             y: -margin,
-            width: $grid.width + 2 * margin,
-            height: $grid.height + 2 * margin,
+            width: $grid?.width + 2 * margin,
+            height: $grid?.height + 2 * margin,
         };
     });
 </script>
@@ -397,11 +401,11 @@
     </style>
     <defs>
         <mask id="SUDOKU_MASK_GIVENS" maskUnits="userSpaceOnUse">
-            <rect x="0" y="0" width={$grid.width} height={$grid.height} fill="#fff" />
+            <rect x="0" y="0" width={$grid?.width} height={$grid?.height} fill="#fff" />
             <path d={$givensMaskPath} fill="#000" stroke="none" />
         </mask>
         <mask id="SUDOKU_MASK_GIVENS_FILLED" maskUnits="userSpaceOnUse">
-            <rect x="0" y="0" width={$grid.width} height={$grid.height} fill="#fff" />
+            <rect x="0" y="0" width={$grid?.width} height={$grid?.height} fill="#fff" />
             <path d={$givensFilledMaskPath} fill="#000" stroke="none" />
         </mask>
         {#each $list as { id, ref, element: Element } (id)}

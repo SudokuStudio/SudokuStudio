@@ -3,7 +3,7 @@ import LZString from "lz-string";
 import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
 import { boardState } from "./board";
 import { setupUserState } from "./user";
-import { fPuzzles } from "@sudoku-studio/board-format";
+import { fPuzzles } from "@sudoku-studio/board-format/src";
 import { createElement } from "./elements";
 
 import { SatSolver } from "./solver/satSolver";
