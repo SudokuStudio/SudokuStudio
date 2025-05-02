@@ -1,5 +1,5 @@
 {
-  "name": "board",
+  "name": "@sudoku-studio/board",
   "version": "0.0.1",
   "scripts": {
     "dev": "vite dev",
@@ -27,6 +27,7 @@
       "svelte": "./dist/index.js"
     },
     "./src": {
+      "types": "./src/lib/index.ts",
       "svelte": "./src/lib/index.ts"
     }
   },
@@ -41,9 +42,10 @@
     "@sveltejs/kit": "^2.16.0",
     "@sveltejs/package": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "hsluv": "^0.1.0",
     "publint": "^0.3.2",
-    "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
+    "svelte": "^5.0.0",
     "typescript": "^5.0.0",
     "vite": "^6.2.6"
   },

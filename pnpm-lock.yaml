@@ -41,6 +41,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.0
         version: 5.0.3(svelte@5.28.2)(vite@6.3.4(@types/node@22.15.3))
+      hsluv:
+        specifier: ^0.1.0
+        version: 0.1.0
       publint:
         specifier: ^0.3.2
         version: 0.3.12
@@ -97,6 +100,9 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.14.5
         version: 7.27.1(@babel/core@7.27.1)
+      '@jest/globals':
+        specifier: ^29.0.0
+        version: 29.7.0
       '@rollup/plugin-commonjs':
         specifier: ^23.0.0
         version: 23.0.7
@@ -151,6 +157,9 @@ importers:
 
   packages/web:
     devDependencies:
+      '@sudoku-studio/board':
+        specifier: workspace:*
+        version: link:../board
       '@sudoku-studio/board-format':
         specifier: workspace:*
         version: link:../board-format

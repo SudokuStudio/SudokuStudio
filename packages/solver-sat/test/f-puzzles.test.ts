@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { CancellationToken, cantAttempt, solve } from "../dist/solver-sat";
-import { fPuzzles } from "@sudoku-studio/board-format";
-import { arrayObj2array } from "@sudoku-studio/board-utils";
+import { fPuzzles } from "@sudoku-studio/board-format/src";
+import { arrayObj2array } from "@sudoku-studio/board-utils/src";
 import { ArrayObj, Geometry, IdxMap } from "@sudoku-studio/schema";
 
 describe('FPuzzles', () => {

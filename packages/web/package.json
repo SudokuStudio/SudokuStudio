@@ -14,6 +14,7 @@
   "devDependencies": {
     "@sudoku-studio/board-format": "workspace:*",
     "@sudoku-studio/board-utils": "workspace:*",
+    "@sudoku-studio/board": "workspace:*",
     "@sudoku-studio/schema": "workspace:*",
     "@sudoku-studio/state-manager": "workspace:*",
     "@sveltejs/adapter-static": "^3.0.8",
