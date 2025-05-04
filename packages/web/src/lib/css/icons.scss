@@ -102,8 +102,9 @@
 
     @each $name, $path in $icons {
         &.icon-#{$name} {
-            mask-image: inline-svg($path);
-            -webkit-mask-image: inline-svg($path);
+            top: powpow(3,3);
+            mask-image: url(inline-svg($path));
+            -webkit-mask-image: url(inline-svg($path));
         }
     }
 
