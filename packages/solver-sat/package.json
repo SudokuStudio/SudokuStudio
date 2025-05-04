@@ -12,7 +12,7 @@
     }
   },
   "scripts": {
-    "clean": "rm -r lib",
+    "clean": "rm -rf dist node_modules",
     "build": "tsc",
     "check": "tsc --noEmit",
     "test": "jest --maxWorkers=100%"

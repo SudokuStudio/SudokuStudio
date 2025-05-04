@@ -1,7 +1,7 @@
 // https://github.com/zemax/node-sass-svg/blob/master/svg-function.js
 import path from 'path';
 import fs from 'fs';
-import { SassNumber, SassString, Value } from 'sass';
+import { SassString, Value } from 'sass-embedded';
 
 /**
  * Converts the data into an inline-encoded SVG.
@@ -33,8 +33,8 @@ export function inlineSvg(args) {
     const svgPath = path.resolve('src', args[0].assertString().text);
     if (!fs.statSync(svgPath).isFile()) throw Error(`Could not find file ${svgPath}.`);
     const encodedSvg = encodeSvg(fs.readFileSync(svgPath, 'utf8'));
-    return new SassString(`data:image/svg+xml,${encodedSvg}`, { quotes: true });
+    // return new SassString(`data:image/svg+xml,${encodedSvg}`, { quotes: true });
     // // return `data:image/svg+xml,${encodedSvg}`;
-    // // return new SassString(`url("data:image/svg+xml,${encodedSvg}")`, { quotes: false });
+    return new SassString(`url("data:image/svg+xml,${encodedSvg}")`, { quotes: false });
     // return new SassString('hello world',  { quotes: false });
 }

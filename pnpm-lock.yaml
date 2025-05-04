@@ -208,9 +208,6 @@ importers:
       normalize.css:
         specifier: ^8.0.1
         version: 8.0.1
-      sass:
-        specifier: ^1.87.0
-        version: 1.87.0
       sass-embedded:
         specifier: ^1.87.0
         version: 1.87.0
@@ -5284,6 +5281,7 @@ snapshots:
       source-map-js: 1.2.1
     optionalDependencies:
       '@parcel/watcher': 2.5.1
+    optional: true
 
   save-svg-as-png@1.4.17: {}
 

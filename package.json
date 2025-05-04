@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "clean": "pnpm -r run clean && rm -rf node_modules",
     "build": "pnpm -r run build",
     "dev": "pnpm --filter @sudoku-studio/web run dev",
     "test": "pnpm -r run test",

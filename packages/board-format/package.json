@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "clean": "rm -r dist",
+    "clean": "rm -rf dist node_modules",
     "build": "tsc",
     "check": "tsc --noEmit"
   },
