@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { schema } from "@sudoku-studio/schema";
     import type { ElementInfo } from "../../js/element/element";
     import { search } from "../../js/elements";
     import { addElement } from "../../js/elementStores";

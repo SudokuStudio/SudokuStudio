@@ -38,6 +38,16 @@ If you are using VSCode (recommended):
 * Click the gear and go to "Extension Settings" and turn on `svelte.enable-ts-plugin`.
 * Restart VSCode.
 
+Note that the plugin may highlight some SCSS imports:
+```
+Error: Can't find stylesheet to import.
+  |
+2 │     @use 'src/css/vars';
+  |
+```
+However this is a false error since the plugin tries to resolve them relative to the
+repository root when they are actually relative to each package, see https://github.com/sveltejs/language-tools/issues/2751.
+
 ## License
 
 Sudoku Studio

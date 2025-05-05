@@ -1,9 +1,10 @@
 <script lang="ts" context="module">
+    import type { Component, ComponentInternals, ComponentProps } from "svelte";
     import type { Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
     import type { StateManager, StateRef } from "@sudoku-studio/state-manager/src";
 
-    import { idxMapToKeysArray, GRID_REGION_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getBorderPath, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils/src";
     import { derived, readable } from "svelte/store";
+    import { idxMapToKeysArray, GRID_REGION_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getBorderPath, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils/src";
 
     import SelectRender from './svelte/SelectRender.svelte';
     import CursorRender from "./svelte/CursorRender.svelte";
@@ -36,46 +37,47 @@
     import NullRender from './svelte/NullRender.svelte';
     import CloneRender from "./svelte/CloneRender.svelte";
 
-    function WarningRender(args: any) {
-        if (null != args.props) {
-            Object.assign(args.props, {
-                fill: '#f33',
-                outlineOpacity: '#eee',
-                innerOpacity: '#333',
-            });
-        }
-        return new SelectRender(args);
-    }
+    const WarningRender: Component<ComponentProps<SelectRender>> = (internals: ComponentInternals, props: ComponentProps<SelectRender>) => {
+        return SelectRender(internals, {
+            ...props,
+            fill: '#f33',
+            outlineOpacity: '#eee',
+            innerOpacity: '#333',
+        });
+    };
 
-    function FilledRender(args: any) {
-        args.props.color = '#4e72b0';
-        args.props.mask = 'url(#SUDOKU_MASK_GIVENS)';
-        return new DigitRender(args);
-    }
+    const FilledRender: Component<ComponentProps<DigitRender>> = (internals: ComponentInternals, props: ComponentProps<DigitRender>) => {
+        return DigitRender(internals, {
+            ...props,
+            color: '#4e72b0',
+            mask: 'url(#SUDOKU_MASK_GIVENS)',
+        });
+    };
 
-    function DifferenceRender(args: any) {
-        Object.assign(args.props, {
+    const DifferenceRender: Component<ComponentProps<PositionNumberRender>> = (internals: ComponentInternals, props: ComponentProps<PositionNumberRender>) => {
+        return PositionNumberRender(internals, {
+            ...props,
             idx2coord: edgeIdx2svgCoord,
             stroke: '#242424',
             fill: '#fff',
             textColor: '#000',
             strokeWidth: 0.02,
         });
-        return new PositionNumberRender(args);
-    }
+    };
 
-    function RatioRender(args: any) {
-        Object.assign(args.props, {
+    const RatioRender: Component<ComponentProps<PositionNumberRender>> = (internals: ComponentInternals, props: ComponentProps<PositionNumberRender>) => {
+        return PositionNumberRender(internals, {
+            ...props,
             idx2coord: edgeIdx2svgCoord,
             stroke: 'none',
             fill: '#000',
             textColor: '#fff',
         });
-        return new PositionNumberRender(args);
-    }
+    };
 
-    function XVRender(args: any) {
-        Object.assign(args.props, {
+    const XVRender: Component<ComponentProps<PositionNumberRender>> = (internals: ComponentInternals, props: ComponentProps<PositionNumberRender>) => {
+        return PositionNumberRender(internals, {
+            ...props,
             idx2coord: edgeIdx2svgCoord,
             stroke: 'none',
             fill: '#fff',
@@ -85,33 +87,33 @@
             fontWeight: 800,
             mapDigits: (num: true | number) => true !== num ? num2roman(num) : '_',
         });
-        return new PositionNumberRender(args);
-    }
+    };
 
-    function SeriesRender(args: any) {
-        Object.assign(args.props, {
+    const SeriesRender: Component<ComponentProps<PositionNumberRender>> = (internals: ComponentInternals, props: ComponentProps<PositionNumberRender>) => {
+        return PositionNumberRender(internals, {
+            ...props,
             idx2coord: (idx: Idx<Geometry.SERIES>, grid: Grid) => {
-                const [ x, y ] = seriesIdx2seriesCoord(idx, grid);
-                return [ x + 0.5, y + 0.5 ];
+                const [x, y] = seriesIdx2seriesCoord(idx, grid);
+                return [x + 0.5, y + 0.5];
             },
             radius: 0,
             textColor: '#000',
             fontSize: 0.5,
-            mapDigits: (num: true | number) => true !== num ? num : '_',
+            mapDigits: (num: true | number) => true !== num ? `${num}` : '_',
         });
-        return new PositionNumberRender(args);
-    }
+    };
 
-    function PalindromeRender(args: any) {
-        Object.assign(args.props, {
+    const PalindromeRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+        return LineRender(internals, {
+            ...props,
             stroke: '#ed8',
             strokeWidth: 0.125,
         });
-        return new LineRender(args);
-    }
+    };
 
-    function GermanWhisperRender(args: any) {
-        Object.assign(args.props, {
+    const GermanWhisperRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+        return LineRender(internals, {
+            ...props,
             stroke: '#8c8',
             strokeWidth: 0.1,
             pathOptions: {
@@ -121,11 +123,11 @@
                 closeLoops: true,
             },
         });
-        return new LineRender(args);
-    }
+    };
 
-    function DutchWhisperRender(args: any) {
-        Object.assign(args.props, {
+    const DutchWhisperRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+        return LineRender(internals, {
+            ...props,
             stroke: '#ff8c00',
             strokeWidth: 0.1,
             pathOptions: {
@@ -135,11 +137,11 @@
                 closeLoops: true,
             },
         });
-        return new LineRender(args);
-    }
+    };
 
-    function RenbanRender(args: any) {
-        Object.assign(args.props, {
+    const RenbanRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+        return LineRender(internals, {
+            ...props,
             stroke: '#c8c',
             strokeWidth: 0.075,
             pathOptions: {
@@ -149,11 +151,11 @@
                 closeLoops: true,
             },
         });
-        return new LineRender(args);
-    }
+    };
 
-    function RegionSumRender(args: any) {
-        Object.assign(args.props, {
+    const RegionSumRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+        return LineRender(internals, {
+            ...props,
             stroke: '#2ECBFF',
             strokeWidth: 0.125,
             pathOptions: {
@@ -163,86 +165,85 @@
                 closeLoops: true,
             },
         });
-        return new LineRender(args);
-    }
+    };
 
-    function SlowThermoRender(args: any) {
-        Object.assign(args.props, {
+    const SlowThermoRender: Component<ComponentProps<ThermoRender>> = (internals: ComponentInternals, props: ComponentProps<ThermoRender>) => {
+        return ThermoRender(internals, {
+            ...props,
             isSlow: true,
         });
-        return new ThermoRender(args);
-    }
+    };
 
-    function ColumnIndexerRender(args: any) {
-        Object.assign(args.props, {
+    const ColumnIndexerRender: Component<ComponentProps<IndexerRender>> = (internals: ComponentInternals, props: ComponentProps<IndexerRender>) => {
+        return IndexerRender(internals, {
+            ...props,
             color: "#C77C7C",
         });
-        return new IndexerRender(args);
-    }
+    };
 
-    function RowIndexerRender(args: any) {
-        Object.assign(args.props, {
+    const RowIndexerRender: Component<ComponentProps<IndexerRender>> = (internals: ComponentInternals, props: ComponentProps<IndexerRender>) => {
+        return IndexerRender(internals, {
+            ...props,
             color: "#7CC77C",
         });
-        return new IndexerRender(args);
-    }
+    };
 
     export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
-        // ['select']: SelectRender,
-        // ['cursor']: CursorRender,
-        // // ['warning']: WarningRender,
+        ['select']: SelectRender,
+        ['cursor']: CursorRender,
+        ['warning']: WarningRender,
 
-        // ['grid']: GridRender,
-        // ['gridRegion']: GridRegionRender,
+        ['grid']: GridRender,
+        ['gridRegion']: GridRegionRender,
 
-        // ['givens']: DigitRender,
-        // // ['filled']: FilledRender,
-        // ['corner']: CornerRender,
-        // ['center']: CenterRender,
-        // ['colors']: ColorsRender,
+        ['givens']: DigitRender,
+        ['filled']: FilledRender,
+        ['corner']: CornerRender,
+        ['center']: CenterRender,
+        ['colors']: ColorsRender,
 
-        // ['thermo']: ThermoRender,
-        // // ['slowThermo']: SlowThermoRender,
-        // ['between']: BetweenRender,
-        // ['lockout']: LockoutRender,
-        // ['doubleArrow']: DoubleArrowRender,
-        // // ['palindrome']: PalindromeRender,
-        // // ['whisper']: GermanWhisperRender,
-        // // ['dutchWhisper']: DutchWhisperRender,
-        // // ['renban']: RenbanRender,
-        // // ['regionSum']: RegionSumRender,
-        // ['arrow']: ArrowRender,
+        ['thermo']: ThermoRender,
+        ['slowThermo']: SlowThermoRender,
+        ['between']: BetweenRender,
+        ['lockout']: LockoutRender,
+        ['doubleArrow']: DoubleArrowRender,
+        ['palindrome']: PalindromeRender,
+        ['whisper']: GermanWhisperRender,
+        ['dutchWhisper']: DutchWhisperRender,
+        ['renban']: RenbanRender,
+        ['regionSum']: RegionSumRender,
+        ['arrow']: ArrowRender,
 
-        // ['min']: MinRender,
-        // ['max']: MaxRender,
-        // ['odd']: OddRender,
-        // ['even']: EvenRender,
-        // // ['columnIndexer']: ColumnIndexerRender,
-        // // ['rowIndexer']: RowIndexerRender,
+        ['min']: MinRender,
+        ['max']: MaxRender,
+        ['odd']: OddRender,
+        ['even']: EvenRender,
+        ['columnIndexer']: ColumnIndexerRender,
+        ['rowIndexer']: RowIndexerRender,
 
-        // ['killer']: KillerRender,
-        // ['clone']: CloneRender,
+        ['killer']: KillerRender,
+        ['clone']: CloneRender,
 
-        // ['quadruple']: QuadrupleRender,
-        // // ['difference']: DifferenceRender,
-        // // ['ratio']: RatioRender,
-        // // ['xv']: XVRender,
+        ['quadruple']: QuadrupleRender,
+        ['difference']: DifferenceRender,
+        ['ratio']: RatioRender,
+        ['xv']: XVRender,
 
-        // ['littleKiller']: LittleKillerRender,
-        // // ['sandwich']: SeriesRender,
-        // // ['xsum']: SeriesRender,
-        // // ['skyscraper']: SeriesRender,
+        ['littleKiller']: LittleKillerRender,
+        ['sandwich']: SeriesRender,
+        ['xsum']: SeriesRender,
+        ['skyscraper']: SeriesRender,
 
-        // ['diagonal']: DiagonalRender,
+        ['diagonal']: DiagonalRender,
 
-        // ['knight']: NullRender,
-        // ['king']: NullRender,
-        // ['disjointGroups']: NullRender,
-        // ['consecutive']: NullRender,
-        // ['antiX']: NullRender,
-        // ['antiV']: NullRender,
-        // ['selfTaxicab']: NullRender,
+        ['knight']: NullRender,
+        ['king']: NullRender,
+        ['disjointGroups']: NullRender,
+        ['consecutive']: NullRender,
+        ['antiX']: NullRender,
+        ['antiV']: NullRender,
+        ['selfTaxicab']: NullRender,
     } as const;
 
     // TODO denormalize this.
@@ -406,8 +407,8 @@
             <rect x="0" y="0" width={$grid?.width} height={$grid?.height} fill="#fff" />
             <path d={$givensFilledMaskPath} fill="#000" stroke="none" />
         </mask>
-        {#each $list as { id, ref, element } (id)}
-            <svelte:component this={element} {id} {ref} grid={$grid} />
+        {#each $list as { id, ref, element: Element } (id)}
+            <Element {id} {ref} grid={$grid} />
         {/each}
     </defs>
     {#each $list as { id } (id)}

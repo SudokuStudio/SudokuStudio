@@ -5,8 +5,8 @@
   "version": "0.0.0",
   "exports": {
     ".": {
-      "types": "./lib/board-format.d.ts",
-      "import": "./lib/board-format.js"
+      "types": "./dist/board-format.d.ts",
+      "import": "./dist/board-format.js"
     },
     "./src": {
       "import": "./src/board-format.ts"

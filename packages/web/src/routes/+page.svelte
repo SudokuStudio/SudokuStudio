@@ -14,7 +14,7 @@
 
     function updateBugReportUrl(event: MouseEvent & { currentTarget: EventTarget & HTMLAnchorElement}): void {
         const url = new URL(URL_REPORT_BUG);
-        url.searchParams.append('version', "TODO __replace.SUDOKU_STUDIO_VERSION");
+        url.searchParams.append('version', import.meta.env.VITE_SUDOKU_STUDIO_VERSION);
         url.searchParams.append('browser', window.navigator.userAgent);
         url.searchParams.append('os', window.navigator.platform);
         url.searchParams.append('url', window.location.href);
@@ -47,8 +47,8 @@
 </main>
 <footer>
     <div class="footer-text">
-        <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio/commit/{"TODO __replace.SUDOKU_STUDIO_VERSION"}">
-            Sudoku Studio v.{"TODO __replace.SUDOKU_STUDIO_VERSION"}
+        <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio/commit/{import.meta.env.VITE_SUDOKU_STUDIO_VERSION}">
+            Sudoku Studio v.{import.meta.env.VITE_SUDOKU_STUDIO_VERSION}
         </a>
         <a target="_blank" href={URL_REPORT_BUG} on:mouseover={debounce(updateBugReportUrl, 500, true)}>
             Bug Report

@@ -1,7 +1,7 @@
-import * as Comlink from "comlink";
-import type { CancellationToken } from "@sudoku-studio/solver-sat";
-import { cantAttempt, solve, solveTrueCandidates } from "@sudoku-studio/solver-sat";
+import type { CancellationToken } from "@sudoku-studio/solver-sat/src";
 import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
+import * as Comlink from "comlink";
+import { cantAttempt, solve, solveTrueCandidates } from "@sudoku-studio/solver-sat/src";
 import { boardRepr } from "@sudoku-studio/board-utils/src";
 
 const CANCELLATION_TABLE: Record<string, CancellationToken> = {};
@@ -61,4 +61,6 @@ const DEFAULT = {
 
 export default DEFAULT;
 
+console.error("hello from satSolverWorker.ts");
+console.log("SAT Solver Worker loaded.");
 Comlink.expose(DEFAULT);

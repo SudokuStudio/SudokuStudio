@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "exports": {
     ".": {
-      "types": "./lib/state-manager.d.ts",
-      "import": "./lib/state-manager.js"
+      "types": "./dist/state-manager.d.ts",
+      "import": "./dist/state-manager.js"
     },
     "./src": {
       "import": "./src/state-manager.ts"

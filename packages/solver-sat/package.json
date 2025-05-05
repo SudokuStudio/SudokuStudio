@@ -4,8 +4,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./lib/solver-sat.d.ts",
-      "import": "./lib/solver-sat.js"
+      "types": "./dist/solver-sat.d.ts",
+      "import": "./dist/solver-sat.js"
     },
     "./src": {
       "import": "./src/solver-sat.ts"

@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "exports": {
     ".": {
-      "types": "./lib/board-utils.d.ts",
-      "import": "./lib/board-utils.js"
+      "types": "./dist/board-utils.d.ts",
+      "import": "./dist/board-utils.js"
     },
     "./src": {
       "import": "./src/board-utils.ts"

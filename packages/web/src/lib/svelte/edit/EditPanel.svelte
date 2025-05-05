@@ -1,4 +1,5 @@
 <script lang="ts">
+    import type { Component, ComponentInternals } from "svelte";
     import type { ElementHandlerList } from "../../js/elementStores";
     import type { ElementInfo } from "../../js/element/element";
     import type { schema } from "@sudoku-studio/schema";
@@ -30,28 +31,24 @@
         return $elementHandlers.filter(({ info }) => isLocalConstraint(info));
     });
 
-    const globalConstraintFilter = (key: schema.ElementType, info: ElementInfo) => (
+    const globalConstraintFilter = (key: string, info: ElementInfo) => (
         isNewConstraint(key) && isGlobalConstraint(info)
     );
-    const localConstraintFilter = (key: schema.ElementType, info: ElementInfo) => (
+    const localConstraintFilter = (key: string, info: ElementInfo) => (
         isNewConstraint(key) && isLocalConstraint(info)
     );
 
-    function componentFor(element: ElementInfo) {
+    function componentFor(element: ElementInfo): Component | null {
         const menuInfo = element.menu;
         if (null == menuInfo) return null;
-        return function(args: any) {
-            if (null == args.props) {
-                console.warn("`args.props` unset for `componentFor` builder.");
-                return null;
-            }
+        return (internals: ComponentInternals, props: any) => {
             if ('select' === menuInfo.type) {
-                args.props.info = menuInfo;
-                return new SelectMenuComponent(args);
+                props.info = menuInfo;
+                return SelectMenuComponent(internals, props);
             }
             if ('checkbox' === menuInfo.type) {
-                args.props.info = menuInfo;
-                return new CheckboxMenuComponent(args);
+                props.info = menuInfo;
+                return CheckboxMenuComponent(internals, props);
             }
             throw Error(`Unknown menu type "${(menuInfo as any).type}".`);
         };
@@ -59,7 +56,7 @@
 
     let modalSearchPattern = '';
     let showAddModal: boolean = false;
-    let constraintFilterFunction = (_key: schema.ElementType, _info: ElementInfo) => true;
+    let constraintFilterFunction = (_key: string, _info: ElementInfo) => true;
 </script>
 
 <ul class="nolist">

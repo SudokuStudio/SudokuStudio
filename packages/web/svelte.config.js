@@ -1,5 +1,17 @@
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import { sveltePreprocess } from 'svelte-preprocess';
+import * as path from "path";
+
+const PATH_PUBLIC = path.resolve('public');
+const PATH_OUTPUT = path.join(PATH_PUBLIC, 'build');
+
+const FILE_WORKER_SATSOLVER = path.join(PATH_OUTPUT, 'satSolverWorker.js');
+
+const replace = [
+  ['__replace.SUDOKU_STUDIO_VERSION', JSON.stringify(process.env.SUDOKU_STUDIO_VERSION || 'DEV')],
+  ['__replace.WORKER_SATSOLVER_SCRIPT', JSON.stringify(path.relative(PATH_PUBLIC, FILE_WORKER_SATSOLVER))],
+];
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -17,7 +29,7 @@ const config = {
       fallback: undefined,
       precompress: false,
       strict: true,
-    }),
+    })
   },
 };
 

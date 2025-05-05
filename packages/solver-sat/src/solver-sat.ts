@@ -1,7 +1,12 @@
-import { load as loadCryptoMiniSat, lbool, Module } from '@sudoku-studio/cryptominisat';
+import { load as loadCryptoMiniSat, Module } from '@sudoku-studio/cryptominisat';
 import { load as loadPbLib } from '@sudoku-studio/pblib';
 import { arrayObj2array, buildRegionMap, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils/src';
 import type { ArrayObj, Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
+
+// TODO(mingwei): this is duplicated from cryptominisat due to `enum` being weird.
+const LBOOL_TRUE = 0;
+const LBOOL_FALSE = 1;
+const LBOOL_UNDEF = 2;
 
 type Context = {
     clauses: number[][],
@@ -73,9 +78,9 @@ async function solveHelper(
 
                 sat.cmsat_set_max_time(satSolverPtr, 0.1);
                 status = sat.cmsat_solve(satSolverPtr);
-            } while (lbool.UNDEF === status);
+            } while (LBOOL_UNDEF === status);
 
-            if (lbool.FALSE === status)
+            if (LBOOL_FALSE === status)
                 break;
 
             // SOLVED!
@@ -85,7 +90,7 @@ async function solveHelper(
             for (const [y, x, v] of product(size, size, size)) {
                 const literal = context.getLiteral(y, x, v);
                 const litVal = model[literal - 1];
-                if (lbool.TRUE === litVal) {
+                if (LBOOL_TRUE === litVal) {
                     const cellIdx = cellCoord2CellIdx([x, y], context.grid);
                     if (undefined !== solution[cellIdx]) throw 'INVALID';
 
