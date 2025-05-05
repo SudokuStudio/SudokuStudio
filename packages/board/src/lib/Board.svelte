@@ -265,8 +265,6 @@
     export let svg: SVGSVGElement = null!;
 
     const grid = boardState.ref('grid');
-    console.log('Grid:', grid);
-    console.log('$grid:', $grid);
 
     const elementsRef = boardState.ref('elements');
     const givensMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
