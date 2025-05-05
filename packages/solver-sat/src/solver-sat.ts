@@ -1,4 +1,5 @@
-import { load as loadCryptoMiniSat, Module } from '@sudoku-studio/cryptominisat';
+import { load as loadCryptoMiniSat } from '@sudoku-studio/cryptominisat';
+import type { Module } from '@sudoku-studio/cryptominisat';
 import { load as loadPbLib } from '@sudoku-studio/pblib';
 import { arrayObj2array, buildRegionMap, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils/src';
 import type { ArrayObj, Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';

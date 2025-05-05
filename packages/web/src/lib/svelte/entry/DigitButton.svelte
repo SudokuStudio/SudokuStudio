@@ -18,7 +18,6 @@
             }
         }, 0);
     }
-    
 </script>
 
 <button
@@ -29,7 +28,7 @@
     on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}
 >
     <div class="pad-text">{digit}</div>
-    <div class="pad-color" style={`background-color: ${colorsList[digit]}`} />
+    <div class="pad-color" style={`background-color: ${colorsList[digit]}`}></div>
 </button>
 
 <style lang="scss">

@@ -7,10 +7,9 @@
     "clean": "pnpm -r run clean && rm -rf node_modules",
     "build": "pnpm -r run build",
     "dev": "pnpm --filter @sudoku-studio/web run dev",
-    "test": "pnpm -r run test",
-    "check": "pnpm -r run check",
-    "format": "prettier --write .",
-    "lint": "prettier --check ."
+    "test": "pnpm -r run --parallel --aggregate-output --reporter=append-only test",
+    "check": "prettier --check . && pnpm -r --parallel --aggregate-output --reporter=append-only run check",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",

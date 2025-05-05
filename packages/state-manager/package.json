@@ -1,6 +1,7 @@
 {
   "name": "@sudoku-studio/state-manager",
   "version": "0.0.0",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/state-manager.d.ts",

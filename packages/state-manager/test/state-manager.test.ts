@@ -1,4 +1,4 @@
-import { Data, Diff, StateManager, Watcher } from "../src/state-manager";
+import { Data, Diff, StateManager, Watcher } from "../src/state-manager.js";
 import { describe, expect, it } from "vitest";
 
 type WatchEvent = {

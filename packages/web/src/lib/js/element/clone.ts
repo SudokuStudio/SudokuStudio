@@ -8,7 +8,7 @@ import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord, warnCl
 import { userCursorIsShownState, userSelectState } from "../user";
 import type { ElementInfo } from "./element";
 import { pushHistory } from "../history";
-import hsluv from "hsluv";
+import * as hsluv from "hsluv";
 import { makeA1Column } from "../util";
 
 export const cloneInfo: ElementInfo = {
@@ -97,7 +97,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
             if (!existingLabels.has(label)) {
                 return {
                     label,
-                    color: hsluvToHex.hsluvToHex([ (127 * i) % 360, 50, 50 ]),
+                    color: hsluv.hsluvToHex([ (127 * i) % 360, 50, 50 ]),
                     a: [],
                     b: [],
                 };
