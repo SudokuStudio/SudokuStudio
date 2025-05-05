@@ -1,6 +1,9 @@
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
 name: CI
 
 jobs:
@@ -27,19 +30,19 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Setup node
-      uses: actions/setup-node@v4
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
       with:
-        node-version: '22'
+        version: 10
 
     - name: Install packages
-      run: npm ci
+      run: pnpm ci
 
     - name: Build
-      run: SUDOKU_STUDIO_VERSION="${GITHUB_SHA:0:7}" npm run build
+      run: SUDOKU_STUDIO_VERSION="${GITHUB_SHA:0:7}" pnpm run build
 
     - name: Test
-      run: npm run test
+      run: pnpm run test
 
     - name: Deploy to gh-pages
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
