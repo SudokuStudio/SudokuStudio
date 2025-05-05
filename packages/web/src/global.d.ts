@@ -1,11 +1,9 @@
 /// <reference types="svelte" />
-// declare module '*.md' {
-//     export default string;
-// }
-// declare module 'web-worker:*' {
-//     const WorkerFactory: new () => Worker;
-//     export default WorkerFactory;
-// }
+
+declare module '$env/static/public' {
+    export const SUDOKU_STUDIO_VERSION: string;
+}
+
 declare module 'save-svg-as-png' {
     export type Options = {
         /** Creates a PNG with the given background color. Defaults to transparent. */
