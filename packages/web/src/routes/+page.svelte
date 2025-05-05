@@ -13,7 +13,7 @@
     import EntryPanel from "$lib/svelte/entry/EntryPanel.svelte";
     import Header from "$lib/svelte/header/Header.svelte";
 
-    function updateBugReportUrl(event: MouseEvent & { currentTarget: EventTarget & HTMLAnchorElement}): void {
+    function updateBugReportUrl(event: UIEvent & { currentTarget: EventTarget & HTMLAnchorElement}): void {
         const url = new URL(URL_REPORT_BUG);
         url.searchParams.append('version', SUDOKU_STUDIO_VERSION);
         url.searchParams.append('browser', window.navigator.userAgent);
@@ -51,7 +51,7 @@
         <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio/commit/{SUDOKU_STUDIO_VERSION}">
             Sudoku Studio v.{SUDOKU_STUDIO_VERSION}
         </a>
-        <a target="_blank" href={URL_REPORT_BUG} on:mouseover={debounce(updateBugReportUrl, 500, true)}>
+        <a target="_blank" href={URL_REPORT_BUG} on:mouseover={debounce(updateBugReportUrl, 500, true)} on:focus={updateBugReportUrl}>
             Bug Report
         </a>
         <a target="_blank" href={URL_REQUEST_FEATURE}>

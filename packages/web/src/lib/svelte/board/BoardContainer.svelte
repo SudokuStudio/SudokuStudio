@@ -1,10 +1,10 @@
 <script lang="ts">
     import type { StateManager } from "@sudoku-studio/state-manager/src";
     import { Board } from "@sudoku-studio/board/src";
-    import { boardDiv, boardSvg, warningState } from "../../js/board";
-    import { currentInputHandler } from "../../js/elementStores";
-    import type { InputHandler } from "../../js/input/inputHandler";
-    import { userState } from "../../js/user";
+    import { boardDiv, boardSvg, warningState } from "$lib/js/board";
+    import { currentInputHandler } from "$lib/js/elementStores";
+    import type { InputHandler } from "$lib/js/input/inputHandler";
+    import { userState } from "$lib/js/user";
 
     function wrapListener(inputHandler: null | InputHandler, key: keyof InputHandler): (event: any) => void {
         return event => {
@@ -29,7 +29,7 @@
     on:keydown={wrapListener($currentInputHandler, 'keydown')}
     on:keyup={wrapListener($currentInputHandler, 'keyup')} />
 
-<div bind:this={$boardDiv} class="overlay" tabindex="0"
+<div bind:this={$boardDiv} class="overlay" tabindex="0" role="grid"
     on:mousedown|capture|stopPropagation|preventDefault={event => {
         event.currentTarget.focus();
         return $currentInputHandler && $currentInputHandler.mouseDown(event);

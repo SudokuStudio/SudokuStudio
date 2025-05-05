@@ -14,7 +14,7 @@
 </script>
 
 <div class="modal-container" hidden={!visible} on:click={dismiss}>
-    <div class="modal" on:keydown={checkEscape}>
+    <div class="modal" on:keydown={checkEscape} aria-modal="true" role="dialog" tabindex="0">
         <slot>This modal is blank.</slot>
     </div>
 </div>

@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
     let counter = 0;
 </script>
-<script type="ts">
+<script lang="ts">
     import type { MouseEventHandler } from "svelte/elements";
 
     import { boardDiv } from "../../../js/board";
@@ -25,11 +25,11 @@
             bind:group={$userToolState} />
         <button class="nobutton focus-skip" on:click={() => $boardDiv && $boardDiv.focus()}>Jump To Board</button>
     {/if}
-    <div class="constraint-row" role="button" on:click|stopPropagation={onClick} title={isLocal ? `${name} Tool` : undefined} aria-labelledby="label-{counter}">
+    <div class="constraint-row" role="button" on:click|stopPropagation={onClick} title={isLocal ? `${name} Tool` : undefined} aria-labelledby="label-{counter}" tabindex="0">
         <div class="constraint-row-left">
             {#if deletable}
-                <button class="delete-button nobutton hoverable" on:click|stopPropagation={onTrash}>
-                    <span class="icon hoverable-icon icon-inline icon-c-clickable icon-trash" />
+                <button class="delete-button nobutton hoverable" on:click|stopPropagation={onTrash} aria-label="Delete {name}">
+                    <span class="icon hoverable-icon icon-inline icon-c-clickable icon-trash"></span>
                 </button><!-- no whitespace
          -->{/if}{#if isLocal}
                 <label class:unused={unused} class="name clickable" for="local-radio-{counter}" id="label-{counter}">{name}</label>

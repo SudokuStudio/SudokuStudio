@@ -21,17 +21,21 @@
         return out;
     }
 
-    function color(count: number | boolean): string {
-        // count is a boolean when center marks are entered manually
+    /// This function determines the color based on the count of numbers.
+    /// `count` is a `true` when center marks are entered manually.
+    /// Otherwise count is the number of solutions found for the cell.
+    function color(count: number | true): string {
         if (count === true || count > 8) {
-            return "#4e72b0";
+            return "#4e72b0"; // blue
         }
         if (count === 1) {
-            return "#299b20";
-        } else if (count <= 3) {
-            return "#c4d0e4";
+            return "#299b20"; // green
         }
-        return "#89a1ca";
+        if (count <= 3) {
+            return "#c4d0e4"; // lightest blue
+        }
+        // 3 < count <= 8
+        return "#89a1ca"; // light blue
     }
 </script>
 

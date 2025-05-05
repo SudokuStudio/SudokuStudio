@@ -21,7 +21,7 @@
 
 <Modal bind:visible={visible}>
     <div class="search-input-container">
-        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-search" />
+        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-search"></span>
         <input class="search-input" type="text" bind:this={searchInput} bind:value={searchPattern} />
     </div>
     <div class="search-results">
@@ -29,7 +29,7 @@
             {#each search(searchPattern, filterFunction) as { item }}
                 <li>
                     <button class="result-item nobutton hoverable" title={item.info.meta?.description} on:click={() => elementClicked(item.key)}>
-                        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}" />
+                        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}"></span>
                         {item.info.menu?.name}
                     </button>
                 </li>

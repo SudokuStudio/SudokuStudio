@@ -15,5 +15,5 @@
 </script>
 
 <ConstraintRow {id} {deletable} name={info.name} unused={false} isLocal={true} onTrash={() => removeElement(id)}>
-    <span class="icon icon-inline icon-c-clickable icon-{info.icon}" />
+    <span class="icon icon-inline icon-c-clickable icon-{info.icon}"></span>
 </ConstraintRow>

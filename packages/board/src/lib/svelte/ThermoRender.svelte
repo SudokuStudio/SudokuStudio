@@ -44,7 +44,6 @@
         d="M0.35, 0.13 L0.65, 0.13 L0.86, 0.34 L0.86, 0.64 L0.64, 0.86 L0.35, 0.86 L0.13, 0.65 L0.13, 0.35 Z"
         stroke="#444"
         stroke-width="0.1"
-        stroke-alignment="inner"
         fill="#222"
     />
 </marker>

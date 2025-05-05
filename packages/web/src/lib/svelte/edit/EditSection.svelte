@@ -1,25 +1,27 @@
 <script lang="ts">
+    import type { MouseEventHandler } from "svelte/elements";
+
     export let icon: string;
     export let title: string;
     export let closed: boolean = false;
-    export let onAdd: undefined | svelte.JSX.MouseEventHandler<HTMLButtonElement> = undefined;
+    export let onAdd: undefined | MouseEventHandler<HTMLButtonElement> = undefined;
 
-    function onClick() {
+    function onClick(): void {
         closed = !closed;
     }
 </script>
 
 <div class="container" class:closed>
-    <div role="button" tabindex="0" class="section-title" on:click={onClick}>
+    <div role="button" tabindex="0" class="section-title" on:click={onClick} aria-label="Show/hide {title}">
         <button class={`add-button nobutton hoverable ${onAdd ?? 'hide-button'}`} on:click|stopPropagation={onAdd}>
-            <span class="icon hoverable-icon icon-inline icon-c-clickable icon-add" />
+            <span class="icon hoverable-icon icon-inline icon-c-clickable icon-add"></span>
         </button>
         <span>
-            <span class="icon hoverable-icon icon-inline icon-c-text icon-{icon}" />
+            <span class="icon hoverable-icon icon-inline icon-c-text icon-{icon}"></span>
             {title}
         </span>
         <span class="tree-menu-wrapper">
-            <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu" />
+            <span class="tree-menu icon icon-inline icon-c-clickable icon-tree-menu"></span>
         </span>
     </div>
     <div class="panel-wrapper">

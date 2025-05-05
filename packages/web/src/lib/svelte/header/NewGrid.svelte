@@ -3,10 +3,11 @@
     import { boardRepr, solutionToString, gridToBoxSizeMap } from "@sudoku-studio/board-utils/src";
     import { setupUserState } from "$lib/js/user";
     import { createElement } from "$lib/js/elements";
+    import { boardState } from "$lib/js/board";
 
     export let visible: boolean;
 
-    function resetGrid(dimensions) {
+    function resetGrid(dimensions: readonly [number, number]): void {
         const newBoardState = boardRepr.createNewBoard(createElement, ...dimensions);
         setupUserState(newBoardState);
         boardState.update(newBoardState as any);

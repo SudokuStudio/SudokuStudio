@@ -15,9 +15,9 @@
     }
 </script>
 
-<div class="constraint-checkbox" on:click|stopPropagation>
+<div class="constraint-checkbox" on:click|stopPropagation role="none" tabindex="-1">
     <label for="checkbox-{++counter}" title={name} class="clickable">
-        <span class="icon icon-inline icon-c-text icon-{icon}" />
+        <span class="icon icon-inline icon-c-text icon-{icon}"></span>
         <span class="sr-only">{name}</span>
     </label>
     <input id="checkbox-{counter}" type="checkbox" on:change={onClick} checked={$checked} />
