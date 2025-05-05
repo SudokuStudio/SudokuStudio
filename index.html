@@ -1,18 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
 
-    <title>Sudoku Studio</title>
-    <link rel="icon" href="./favicon.png">
+  <title>Sudoku Studio</title>
+  <link rel="icon" href="./favicon.png">
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel='stylesheet' href='./build/bundle.css'>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <script defer src='./build/bundle.js'></script>
+  
+		<link rel="modulepreload" href="./_app/immutable/entry/start.BA89F2oh.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/sGUjdMqd.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DcpimVB_.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/h5JDLhuT.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.B4aNXjEz.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DEPwZVLP.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DEEdQwaq.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/DXjmiMH5.js">
 </head>
 
-<body>
+<body data-sveltekit-preload-data="hover">
+  <div style="display: contents">
+			<script>
+				{
+					__sveltekit_16io0sf = {
+						base: new URL(".", location).pathname.slice(0, -1)
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("./_app/immutable/entry/start.BA89F2oh.js"),
+						import("./_app/immutable/entry/app.B4aNXjEz.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
 </body>
 </html>

@@ -1,0 +1,1 @@
+export const env={"SUDOKU_STUDIO_VERSION":"c46c8d5"}
