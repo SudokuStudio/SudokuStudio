@@ -3,14 +3,13 @@ frontend:
   phases:
     preBuild:
       commands:
-        - git submodule update --init --recursive
-        - npm i -g npm@^7.0.0
-        - npm ci
+        - npm i -g pnpm
+        - pnpm i
     build:
       commands:
-        - SUDOKU_STUDIO_VERSION="${AWS_COMMIT_ID:0:7}" npm run build
+        - SUDOKU_STUDIO_VERSION="${AWS_COMMIT_ID:0:7}" pnpm run build
   artifacts:
-    baseDirectory: /packages/web/public/
+    baseDirectory: /packages/web/build/
     files:
       - '**/*'
   cache:

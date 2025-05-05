@@ -1,7 +1,12 @@
-import { load as loadCryptoMiniSat, lbool, Module } from '@sudoku-studio/cryptominisat';
-import loadPbLib from '@sudoku-studio/pblib';
-import { arrayObj2array, buildRegionMap, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils';
-import { ArrayObj, Coord, Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
+import { load as loadCryptoMiniSat, Module } from '@sudoku-studio/cryptominisat';
+import { load as loadPbLib } from '@sudoku-studio/pblib';
+import { arrayObj2array, buildRegionMap, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils/src';
+import type { ArrayObj, Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
+
+// TODO(mingwei): this is duplicated from cryptominisat due to `enum` being weird.
+const LBOOL_TRUE = 0;
+const LBOOL_FALSE = 1;
+const LBOOL_UNDEF = 2;
 
 type Context = {
     clauses: number[][],
@@ -73,20 +78,20 @@ async function solveHelper(
 
                 sat.cmsat_set_max_time(satSolverPtr, 0.1);
                 status = sat.cmsat_solve(satSolverPtr);
-            } while (lbool.UNDEF === status);
+            } while (LBOOL_UNDEF === status);
 
-            if (lbool.FALSE === status)
+            if (LBOOL_FALSE === status)
                 break;
 
             // SOLVED!
             const model = sat.cmsat_get_model(satSolverPtr);
             const solution: IdxMap<Geometry.CELL, number> = {};
             const excludeSolutionClause: number[] = [];
-            for (const [ y, x, v ] of product(size, size, size)) {
+            for (const [y, x, v] of product(size, size, size)) {
                 const literal = context.getLiteral(y, x, v);
                 const litVal = model[literal - 1];
-                if (lbool.TRUE === litVal) {
-                    const cellIdx = cellCoord2CellIdx([ x, y ], context.grid);
+                if (LBOOL_TRUE === litVal) {
+                    const cellIdx = cellCoord2CellIdx([x, y], context.grid);
                     if (undefined !== solution[cellIdx]) throw 'INVALID';
 
                     excludeSolutionClause.push(-literal);
@@ -109,8 +114,7 @@ async function solveHelper(
 
 export async function solve(board: schema.Board, maxSolutions: number,
     onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void,
-    cancellationToken: CancellationToken = {}): Promise<boolean>
-{
+    cancellationToken: CancellationToken = {}): Promise<boolean> {
     const pbLib = await pbLibPromise;
 
     const size = board.grid.width;
@@ -168,7 +172,7 @@ function updateValidCandidatesForSolutions(
             if (undefined === value) continue;
 
             const count = validCandidates[cellIndex]?.get(value) || 0;
-            validCandidates[cellIndex]?.set(value, count+1);
+            validCandidates[cellIndex]?.set(value, count + 1);
         }
         foundSolutions[representation] = true;
     }
@@ -176,8 +180,7 @@ function updateValidCandidatesForSolutions(
 
 export async function solveTrueCandidates(board: schema.Board,
     onComplete: (candidates: null | IdxMap<Geometry.CELL, Map<number, number>>) => void,
-    cancellationToken: CancellationToken = {}): Promise<boolean>
-{
+    cancellationToken: CancellationToken = {}): Promise<boolean> {
     const pbLib = await pbLibPromise;
 
     const size = board.grid.width;
@@ -193,14 +196,14 @@ export async function solveTrueCandidates(board: schema.Board,
     const numBaseVars = Math.pow(context.size, 3);
     let numLits = numBaseVars;
 
-    // Create a boolean array tracking which cells have givens
-    const givens: IdxMap<Geometry.CELL, number> = {};
+    // Create a set tracking which cells have givens.
+    const givens: IdxBitset<Geometry.CELL> = {};
     for (const element of Object.values(board.elements)) {
         if (cancellationToken.cancelled) return false;
         if (element.type === 'filled') continue;
         if (element.type === 'givens') {
-            for (const [ cellIdx, value1 ] of Object.entries(element.value || {})) {
-                givens[cellIdx] = value1!;
+            for (const cellIdx of Object.keys(element.value || {}) as `${Idx<Geometry.CELL>}`[]) {
+                givens[cellIdx] = true;
             }
         }
 
@@ -240,7 +243,7 @@ export async function solveTrueCandidates(board: schema.Board,
         [],
         cancellationToken,
         (solution: IdxMap<Geometry.CELL, number>) => initialSolutions.push(solution),
-        () => {},
+        () => { },
     );
 
     if (!returnValue) {
@@ -269,20 +272,20 @@ export async function solveTrueCandidates(board: schema.Board,
 
             // Add additional clause for the value being tested
             {
-                const [ x, y ] = cellIdx2cellCoord(testCellIdx, context.grid);
+                const [x, y] = cellIdx2cellCoord(testCellIdx, context.grid);
                 const literal = context.getLiteral(y, x, testValue - 1);
-                additionalClauses.push([ literal ]);
+                additionalClauses.push([literal]);
             }
 
             // Add clauses for previous cells with only 1 candidate
             {
                 for (let previousCellIndex = 0; previousCellIndex < testCellIdx; previousCellIndex++) {
                     const previousCellCandidates = validCandidates[previousCellIndex];
-                    if (previousCellCandidates && 1 === previousCellCandidates.size) {
-                        const onlyCandidate = previousCellCandidates.keys().next().value;
-                        const [ x, y ] = cellIdx2cellCoord(previousCellIndex, context.grid);
+                    if (1 === previousCellCandidates?.size) {
+                        const onlyCandidate = previousCellCandidates.keys().next().value!;
+                        const [x, y] = cellIdx2cellCoord(previousCellIndex, context.grid);
                         const literal = context.getLiteral(y, x, onlyCandidate - 1);
-                        additionalClauses.push([ literal ]);
+                        additionalClauses.push([literal]);
                     }
                 }
             }
@@ -296,7 +299,7 @@ export async function solveTrueCandidates(board: schema.Board,
                 additionalClauses,
                 cancellationToken,
                 (solution: IdxMap<Geometry.CELL, number>) => solutions.push(solution),
-                () => {},
+                () => { },
             );
 
             if (!returnValue) {
@@ -319,11 +322,11 @@ export const ELEMENT_HANDLERS = {
 
     grid(numLits: number, _element: schema.GridElement, context: Context): number {
         const ones = Array(context.size).fill(1);
-        for (const [ a, b ] of product(context.size, context.size)) {
+        for (const [a, b] of product(context.size, context.size)) {
             const cel: number[] = [];
             const row: number[] = [];
             const col: number[] = [];
-            for (const [ c ] of product(context.size)) {
+            for (const [c] of product(context.size)) {
                 cel.push(context.getLiteral(a, b, c));
                 row.push(context.getLiteral(a, c, b));
                 col.push(context.getLiteral(c, a, b));
@@ -345,7 +348,7 @@ export const ELEMENT_HANDLERS = {
                 .map(idx => cellIdx2cellCoord(idx, context.grid))
             const ones = Array(coords.length).fill(1);
             for (let val = 0; val < context.size; val++) {
-                const literals = coords.map(([ x, y ]) => context.getLiteral(y, x, val));
+                const literals = coords.map(([x, y]) => context.getLiteral(y, x, val));
                 numLits = context.pbLib.encodeBoth(ones, literals, 1, 1, context.clauses, 1 + numLits);
             }
         }
@@ -356,9 +359,9 @@ export const ELEMENT_HANDLERS = {
     disjointGroups(numLits: number, element: schema.BooleanElement, context: Context): number {
         if (element.value) {
             const ones = Array(context.size).fill(1);
-            for (const [ val, pos ] of product(context.size, context.size)) {
+            for (const [val, pos] of product(context.size, context.size)) {
                 const box: number[] = [];
-                for (const [ bx ] of product(context.size)) {
+                for (const [bx] of product(context.size)) {
                     box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
                 }
                 numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, 1 + numLits);
@@ -368,12 +371,12 @@ export const ELEMENT_HANDLERS = {
     },
 
     givens(numLits: number, element: schema.DigitElement, context: Context): number {
-        for (const [ cellIdx, value1 ] of Object.entries(element.value || {})) {
+        for (const [cellIdx, value1] of Object.entries(element.value || {})) {
             const v = value1! - 1;
-            const [ x, y ] = cellIdx2cellCoord(+cellIdx, context.grid);
+            const [x, y] = cellIdx2cellCoord(+cellIdx, context.grid);
 
             const literal = context.getLiteral(y, x, v);
-            context.clauses.push([ literal ]);
+            context.clauses.push([literal]);
         }
         return numLits;
     },
@@ -471,21 +474,21 @@ export const ELEMENT_HANDLERS = {
 
     min(numLits: number, element: schema.RegionElement, context: Context): number {
         const cellIdxes = idxMapToKeysArray(element.value || {});
-        for (const [ inIdx, outIdx ] of getBorderCellPairs(cellIdxes, context.grid)) {
-            const inCoord  = cellIdx2cellCoord(inIdx,  context.grid);
+        for (const [inIdx, outIdx] of getBorderCellPairs(cellIdxes, context.grid)) {
+            const inCoord = cellIdx2cellCoord(inIdx, context.grid);
             const outCoord = cellIdx2cellCoord(outIdx, context.grid);
             // IN < OUT.
-            numLits = encodeIncreasing(numLits, [ inCoord, outCoord ], true, context);
+            numLits = encodeIncreasing(numLits, [inCoord, outCoord], true, context);
         }
         return numLits;
     },
     max(numLits: number, element: schema.RegionElement, context: Context): number {
         const cellIdxes = idxMapToKeysArray(element.value || {});
-        for (const [ inIdx, outIdx ] of getBorderCellPairs(cellIdxes, context.grid)) {
-            const inCoord  = cellIdx2cellCoord(inIdx,  context.grid);
+        for (const [inIdx, outIdx] of getBorderCellPairs(cellIdxes, context.grid)) {
+            const inCoord = cellIdx2cellCoord(inIdx, context.grid);
             const outCoord = cellIdx2cellCoord(outIdx, context.grid);
             // OUT < IN.
-            numLits = encodeIncreasing(numLits, [ outCoord, inCoord ], true, context);
+            numLits = encodeIncreasing(numLits, [outCoord, inCoord], true, context);
         }
         return numLits;
     },
@@ -506,7 +509,7 @@ export const ELEMENT_HANDLERS = {
     },
 
     littleKiller(numLits: number, element: schema.LittleKillerElement, context: Context): number {
-        for (const [ diagIdx, sum ] of Object.entries(element.value || {})) {
+        for (const [diagIdx, sum] of Object.entries(element.value || {})) {
             if ('number' !== typeof sum) continue;
 
             const cellCoords = diagonalIdx2diagonalCellCoords(+diagIdx, context.grid);
@@ -572,7 +575,7 @@ export const ELEMENT_HANDLERS = {
 
             // 1: Ensure that no cell is included multiple times.
             const uniqueCoords = cellCoords.filter(
-                (n,i, arr) => {
+                (n, i, arr) => {
                     return arr.findIndex(
                         t => {
                             if (n === t)
@@ -586,14 +589,14 @@ export const ELEMENT_HANDLERS = {
 
             // 3: CREATE LITERALS to mark if V is in the region.
             const isVInRegion = Array<void>(context.size).fill().map(() => ++numLits);
-            for (const [ v ] of product(context.size)) {
+            for (const [v] of product(context.size)) {
                 // Forward: if isVInRegion then some cell must contain v.
-                const forwardClause = [ -isVInRegion[v] ];
+                const forwardClause = [-isVInRegion[v]];
 
-                for (const [ x, y ] of uniqueCoords) {
+                for (const [x, y] of uniqueCoords) {
                     const cellIsV = context.getLiteral(y, x, v);
                     // Backward: if some cell contains v, then isVInRegion is true.
-                    context.clauses.push([ -cellIsV, isVInRegion[v] ]);
+                    context.clauses.push([-cellIsV, isVInRegion[v]]);
 
                     forwardClause.push(cellIsV);
                 }
@@ -606,7 +609,7 @@ export const ELEMENT_HANDLERS = {
                 for (let medium = 1; medium < large; medium++) {
                     for (let small = 0; small < medium; small++) {
                         // S & L => M
-                        context.clauses.push([ -isVInRegion[small], -isVInRegion[large], isVInRegion[medium] ]);
+                        context.clauses.push([-isVInRegion[small], -isVInRegion[large], isVInRegion[medium]]);
                     }
                 }
             }
@@ -633,22 +636,22 @@ export const ELEMENT_HANDLERS = {
             if (3 > betweenCells.length) continue;
 
             const isAscendingLit = ++numLits;
-            const [ headX, headY ] = betweenCells.shift()!;
-            const [ tailX, tailY ] = betweenCells.pop()!;
+            const [headX, headY] = betweenCells.shift()!;
+            const [tailX, tailY] = betweenCells.pop()!;
 
-            for (const [ betwX, betwY ] of betweenCells) {
+            for (const [betwX, betwY] of betweenCells) {
                 for (let large = 0; large < context.size; large++) {
                     for (let small = 0; small <= large; small++) {
                         // Using De Morgan's law.
                         context.clauses.push(
                             // Cannot be ASCENDING  & HEAD >= BETW
-                            [ -isAscendingLit, -context.getLiteral(headY, headX, large), -context.getLiteral(betwY, betwX, small) ],
+                            [-isAscendingLit, -context.getLiteral(headY, headX, large), -context.getLiteral(betwY, betwX, small)],
                             // Cannot be ASCENDING  & BETW >= TAIL
-                            [ -isAscendingLit, -context.getLiteral(betwY, betwX, large), -context.getLiteral(tailY, tailX, small) ],
+                            [-isAscendingLit, -context.getLiteral(betwY, betwX, large), -context.getLiteral(tailY, tailX, small)],
                             // Cannot be DESCENDING & HEAD <= BETW.
-                            [  isAscendingLit, -context.getLiteral(headY, headX, small), -context.getLiteral(betwY, betwX, large) ],
+                            [isAscendingLit, -context.getLiteral(headY, headX, small), -context.getLiteral(betwY, betwX, large)],
                             // Cannot be DESCENDING & BETW <= TAIL.
-                            [  isAscendingLit, -context.getLiteral(betwY, betwX, small), -context.getLiteral(tailY, tailX, large) ],
+                            [isAscendingLit, -context.getLiteral(betwY, betwX, small), -context.getLiteral(tailY, tailX, large)],
                         );
                     }
                 }
@@ -670,7 +673,7 @@ export const ELEMENT_HANDLERS = {
 
             // Double arrow circles
             for (const [x, y] of [head, tail]) {
-                for (const [ v ] of product(context.size)) {
+                for (const [v] of product(context.size)) {
                     const bulbDigitLiteral = context.getLiteral(y, x, v);
                     const value = 1 + v;
                     weights.push(-1 * value);
@@ -693,10 +696,10 @@ export const ELEMENT_HANDLERS = {
         for (const cells of Object.values(element.value || {})) {
             const lineCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
 
-            const [ headX, headY ] = lineCells.shift()!;
-            const [ tailX, tailY ] = lineCells.pop()!;
+            const [headX, headY] = lineCells.shift()!;
+            const [tailX, tailY] = lineCells.pop()!;
 
-            for (const [ lineX, lineY ] of lineCells) {
+            for (const [lineX, lineY] of lineCells) {
                 for (let large = 0; large < context.size; large++) {
                     for (let medium = 0; medium <= large; medium++) {
                         for (let small = 0; small <= medium; small++) {
@@ -711,11 +714,11 @@ export const ELEMENT_HANDLERS = {
                 }
             }
 
-            for (const [ v0, v1 ] of product(context.size, context.size)) {
+            for (const [v0, v1] of product(context.size, context.size)) {
                 if (Math.abs(v0 - v1) < delta) { // If the difference is too small, we can't have both.
                     const lit0 = context.getLiteral(headY, headX, v0);
                     const lit1 = context.getLiteral(tailY, tailX, v1);
-                    context.clauses.push([ -lit0, -lit1 ]);
+                    context.clauses.push([-lit0, -lit1]);
                 }
             }
         }
@@ -737,8 +740,8 @@ export const ELEMENT_HANDLERS = {
                     regionNumber = context.regionMap[lineCells[i]];
                     break;
                 }
-                const [ x, y ] = cellIdx2cellCoord(lineCells[i], context.grid);
-                for (const [ v ] of product(context.size)) {
+                const [x, y] = cellIdx2cellCoord(lineCells[i], context.grid);
+                for (const [v] of product(context.size)) {
                     weights.push(-v - 1);
                     lits.push(context.getLiteral(y, x, v));
                 }
@@ -757,8 +760,8 @@ export const ELEMENT_HANDLERS = {
                     lits.length = weightsLength;
                     regionNumber = context.regionMap[lineCells[i]];
                 }
-                const [ x, y ] = cellIdx2cellCoord(lineCells[i], context.grid);
-                for (const [ v ] of product(context.size)) {
+                const [x, y] = cellIdx2cellCoord(lineCells[i], context.grid);
+                for (const [v] of product(context.size)) {
                     weights.push(v + 1);
                     lits.push(context.getLiteral(y, x, v));
                 }
@@ -778,7 +781,7 @@ export const ELEMENT_HANDLERS = {
             const bulbArrReversed = arrayObj2array(bulb);
             bulbArrReversed.reverse();
             // Discard start (which is on cell head).
-            const [ _bodyStart, ...bodyArrRest ] = arrayObj2array(body);
+            const [_bodyStart, ...bodyArrRest] = arrayObj2array(body);
             if (0 >= bulbArrReversed.length || 0 >= bodyArrRest.length) continue;
 
             const weights: number[] = [];
@@ -788,8 +791,8 @@ export const ELEMENT_HANDLERS = {
             {
                 let power = 1;
                 for (const bulbCellIdx of bulbArrReversed) {
-                    const [ x, y ] = cellIdx2cellCoord(bulbCellIdx, context.grid);
-                    for (const [ v ] of product(context.size)) {
+                    const [x, y] = cellIdx2cellCoord(bulbCellIdx, context.grid);
+                    for (const [v] of product(context.size)) {
                         const bulbDigitLiteral = context.getLiteral(y, x, v);
                         const value = 1 + v;
                         weights.push(-1 * power * value);
@@ -812,7 +815,7 @@ export const ELEMENT_HANDLERS = {
     },
 
     xv(numLits: number, element: schema.EdgeNumberElement, context: Context): number {
-        for (const [ edgeIdx, sum ] of Object.entries(element.value || {})) {
+        for (const [edgeIdx, sum] of Object.entries(element.value || {})) {
             if ('number' !== typeof sum) continue;
 
             const cellPair = edgeIdx2cellIdxes(+edgeIdx, context.grid).map(idx => cellIdx2cellCoord(idx, context.grid));
@@ -823,18 +826,18 @@ export const ELEMENT_HANDLERS = {
 
     difference(numLits: number, element: schema.EdgeNumberElement, context: Context): number {
         const DEFAULT_DELTA = 1;
-        for (const [ edgeIdx, deltaOrTrue ] of Object.entries(element.value || {})) {
+        for (const [edgeIdx, deltaOrTrue] of Object.entries(element.value || {})) {
             const delta = ('number' === typeof deltaOrTrue) ? deltaOrTrue : DEFAULT_DELTA;
 
-            const [ cellIdxA, cellIdxB ] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
-            const [ xA, yA ] = cellIdx2cellCoord(cellIdxA, context.grid);
-            const [ xB, yB ] = cellIdx2cellCoord(cellIdxB, context.grid);
+            const [cellIdxA, cellIdxB] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
+            const [xA, yA] = cellIdx2cellCoord(cellIdxA, context.grid);
+            const [xB, yB] = cellIdx2cellCoord(cellIdxB, context.grid);
 
-            for (const [ v ] of product(context.size)) {
+            for (const [v] of product(context.size)) {
                 // Cell A is V implies cell B is V - DIFF or V + DIFF.
                 // Cell B is V implies cell A is V - DIFF or V + DIFF.
-                const aIsVClause = [ -context.getLiteral(yA, xA, v) ];
-                const bIsVClause = [ -context.getLiteral(yB, xB, v) ];
+                const aIsVClause = [-context.getLiteral(yA, xA, v)];
+                const bIsVClause = [-context.getLiteral(yB, xB, v)];
                 if (delta <= v) {
                     aIsVClause.push(context.getLiteral(yB, xB, v - delta));
                     bIsVClause.push(context.getLiteral(yA, xA, v - delta));
@@ -852,22 +855,22 @@ export const ELEMENT_HANDLERS = {
 
     ratio(numLits: number, element: schema.EdgeNumberElement, context: Context): number {
         const DEFAULT_RATIO = 2;
-        for (const [ edgeIdx, ratioOrTrue ] of Object.entries(element.value || {})) {
+        for (const [edgeIdx, ratioOrTrue] of Object.entries(element.value || {})) {
             const ratio = ('number' === typeof ratioOrTrue) ? ratioOrTrue : DEFAULT_RATIO;
             if (ratio <= 0) throw Error(`Ratio must be positive: ${ratio}.`);
 
-            const [ cellIdxA, cellIdxB ] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
-            const [ xA, yA ] = cellIdx2cellCoord(cellIdxA, context.grid);
-            const [ xB, yB ] = cellIdx2cellCoord(cellIdxB, context.grid);
+            const [cellIdxA, cellIdxB] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
+            const [xA, yA] = cellIdx2cellCoord(cellIdxA, context.grid);
+            const [xB, yB] = cellIdx2cellCoord(cellIdxB, context.grid);
 
-            for (const [ v ] of product(context.size)) {
+            for (const [v] of product(context.size)) {
                 const value = 1 + v;
                 const valueDiv = value / ratio;
                 const valueMul = value * ratio;
                 // Cell A is VALUE implies cell B is VALUE * DELTA or VALUE / DELTA.
                 // Cell B is VALUE implies cell A is VALUE * DELTA or VALUE / DELTA.
-                const aIsVClause = [ -context.getLiteral(yA, xA, v) ];
-                const bIsVClause = [ -context.getLiteral(yB, xB, v) ];
+                const aIsVClause = [-context.getLiteral(yA, xA, v)];
+                const bIsVClause = [-context.getLiteral(yB, xB, v)];
                 if (Number.isInteger(valueDiv)) {
                     aIsVClause.push(context.getLiteral(yB, xB, valueDiv - 1)); // -1 for zero-indexing.
                     bIsVClause.push(context.getLiteral(yA, xA, valueDiv - 1));
@@ -884,7 +887,7 @@ export const ELEMENT_HANDLERS = {
     },
 
     quadruple(numLits: number, element: schema.QuadrupleElement, context: Context): number {
-        for (const [ cornerIdx, values ] of Object.entries(element.value || {})) {
+        for (const [cornerIdx, values] of Object.entries(element.value || {})) {
             const cellCoords = cornerCoord2cellCoords(cornerIdx2cornerCoord(+cornerIdx, context.grid), context.grid);
             const vs = arrayObj2array(values as ArrayObj<number>).map(value1 => value1 - 1);
             numLits = encodeCellsMustContain(numLits, cellCoords, vs, context);
@@ -902,20 +905,20 @@ export const ELEMENT_HANDLERS = {
                 isBreadLit = ++numLits;
                 _breadLitTable.set(idx, isBreadLit);
 
-                const [ x, y ] = cellIdx2cellCoord(idx, context.grid);
+                const [x, y] = cellIdx2cellCoord(idx, context.grid);
                 const cellIsMin = context.getLiteral(y, x, 0);
                 const cellIsMax = context.getLiteral(y, x, context.size - 1);
                 // Cell is min => is bread.
-                context.clauses.push([ -cellIsMin, isBreadLit ]);
+                context.clauses.push([-cellIsMin, isBreadLit]);
                 // Cell is max => is bread.
-                context.clauses.push([ -cellIsMax, isBreadLit ]);
+                context.clauses.push([-cellIsMax, isBreadLit]);
                 // Cell is bread => is min or is max.
-                context.clauses.push([ -isBreadLit, cellIsMin, cellIsMax ]);
+                context.clauses.push([-isBreadLit, cellIsMin, cellIsMax]);
             }
             return isBreadLit;
         }
 
-        for (const [ seriesIdx, sandwichSumOrTrue ] of Object.entries(element.value || {})) {
+        for (const [seriesIdx, sandwichSumOrTrue] of Object.entries(element.value || {})) {
             if ('number' !== typeof sandwichSumOrTrue) continue;
 
             const cellCoords = seriesIdx2CellCoords(+seriesIdx, context.grid);
@@ -929,7 +932,7 @@ export const ELEMENT_HANDLERS = {
                     const weights: number[] = [];
                     const literals: number[] = [];
                     for (let i = frst + 1; i < last; i++) {
-                        const [ x, y ] = cellCoords[i];
+                        const [x, y] = cellCoords[i];
                         // Skip 1 and 9 (max).
                         for (let v = 1; v < context.size - 1; v++) {
                             const value = 1 + v;
@@ -941,7 +944,7 @@ export const ELEMENT_HANDLERS = {
                     const sumClauses: number[][] = [];
                     numLits = context.pbLib.encodeBoth(weights, literals, sandwichSumOrTrue, sandwichSumOrTrue, sumClauses, 1 + numLits);
                     // Sum only need be true if this is where the bread is.
-                    makeConditional([ isBreadLits[frst], isBreadLits[last] ], sumClauses);
+                    makeConditional([isBreadLits[frst], isBreadLits[last]], sumClauses);
                     context.clauses.push(...sumClauses);
                 }
             }
@@ -950,20 +953,20 @@ export const ELEMENT_HANDLERS = {
     },
 
     xsum(numLits: number, element: schema.SeriesNumberElement, context: Context): number {
-        for (const [ seriesIdx, xsumOrTrue ] of Object.entries(element.value || {})) {
+        for (const [seriesIdx, xsumOrTrue] of Object.entries(element.value || {})) {
             if ('number' !== typeof xsumOrTrue) continue;
 
-            const [ xCellCoord, ...restCellCoords ] = seriesIdx2CellCoords(+seriesIdx, context.grid);
-            const [ x, y ] = xCellCoord;
+            const [xCellCoord, ...restCellCoords] = seriesIdx2CellCoords(+seriesIdx, context.grid);
+            const [x, y] = xCellCoord;
 
             // Deal with xSum = 1 separately:
             if (1 === xsumOrTrue) {
                 // xCell must be 1.
-                context.clauses.push([ context.getLiteral(y, x, 0) ]);
+                context.clauses.push([context.getLiteral(y, x, 0)]);
                 continue;
             }
             // xCell must not be 1. Important so the remaining clauses get triggered.
-            context.clauses.push([ -context.getLiteral(y, x, 0) ]);
+            context.clauses.push([-context.getLiteral(y, x, 0)]);
 
             for (let xv = 1; xv < context.size; xv++) {
                 const sumCellCoords = restCellCoords.slice(0, xv);
@@ -972,14 +975,14 @@ export const ELEMENT_HANDLERS = {
 
                 const prevNumClauses = context.clauses.length;
                 numLits = encodeSum(numLits, xsumOrTrue - xValue, sumCellCoords, context);
-                makeConditional([ xCellLit ], context.clauses.slice(prevNumClauses));
+                makeConditional([xCellLit], context.clauses.slice(prevNumClauses));
             }
         }
         return numLits;
     },
 
     skyscraper(numLits: number, element: schema.SeriesNumberElement, context: Context): number {
-        for (const [ seriesIdx, numVisible ] of Object.entries(element.value || {})) {
+        for (const [seriesIdx, numVisible] of Object.entries(element.value || {})) {
             if ('number' !== typeof numVisible) continue;
 
             const cellCoords = seriesIdx2CellCoords(+seriesIdx, context.grid);
@@ -987,23 +990,23 @@ export const ELEMENT_HANDLERS = {
             // 1: CREATE LITERALS to mark if a cell is visible. Skip the first one (always visible).
             const isVisibleLits = Array<void>(context.size - 1).fill().map(() => ++numLits);
             for (let i = 1; i < context.size; i++) {
-                const [ x, y ] = cellCoords[i];
+                const [x, y] = cellCoords[i];
 
                 for (let v = 0; v < context.size; v++) {
                     const cellIsVLit = context.getLiteral(y, x, v);
                     const cellIsVisible = isVisibleLits[i - 1];
 
                     // This cell being NOT visible implies some previous cells is greater.
-                    const notVisibleClause = [ -cellIsVLit, cellIsVisible ];
+                    const notVisibleClause = [-cellIsVLit, cellIsVisible];
                     context.clauses.push(notVisibleClause);
 
                     for (let iPrev = 0; iPrev < i; iPrev++) {
                         for (let gtV = v + 1; gtV < context.size; gtV++) {
                             // Any previous cell greater implies this is NOT visible.
-                            const [ xPrev, yPrev ] = cellCoords[iPrev];
+                            const [xPrev, yPrev] = cellCoords[iPrev];
                             const prevCellGtLit = context.getLiteral(yPrev, xPrev, gtV);
                             // Cell is v AND prev cell is gtV implies cell not visible.
-                            context.clauses.push([ -cellIsVLit, -prevCellGtLit, -cellIsVisible ]);
+                            context.clauses.push([-cellIsVLit, -prevCellGtLit, -cellIsVisible]);
 
                             notVisibleClause.push(prevCellGtLit);
                         }
@@ -1046,16 +1049,16 @@ function makeConditional(conditionConjunction: number[], clauses: number[][]): v
 function encodeClones(numLits: number, cellsA: Coord<Geometry.CELL>[], cellsB: Coord<Geometry.CELL>[], context: Context): number {
     if (cellsA.length !== cellsB.length) throw Error(`Cloned cells must be of equal length (${cellsA.length} !== ${cellsB.length}).`);
     for (let i = 0; i < cellsA.length; i++) {
-        const [ xA, yA ] = cellsA[i];
-        const [ xB, yB ] = cellsB[i];
-        for (const [ v ] of product(context.size)) {
+        const [xA, yA] = cellsA[i];
+        const [xB, yB] = cellsB[i];
+        for (const [v] of product(context.size)) {
             const litA = context.getLiteral(yA, xA, v);
             const litB = context.getLiteral(yB, xB, v);
             context.clauses.push(
                 // A implies B.
-                [ -litA, litB ],
+                [-litA, litB],
                 // B implies A.
-                [ -litB, litA ],
+                [-litB, litA],
             );
 
         }
@@ -1070,8 +1073,8 @@ function encodeClones(numLits: number, cellsA: Coord<Geometry.CELL>[], cellsB: C
  */
 function encodeIncreasing(numLits: number, cells: Coord<Geometry.CELL>[], strict: boolean, context: Context): number {
     for (let i = 1; i < cells.length; i++) {
-        const [ prevX, prevY ] = cells[i - 1];
-        const [ nextX, nextY ] = cells[i];
+        const [prevX, prevY] = cells[i - 1];
+        const [nextX, nextY] = cells[i];
         for (let large = 0; large < context.size; large++) {
             for (let small = 0; small <= large; small++) {
                 // Dont add exclusion of equality if we're not strict.
@@ -1080,7 +1083,7 @@ function encodeIncreasing(numLits: number, cells: Coord<Geometry.CELL>[], strict
                 const largePrevLit = context.getLiteral(prevY, prevX, large);
                 const smallNextLit = context.getLiteral(nextY, nextX, small);
                 // Prevent large preceding small.
-                context.clauses.push([ -largePrevLit, -smallNextLit ]);
+                context.clauses.push([-largePrevLit, -smallNextLit]);
             }
         }
     }
@@ -1093,7 +1096,7 @@ function encodeCellsMustContain(numLits: number, cells: Coord<Geometry.CELL>[], 
         valueOccurrences.set(v, 1 + (valueOccurrences.get(v) || 0));
     }
 
-    for (const [ v, occurrences ] of valueOccurrences) {
+    for (const [v, occurrences] of valueOccurrences) {
         const literals = writeLitsV(cells, +v, context);
         numLits = context.pbLib.encodeAtLeastK(literals, occurrences, context.clauses, 1 + numLits);
     }
@@ -1106,7 +1109,7 @@ function encodeNoRepeats(numLits: number, cells: Coord<Geometry.CELL>[], context
         context.clauses.push([]);
         return numLits;
     }
-    for (const [ v ] of product(context.size)) {
+    for (const [v] of product(context.size)) {
         const literals = writeLitsV(cells, v, context);
         numLits = context.pbLib.encodeAtMostK(literals, 1, context.clauses, 1 + numLits);
     }
@@ -1114,7 +1117,7 @@ function encodeNoRepeats(numLits: number, cells: Coord<Geometry.CELL>[], context
 }
 
 function writeLitsV(cells: Coord<Geometry.CELL>[], v: number, context: Context, literals: number[] = []): number[] {
-    for (const [ x, y ] of cells) {
+    for (const [x, y] of cells) {
         const literal = context.getLiteral(y, x, v);
         literals.push(literal);
     }
@@ -1122,20 +1125,20 @@ function writeLitsV(cells: Coord<Geometry.CELL>[], v: number, context: Context, 
 }
 
 function encodeSum(numLits: number, sum: number, cells: Coord<Geometry.CELL>[], context: Context): number {
-    const [ weights, lits ] = writeSum(cells, context);
+    const [weights, lits] = writeSum(cells, context);
     return context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, 1 + numLits);
 }
 
-function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: number[] = [], literals: number[] = []): [ weights: number[], literals: number[] ] {
-    for (const [ x, y ] of cells) {
-        for (const [ v ] of product(context.size)) {
+function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: number[] = [], literals: number[] = []): [weights: number[], literals: number[]] {
+    for (const [x, y] of cells) {
+        for (const [v] of product(context.size)) {
             const value = 1 + v;
             const literal = context.getLiteral(y, x, v);
             weights.push(value);
             literals.push(literal);
         }
     }
-    return [ weights, literals ];
+    return [weights, literals];
 }
 
 function encodeGlobalCellPairs(
@@ -1143,12 +1146,12 @@ function encodeGlobalCellPairs(
     context: Context, cellPairsFunc: typeof knightMoves,
     constraintFunc: (v0: number, v1: number) => boolean
 ): number {
-    for (const [ [ x0, y0 ], [ x1, y1 ] ] of cellPairsFunc(context.grid)) {
-        for (const [ v0, v1 ] of product(context.size, context.size)) {
+    for (const [[x0, y0], [x1, y1]] of cellPairsFunc(context.grid)) {
+        for (const [v0, v1] of product(context.size, context.size)) {
             if (constraintFunc(v0 + 1, v1 + 1)) {
                 const aLit = context.getLiteral(y0, x0, v0);
                 const bLit = context.getLiteral(y1, x1, v1);
-                context.clauses.push([ -aLit, -bLit ]); // Cannot both be true.
+                context.clauses.push([-aLit, -bLit]); // Cannot both be true.
             }
         }
     }
@@ -1156,11 +1159,11 @@ function encodeGlobalCellPairs(
 }
 
 function encodeExcludeValues(numLits: number, cells: Coord<Geometry.CELL>[], excludeValues: (v: number) => boolean, context: Context): number {
-    for (const [ x, y ] of cells) {
-        for (const [ v ] of product(context.size)) {
+    for (const [x, y] of cells) {
+        for (const [v] of product(context.size)) {
             if (excludeValues(v)) {
                 const literal = context.getLiteral(y, x, v);
-                context.clauses.push([ -literal ]);
+                context.clauses.push([-literal]);
             }
         }
     }
@@ -1173,14 +1176,14 @@ function whisperConstraint(deltaFunc: (gridWidth: number) => number, numLits: nu
     for (const whisperCells of Object.values(element.value || {})) {
         const cellCoords = arrayObj2array(whisperCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
         for (let i = 1; i < cellCoords.length; i++) {
-            const [ x0, y0 ] = cellCoords[i - 1];
-            const [ x1, y1 ] = cellCoords[i];
+            const [x0, y0] = cellCoords[i - 1];
+            const [x1, y1] = cellCoords[i];
 
-            for (const [ v0, v1 ] of product(context.size, context.size)) {
+            for (const [v0, v1] of product(context.size, context.size)) {
                 if (Math.abs(v0 - v1) < delta) { // If the difference is too small, we can't have both.
                     const lit0 = context.getLiteral(y0, x0, v0);
                     const lit1 = context.getLiteral(y1, x1, v1);
-                    context.clauses.push([ -lit0, -lit1 ]);
+                    context.clauses.push([-lit0, -lit1]);
                 }
             }
         }
@@ -1188,15 +1191,15 @@ function whisperConstraint(deltaFunc: (gridWidth: number) => number, numLits: nu
     return numLits;
 }
 
-function generalIndexer(element: schema.RegionElement, context: Context, f:(r: number, c :number, v: number) => [number, number, number]): void {
+function generalIndexer(element: schema.RegionElement, context: Context, f: (r: number, c: number, v: number) => [number, number, number]): void {
     const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
-    for (const [ c, r ] of cellCoords) {
-        for (const [ v ] of product(context.size)) {
+    for (const [c, r] of cellCoords) {
+        for (const [v] of product(context.size)) {
             const indexer = context.getLiteral(r, c, v);
             const indexee = context.getLiteral(...f(r, c, v));
             context.clauses.push(
-                [ -indexer, indexee ],
-                [ -indexee, indexer ],
+                [-indexer, indexee],
+                [-indexee, indexer],
             );
         }
     }

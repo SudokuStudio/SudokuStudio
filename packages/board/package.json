@@ -1,33 +1,56 @@
 {
   "name": "@sudoku-studio/board",
-  "private": true,
-  "description": "Board Svelte component for Sudoku Studio",
+  "version": "0.0.1",
   "scripts": {
-    "clean": "rm -r lib",
-    "build": "rollup -c",
-    "test": ""
+    "clean": "rm -rf .svelte-kit dist node_modules",
+    "dev": "vite dev",
+    "build": "vite build && npm run prepack",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''",
+    "prepack": "svelte-kit sync && svelte-package && publint",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
-  "main": "lib/board.js",
-  "svelte": "src/main.ts",
-  "types": "./types.d.ts",
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    },
+    "./src": {
+      "types": "./src/lib/index.ts",
+      "svelte": "./src/lib/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^17.1.0",
-    "@rollup/plugin-node-resolve": "^11.2.1",
-    "@rollup/plugin-typescript": "^8.2.1",
-    "@tsconfig/svelte": "^2.0.1",
-    "@types/jest": "^26.0.24",
+    "@sudoku-studio/board-utils": "workspace:*",
+    "@sudoku-studio/schema": "workspace:*",
+    "@sudoku-studio/state-manager": "workspace:*",
+    "@sveltejs/adapter-auto": "^6.0.0",
+    "@sveltejs/kit": "^2.16.0",
+    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "hsluv": "^0.1.0",
-    "rollup": "^2.53.0",
-    "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-scss": "^3.0.0",
-    "rollup-plugin-svelte": "^7.1.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "sass": "^1.35.2",
-    "svelte": "^3.38.3",
-    "svelte-jester": "^1.7.0",
-    "svelte-preprocess": "^4.7.4",
-    "ts-jest": "^26.5.6",
-    "tslib": "^2.3.0",
-    "typescript": "^4.3.5"
-  }
+    "publint": "^0.3.2",
+    "svelte-check": "^4.0.0",
+    "svelte": "^5.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^6.2.6"
+  },
+  "keywords": [
+    "svelte"
+  ]
 }
