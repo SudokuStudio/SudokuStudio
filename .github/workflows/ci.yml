@@ -35,7 +35,7 @@ jobs:
       uses: pnpm/action-setup@v4
 
     - name: Install packages
-      run: pnpm ci
+      run: pnpm i
 
     - name: Build
       run: SUDOKU_STUDIO_VERSION="${GITHUB_SHA:0:7}" pnpm run build
