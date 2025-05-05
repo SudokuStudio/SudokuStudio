@@ -31,9 +31,8 @@ jobs:
         submodules: recursive
 
     - name: Setup pnpm
+      # reads version from `package.json.packageManager`
       uses: pnpm/action-setup@v4
-      with:
-        version: 10
 
     - name: Install packages
       run: pnpm ci
