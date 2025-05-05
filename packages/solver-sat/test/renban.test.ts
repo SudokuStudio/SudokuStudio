@@ -1,7 +1,8 @@
-import { describe, expect, test } from '@jest/globals'
-import { CancellationToken, cantAttempt, solve } from "../dist/solver-sat";
-import { fPuzzles } from "@sudoku-studio/board-format";
 import type { Geometry, IdxMap } from '@sudoku-studio/schema';
+import { CancellationToken, cantAttempt, solve } from "@sudoku-studio/solver-sat/src";
+import { fPuzzles } from "@sudoku-studio/board-format/src";
+import { describe, expect, test } from 'vitest'
+
 
 describe('Renban Puzzles', () => {
     const boards = [

@@ -1,8 +1,8 @@
-import { describe, expect, test } from '@jest/globals'
-import { CancellationToken, cantAttempt, solve } from "../dist/solver-sat";
+import type { ArrayObj, Geometry, IdxMap } from "@sudoku-studio/schema";
+import { describe, expect, test } from 'vitest'
+import { CancellationToken, cantAttempt, solve } from "@sudoku-studio/solver-sat/src";
 import { fPuzzles } from "@sudoku-studio/board-format/src";
 import { arrayObj2array } from "@sudoku-studio/board-utils/src";
-import { ArrayObj, Geometry, IdxMap } from "@sudoku-studio/schema";
 
 describe('FPuzzles', () => {
     // From https://github.com/dclamage/SudokuSolver/blob/master/SudokuTests/Puzzles.cs

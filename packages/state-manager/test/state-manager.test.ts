@@ -1,5 +1,5 @@
 import { Data, Diff, StateManager, Watcher } from "../src/state-manager";
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from "vitest";
 
 type WatchEvent = {
   path: string[];
@@ -740,7 +740,6 @@ describe("class StateManager", () => {
             "foo/baz": null,
           },
         });
-        console.log(stateMgr.get());
       }
     });
 
