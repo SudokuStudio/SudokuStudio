@@ -47,7 +47,8 @@ jobs:
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
       shell: bash
       run: |
-        BASE_DIR=packages/web/public
+        BASE_DIR=packages/web/build
+        touch "$BASE_DIR/.nojekyll"
         git -C "$BASE_DIR" init -q
         git -C "$BASE_DIR" remote add origin "$(git remote get-url origin)"
         git -C "$BASE_DIR" fetch origin gh-pages:gh-pages
