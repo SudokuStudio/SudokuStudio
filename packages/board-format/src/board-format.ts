@@ -1,1 +1,1 @@
-export * as fPuzzles from './f-puzzles';
+export * as fPuzzles from './f-puzzles.js';

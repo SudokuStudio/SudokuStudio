@@ -1,5 +1,5 @@
 import * as LZString from "lz-string";
-import { boardRepr, cellCoord2CellIdx, svgCoord2diagonalIdx, svgCoord2edgeIdx, roman2num, svgCoord2seriesIdx, cellIdx2cellCoord, svgCoord2cornerCoord, cornerCoord2cornerIdx, gridToBoxSizeMap } from "@sudoku-studio/board-utils";
+import { boardRepr, cellCoord2CellIdx, svgCoord2diagonalIdx, svgCoord2edgeIdx, roman2num, svgCoord2seriesIdx, cellIdx2cellCoord, svgCoord2cornerCoord, cornerCoord2cornerIdx, gridToBoxSizeMap } from "@sudoku-studio/board-utils/src";
 import type { Coord, Geometry, Grid, Idx, IdxBitset, schema } from "@sudoku-studio/schema";
 import { hexToHsluv, hsluvToHex } from "hsluv";
 
@@ -83,7 +83,7 @@ type FPuzzlesClone = {
 
 type FPuzzlesQuadruple = {
     cells: string[],
-    values?: [ number?, number?, number?, number? ],
+    values?: [number?, number?, number?, number?],
 };
 
 
@@ -96,7 +96,7 @@ function parseRCNotation(rc: string): Coord<Geometry.CELL> {
     const col = Number(match[2]);
     const x = col - 1;
     const y = row - 1;
-    return [ x, y ];
+    return [x, y];
 }
 
 
@@ -114,10 +114,15 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
 
 
     function findOrAddElement<E extends schema.Element>(type: E['type'], value: E['value']): E {
-        if (null == board.elements) board.elements  = {};
+        if (null == board.elements) board.elements = {};
         for (const elem of Object.values(board.elements)) {
             if (type === elem.type) {
-                Object.assign(elem.value, value);
+                if (null != elem.value) {
+                    Object.assign(elem.value, value);
+                }
+                else {
+                    (elem as E).value = value;
+                }
                 return elem as E;
             }
         }
@@ -147,8 +152,7 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
     function addEdgeElement(
         type: schema.EdgeNumberElement['type'],
         fLinesConstraint: FPuzzlesCells[],
-        parse: (val: string) => null |number = Number): void
-    {
+        parse: (val: string) => null | number = Number): void {
         const elem: schema.EdgeNumberElement = findOrAddElement(type, {});
         for (const fCellsObj of fLinesConstraint) {
             if (2 !== fCellsObj.cells.length) {
@@ -160,7 +164,7 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
             const average = [
                 0.5 * (coordA[0] + coordB[0] + 1),
                 0.5 * (coordA[1] + coordB[1] + 1),
-            ] as [ number, number ];
+            ] as [number, number];
             const edgeIdx = svgCoord2edgeIdx(average, grid);
 
             if (null == edgeIdx) {
@@ -172,12 +176,12 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
             elem.value![edgeIdx] = (null != val) ? val : true;
         }
     }
-    function addSeriesElement(type: schema.SeriesNumberElement['type'], fConstraint: FPuzzlesCell[]):void {
+    function addSeriesElement(type: schema.SeriesNumberElement['type'], fConstraint: FPuzzlesCell[]): void {
         const elem: schema.SeriesNumberElement = findOrAddElement(type, {});
         for (const fCellValue of fConstraint) {
             // Find the equivalent click location.
             // Cell is outside the grid.
-            const coord = parseRCNotation(fCellValue.cell) as [ number, number ];
+            const coord = parseRCNotation(fCellValue.cell) as [number, number];
             coord[0] += 0.5;
             coord[1] += 0.5;
 
@@ -211,7 +215,7 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
         const gridRow = fBoard.grid[y];
         for (let x = 0; x < size; x++) {
             const gridEntry = gridRow[x];
-            const cellIdx = cellCoord2CellIdx([ x, y ], grid);
+            const cellIdx = cellCoord2CellIdx([x, y], grid);
 
             if (null != gridEntry.region) {
                 let elem: schema.GridRegionElement;
@@ -301,8 +305,8 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
         for (const fLkEntry of fBoard.littlekillersum) {
             // Find the equivalent click location.
             // Cell is outside the grid.
-            const coord = parseRCNotation(fLkEntry.cell) as [ number, number ];
-            if      ('DR' === fLkEntry.direction) { coord[0] += 0.75; coord[1] += 0.75 }
+            const coord = parseRCNotation(fLkEntry.cell) as [number, number];
+            if ('DR' === fLkEntry.direction) { coord[0] += 0.75; coord[1] += 0.75 }
             else if ('DL' === fLkEntry.direction) { coord[0] += 0.25; coord[1] += 0.75 }
             else if ('UR' === fLkEntry.direction) { coord[0] += 0.75; coord[1] += 0.25 }
             else if ('UL' === fLkEntry.direction) { coord[0] += 0.25; coord[1] += 0.25 }
@@ -335,7 +339,7 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
             }
             const coord = fQuadEntry.cells
                 .map(parseRCNotation)
-                .reduce<[ number, number ]>(([ x0, y0 ], [ x1, y1 ]) => [ x0 + x1, y0 + y1 ], [ 0, 0 ]);
+                .reduce<[number, number]>(([x0, y0], [x1, y1]) => [x0 + x1, y0 + y1], [0, 0]);
             coord[0] *= 0.25;
             coord[1] *= 0.25;
 
@@ -356,14 +360,14 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
         for (const fCloneEntry of fBoard.clone) {
             const cloneItem = elem.value![boardRepr.makeUid()] = {
                 color: undefined as undefined | string,
-                a: fCloneEntry.cells     .map (rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),
+                a: fCloneEntry.cells.map(rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),
                 b: fCloneEntry.cloneCells.map(rc => cellCoord2CellIdx(parseRCNotation(rc), grid)),
             };
 
             // Try to find color from cells.
             let color = null;
             for (const idx of cloneItem.a.concat(cloneItem.b)) {
-                const [ x, y ] = cellIdx2cellCoord(idx, grid);
+                const [x, y] = cellIdx2cellCoord(idx, grid);
                 const { c } = fBoard.grid[y][x];
                 if (null == c) continue outer;
                 if (!c.startsWith('#')) continue outer;
@@ -373,8 +377,8 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
             }
             if (null == color) continue;
             // All have same color.
-            const [ h, s, l ] = hexToHsluv(color);
-            cloneItem.color = hsluvToHex([ h, s, 0.5 * l ]);
+            const [h, s, l] = hexToHsluv(color);
+            cloneItem.color = hsluvToHex([h, s, 0.5 * l]);
         }
     }
 
