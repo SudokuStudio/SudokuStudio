@@ -61,6 +61,4 @@ const DEFAULT = {
 
 export default DEFAULT;
 
-console.error("hello from satSolverWorker.ts");
-console.log("SAT Solver Worker loaded.");
 Comlink.expose(DEFAULT);

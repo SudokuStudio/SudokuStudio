@@ -122,8 +122,8 @@ importers:
         specifier: workspace:*
         version: link:../board-utils
       '@sudoku-studio/cryptominisat':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.9
+        version: 0.0.9
       '@sudoku-studio/pblib':
         specifier: ^0.0.4
         version: 0.0.4
@@ -1159,8 +1159,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sudoku-studio/cryptominisat@0.0.2':
-    resolution: {integrity: sha512-kDa4lruQjym6GDNa5lTi0ZVayxLjqVDQUP7ALJJZYUygaJzuNNezaHvxMPtHfFK3pjr7mrk36fOKjBxODuXpog==}
+  '@sudoku-studio/cryptominisat@0.0.9':
+    resolution: {integrity: sha512-C5RYqfYBc03H0GWLtnF9HnGLkjySSN10eiv9e+Ei7naj2ZFTUCBZUKxfJ9rPoCCLiZRZoU8BAOwdXxp8HQq2wA==}
 
   '@sudoku-studio/pblib@0.0.4':
     resolution: {integrity: sha512-xI+u4ogaH0FJpbuJJmfJNn/TXiOA+E8d21lBkvzyUxg0m1THAYOMHIorWoMwHv8TMNxPh0aHPej7WGN7xco1+A==}
@@ -3020,7 +3020,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.40.1':
     optional: true
 
-  '@sudoku-studio/cryptominisat@0.0.2': {}
+  '@sudoku-studio/cryptominisat@0.0.9': {}
 
   '@sudoku-studio/pblib@0.0.4': {}
 

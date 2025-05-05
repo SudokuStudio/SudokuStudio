@@ -27,7 +27,7 @@
     "@rollup/plugin-typescript": "^9.0.0",
     "@sudoku-studio/board-format": "workspace:*",
     "@sudoku-studio/board-utils": "workspace:*",
-    "@sudoku-studio/cryptominisat": "^0.0.2",
+    "@sudoku-studio/cryptominisat": "^0.0.9",
     "@sudoku-studio/pblib": "^0.0.4",
     "@sudoku-studio/schema": "workspace:*",
     "typescript": "^5.0.0",
