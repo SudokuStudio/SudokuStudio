@@ -33,7 +33,6 @@
 
 <style lang="scss">
     @use '../../css/padbutton';
-    @use "@material/ripple";
 
     .padbutton {
         &.center {

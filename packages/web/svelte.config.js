@@ -1,11 +1,5 @@
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-import * as path from "path";
-
-const PATH_PUBLIC = path.resolve('public');
-const PATH_OUTPUT = path.join(PATH_PUBLIC, 'build');
-
-const FILE_WORKER_SATSOLVER = path.join(PATH_OUTPUT, 'satSolverWorker.js');
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -27,6 +21,12 @@ const config = {
     env: {
       publicPrefix: 'SUDOKU_STUDIO_',
     }
+  },
+  onwarn: (warning, handler) => {
+    // https://github.com/josdejong/svelte-jsoneditor/issues/387#issuecomment-2014948986
+    if (warning.code === 'vite-plugin-svelte-preprocess-many-dependencies') return;
+    // handle all other warnings normally
+    handler(warning);
   },
 };
 

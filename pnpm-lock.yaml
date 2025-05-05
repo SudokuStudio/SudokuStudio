@@ -8,9 +8,6 @@ importers:
 
   .:
     devDependencies:
-      '@material/ripple':
-        specifier: ^11.0.0
-        version: 11.0.0
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
@@ -149,8 +146,8 @@ importers:
   packages/web:
     devDependencies:
       '@material/ripple':
-        specifier: ^11.0.0
-        version: 11.0.0
+        specifier: ^14.0.0
+        version: 14.0.0
       '@sudoku-studio/board':
         specifier: workspace:*
         version: link:../board
@@ -903,23 +900,26 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@material/animation@11.0.0':
-    resolution: {integrity: sha512-pAJRl0ySvfOzqyGUme27tPf1LbqrjSTK4g5kngpXOPAIQdYYx89QLAfcqHONSpvXO7/WP+Kc9zJ3WWxbUaG8Wg==}
+  '@material/animation@14.0.0':
+    resolution: {integrity: sha512-VlYSfUaIj/BBVtRZI8Gv0VvzikFf+XgK0Zdgsok5c1v5DDnNz5tpB8mnGrveWz0rHbp1X4+CWLKrTwNmjrw3Xw==}
 
-  '@material/base@11.0.0':
-    resolution: {integrity: sha512-GTybYdiWBoEyYQ3he8cEeuXe5mPq2peFX41rBsMrs516TGDxrVJrEAKNedydhtpfRBsZRreTXMLZtbGrZzfIFQ==}
+  '@material/base@14.0.0':
+    resolution: {integrity: sha512-Ou7vS7n1H4Y10MUZyYAbt6H0t67c6urxoCgeVT7M38aQlaNUwFMODp7KT/myjYz2YULfhu3PtfSV3Sltgac9mA==}
 
-  '@material/dom@11.0.0':
-    resolution: {integrity: sha512-LZdg6VmYnMXc/Ct/GdQ22o4m3UgjhZYQIrwu9Iebqchx0Vd2OTmcFN5nArHSCSgUEhpjpPlkbZmjOpeOAwiKZg==}
+  '@material/dom@14.0.0':
+    resolution: {integrity: sha512-8t88XyacclTj8qsIw9q0vEj4PI2KVncLoIsIMzwuMx49P2FZg6TsLjor262MI3Qs00UWAifuLMrhnOnfyrbe7Q==}
 
-  '@material/feature-targeting@11.0.0':
-    resolution: {integrity: sha512-7/jdaHm7C16Eq02tDQ1iI+giWKgk+QRNWFrmGKzHfXbU604XwY/eSLSiVS8QI01vx9QZ0aO9K84m0yhQQNQQtg==}
+  '@material/feature-targeting@14.0.0':
+    resolution: {integrity: sha512-a5WGgHEq5lJeeNL5yevtgoZjBjXWy6+klfVWQEh8oyix/rMJygGgO7gEc52uv8fB8uAIoYEB3iBMOv8jRq8FeA==}
 
-  '@material/ripple@11.0.0':
-    resolution: {integrity: sha512-672zAsYaL8aS861VgfEPL4sFMkFe0psiSc+4DfUTq7Nanl4e1gcarzzHZAn5IExUNk3/5QybDiXV+dbaL/0NjQ==}
+  '@material/ripple@14.0.0':
+    resolution: {integrity: sha512-9XoGBFd5JhFgELgW7pqtiLy+CnCIcV2s9cQ2BWbOQeA8faX9UZIDUx/g76nHLZ7UzKFtsULJxZTwORmsEt2zvw==}
 
-  '@material/theme@11.0.0':
-    resolution: {integrity: sha512-GnQI8sd2wHFD3AvmhpyRaH5o9D5Shobs1xDH4FdRU9+c+FNNqouZMDzyM6UpCX4700DzqvE7l0/1LjzB7ve7Lg==}
+  '@material/rtl@14.0.0':
+    resolution: {integrity: sha512-xl6OZYyRjuiW2hmbjV2omMV8sQtfmKAjeWnD1RMiAPLCTyOW9Lh/PYYnXjxUrNa0cRwIIbOn5J7OYXokja8puA==}
+
+  '@material/theme@14.0.0':
+    resolution: {integrity: sha512-6/SENWNIFuXzeHMPHrYwbsXKgkvCtWuzzQ3cUu4UEt3KcQ5YpViazIM6h8ByYKZP8A9d8QpkJ0WGX5btGDcVoA==}
 
   '@parcel/watcher-android-arm64@2.5.1':
     resolution: {integrity: sha512-KF8+j9nNbUN8vzOFDpRMsaKBHZ/mcjEjMToVMJOhTozkDonQFFrRcfdLWn6yWKCmJKmdVxSgHiYvTCef4/qcBA==}
@@ -2828,35 +2828,41 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@material/animation@11.0.0':
+  '@material/animation@14.0.0':
     dependencies:
       tslib: 2.8.1
 
-  '@material/base@11.0.0':
+  '@material/base@14.0.0':
     dependencies:
       tslib: 2.8.1
 
-  '@material/dom@11.0.0':
+  '@material/dom@14.0.0':
     dependencies:
-      '@material/feature-targeting': 11.0.0
+      '@material/feature-targeting': 14.0.0
       tslib: 2.8.1
 
-  '@material/feature-targeting@11.0.0':
+  '@material/feature-targeting@14.0.0':
     dependencies:
       tslib: 2.8.1
 
-  '@material/ripple@11.0.0':
+  '@material/ripple@14.0.0':
     dependencies:
-      '@material/animation': 11.0.0
-      '@material/base': 11.0.0
-      '@material/dom': 11.0.0
-      '@material/feature-targeting': 11.0.0
-      '@material/theme': 11.0.0
+      '@material/animation': 14.0.0
+      '@material/base': 14.0.0
+      '@material/dom': 14.0.0
+      '@material/feature-targeting': 14.0.0
+      '@material/rtl': 14.0.0
+      '@material/theme': 14.0.0
       tslib: 2.8.1
 
-  '@material/theme@11.0.0':
+  '@material/rtl@14.0.0':
     dependencies:
-      '@material/feature-targeting': 11.0.0
+      '@material/theme': 14.0.0
+      tslib: 2.8.1
+
+  '@material/theme@14.0.0':
+    dependencies:
+      '@material/feature-targeting': 14.0.0
       tslib: 2.8.1
 
   '@parcel/watcher-android-arm64@2.5.1':

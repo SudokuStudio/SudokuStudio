@@ -1,5 +1,5 @@
 @use "@material/ripple";
-@use '$lib/css/vars' as vars;
+@use './vars.scss' as vars;
 
 .padbutton {
     @include ripple.states-base-color(#fff);
