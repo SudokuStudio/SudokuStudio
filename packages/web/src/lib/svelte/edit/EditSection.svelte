@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { MouseEventHandler } from "svelte/elements";
+    import type { MouseEventHandler } from 'svelte/elements';
 
     export let icon: string;
     export let title: string;
@@ -55,7 +55,8 @@
         white-space: nowrap;
 
         @include vars.hoverborder();
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
             @include vars.hoverborder-hover();
         }
 
@@ -89,9 +90,10 @@
         overflow: hidden;
     }
     .panel-wrapper:after {
-        content: "";
+        content: '';
         height: 10px;
-        transition: height vars.$transition-time linear,
+        transition:
+            height vars.$transition-time linear,
             max-height 0s vars.$transition-time linear;
         max-height: 0px;
     }
@@ -103,7 +105,8 @@
     }
     .closed .panel-wrapper > .panel {
         margin-bottom: -2000px;
-        transition: margin-bottom vars.$transition-time cubic-bezier(1, 0, 1, 1),
+        transition:
+            margin-bottom vars.$transition-time cubic-bezier(1, 0, 1, 1),
             visibility 0s vars.$transition-time,
             max-height 0s vars.$transition-time;
         visibility: hidden;

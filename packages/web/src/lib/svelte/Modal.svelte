@@ -1,7 +1,7 @@
 <script lang="ts">
     export let visible: boolean;
 
-    function dismiss<T extends EventTarget>(this: T, event: MouseEvent & { currentTarget: EventTarget & T}) {
+    function dismiss<T extends EventTarget>(this: T, event: MouseEvent & { currentTarget: EventTarget & T }) {
         if (this === event.target) {
             visible = false;
         }
@@ -29,7 +29,7 @@
         width: 100%;
         height: 100%;
 
-        background-color: rgba(0,0,0,0.5);
+        background-color: rgba(0, 0, 0, 0.5);
     }
 
     .modal {

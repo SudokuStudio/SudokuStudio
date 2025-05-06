@@ -1,5 +1,5 @@
 <script lang="ts">
-    import NewGrid from "./NewGrid.svelte";
+    import NewGrid from './NewGrid.svelte';
 
     let showNewGrid: boolean = false;
 </script>
@@ -10,7 +10,12 @@
         <!-- Solving/Setting -->
         <!-- Export -->
         <li>
-            <button class="nobutton" on:click={() => {showNewGrid = true;}}>New Grid</button>
+            <button
+                class="nobutton"
+                on:click={() => {
+                    showNewGrid = true;
+                }}>New Grid</button
+            >
         </li>
     </ul>
 </div>
@@ -52,7 +57,8 @@
 
             max-width: none;
         }
-        .header-left, .header-right {
+        .header-left,
+        .header-right {
             display: none;
         }
     }
@@ -76,9 +82,9 @@
         text-align: inherit;
 
         @include vars.hoverborder();
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
             @include vars.hoverborder-hover();
         }
     }
-
 </style>

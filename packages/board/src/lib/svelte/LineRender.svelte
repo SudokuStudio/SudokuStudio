@@ -1,12 +1,12 @@
 <script lang="ts">
-    import type { ArrayObj, Geometry, Idx } from "@sudoku-studio/schema";
-    import type { StateRef } from "@sudoku-studio/state-manager/src";
-    import type { MakePathOptions } from "@sudoku-studio/board-utils/src";
-    import { makePath, arrayObj2array } from "@sudoku-studio/board-utils/src";
+    import type { ArrayObj, Geometry, Idx } from '@sudoku-studio/schema';
+    import type { StateRef } from '@sudoku-studio/state-manager/src';
+    import type { MakePathOptions } from '@sudoku-studio/board-utils/src';
+    import { makePath, arrayObj2array } from '@sudoku-studio/board-utils/src';
 
     export let id: string;
     export let ref: StateRef;
-    export let grid: { width: number, height: number };
+    export let grid: { width: number; height: number };
 
     export let stroke = '#c7855c';
     export let strokeWidth = 0.125;
@@ -18,16 +18,13 @@
         closeLoops: false,
     };
 
-    type Item = { itemId: string, d: string };
+    type Item = { itemId: string; d: string };
     function each(items: null | Record<string, ArrayObj<Idx<Geometry.CELL>>>): Item[] {
         if (null == items) return [];
         const out: Item[] = [];
-        for (const [ itemId, idxArrObj ] of Object.entries(items)) {
+        for (const [itemId, idxArrObj] of Object.entries(items)) {
             const idxArr = arrayObj2array(idxArrObj);
-            out.push({
-                itemId,
-                d: makePath(idxArr, grid, pathOptions),
-            });
+            out.push({ itemId, d: makePath(idxArr, grid, pathOptions) });
         }
         return out;
     }
@@ -35,7 +32,14 @@
 
 <g {id}>
     {#each each($ref) as { itemId, d } (itemId)}
-        <path {d} fill="none" stroke-linejoin="round" stroke-linecap="round"
-            {stroke} stroke-width={strokeWidth} stroke-opacity="0.9" />
+        <path
+            {d}
+            fill="none"
+            stroke-linejoin="round"
+            stroke-linecap="round"
+            {stroke}
+            stroke-width={strokeWidth}
+            stroke-opacity="0.9"
+        />
     {/each}
 </g>

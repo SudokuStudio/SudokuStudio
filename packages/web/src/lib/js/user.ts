@@ -1,10 +1,8 @@
-import { browser } from '$app/environment'
+import { browser } from '$app/environment';
 import { StateManager, StateRef } from '@sudoku-studio/state-manager/src';
-import type { schema } from "@sudoku-studio/schema";
+import type { schema } from '@sudoku-studio/schema';
 
-export const MARK_TYPES = [
-    'filled', 'corner', 'center', 'colors',
-] as const;
+export const MARK_TYPES = ['filled', 'corner', 'center', 'colors'] as const;
 
 export const userState = new StateManager();
 if (browser) {
@@ -13,10 +11,7 @@ if (browser) {
 
 userState.update({
     select: {},
-    cursor: {
-        index: null,
-        isShown: false,
-    },
+    cursor: { index: null, isShown: false },
 
     tool: '120', // TODO magic numbers.
     prevTool: '120',
@@ -55,7 +50,7 @@ export const TOOL_INPUT_NAME = 'tool';
 
 /** Load tools and pencil marks for the user. */
 export function setupUserState(board: schema.Board) {
-    for (const [ id, { type }] of Object.entries(board.elements)) {
+    for (const [id, { type }] of Object.entries(board.elements)) {
         if ((MARK_TYPES as readonly string[]).includes(type)) {
             userState.ref('marks', type).replace(id);
             if ('filled' === type) {

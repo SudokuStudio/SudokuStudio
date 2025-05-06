@@ -1,25 +1,25 @@
 {
-  "name": "@sudoku-studio/board-utils",
-  "type": "module",
-  "version": "0.0.0",
-  "exports": {
-    ".": {
-      "types": "./dist/board-utils.d.ts",
-      "import": "./dist/board-utils.js"
+    "name": "@sudoku-studio/board-utils",
+    "type": "module",
+    "version": "0.0.0",
+    "exports": {
+        ".": {
+            "types": "./dist/board-utils.d.ts",
+            "import": "./dist/board-utils.js"
+        },
+        "./src": {
+            "import": "./src/board-utils.ts"
+        }
     },
-    "./src": {
-      "import": "./src/board-utils.ts"
+    "scripts": {
+        "clean": "rm -rf dist node_modules",
+        "build": "tsc",
+        "check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@sudoku-studio/schema": "workspace:*"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0"
     }
-  },
-  "scripts": {
-    "clean": "rm -rf dist node_modules",
-    "build": "tsc",
-    "check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@sudoku-studio/schema": "workspace:*"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  }
 }

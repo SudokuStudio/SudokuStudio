@@ -1,68 +1,73 @@
 on:
-  push:
-    branches:
-      - dev
-      - main
-  pull_request:
+    push:
+        branches:
+            - dev
+            - main
+    pull_request:
 name: CI
 
 jobs:
-  pre_job:
-    runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
-    steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v5.3.1
-        with:
-          cancel_others: 'true'
+    pre_job:
+        runs-on: ubuntu-latest
+        outputs:
+            should_skip: ${{ steps.skip_check.outputs.should_skip }}
+        steps:
+            - id: skip_check
+              uses: fkirc/skip-duplicate-actions@v5.3.1
+              with:
+                  cancel_others: 'true'
 
-  test:
-    name: Test
-    needs: pre_job
-    if: ${{ github.ref == 'refs/heads/dev' || needs.pre_job.outputs.should_skip != 'true' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
+    test:
+        name: Test
+        needs: pre_job
+        if: ${{ github.ref == 'refs/heads/dev' || needs.pre_job.outputs.should_skip != 'true' }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - name: Checkout sources
+              uses: actions/checkout@v4
+              with:
+                  submodules: recursive
 
-    - name: Checkout sources
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
+            - name: Setup pnpm
+              # reads version from `package.json.packageManager`
+              uses: pnpm/action-setup@v4
 
-    - name: Setup pnpm
-      # reads version from `package.json.packageManager`
-      uses: pnpm/action-setup@v4
+            - name: Install packages
+              run: pnpm i
 
-    - name: Install packages
-      run: pnpm i
+            - name: Lint
+              run: pnpm run lint
 
-    - name: Build
-      run: SUDOKU_STUDIO_VERSION="${GITHUB_SHA:0:7}" pnpm run build
+            - name: Check
+              run: pnpm run check
 
-    - name: Test
-      run: pnpm run test
+            - name: Test
+              run: pnpm run test
 
-    - name: Deploy to gh-pages
-      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
-      shell: bash
-      run: |
-        BASE_DIR=packages/web/build
-        touch "$BASE_DIR/.nojekyll"
-        git -C "$BASE_DIR" init -q
-        git -C "$BASE_DIR" remote add origin "$(git remote get-url origin)"
-        git -C "$BASE_DIR" fetch origin gh-pages:gh-pages
-        git -C "$BASE_DIR" config credential.helper "$(git config credential.helper)"
-        git -C "$BASE_DIR" config 'http.https://github.com/.extraheader' "$(git config 'http.https://github.com/.extraheader')"
-        git -C "$BASE_DIR" config core.autocrlf input
-        git -C "$BASE_DIR" config core.safecrlf false
-        git -C "$BASE_DIR" symbolic-ref HEAD refs/heads/gh-pages
-        git -C "$BASE_DIR" reset
-        git -C "$BASE_DIR" add -A
-        if git -C "$BASE_DIR" -c 'user.name=github-actions[bot]' -c 'user.email=41898282+github-actions[bot]@users.noreply.github.com' \
-          commit -m "Deploy $(date -I) $(git rev-parse HEAD)";
-        then
-          git -C "$BASE_DIR" push -u origin gh-pages --quiet
-        else
-          echo 'No changes to commit'
-        fi
+            - name: Build
+              run: SUDOKU_STUDIO_VERSION="${GITHUB_SHA:0:7}" pnpm run build
+
+            - name: Deploy to gh-pages
+              if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
+              shell: bash
+              run: |
+                  BASE_DIR=packages/web/build
+                  touch "$BASE_DIR/.nojekyll"
+                  git -C "$BASE_DIR" init -q
+                  git -C "$BASE_DIR" remote add origin "$(git remote get-url origin)"
+                  git -C "$BASE_DIR" fetch origin gh-pages:gh-pages
+                  git -C "$BASE_DIR" config credential.helper "$(git config credential.helper)"
+                  git -C "$BASE_DIR" config 'http.https://github.com/.extraheader' "$(git config 'http.https://github.com/.extraheader')"
+                  git -C "$BASE_DIR" config core.autocrlf input
+                  git -C "$BASE_DIR" config core.safecrlf false
+                  git -C "$BASE_DIR" symbolic-ref HEAD refs/heads/gh-pages
+                  git -C "$BASE_DIR" reset
+                  git -C "$BASE_DIR" add -A
+                  if git -C "$BASE_DIR" -c 'user.name=github-actions[bot]' -c 'user.email=41898282+github-actions[bot]@users.noreply.github.com' \
+                    commit -m "Deploy $(date -I) $(git rev-parse HEAD)";
+                  then
+                    git -C "$BASE_DIR" push -u origin gh-pages --quiet
+                  else
+                    echo 'No changes to commit'
+                  fi

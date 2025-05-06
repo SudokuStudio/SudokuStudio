@@ -1,10 +1,10 @@
-import type { StateRef } from "@sudoku-studio/state-manager/src";
-import type { Grid } from "@sudoku-studio/schema";
-import type { InputHandler } from "../input/inputHandler";
-import { getSelectDigitInputHandler } from "../input/selectDigitInputHandler";
-import hsluv from "hsluv";
+import type { StateRef } from '@sudoku-studio/state-manager/src';
+import type { Grid } from '@sudoku-studio/schema';
+import type { InputHandler } from '../input/inputHandler';
+import { getSelectDigitInputHandler } from '../input/selectDigitInputHandler';
+import hsluv from 'hsluv';
 
-import type { ElementInfo } from "./element";
+import type { ElementInfo } from './element';
 
 export const givensInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
@@ -18,11 +18,7 @@ export const givensInfo: ElementInfo = {
     order: 220,
     permanent: true,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Given',
-        icon: 'given',
-    },
+    menu: { type: 'select', name: 'Given', icon: 'given' },
 } as const;
 export const filledInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
@@ -73,14 +69,14 @@ export const colorsInfo: ElementInfo = {
 } as const;
 
 export const colorsList: string[] = [
-    "#111111",
-    "#666666",
-    "#b2b2b2",
-    hsluv.hsluvToHex([  10, 100, 60 ]),
-    hsluv.hsluvToHex([  40, 100, 65 ]),
-    hsluv.hsluvToHex([  70, 100, 92 ]),
-    hsluv.hsluvToHex([ 120, 100, 80 ]),
-    hsluv.hsluvToHex([ 230, 100, 85 ]),
-    hsluv.hsluvToHex([ 260, 100, 55 ]),
-    hsluv.hsluvToHex([ 300, 100, 70 ]),
+    '#111111',
+    '#666666',
+    '#b2b2b2',
+    hsluv.hsluvToHex([10, 100, 60]),
+    hsluv.hsluvToHex([40, 100, 65]),
+    hsluv.hsluvToHex([70, 100, 92]),
+    hsluv.hsluvToHex([120, 100, 80]),
+    hsluv.hsluvToHex([230, 100, 85]),
+    hsluv.hsluvToHex([260, 100, 55]),
+    hsluv.hsluvToHex([300, 100, 70]),
 ];

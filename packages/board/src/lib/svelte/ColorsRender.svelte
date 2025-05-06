@@ -1,17 +1,17 @@
 <script lang="ts">
-    import type { Geometry, IdxMap } from "@sudoku-studio/schema";
-    import { makeConicalCellSlice } from "@sudoku-studio/board-utils/src";
-    import type { StateRef } from "@sudoku-studio/state-manager/src";
-    import hsluv from "hsluv";
+    import type { Geometry, IdxMap } from '@sudoku-studio/schema';
+    import { makeConicalCellSlice } from '@sudoku-studio/board-utils/src';
+    import type { StateRef } from '@sudoku-studio/state-manager/src';
+    import hsluv from 'hsluv';
 
     export let id: string;
     export let ref: StateRef;
-    export let grid: { width: number, height: number };
+    export let grid: { width: number; height: number };
 
-    type Item = { idx: number, slices: { d: string, fill: string }[] };
+    type Item = { idx: number; slices: { d: string; fill: string }[] };
     function getMarks(cells: IdxMap<Geometry.CELL, Record<string, boolean>>): Item[] {
         const out: Item[] = [];
-        for (const [ idx, colorsBitset ] of Object.entries(cells)) {
+        for (const [idx, colorsBitset] of Object.entries(cells)) {
             const colors = Object.keys(colorsBitset || {});
             colors.sort((a, b) => {
                 const hsluvA = hsluv.hexToHsluv(a);
@@ -24,7 +24,7 @@
                 d: makeConicalCellSlice(+idx, grid, i, arr.length),
             }));
 
-            out.push({ idx: +idx, slices })
+            out.push({ idx: +idx, slices });
         }
         return out;
     }

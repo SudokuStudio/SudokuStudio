@@ -1,16 +1,16 @@
-import debounce from "debounce";
-import LZString from "lz-string";
-import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
-import { boardState } from "./board";
-import { setupUserState } from "./user";
-import { fPuzzles } from "@sudoku-studio/board-format/src";
-import { createElement } from "./elements";
+import debounce from 'debounce';
+import LZString from 'lz-string';
+import type { Geometry, IdxMap, schema } from '@sudoku-studio/schema';
+import { boardState } from './board';
+import { setupUserState } from './user';
+import { fPuzzles } from '@sudoku-studio/board-format/src';
+import { createElement } from './elements';
 
-import { SatSolver } from "./solver/satSolver";
-import { boardRepr, solutionToString } from "@sudoku-studio/board-utils/src";
+import { SatSolver } from './solver/satSolver';
+import { boardRepr, solutionToString } from '@sudoku-studio/board-utils/src';
 
 // TODO SOMETHING PROPER
-(window as any).solve = async function(maxSolutions = 10, maxTimeMillis = 10 * 1000): Promise<() => Promise<void>> {
+(window as any).solve = async function (maxSolutions = 10, maxTimeMillis = 10 * 1000): Promise<() => Promise<void>> {
     const START = Date.now();
 
     const board = boardState.get<schema.Board>()!;
@@ -23,12 +23,13 @@ import { boardRepr, solutionToString } from "@sudoku-studio/board-utils/src";
 
     let count = 0;
     let timeout: number = -1;
-    const cancel = SatSolver.solve(board, maxSolutions, solution => {
+    const cancel = SatSolver.solve(board, maxSolutions, (solution) => {
         if (null == solution) {
             clearTimeout(timeout);
-            console.log(`DONE. Found ${(count < maxSolutions) ? 'ALL ' : ''}${count} solutions in ${Date.now() - START} ms.`);
-        }
-        else {
+            console.log(
+                `DONE. Found ${count < maxSolutions ? 'ALL ' : ''}${count} solutions in ${Date.now() - START} ms.`,
+            );
+        } else {
             count++;
             console.log(`FOUND ${count} in ${Date.now() - START} ms:\n${solutionToString(solution, board.grid)}`);
         }
@@ -41,18 +42,21 @@ import { boardRepr, solutionToString } from "@sudoku-studio/board-utils/src";
         }
     }
 
-    if (isFinite(maxTimeMillis))
-        timeout = window.setTimeout(cancelLog, maxTimeMillis, 'TIMED OUT');
+    if (isFinite(maxTimeMillis)) timeout = window.setTimeout(cancelLog, maxTimeMillis, 'TIMED OUT');
 
     return () => cancelLog('CANCELLED');
-}
+};
 
 export function initUserAndBoard(): void {
-    boardState.watch(debounce((_path, _oldVal, newVal) => {
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.set('b', LZString.compressToBase64(JSON.stringify(newVal)));
-        window.history.replaceState(null, '', newUrl.href);
-    }, 200), false, '.');
+    boardState.watch(
+        debounce((_path, _oldVal, newVal) => {
+            const newUrl = new URL(window.location.href);
+            newUrl.searchParams.set('b', LZString.compressToBase64(JSON.stringify(newVal)));
+            window.history.replaceState(null, '', newUrl.href);
+        }, 200),
+        false,
+        '.',
+    );
 
     const thisUrl = new URL(window.location.href);
 
@@ -67,8 +71,7 @@ export function initUserAndBoard(): void {
             window.history.replaceState(null, '', thisUrl.href);
 
             return;
-        }
-        catch (e) {
+        } catch (e) {
             console.error('Failed to parse f-puzzles board', e);
             console.error(e);
         }
@@ -79,7 +82,7 @@ export function initUserAndBoard(): void {
         const digitsString = thisUrl.searchParams.get('c')!;
         const size = 9;
         if (size * size === digitsString.length) {
-            const digits = Array.from(digitsString).map(char => DIGIT_REGEX.test(char) ? +char : undefined);
+            const digits = Array.from(digitsString).map((char) => (DIGIT_REGEX.test(char) ? +char : undefined));
 
             const newBoardState = boardRepr.createNewBoard(createElement);
             setupUserState(newBoardState);
@@ -108,8 +111,7 @@ export function initUserAndBoard(): void {
                 boardState.update(newBoardState as any);
                 return;
             }
-        }
-        catch (e) {
+        } catch (e) {
             console.error('Failed to update board from `b` param.');
             console.error(e);
         }
@@ -118,4 +120,4 @@ export function initUserAndBoard(): void {
     const newBoardState = boardRepr.createNewBoard(createElement);
     setupUserState(newBoardState);
     boardState.update(newBoardState as any);
-};
+}

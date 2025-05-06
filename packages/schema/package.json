@@ -1,5 +1,5 @@
 {
-  "name": "@sudoku-studio/schema",
-  "version": "0.0.0",
-  "types": "./schema.d.ts"
+    "name": "@sudoku-studio/schema",
+    "version": "0.0.0",
+    "types": "./schema.d.ts"
 }

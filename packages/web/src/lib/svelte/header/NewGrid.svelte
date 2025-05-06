@@ -1,9 +1,9 @@
 <script lang="ts">
-    import Modal from "../Modal.svelte";
-    import { boardRepr, solutionToString, gridToBoxSizeMap } from "@sudoku-studio/board-utils/src";
-    import { setupUserState } from "$lib/js/user";
-    import { createElement } from "$lib/js/elements";
-    import { boardState } from "$lib/js/board";
+    import Modal from '../Modal.svelte';
+    import { boardRepr, solutionToString, gridToBoxSizeMap } from '@sudoku-studio/board-utils/src';
+    import { setupUserState } from '$lib/js/user';
+    import { createElement } from '$lib/js/elements';
+    import { boardState } from '$lib/js/board';
 
     export let visible: boolean;
 
@@ -15,7 +15,7 @@
     }
 </script>
 
-<Modal bind:visible={visible}>
+<Modal bind:visible>
     <div class="size-choices">
         <ol class="nolist">
             {#each Object.entries(gridToBoxSizeMap) as [size, dimensions]}
@@ -44,7 +44,8 @@
         text-align: inherit;
 
         @include vars.hoverborder();
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
             @include vars.hoverborder-hover();
         }
     }
