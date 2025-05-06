@@ -1,36 +1,36 @@
 {
-  "name": "@sudoku-studio/solver-sat",
-  "version": "0.0.0",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/solver-sat.d.ts",
-      "import": "./dist/solver-sat.js"
+    "name": "@sudoku-studio/solver-sat",
+    "version": "0.0.0",
+    "type": "module",
+    "exports": {
+        ".": {
+            "types": "./dist/solver-sat.d.ts",
+            "import": "./dist/solver-sat.js"
+        },
+        "./src": {
+            "import": "./src/solver-sat.ts"
+        }
     },
-    "./src": {
-      "import": "./src/solver-sat.ts"
+    "scripts": {
+        "clean": "rm -rf dist node_modules",
+        "build": "tsc",
+        "check": "tsc --noEmit",
+        "test": "vitest"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.14.8",
+        "@babel/preset-env": "^7.14.8",
+        "@babel/preset-typescript": "^7.14.5",
+        "@rollup/plugin-commonjs": "^23.0.0",
+        "@rollup/plugin-node-resolve": "^15.0.0",
+        "@rollup/plugin-replace": "^5.0.0",
+        "@rollup/plugin-typescript": "^9.0.0",
+        "@sudoku-studio/board-format": "workspace:*",
+        "@sudoku-studio/board-utils": "workspace:*",
+        "@sudoku-studio/cryptominisat": "^0.0.9",
+        "@sudoku-studio/pblib": "^0.0.4",
+        "@sudoku-studio/schema": "workspace:*",
+        "typescript": "^5.0.0",
+        "vitest": "^3.1.2"
     }
-  },
-  "scripts": {
-    "clean": "rm -rf dist node_modules",
-    "build": "tsc",
-    "check": "tsc --noEmit",
-    "test": "vitest"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.14.8",
-    "@babel/preset-env": "^7.14.8",
-    "@babel/preset-typescript": "^7.14.5",
-    "@rollup/plugin-commonjs": "^23.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "@rollup/plugin-replace": "^5.0.0",
-    "@rollup/plugin-typescript": "^9.0.0",
-    "@sudoku-studio/board-format": "workspace:*",
-    "@sudoku-studio/board-utils": "workspace:*",
-    "@sudoku-studio/cryptominisat": "^0.0.9",
-    "@sudoku-studio/pblib": "^0.0.4",
-    "@sudoku-studio/schema": "workspace:*",
-    "typescript": "^5.0.0",
-    "vitest": "^3.1.2"
-  }
 }

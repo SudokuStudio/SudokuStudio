@@ -1,16 +1,28 @@
 <script lang="ts">
-    import { TOOL_INPUT_NAME, userToolState, userState, userPrevToolState, userSelectState, userCursorIsShownState, getUserToolStateName } from "../../js/user";
-    import { currentInputHandler } from "../../js/elementStores";
-    import DigitButton from "./DigitButton.svelte";
+    import {
+        TOOL_INPUT_NAME,
+        userToolState,
+        userState,
+        userPrevToolState,
+        userSelectState,
+        userCursorIsShownState,
+        getUserToolStateName,
+    } from '$lib/js/user';
+    import { currentInputHandler } from '$lib/js/elementStores';
+    import DigitButton from './DigitButton.svelte';
 
     // Button ripples.
-    import { MDCRipple } from "@material/ripple";
-    import { onMount } from "svelte";
-    import SaveSvgAsPng from "save-svg-as-png";
-    import { changeHistory } from "$lib/js/history";
-    import { boardState, boardDiv, boardSvg } from "$lib/js/board";
+    import { MDCRipple } from '@material/ripple';
+    import { onMount } from 'svelte';
+    import SaveSvgAsPng from 'save-svg-as-png';
+    import { changeHistory } from '$lib/js/history';
+    import { boardState, boardDiv, boardSvg } from '$lib/js/board';
 
-    onMount(() => Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), el => MDCRipple.attachTo(el)));
+    onMount(() =>
+        Array.prototype.forEach.call(document.getElementsByClassName('mdc-ripple-surface'), (el) =>
+            MDCRipple.attachTo(el),
+        ),
+    );
 
     function setPreviousMode() {
         userPrevToolState.set(userToolState.get());
@@ -34,15 +46,17 @@
         userSelectState.replace(null);
         userCursorIsShownState.replace(false);
 
-        const title  = boardState.get<string>('meta', 'title')  || 'Untitled';
+        const title = boardState.get<string>('meta', 'title') || 'Untitled';
         const author = boardState.get<string>('meta', 'author') || 'Anonymous';
         const filename = `Sudoku Studio - ${title} by ${author}.png`;
-        const unsubscribe = boardSvg.subscribe(svg => SaveSvgAsPng.saveSvgAsPng(svg, filename, {
-            scale: 100,
-            backgroundColor: '#fff',
-            top: svg.viewBox.baseVal.x,
-            left: svg.viewBox.baseVal.y,
-        }));
+        const unsubscribe = boardSvg.subscribe((svg) =>
+            SaveSvgAsPng.saveSvgAsPng(svg, filename, {
+                scale: 100,
+                backgroundColor: '#fff',
+                top: svg.viewBox.baseVal.x,
+                left: svg.viewBox.baseVal.y,
+            }),
+        );
         unsubscribe();
     }
 
@@ -53,17 +67,35 @@
     <div class="mode-pad-container">
         <div class="mode-pad">
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-digits"
-                    value={$filled} bind:group={$userToolState} on:change={setPreviousMode} />
+                <input
+                    class="radio-mode-button"
+                    type="radio"
+                    name={TOOL_INPUT_NAME}
+                    id="mode-radio-digits"
+                    value={$filled}
+                    bind:group={$userToolState}
+                    on:change={setPreviousMode}
+                />
                 <label class="mdc-ripple-surface padbutton padbutton-mode" for="mode-radio-digits" title="Fill digits">
                     <span aria-hidden="true">1</span>
                     <span class="sr-only">Fill Digits tool</span>
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-corner"
-                    value={$corner} bind:group={$userToolState} on:change={setPreviousMode} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" for="mode-radio-corner" title="Corner marks [shift]">
+                <input
+                    class="radio-mode-button"
+                    type="radio"
+                    name={TOOL_INPUT_NAME}
+                    id="mode-radio-corner"
+                    value={$corner}
+                    bind:group={$userToolState}
+                    on:change={setPreviousMode}
+                />
+                <label
+                    class="mdc-ripple-surface padbutton padbutton-mode"
+                    for="mode-radio-corner"
+                    title="Corner marks [shift]"
+                >
                     <span aria-hidden="true" style="font-size: 50%;">
                         <span style="position: absolute; top:    12%; left:  20%;">1</span>
                         <span style="position: absolute; top:    12%; right: 20%;">2</span>
@@ -73,17 +105,39 @@
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-center"
-                    value={$center} bind:group={$userToolState} on:change={setPreviousMode} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" for="mode-radio-center" title="Center marks [cmd or ctrl]">
+                <input
+                    class="radio-mode-button"
+                    type="radio"
+                    name={TOOL_INPUT_NAME}
+                    id="mode-radio-center"
+                    value={$center}
+                    bind:group={$userToolState}
+                    on:change={setPreviousMode}
+                />
+                <label
+                    class="mdc-ripple-surface padbutton padbutton-mode"
+                    for="mode-radio-center"
+                    title="Center marks [cmd or ctrl]"
+                >
                     <span aria-hidden="true" style="font-size: 50%;">123</span>
                     <span class="sr-only">Center Marks tool [cmd or ctrl]</span>
                 </label>
             </div>
             <div>
-                <input class="radio-mode-button" type="radio" name={TOOL_INPUT_NAME} id="mode-radio-colors"
-                    value={$colors} bind:group={$userToolState} on:change={setPreviousMode} />
-                <label class="mdc-ripple-surface padbutton padbutton-mode" for="mode-radio-colors" title="Color highlights [alt]">
+                <input
+                    class="radio-mode-button"
+                    type="radio"
+                    name={TOOL_INPUT_NAME}
+                    id="mode-radio-colors"
+                    value={$colors}
+                    bind:group={$userToolState}
+                    on:change={setPreviousMode}
+                />
+                <label
+                    class="mdc-ripple-surface padbutton padbutton-mode"
+                    for="mode-radio-colors"
+                    title="Color highlights [alt]"
+                >
                     <span class="icon icon-inline icon-c-textinv icon-colors"></span>
                     <span class="sr-only">Colors tool [alt]</span>
                 </label>
@@ -106,19 +160,40 @@
                 <DigitButton digit={9} gridArea="3 / 3 / 4 / 4" toolName={userToolStateName} />
 
                 <DigitButton digit={0} gridArea="4 / 1 / 5 / 2" toolName={userToolStateName} />
-                <button class="mdc-ripple-surface padbutton" style="grid-area: 4 / 2 / 5 / 4" value="Delete" title="Delete [del or backspace]"
-                    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined} aria-label="Delete">
+                <button
+                    class="mdc-ripple-surface padbutton"
+                    style="grid-area: 4 / 2 / 5 / 4"
+                    value="Delete"
+                    title="Delete [del or backspace]"
+                    on:click={($currentInputHandler && $currentInputHandler.padClick) || undefined}
+                    aria-label="Delete"
+                >
                     <span class="icon icon-inline icon-c-textinv icon-delete"></span>
                 </button>
             </div>
             <div class="ctrl-pad">
-                <button class="mdc-ripple-surface padbutton" title="Undo [ctrl+z]" aria-label="Undo [ctrl+z]" on:click={() => changeHistory(false)}>
+                <button
+                    class="mdc-ripple-surface padbutton"
+                    title="Undo [ctrl+z]"
+                    aria-label="Undo [ctrl+z]"
+                    on:click={() => changeHistory(false)}
+                >
                     <span class="icon icon-inline icon-c-textinv icon-undo"></span>
                 </button>
-                <button class="mdc-ripple-surface padbutton" title="Redo [ctrl+y]" aria-label="Redo [ctrl+y]" on:click={() => changeHistory(true)}>
+                <button
+                    class="mdc-ripple-surface padbutton"
+                    title="Redo [ctrl+y]"
+                    aria-label="Redo [ctrl+y]"
+                    on:click={() => changeHistory(true)}
+                >
                     <span class="icon icon-inline icon-c-textinv icon-undo redo"></span>
                 </button>
-                <button class="mdc-ripple-surface padbutton" title="Save Image" aria-label="Save Image" on:click={saveImage}>
+                <button
+                    class="mdc-ripple-surface padbutton"
+                    title="Save Image"
+                    aria-label="Save Image"
+                    on:click={saveImage}
+                >
                     <span class="icon icon-inline icon-c-textinv icon-screenshot"></span>
                 </button>
             </div>
@@ -127,8 +202,8 @@
 </div>
 
 <style lang="scss">
-    @use "sass:math";
-    @use "@material/ripple";
+    @use 'sass:math';
+    @use '@material/ripple';
     @use '$lib/css/padbutton.scss';
     @use '$lib/css/vars.scss' as vars;
 
@@ -158,7 +233,8 @@
 
             border-radius: vars.$padbutton-border-radius;
         }
-        .radio-mode-button, .padbutton.padbutton-mode {
+        .radio-mode-button,
+        .padbutton.padbutton-mode {
             position: absolute;
             top: 0;
             left: 0;

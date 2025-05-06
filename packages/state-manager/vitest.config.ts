@@ -1,8 +1,3 @@
 import { defineConfig } from 'vitest/config';
 
-export default defineConfig({
-    test: {
-        pool: 'threads',
-        isolate: false,
-    },
-});
+export default defineConfig({ test: { pool: 'threads', isolate: false } });

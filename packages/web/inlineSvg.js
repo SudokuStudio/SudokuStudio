@@ -12,12 +12,13 @@ function encodeSvg(data) {
     const symbols = /[\r\n"%#()<>?\[\\\]^`{|}]/g;
 
     // Use single quotes instead of double to avoid encoding.
-    if (0 <= data.indexOf('"')) { // TODO this seems like it will break any single quotes in text.
+    if (0 <= data.indexOf('"')) {
+        // TODO this seems like it will break any single quotes in text.
         data = data.replace(/"/g, "'");
     }
 
-    data = data.replace(/>\s{1,}</g, "><");
-    data = data.replace(/\s{2,}/g, " ");
+    data = data.replace(/>\s{1,}</g, '><');
+    data = data.replace(/\s{2,}/g, ' ');
 
     data = data.replace(symbols, encodeURIComponent);
 

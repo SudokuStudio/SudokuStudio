@@ -1,24 +1,24 @@
 {
-  "name": "@sudoku-studio/state-manager",
-  "version": "0.0.0",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/state-manager.d.ts",
-      "import": "./dist/state-manager.js"
+    "name": "@sudoku-studio/state-manager",
+    "version": "0.0.0",
+    "type": "module",
+    "exports": {
+        ".": {
+            "types": "./dist/state-manager.d.ts",
+            "import": "./dist/state-manager.js"
+        },
+        "./src": {
+            "import": "./src/state-manager.ts"
+        }
     },
-    "./src": {
-      "import": "./src/state-manager.ts"
+    "scripts": {
+        "clean": "rm -rf dist node_modules",
+        "build": "tsc",
+        "check": "tsc --noEmit",
+        "test": "vitest"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0",
+        "vitest": "^3.1.2"
     }
-  },
-  "scripts": {
-    "clean": "rm -rf dist node_modules",
-    "build": "tsc",
-    "check": "tsc --noEmit",
-    "test": "vitest"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0",
-    "vitest": "^3.1.2"
-  }
 }

@@ -1,12 +1,14 @@
-import type { Grid, Coord, Geometry, Idx } from "@sudoku-studio/schema";
-import { click2svgCoord, cellCoord2CellIdx, svgCoord2cellCoord, distSq, cellLine } from "@sudoku-studio/board-utils/src";
-import { getTouchPosition } from "./inputHandler";
+import type { Grid, Coord, Geometry, Idx } from '@sudoku-studio/schema';
+import {
+    click2svgCoord,
+    cellCoord2CellIdx,
+    svgCoord2cellCoord,
+    distSq,
+    cellLine,
+} from '@sudoku-studio/board-utils/src';
+import { getTouchPosition } from './inputHandler';
 
-export type CellDragTapEvent = {
-    event: MouseEvent | TouchEvent,
-    coord: Coord<Geometry.CELL>,
-    grid: Grid,
-};
+export type CellDragTapEvent = { event: MouseEvent | TouchEvent; coord: Coord<Geometry.CELL>; grid: Grid };
 
 export class AdjacentCellPointerHandler {
     onTap: null | ((event: CellDragTapEvent) => void) = null;
@@ -105,13 +107,23 @@ export class AdjacentCellPointerHandler {
         }
     }
 
-    private _handleDown(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
+    private _handleDown(
+        event: MouseEvent | TouchEvent,
+        mousePosition: { offsetX: number; offsetY: number },
+        grid: Grid,
+        svg: SVGSVGElement,
+    ): void {
         this._isDown = true;
         this._isTap = true;
         this._handle(event, mousePosition, grid, svg);
     }
 
-    private _handleMove(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
+    private _handleMove(
+        event: MouseEvent | TouchEvent,
+        mousePosition: { offsetX: number; offsetY: number },
+        grid: Grid,
+        svg: SVGSVGElement,
+    ): void {
         if (this._isDown) {
             this._handle(event, mousePosition, grid, svg);
         }
@@ -126,7 +138,12 @@ export class AdjacentCellPointerHandler {
         }
     }
 
-    private _handleClick(event: MouseEvent | TouchEvent, svgCoord: Coord<typeof Geometry.SVG>, grid: Grid, _svg: SVGSVGElement): void {
+    private _handleClick(
+        event: MouseEvent | TouchEvent,
+        svgCoord: Coord<typeof Geometry.SVG>,
+        grid: Grid,
+        _svg: SVGSVGElement,
+    ): void {
         if (this._isTap) {
             const coord = svgCoord2cellCoord(svgCoord, grid, false);
             if (null != coord) {
@@ -135,14 +152,24 @@ export class AdjacentCellPointerHandler {
         }
     }
 
-    private _handleDoubleClick(event: MouseEvent | TouchEvent, svgCoord: Coord<typeof Geometry.SVG>, grid: Grid, _svg: SVGSVGElement): void {
+    private _handleDoubleClick(
+        event: MouseEvent | TouchEvent,
+        svgCoord: Coord<typeof Geometry.SVG>,
+        grid: Grid,
+        _svg: SVGSVGElement,
+    ): void {
         const coord = svgCoord2cellCoord(svgCoord, grid, false);
         if (null != coord) {
             this.onDoubleTap && this.onDoubleTap({ event, coord, grid });
         }
     }
 
-    private _handle(event: MouseEvent | TouchEvent, mousePosition: { offsetX: number, offsetY: number }, grid: Grid, svg: SVGSVGElement): void {
+    private _handle(
+        event: MouseEvent | TouchEvent,
+        mousePosition: { offsetX: number; offsetY: number },
+        grid: Grid,
+        svg: SVGSVGElement,
+    ): void {
         const pos = click2svgCoord(mousePosition, svg);
 
         // Interpolate if mouse jumped cells within the board.

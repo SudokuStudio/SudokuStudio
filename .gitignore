@@ -1,16 +1,17 @@
-node_modules
-/packages/*/dist
+node_modules/
 
 # Output
+dist/
+build/
+.svelte-kit/
+
 .output
 .vercel
 .netlify
 .wrangler
-/.svelte-kit
-/build
 
 # OS
-.DS_Store
+.DS_Store/
 Thumbs.db
 
 # Env

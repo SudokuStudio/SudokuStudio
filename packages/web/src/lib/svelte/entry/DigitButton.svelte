@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { colorsList } from "../../js/element/digit";
-    import { currentInputHandler } from "../../js/elementStores";
+    import { colorsList } from '$lib/js/element/digit';
+    import { currentInputHandler } from '$lib/js/elementStores';
 
-    import { MDCRipple } from "@material/ripple";
+    import { MDCRipple } from '@material/ripple';
 
     export let digit: number;
     export let gridArea: string;
@@ -25,7 +25,7 @@
     style={`grid-area: ${gridArea}`}
     value={digit}
     title={`[${digit}]`}
-    on:click={$currentInputHandler && $currentInputHandler.padClick || undefined}
+    on:click={($currentInputHandler && $currentInputHandler.padClick) || undefined}
 >
     <div class="pad-text">{digit}</div>
     <div class="pad-color" style={`background-color: ${colorsList[digit]}`}></div>

@@ -1,13 +1,19 @@
-import type { Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
-import type { Diff, StateRef } from "@sudoku-studio/state-manager/src";
-import { getCellValue } from "../board";
-import { AdjacentCellPointerHandler } from "../input/adjacentCellPointerHandler";
-import type { CellDragTapEvent } from "../input/adjacentCellPointerHandler";
-import type { InputHandler } from "../input/inputHandler";
-import { cellCoord2CellIdx, cellIdx2cellCoord, getBorderCellPairs, idxMapToKeysArray, markDigitsFailingCondition } from "@sudoku-studio/board-utils/src";
-import { pushHistory } from "../history";
-import { userCursorIsShownState, userSelectState } from "../user";
-import type { ElementInfo } from "./element";
+import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
+import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
+import { getCellValue } from '../board';
+import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
+import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
+import type { InputHandler } from '../input/inputHandler';
+import {
+    cellCoord2CellIdx,
+    cellIdx2cellCoord,
+    getBorderCellPairs,
+    idxMapToKeysArray,
+    markDigitsFailingCondition,
+} from '@sudoku-studio/board-utils/src';
+import { pushHistory } from '../history';
+import { userCursorIsShownState, userSelectState } from '../user';
+import type { ElementInfo } from './element';
 
 export const minInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
@@ -15,14 +21,16 @@ export const minInfo: ElementInfo = {
     },
     order: 20,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Min',
-        icon: 'min',
-    },
-    getWarnings(value: schema.RegionElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Min', icon: 'min' },
+    getWarnings(
+        value: schema.RegionElement['value'],
+        grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         const cells = idxMapToKeysArray(value || {});
-        for (const [ inCell, outCell ] of getBorderCellPairs(cells, grid)) {
+        for (const [inCell, outCell] of getBorderCellPairs(cells, grid)) {
             const inDigit = digits[inCell];
             const outDigit = digits[outCell];
             if (null == inDigit || null == outDigit) continue;
@@ -34,8 +42,8 @@ export const minInfo: ElementInfo = {
     },
     meta: {
         description: 'Contiguous groups of cells with less-than signs must be less than all of their edge neighbors.',
-        tags: [ 'extreme', 'fortress', 'minimum', 'less' ],
-        category: [ 'local', 'cell' ],
+        tags: ['extreme', 'fortress', 'minimum', 'less'],
+        category: ['local', 'cell'],
     },
 };
 
@@ -45,14 +53,16 @@ export const maxInfo: ElementInfo = {
     },
     order: 21,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Max',
-        icon: 'max',
-    },
-    getWarnings(value: schema.RegionElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Max', icon: 'max' },
+    getWarnings(
+        value: schema.RegionElement['value'],
+        grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         const cells = idxMapToKeysArray(value || {});
-        for (const [ inCell, outCell ] of getBorderCellPairs(cells, grid)) {
+        for (const [inCell, outCell] of getBorderCellPairs(cells, grid)) {
             const inDigit = digits[inCell];
             const outDigit = digits[outCell];
             if (null == inDigit || null == outDigit) continue;
@@ -63,9 +73,10 @@ export const maxInfo: ElementInfo = {
         }
     },
     meta: {
-        description: 'Contiguous groups of cells with greater-than signs must be greater than all of their edge neighbors.',
-        tags: [ 'extreme', 'fortress', 'maximum', 'more', 'greater' ],
-        category: [ 'local', 'cell' ],
+        description:
+            'Contiguous groups of cells with greater-than signs must be greater than all of their edge neighbors.',
+        tags: ['extreme', 'fortress', 'maximum', 'more', 'greater'],
+        category: ['local', 'cell'],
     },
 };
 
@@ -75,19 +86,21 @@ export const evenInfo: ElementInfo = {
     },
     order: 40,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Even',
-        icon: 'odd-even',
-    },
-    getWarnings(value: schema.RegionElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Even', icon: 'odd-even' },
+    getWarnings(
+        value: schema.RegionElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         const cells = idxMapToKeysArray(value || {});
-        markDigitsFailingCondition(digits, cells, warnings, x => 0 == x % 2);
+        markDigitsFailingCondition(digits, cells, warnings, (x) => 0 == x % 2);
     },
     meta: {
         description: 'Cells with a gray square must be even.',
-        tags: [ 'parity', 'modulo', 'remainder' ],
-        category: [ 'local', 'cell' ],
+        tags: ['parity', 'modulo', 'remainder'],
+        category: ['local', 'cell'],
     },
 };
 
@@ -97,19 +110,21 @@ export const oddInfo: ElementInfo = {
     },
     order: 41,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Odd',
-        icon: 'odd-even',
-    },
-    getWarnings(value: schema.RegionElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Odd', icon: 'odd-even' },
+    getWarnings(
+        value: schema.RegionElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         const cells = idxMapToKeysArray(value || {});
-        markDigitsFailingCondition(digits, cells, warnings, x => 1 == x % 2);
+        markDigitsFailingCondition(digits, cells, warnings, (x) => 1 == x % 2);
     },
     meta: {
         description: 'Cells with a gray circle must be odd.',
-        tags: [ 'parity', 'modulo', 'remainder' ],
-        category: [ 'local', 'cell' ],
+        tags: ['parity', 'modulo', 'remainder'],
+        category: ['local', 'cell'],
     },
 };
 
@@ -119,20 +134,28 @@ export const columnIndexerInfo: ElementInfo = {
     },
     order: 42,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Column Indexer',
-        icon: 'odd-even',
-    },
-    getWarnings(value: schema.RegionElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
-        indexerWarnings(value, grid, digits, warnings,
-                        (r, _c, indexerValue) => [indexerValue - 1, r],
-                            (_r, c, indexeeValue) => (indexeeValue != c + 1));
+    menu: { type: 'select', name: 'Column Indexer', icon: 'odd-even' },
+    getWarnings(
+        value: schema.RegionElement['value'],
+        grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
+        indexerWarnings(
+            value,
+            grid,
+            digits,
+            warnings,
+            (r, _c, indexerValue) => [indexerValue - 1, r],
+            (_r, c, indexeeValue) => indexeeValue != c + 1,
+        );
     },
     meta: {
-        description: 'If the cell with this constraint is at row R, column C and has digit V, then the cell at Row R, column V has digit C.',
-        tags: [ 'indexer' ],
-        category: [ 'local', 'cell' ],
+        description:
+            'If the cell with this constraint is at row R, column C and has digit V, then the cell at Row R, column V has digit C.',
+        tags: ['indexer'],
+        category: ['local', 'cell'],
     },
 };
 
@@ -142,20 +165,28 @@ export const rowIndexerInfo: ElementInfo = {
     },
     order: 42,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Row Indexer',
-        icon: 'odd-even',
-    },
-    getWarnings(value: schema.RegionElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
-        indexerWarnings(value, grid, digits, warnings,
-                        (_r, c, indexerValue) => [c, indexerValue - 1],
-                            (r, _c, indexeeValue) => (indexeeValue != r + 1));
+    menu: { type: 'select', name: 'Row Indexer', icon: 'odd-even' },
+    getWarnings(
+        value: schema.RegionElement['value'],
+        grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
+        indexerWarnings(
+            value,
+            grid,
+            digits,
+            warnings,
+            (_r, c, indexerValue) => [c, indexerValue - 1],
+            (r, _c, indexeeValue) => indexeeValue != r + 1,
+        );
     },
     meta: {
-        description: 'If the cell with this constraint is at row R, column C and has digit V, then the cell at Row V, column C has digit R.',
-        tags: [ 'indexer' ],
-        category: [ 'local', 'cell' ],
+        description:
+            'If the cell with this constraint is at row R, column C and has digit V, then the cell at Row V, column C has digit R.',
+        tags: ['indexer'],
+        category: ['local', 'cell'],
     },
 };
 
@@ -166,13 +197,10 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, opp
         DYNAMIC,
         ADDING,
         REMOVING,
-    };
+    }
     let mode = Mode.DYNAMIC;
 
-    const fullDiff: Diff = {
-        redo: {},
-        undo: {},
-    };
+    const fullDiff: Diff = { redo: {}, undo: {} };
 
     function handle(event: CellDragTapEvent) {
         const { coord, grid } = event;
@@ -223,15 +251,11 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, opp
             pointerHandler.mouseUp();
         },
 
-        blur(_event: FocusEvent): void {
-        },
+        blur(_event: FocusEvent): void {},
 
-        keydown(_event: KeyboardEvent): void {
-        },
-        keyup(_event: KeyboardEvent): void {
-        },
-        padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {
-        },
+        keydown(_event: KeyboardEvent): void {},
+        keyup(_event: KeyboardEvent): void {},
+        padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {},
 
         mouseDown(event: MouseEvent): void {
             pointerHandler.mouseDown(event, grid, svg);
@@ -260,14 +284,19 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, opp
     } as const;
 }
 
-function indexerWarnings(value: schema.RegionElement['value'], grid: Grid, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>,
-                        f: (r: number, c: number, indexerValue: number) => [number, number],
-                        testValue: (r: number, c: number, indexeeValue: number) => boolean): void {
+function indexerWarnings(
+    value: schema.RegionElement['value'],
+    grid: Grid,
+    digits: IdxMap<Geometry.CELL, number>,
+    warnings: IdxBitset<Geometry.CELL>,
+    f: (r: number, c: number, indexerValue: number) => [number, number],
+    testValue: (r: number, c: number, indexeeValue: number) => boolean,
+): void {
     const cells = idxMapToKeysArray(value || {});
     for (const indexer of cells) {
         const indexerValue = digits[indexer];
         if (null == indexerValue) continue;
-        const [ c, r ] = cellIdx2cellCoord(indexer, grid);
+        const [c, r] = cellIdx2cellCoord(indexer, grid);
         const indexee = cellCoord2CellIdx(f(r, c, indexerValue), grid);
         const indexeeValue = digits[indexee];
         if (null == indexeeValue) continue;

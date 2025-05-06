@@ -1,22 +1,22 @@
 {
-  "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
-    "target": "ES2017",
-    "lib": ["DOM", "ES2017"],
-    "outDir": "${configDir}/dist",
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "compilerOptions": {
+        "module": "NodeNext",
+        "moduleResolution": "nodenext",
+        "target": "ES2017",
+        "lib": ["DOM", "ES2017"],
+        "outDir": "${configDir}/dist",
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
 
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strict": true,
-    "strictNullChecks": true,
-  },
-  "include": ["${configDir}/src/**/*"]
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strict": true,
+        "strictNullChecks": true
+    },
+    "include": ["${configDir}/src/**/*"]
 }

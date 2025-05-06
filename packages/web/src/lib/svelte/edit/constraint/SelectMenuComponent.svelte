@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type { StateRef } from "@sudoku-studio/state-manager/src";
-    import type { SelectMenuComponent } from "../../../js/element/element";
-    import { removeElement } from "../../../js/elementStores";
+    import type { StateRef } from '@sudoku-studio/state-manager/src';
+    import type { SelectMenuComponent } from '$lib/js/element/element';
+    import { removeElement } from '$lib/js/elementStores';
 
-    import ConstraintRow from "./ConstraintRow.svelte";
+    import ConstraintRow from './ConstraintRow.svelte';
 
     export let id: string;
     export let elementRef: StateRef;

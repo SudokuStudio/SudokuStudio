@@ -1,9 +1,9 @@
 <script lang="ts">
-    import type { schema } from "@sudoku-studio/schema";
-    import type { ElementInfo } from "../../js/element/element";
-    import { search } from "../../js/elements";
-    import { addElement } from "../../js/elementStores";
-    import Modal from "../Modal.svelte";
+    import type { schema } from '@sudoku-studio/schema';
+    import type { ElementInfo } from '$lib/js/element/element';
+    import { search } from '$lib/js/elements';
+    import { addElement } from '$lib/js/elementStores';
+    import Modal from '../Modal.svelte';
 
     export let visible = false;
     export let filterFunction: (key: string, info: ElementInfo) => boolean;
@@ -19,7 +19,7 @@
     $: visible && setTimeout(() => searchInput.select(), 0);
 </script>
 
-<Modal bind:visible={visible}>
+<Modal bind:visible>
     <div class="search-input-container">
         <span class="icon hoverable-icon icon-inline icon-c-clickable icon-search"></span>
         <input class="search-input" type="text" bind:this={searchInput} bind:value={searchPattern} />
@@ -28,8 +28,13 @@
         <ol class="nolist">
             {#each search(searchPattern, filterFunction) as { item }}
                 <li>
-                    <button class="result-item nobutton hoverable" title={item.info.meta?.description} on:click={() => elementClicked(item.key)}>
-                        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}"></span>
+                    <button
+                        class="result-item nobutton hoverable"
+                        title={item.info.meta?.description}
+                        on:click={() => elementClicked(item.key)}
+                    >
+                        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}"
+                        ></span>
                         {item.info.menu?.name}
                     </button>
                 </li>
@@ -79,7 +84,8 @@
         text-align: inherit;
 
         @include vars.hoverborder();
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
             @include vars.hoverborder-hover();
         }
     }

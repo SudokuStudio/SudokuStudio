@@ -3,17 +3,18 @@
     import { initUserAndBoard } from '$lib/js/init';
     initUserAndBoard();
 </script>
+
 <script lang="ts">
-    import debounce from "debounce";
+    import debounce from 'debounce';
 
-    import { boardDiv, boardState } from "$lib/js/board";
-    import { URL_REQUEST_FEATURE, URL_REPORT_BUG } from "$lib/js/github";
-    import BoardContainer from "$lib/svelte/board/BoardContainer.svelte";
-    import EditPanel from "$lib/svelte/edit/EditPanel.svelte";
-    import EntryPanel from "$lib/svelte/entry/EntryPanel.svelte";
-    import Header from "$lib/svelte/header/Header.svelte";
+    import { boardDiv, boardState } from '$lib/js/board';
+    import { URL_REQUEST_FEATURE, URL_REPORT_BUG } from '$lib/js/github';
+    import BoardContainer from '$lib/svelte/board/BoardContainer.svelte';
+    import EditPanel from '$lib/svelte/edit/EditPanel.svelte';
+    import EntryPanel from '$lib/svelte/entry/EntryPanel.svelte';
+    import Header from '$lib/svelte/header/Header.svelte';
 
-    function updateBugReportUrl(event: UIEvent & { currentTarget: EventTarget & HTMLAnchorElement}): void {
+    function updateBugReportUrl(event: UIEvent & { currentTarget: EventTarget & HTMLAnchorElement }): void {
         const url = new URL(URL_REPORT_BUG);
         url.searchParams.append('version', SUDOKU_STUDIO_VERSION);
         url.searchParams.append('browser', window.navigator.userAgent);
@@ -51,12 +52,15 @@
         <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio/commit/{SUDOKU_STUDIO_VERSION}">
             Sudoku Studio v.{SUDOKU_STUDIO_VERSION}
         </a>
-        <a target="_blank" href={URL_REPORT_BUG} on:mouseover={debounce(updateBugReportUrl, 500, true)} on:focus={updateBugReportUrl}>
+        <a
+            target="_blank"
+            href={URL_REPORT_BUG}
+            on:mouseover={debounce(updateBugReportUrl, 500, true)}
+            on:focus={updateBugReportUrl}
+        >
             Bug Report
         </a>
-        <a target="_blank" href={URL_REQUEST_FEATURE}>
-            Feature Request
-        </a>
+        <a target="_blank" href={URL_REQUEST_FEATURE}> Feature Request </a>
     </div>
 </footer>
 
@@ -80,7 +84,8 @@
             flex: 1;
         }
 
-        .left-panel, .right-panel {
+        .left-panel,
+        .right-panel {
             flex: 1 1 100%;
             overflow: visible auto;
             height: calc(100vh - #{vars.$header-height + vars.$footer-height});
@@ -103,7 +108,8 @@
                 flex-direction: column;
             }
             .center-panel {
-                width: vars.$sudoku-size-small; height: vars.$sudoku-size-small;
+                width: vars.$sudoku-size-small;
+                height: vars.$sudoku-size-small;
 
                 align-self: center;
 
@@ -135,4 +141,3 @@
         }
     }
 </style>
-    

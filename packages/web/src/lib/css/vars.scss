@@ -15,7 +15,6 @@ $font-size: max(16px, calc(12px + min(0.5vw, #{0.5vh * $max-aspect-ratio})));
 $font-weight-normal: 500;
 $font-weight-heavy: 800;
 
-
 $color-clickable: #637691;
 $color-clickable-light: #778dad;
 $color-disabled: color.adjust($color-clickable, $saturation: -100%);
@@ -25,13 +24,10 @@ $transition-time: 0.2s;
 $color-warning: #916363;
 
 @mixin breakpoint-mobile {
-    @media (max-width: 800px) and (max-aspect-ratio: 5/4),
-        (max-width: 600px)
-    {
+    @media (max-width: 800px) and (max-aspect-ratio: 5/4), (max-width: 600px) {
         @content;
     }
 }
-
 
 $hoverborder-size: 0.1rem;
 $hoverborder-transition-time: 0.1s;

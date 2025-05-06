@@ -1,9 +1,9 @@
-import type { Geometry, Grid, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
-import type { StateRef } from "@sudoku-studio/state-manager/src";
-import type { InputHandler } from "../input/inputHandler";
-import type { ElementInfo } from "./element";
-import { getLineInputHandler } from "../input/lineInputHandler";
-import { arrayObj2array, warnClones } from "@sudoku-studio/board-utils/src";
+import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
+import type { StateRef } from '@sudoku-studio/state-manager/src';
+import type { InputHandler } from '../input/inputHandler';
+import type { ElementInfo } from './element';
+import { getLineInputHandler } from '../input/lineInputHandler';
+import { arrayObj2array, warnClones } from '@sudoku-studio/board-utils/src';
 
 export const thermoInfo: ElementInfo = {
     getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
@@ -15,18 +15,20 @@ export const thermoInfo: ElementInfo = {
     },
     order: 30,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Thermo',
-        icon: 'thermo',
-    },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Thermo', icon: 'thermo' },
+    getWarnings(
+        value: schema.LineElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         getThermoWarnings(value, digits, warnings, true);
     },
     meta: {
         description: 'Digits on thermos increase from bulb to tip and may not repeat.',
-        tags: [ 'line', 'non-repeat', 'thermometer' ],
-        category: [ 'local', 'line' ],
+        tags: ['line', 'non-repeat', 'thermometer'],
+        category: ['local', 'line'],
     },
 };
 
@@ -40,26 +42,29 @@ export const slowThermoInfo: ElementInfo = {
     },
     order: 30,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Slow Thermo',
-        icon: 'slow-thermo',
-    },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Slow Thermo', icon: 'slow-thermo' },
+    getWarnings(
+        value: schema.LineElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         getThermoWarnings(value, digits, warnings, false);
     },
     meta: {
         description: 'Digits on slow thermos increase or stay the same from bulb to tip; digits may repeat.',
-        tags: [ 'line', 'repeat', 'thermometer' ],
-        category: [ 'local', 'line' ],
+        tags: ['line', 'repeat', 'thermometer'],
+        category: ['local', 'line'],
     },
 };
 
 function getThermoWarnings(
     value: schema.LineElement['value'],
-    digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>,
-    strict: boolean): void
-{
+    digits: IdxMap<Geometry.CELL, number>,
+    warnings: IdxBitset<Geometry.CELL>,
+    strict: boolean,
+): void {
     for (const cells of Object.values(value || {})) {
         const cellsArr = arrayObj2array(cells);
 
@@ -71,11 +76,10 @@ function getThermoWarnings(
 
                 if (maxSeen < digit) {
                     maxSeen = digit;
-                }
-                else if (maxSeen == digit) {
+                } else if (maxSeen == digit) {
                     warnings[cellIdx] = strict;
-                }
-                else { // maxSeen > digit.
+                } else {
+                    // maxSeen > digit.
                     warnings[cellIdx] = true;
                 }
             }
@@ -90,11 +94,10 @@ function getThermoWarnings(
 
                 if (minSeen > digit) {
                     minSeen = digit;
-                }
-                else if (minSeen == digit) {
+                } else if (minSeen == digit) {
                     if (strict) warnings[cellIdx] = true;
-                }
-                else { // maxSeen < digit.
+                } else {
+                    // maxSeen < digit.
                     warnings[cellIdx] = true;
                 }
             }
@@ -112,12 +115,14 @@ export const betweenInfo: ElementInfo = {
     },
     order: 50,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Between',
-        icon: 'between',
-    },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Between', icon: 'between' },
+    getWarnings(
+        value: schema.LineElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         for (const cells of Object.values(value || {})) {
             const betweenCells = arrayObj2array(cells);
             if (3 > betweenCells.length) continue;
@@ -143,9 +148,10 @@ export const betweenInfo: ElementInfo = {
         }
     },
     meta: {
-        description: 'Digits on between lines must be greater than one circle and less than the other; digits may repeat.',
-        tags: [ 'line', 'range' ],
-        category: [ 'local', 'line' ],
+        description:
+            'Digits on between lines must be greater than one circle and less than the other; digits may repeat.',
+        tags: ['line', 'range'],
+        category: ['local', 'line'],
     },
 };
 
@@ -159,12 +165,14 @@ export const doubleArrowInfo: ElementInfo = {
     },
     order: 50,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Double Arrow',
-        icon: 'double-arrow',
-    },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Double Arrow', icon: 'double-arrow' },
+    getWarnings(
+        value: schema.LineElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         for (const cells of Object.values(value || {})) {
             const lineCells = arrayObj2array(cells);
             if (3 > lineCells.length) continue;
@@ -183,8 +191,7 @@ export const doubleArrowInfo: ElementInfo = {
                 const digit = digits[bodyIdx];
                 if (null == digit) {
                     allFilled = false;
-                }
-                else {
+                } else {
                     actualSum += digit;
                 }
             }
@@ -192,14 +199,14 @@ export const doubleArrowInfo: ElementInfo = {
             if (targetSum < actualSum || (allFilled && targetSum !== actualSum)) {
                 warnings[headIdx] = true;
                 warnings[tailIdx] = true;
-                lineCells.forEach(idx => warnings[idx] = true);
+                lineCells.forEach((idx) => (warnings[idx] = true));
             }
         }
     },
     meta: {
         description: 'Digits on the line must have the same sum as the two circles; digits may repeat.',
-        tags: [ 'line', 'sum' ],
-        category: [ 'local', 'line' ],
+        tags: ['line', 'sum'],
+        category: ['local', 'line'],
     },
 };
 
@@ -213,12 +220,14 @@ export const lockoutInfo: ElementInfo = {
     },
     order: 50,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Lockout',
-        icon: 'lockout',
-    },
-    getWarnings(value: schema.LineElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Lockout', icon: 'lockout' },
+    getWarnings(
+        value: schema.LineElement['value'],
+        grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         const delta = ((grid.width + 1) >> 1) - 1; // TODO: make this configurable somehow.
 
         for (const cells of Object.values(value || {})) {
@@ -250,9 +259,10 @@ export const lockoutInfo: ElementInfo = {
         }
     },
     meta: {
-        description: 'Digits on lockout lines must not be between or equal to the digits in the circles. Circles must differ by at least 4. Digits may repeat.',
-        tags: [ 'line', 'range' ],
-        category: [ 'local', 'line' ],
+        description:
+            'Digits on lockout lines must not be between or equal to the digits in the circles. Circles must differ by at least 4. Digits may repeat.',
+        tags: ['line', 'range'],
+        category: ['local', 'line'],
     },
 };
 
@@ -266,12 +276,14 @@ export const palindromeInfo: ElementInfo = {
     },
     order: 60,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Palindrome',
-        icon: 'palindrome',
-    },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Palindrome', icon: 'palindrome' },
+    getWarnings(
+        value: schema.LineElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         for (const cells of Object.values(value || {})) {
             const cellsArr = arrayObj2array(cells);
 
@@ -284,12 +296,18 @@ export const palindromeInfo: ElementInfo = {
     },
     meta: {
         description: 'Digits along palindromes must read the same from both ends.',
-        tags: [ 'line' ],
-        category: [ 'local', 'line' ],
+        tags: ['line'],
+        category: ['local', 'line'],
     },
 };
 
-function getWhisperInfo(deltaFunc: (gridWidth: number) => number, constraintName: string, icon: string, description: string, tags: string[]): ElementInfo {
+function getWhisperInfo(
+    deltaFunc: (gridWidth: number) => number,
+    constraintName: string,
+    icon: string,
+    description: string,
+    tags: string[],
+): ElementInfo {
     return {
         getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
             return getLineInputHandler(ref, grid, svg, {
@@ -300,26 +318,28 @@ function getWhisperInfo(deltaFunc: (gridWidth: number) => number, constraintName
         },
         order: 70,
         inGlobalMenu: false,
-        menu: {
-            type: 'select',
-            name: constraintName,
-            icon: icon,
-        },
-        getWarnings(value: schema.LineElement['value'], grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+        menu: { type: 'select', name: constraintName, icon: icon },
+        getWarnings(
+            value: schema.LineElement['value'],
+            grid: Grid,
+            _regionMap: IdxMap<Geometry.CELL, number>,
+            digits: IdxMap<Geometry.CELL, number>,
+            warnings: IdxBitset<Geometry.CELL>,
+        ): void {
             const delta = deltaFunc(grid.width); // TODO: make this configurable somehow.
-    
+
             for (const cells of Object.values(value || {})) {
                 const cellsArr = arrayObj2array(cells);
-    
+
                 for (let i = 1; i < cellsArr.length; i++) {
                     const prevIdx = cellsArr[i - 1];
                     const nextIdx = cellsArr[i];
-    
+
                     const prevDigit = digits[prevIdx];
                     const nextDigit = digits[nextIdx];
-    
+
                     if (null == prevDigit || null == nextDigit) continue;
-    
+
                     if (Math.abs(prevDigit - nextDigit) < delta) {
                         warnings[prevIdx] = true;
                         warnings[nextIdx] = true;
@@ -327,20 +347,16 @@ function getWhisperInfo(deltaFunc: (gridWidth: number) => number, constraintName
                 }
             }
         },
-        meta: {
-            description: description,
-            tags: tags,
-            category: [ 'local', 'line' ],
-        },
+        meta: { description: description, tags: tags, category: ['local', 'line'] },
     };
-};
+}
 
 export const germanWhisperInfo: ElementInfo = getWhisperInfo(
     (gridWidth) => (gridWidth + 1) >> 1,
     'German Whisper',
     'whisper',
     'Adjacent digits along German Whispers must differ by at least 5; digits may repeat.',
-    [ 'line', 'german', 'five', '5' ],
+    ['line', 'german', 'five', '5'],
 );
 
 export const dutchWhisperInfo: ElementInfo = getWhisperInfo(
@@ -348,7 +364,7 @@ export const dutchWhisperInfo: ElementInfo = getWhisperInfo(
     'Dutch Whisper',
     'dutch-whisper',
     'Adjacent digits along Dutch Whispers must differ by at least 4; digits may repeat.',
-    [ 'line', 'dutch', 'five', '4' ],
+    ['line', 'dutch', 'five', '4'],
 );
 
 export const renbanInfo: ElementInfo = {
@@ -361,14 +377,15 @@ export const renbanInfo: ElementInfo = {
     },
     order: 80,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Renban',
-        icon: 'renban',
-    },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
-        outer:
-        for (const cells of Object.values(value || {})) {
+    menu: { type: 'select', name: 'Renban', icon: 'renban' },
+    getWarnings(
+        value: schema.LineElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
+        outer: for (const cells of Object.values(value || {})) {
             const uniqueCellsArr = [...new Set(arrayObj2array(cells))];
 
             const seen: number[] = [];
@@ -383,7 +400,7 @@ export const renbanInfo: ElementInfo = {
             seen.sort((a, b) => a - b);
             for (let i = 1; i < seen.length; i++) {
                 if (seen[i - 1] + 1 !== seen[i]) {
-                    uniqueCellsArr.forEach(idx => warnings[idx] = true);
+                    uniqueCellsArr.forEach((idx) => (warnings[idx] = true));
                     continue outer;
                 }
             }
@@ -391,8 +408,8 @@ export const renbanInfo: ElementInfo = {
     },
     meta: {
         description: 'Digits along renban lines must be in a consecutive set in any order; digits may not repeat.',
-        tags: [ 'line', 'non-repeat' ],
-        category: [ 'local', 'line' ],
+        tags: ['line', 'non-repeat'],
+        category: ['local', 'line'],
     },
 };
 
@@ -406,44 +423,45 @@ export const regionSumInfo: ElementInfo = {
     },
     order: 80,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Region Sum',
-        icon: 'region-sum',
-    },
-    getWarnings(value: schema.LineElement['value'], _grid: Grid, regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Region Sum', icon: 'region-sum' },
+    getWarnings(
+        value: schema.LineElement['value'],
+        _grid: Grid,
+        regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         for (const line of Object.values(value || {})) {
             const cells = arrayObj2array(line);
             if (cells.length === 0) continue;
 
-            const regionLines = [] as {startIdx: number, endIdx: number, sum: number}[]
+            const regionLines = [] as { startIdx: number; endIdx: number; sum: number }[];
             let startIdx = 0;
             let region = regionMap[cells[0]]!;
             let sum = 0;
 
             for (let i = 0; i < cells.length; i++) {
                 const idx = cells[i];
-                if(regionMap[idx] != region) {
-                    regionLines.push({startIdx: startIdx, endIdx: i, sum: sum});
+                if (regionMap[idx] != region) {
+                    regionLines.push({ startIdx: startIdx, endIdx: i, sum: sum });
                     startIdx = i;
                     region = regionMap[idx]!;
                     sum = 0;
                 }
                 const digit = digits[idx];
                 if (null == digit) {
-                    while ((i < cells.length) && (regionMap[cells[i]] === region)) i++;
+                    while (i < cells.length && regionMap[cells[i]] === region) i++;
                     startIdx = i;
                     region = regionMap[cells[i]]!;
                     sum = 0;
-                    i--;    // Undo last increment. The for loop will redo this.
+                    i--; // Undo last increment. The for loop will redo this.
                 } else {
                     sum += digit;
                 }
             }
 
-            if (startIdx !== cells.length)
-                regionLines.push({startIdx: startIdx, endIdx: cells.length, sum: sum});
-            if (!regionLines.every( v => v.sum === regionLines[0].sum)) {
+            if (startIdx !== cells.length) regionLines.push({ startIdx: startIdx, endIdx: cells.length, sum: sum });
+            if (!regionLines.every((v) => v.sum === regionLines[0].sum)) {
                 regionLines.forEach((v) => {
                     for (let i = v.startIdx; i < v.endIdx; i++) {
                         warnings[cells[i]] = true;
@@ -453,10 +471,11 @@ export const regionSumInfo: ElementInfo = {
         }
     },
     meta: {
-        description: 'Digits along region sum lines sum to the same value in each region it passes through. \
+        description:
+            'Digits along region sum lines sum to the same value in each region it passes through. \
 Each instance of a single line that passes through a box is counted separately. \
 Different lines may have different sums.',
-        tags: [ 'line', 'region sum' ],
-        category: [ 'local', 'line' ],
+        tags: ['line', 'region sum'],
+        category: ['local', 'line'],
     },
 };

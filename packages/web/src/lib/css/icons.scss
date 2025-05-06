@@ -5,7 +5,7 @@
     padding: 0;
     margin: -1px;
     overflow: hidden;
-    clip: rect(0,0,0,0);
+    clip: rect(0, 0, 0, 0);
     border: 0;
 }
 
@@ -23,7 +23,6 @@
     mask-size: 95%;
     -webkit-mask-size: 95%;
 
-
     &::before {
         display: block;
         width: 100%;
@@ -38,66 +37,66 @@
         vertical-align: baseline;
     }
     &.icon-inline::before {
-        content: "";
+        content: '';
         display: inline-block;
     }
 
     $icons: (
-        "trash": "svg/16px/symbols/remove.svg",
-        "warning": "svg/16px/symbols/warning.svg",
+        'trash': 'svg/16px/symbols/remove.svg',
+        'warning': 'svg/16px/symbols/warning.svg',
 
-        "tree-menu": "svg/16px/symbols/tree-menu-shown.svg",
+        'tree-menu': 'svg/16px/symbols/tree-menu-shown.svg',
 
-        "undo": "svg/16px/symbols/undo.svg",
-        "screenshot": "svg/large/screenshot.svg",
-        "delete": "svg/16px/symbols/x.svg",
-        "add": "svg/16px/symbols/add.svg",
-        "pencil": "svg/16px/symbols/cosmetic.svg",
-        "location": "svg/16px/symbols/local.svg",
-        "search": "svg/16px/symbols/search.svg",
+        'undo': 'svg/16px/symbols/undo.svg',
+        'screenshot': 'svg/large/screenshot.svg',
+        'delete': 'svg/16px/symbols/x.svg',
+        'add': 'svg/16px/symbols/add.svg',
+        'pencil': 'svg/16px/symbols/cosmetic.svg',
+        'location': 'svg/16px/symbols/local.svg',
+        'search': 'svg/16px/symbols/search.svg',
 
-        "computer": "svg/16px/symbols/computer.svg",
-        "globe": "svg/16px/symbols/globe.svg",
+        'computer': 'svg/16px/symbols/computer.svg',
+        'globe': 'svg/16px/symbols/globe.svg',
 
-        "colors": "svg/large/colors.svg",
+        'colors': 'svg/large/colors.svg',
 
-        "positive-diagonal": "svg/16px/global-constraints/diagonal-up-constraint.svg",
-        "negative-diagonal": "svg/16px/global-constraints/diagonal-down-constraint.svg",
-        "knight": "svg/16px/global-constraints/knight-constraint.svg",
-        "king": "svg/16px/global-constraints/king-constraint.svg",
-        "disjoint": "svg/16px/global-constraints/disjoint-constraint.svg",
-        "consec-orth": "svg/16px/global-constraints/consec-constraint.svg",
-        "consec-diag": "svg/16px/global-constraints/consec-diagonal-constraint.svg",
-        "anti-x": "svg/16px/local-constraints/xv-constraint.svg",
-        "anti-v": "svg/16px/local-constraints/xv-constraint.svg",
-        "taxi": "svg/16px/global-constraints/taxi-constraint-1.svg",
-        "cityblock": "svg/16px/global-constraints/taxi-constraint-2.svg",
+        'positive-diagonal': 'svg/16px/global-constraints/diagonal-up-constraint.svg',
+        'negative-diagonal': 'svg/16px/global-constraints/diagonal-down-constraint.svg',
+        'knight': 'svg/16px/global-constraints/knight-constraint.svg',
+        'king': 'svg/16px/global-constraints/king-constraint.svg',
+        'disjoint': 'svg/16px/global-constraints/disjoint-constraint.svg',
+        'consec-orth': 'svg/16px/global-constraints/consec-constraint.svg',
+        'consec-diag': 'svg/16px/global-constraints/consec-diagonal-constraint.svg',
+        'anti-x': 'svg/16px/local-constraints/xv-constraint.svg',
+        'anti-v': 'svg/16px/local-constraints/xv-constraint.svg',
+        'taxi': 'svg/16px/global-constraints/taxi-constraint-1.svg',
+        'cityblock': 'svg/16px/global-constraints/taxi-constraint-2.svg',
 
-        "thermo": "svg/16px/local-constraints/thermo-constraint.svg",
-        "slow-thermo": "svg/16px/local-constraints/slow-thermo-constraint.svg",
-        "arrow": "svg/16px/local-constraints/arrow-constraint.svg",
-        "between": "svg/16px/local-constraints/between-constraint.svg",
-        "double-arrow": "svg/16px/local-constraints/between-constraint.svg",
-        "lockout": "svg/16px/local-constraints/lockout-constraint.svg",
-        "palindrome": "svg/16px/local-constraints/palindrome-constraint.svg",
-        "whisper": "svg/16px/local-constraints/whisper-constraint.svg",
-        "dutch-whisper": "svg/16px/local-constraints/whisper-constraint.svg",
-        "renban": "svg/16px/local-constraints/renban-constraint.svg",
-        "region-sum": "svg/16px/local-constraints/region-sum-lines-constraint.svg",
+        'thermo': 'svg/16px/local-constraints/thermo-constraint.svg',
+        'slow-thermo': 'svg/16px/local-constraints/slow-thermo-constraint.svg',
+        'arrow': 'svg/16px/local-constraints/arrow-constraint.svg',
+        'between': 'svg/16px/local-constraints/between-constraint.svg',
+        'double-arrow': 'svg/16px/local-constraints/between-constraint.svg',
+        'lockout': 'svg/16px/local-constraints/lockout-constraint.svg',
+        'palindrome': 'svg/16px/local-constraints/palindrome-constraint.svg',
+        'whisper': 'svg/16px/local-constraints/whisper-constraint.svg',
+        'dutch-whisper': 'svg/16px/local-constraints/whisper-constraint.svg',
+        'renban': 'svg/16px/local-constraints/renban-constraint.svg',
+        'region-sum': 'svg/16px/local-constraints/region-sum-lines-constraint.svg',
 
-        "given": "svg/16px/local-constraints/digit-constraint.svg",
-        "quadruple": "svg/16px/local-constraints/quad-constraint.svg",
-        "kropki": "svg/16px/local-constraints/kropki-constraint.svg",
-        "xv": "svg/16px/local-constraints/xv-constraint.svg",
-        "min": "svg/16px/local-constraints/min-constraint.svg",
-        "max": "svg/16px/local-constraints/max-constraint.svg",
-        "odd-even": "svg/16px/local-constraints/odd-even-constraint.svg",
-        "sandwich": "svg/16px/local-constraints/sandwich-constraint.svg",
-        "skyscraper": "svg/16px/local-constraints/skyscraper-constraint.svg",
-        "xsum": "svg/16px/local-constraints/xsum-constraint.svg",
-        "killer": "svg/16px/local-constraints/killer-constraint.svg",
-        "little-killer": "svg/16px/local-constraints/little-killer-constraint.svg",
-        "clone": "svg/16px/local-constraints/clone-constraint.svg",
+        'given': 'svg/16px/local-constraints/digit-constraint.svg',
+        'quadruple': 'svg/16px/local-constraints/quad-constraint.svg',
+        'kropki': 'svg/16px/local-constraints/kropki-constraint.svg',
+        'xv': 'svg/16px/local-constraints/xv-constraint.svg',
+        'min': 'svg/16px/local-constraints/min-constraint.svg',
+        'max': 'svg/16px/local-constraints/max-constraint.svg',
+        'odd-even': 'svg/16px/local-constraints/odd-even-constraint.svg',
+        'sandwich': 'svg/16px/local-constraints/sandwich-constraint.svg',
+        'skyscraper': 'svg/16px/local-constraints/skyscraper-constraint.svg',
+        'xsum': 'svg/16px/local-constraints/xsum-constraint.svg',
+        'killer': 'svg/16px/local-constraints/killer-constraint.svg',
+        'little-killer': 'svg/16px/local-constraints/little-killer-constraint.svg',
+        'clone': 'svg/16px/local-constraints/clone-constraint.svg',
     );
 
     @each $name, $path in $icons {
@@ -117,7 +116,7 @@
 }
 .icon-c-textinv {
     background-color: #fff;
-};
+}
 .icon-c-clickable {
     background-color: $color-clickable;
 }

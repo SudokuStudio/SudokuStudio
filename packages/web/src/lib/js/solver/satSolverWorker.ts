@@ -1,43 +1,44 @@
-import type { CancellationToken } from "@sudoku-studio/solver-sat/src";
-import type { Geometry, IdxMap, schema } from "@sudoku-studio/schema";
-import * as Comlink from "comlink";
-import { cantAttempt, solve, solveTrueCandidates } from "@sudoku-studio/solver-sat/src";
-import { boardRepr } from "@sudoku-studio/board-utils/src";
+import type { CancellationToken } from '@sudoku-studio/solver-sat/src';
+import type { Geometry, IdxMap, schema } from '@sudoku-studio/schema';
+import * as Comlink from 'comlink';
+import { cantAttempt, solve, solveTrueCandidates } from '@sudoku-studio/solver-sat/src';
+import { boardRepr } from '@sudoku-studio/board-utils/src';
 
 const CANCELLATION_TABLE: Record<string, CancellationToken> = {};
 
-function solveAsync(board: schema.Board, maxSolutions: number,
-    onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void): string
-{
+function solveAsync(
+    board: schema.Board,
+    maxSolutions: number,
+    onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void,
+): string {
     const taskId = boardRepr.makeUid();
     const token: CancellationToken = {};
     CANCELLATION_TABLE[taskId] = token;
 
     console.log(`[${taskId}] Starting.`);
 
-    solve(board, maxSolutions, onSolutionFoundOrComplete, token)
-        .finally(() => {
-            delete CANCELLATION_TABLE[taskId];
-            console.log(`[${taskId}] Finished.`);
-        });
+    solve(board, maxSolutions, onSolutionFoundOrComplete, token).finally(() => {
+        delete CANCELLATION_TABLE[taskId];
+        console.log(`[${taskId}] Finished.`);
+    });
 
     return taskId;
 }
 
-function solveTrueCandidatesAsync(board: schema.Board,
-    onComplete: (candidates: null | IdxMap<Geometry.CELL, Map<number, number>>) => void): string
-{
+function solveTrueCandidatesAsync(
+    board: schema.Board,
+    onComplete: (candidates: null | IdxMap<Geometry.CELL, Map<number, number>>) => void,
+): string {
     const taskId = boardRepr.makeUid();
     const token: CancellationToken = {};
     CANCELLATION_TABLE[taskId] = token;
 
     console.log(`[${taskId}] Starting.`);
 
-    solveTrueCandidates(board, onComplete, token)
-        .finally(() => {
-            delete CANCELLATION_TABLE[taskId];
-            console.log(`[${taskId}] Finished.`);
-        });
+    solveTrueCandidates(board, onComplete, token).finally(() => {
+        delete CANCELLATION_TABLE[taskId];
+        console.log(`[${taskId}] Finished.`);
+    });
 
     return taskId;
 }
@@ -52,12 +53,7 @@ function cancel(taskId: string): boolean {
     return false;
 }
 
-const DEFAULT = {
-    cantAttempt,
-    solveAsync,
-    solveTrueCandidatesAsync,
-    cancel,
-} as const;
+const DEFAULT = { cantAttempt, solveAsync, solveTrueCandidatesAsync, cancel } as const;
 
 export default DEFAULT;
 

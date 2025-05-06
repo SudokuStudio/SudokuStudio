@@ -1,8 +1,9 @@
 <script lang="ts" context="module">
     let counter = 0;
 </script>
+
 <script lang="ts">
-    import { pushHistory } from "../../../js/history";
+    import { pushHistory } from '$lib/js/history';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
     export let name: string;
