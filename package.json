@@ -1,6 +1,7 @@
 {
     "name": "sudoku-studio",
     "version": "0.0.0",
+    "license": "GPL-3.0",
     "homepage": "https://github.com/SudokuStudio/Sudoku#readme",
     "repository": {
         "type": "git",
@@ -14,6 +15,8 @@
         "echoes <DancingGrumpyCat@users.noreply.github.com>",
         "Mingwei Samuel <mingwei.samuel@gmail.com>"
     ],
+    "keywords": [],
+    "packageManager": "pnpm@10.10.0",
     "scripts": {
         "clean": "pnpm -r --parallel run clean && rm -rf node_modules",
         "build:all": "pnpm -r --parallel --aggregate-output --reporter=append-only run build",
@@ -24,10 +27,6 @@
         "format": "prettier --write .",
         "lint": "prettier --check"
     },
-    "keywords": [],
-    "author": "",
-    "license": "GPL-3.0",
-    "packageManager": "pnpm@10.10.0",
     "devDependencies": {
         "prettier": "^3.5.3",
         "prettier-plugin-svelte": "^3.3.3",
