@@ -1,25 +1,26 @@
-import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
-import type { Diff, StateRef } from "@sudoku-studio/state-manager/src";
-import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils/src";
-import { pushHistory } from "../history";
-import { AdjacentCellPointerHandler } from "../input/adjacentCellPointerHandler";
-import type { CellDragTapEvent } from "../input/adjacentCellPointerHandler";
-import type { InputHandler } from "../input/inputHandler";
-import { userCursorIsShownState, userSelectState } from "../user";
-import type { ElementInfo } from "./element";
+import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
+import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
+import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
+import { pushHistory } from '../history';
+import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
+import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
+import type { InputHandler } from '../input/inputHandler';
+import { userCursorIsShownState, userSelectState } from '../user';
+import type { ElementInfo } from './element';
 
 export const arrowInfo: ElementInfo = {
     getInputHandler: getArrowInputHandler,
     order: 90,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Arrow',
-        icon: 'arrow',
-    },
-    getWarnings(value: schema.ArrowElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
-        outer:
-        for (const { bulb, body } of Object.values(value || {})) {
+    menu: { type: 'select', name: 'Arrow', icon: 'arrow' },
+    getWarnings(
+        value: schema.ArrowElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
+        outer: for (const { bulb, body } of Object.values(value || {})) {
             const bulbArrReversed = arrayObj2array(bulb);
             bulbArrReversed.reverse();
 
@@ -35,29 +36,28 @@ export const arrowInfo: ElementInfo = {
                 power *= 10;
             }
 
-            const [ _bodyStart, ...bodyArrRest ] = arrayObj2array(body);
+            const [_bodyStart, ...bodyArrRest] = arrayObj2array(body);
             let actualSum = 0;
             let allFilled = true;
             for (const bodyIdx of bodyArrRest) {
                 const digit = digits[bodyIdx];
                 if (null == digit) {
                     allFilled = false;
-                }
-                else {
+                } else {
                     actualSum += digit;
                 }
             }
 
             if (targetSum < actualSum || (allFilled && targetSum !== actualSum)) {
-                bulbArrReversed.forEach(idx => warnings[idx] = true);
-                bodyArrRest.forEach(idx => warnings[idx] = true);
+                bulbArrReversed.forEach((idx) => (warnings[idx] = true));
+                bodyArrRest.forEach((idx) => (warnings[idx] = true));
             }
         }
     },
     meta: {
         description: 'Digits along arrows must sum to the digit in the circle; digits may repeat.',
-        tags: [ 'line', 'sum' ],
-        category: [ 'local', 'line' ],
+        tags: ['line', 'sum'],
+        category: ['local', 'line'],
     },
 };
 
@@ -73,16 +73,16 @@ function reorderArrowBulb(cells: Idx<Geometry.CELL>[], grid: Grid): void {
 
     const addedRowCells: Idx<Geometry.CELL>[] = [];
     for (const idx of cells) {
-        const [ x, y ] = cellIdx2cellCoord(idx, grid);
+        const [x, y] = cellIdx2cellCoord(idx, grid);
         if (y === prevY) {
             // If we are in the same row as the previous cell, add all between cells (if any).
             for (let betweenX = prevX + 1; betweenX < x; betweenX++) {
-                addedRowCells.push(cellCoord2CellIdx([ betweenX, y ], grid));
+                addedRowCells.push(cellCoord2CellIdx([betweenX, y], grid));
             }
         }
         prevX = x;
         prevY = y;
-    };
+    }
 
     // Add added row cells and resort.
     cells.push(...addedRowCells);
@@ -90,7 +90,6 @@ function reorderArrowBulb(cells: Idx<Geometry.CELL>[], grid: Grid): void {
 }
 
 export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
-
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
     enum Mode {
@@ -106,7 +105,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
 
     function handleDragStart(idx: Idx<Geometry.CELL>): void {
         const existingArrows = stateRef.get<schema.ArrowElement['value']>() || {};
-        for (const [ arrowId, { bulb, body } ] of Object.entries(existingArrows)) {
+        for (const [arrowId, { bulb, body }] of Object.entries(existingArrows)) {
             const bulbArr = arrayObj2array(bulb || {});
             if (bulbArr.includes(idx)) {
                 // Adding body to existing arrow.
@@ -115,7 +114,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
                 arrowRef = bodyEmpty ? stateRef.ref(arrowId) : stateRef.ref(boardRepr.makeUid());
                 mode = Mode.BODY;
                 bulbCells = bulbArr;
-                bodyCells = [ idx ];
+                bodyCells = [idx];
 
                 arrowRef.ref(Mode.BULB).replace(bulbArr);
                 return;
@@ -124,7 +123,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         // Making bulb.
         arrowRef = stateRef.ref(boardRepr.makeUid());
         mode = Mode.BULB;
-        bulbCells = [ idx ];
+        bulbCells = [idx];
         bodyCells = [];
     }
 
@@ -132,30 +131,26 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
-        if (Mode.DYNAMIC === mode)
-            handleDragStart(idx);
+        if (Mode.DYNAMIC === mode) handleDragStart(idx);
 
         if (null == arrowRef) throw 'UNREACHABLE';
 
-        const lineCells = (Mode.BULB === mode) ? bulbCells : bodyCells;
+        const lineCells = Mode.BULB === mode ? bulbCells : bodyCells;
         const selfHit = lineCells.lastIndexOf(idx);
         if (0 <= selfHit) {
             if (Mode.BODY === mode && 0 === selfHit && 2 < lineCells.length) {
                 // Allow crossing the start of the line in special situations.
                 lineCells.push(idx);
-            }
-            else {
+            } else {
                 lineCells.length = selfHit + 1;
             }
-        }
-        else {
+        } else {
             lineCells.push(idx);
         }
 
-        if (Mode.BULB === mode)
-            reorderArrowBulb(lineCells, grid);
+        if (Mode.BULB === mode) reorderArrowBulb(lineCells, grid);
 
-        const minLength = (Mode.BULB === mode) ? 1 : 2;
+        const minLength = Mode.BULB === mode ? 1 : 2;
         arrowRef.ref(mode).replace(minLength <= lineCells.length ? lineCells : null);
     }
 
@@ -175,15 +170,11 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
             // If 0 === bodyCells.length that means we've placed a bulb -- do not delete.
             // But if 1 === bodyCells.length then we've added empty to a bulb -- delete.
             arrowRef.replace(null);
-        }
-        else {
+        } else {
             const path = arrowRef.path().join('/');
-            const diff: Diff = {
-                redo: {},
-                undo: { [path]: null },
-            };
-            bulbCells.forEach((val, i) => diff.redo[`${path}/bulb/${i}`] = val);
-            bodyCells.forEach((val, i) => diff.redo[`${path}/body/${i}`] = val);
+            const diff: Diff = { redo: {}, undo: { [path]: null } };
+            bulbCells.forEach((val, i) => (diff.redo[`${path}/bulb/${i}`] = val));
+            bodyCells.forEach((val, i) => (diff.redo[`${path}/body/${i}`] = val));
             pushHistory(diff);
         }
         arrowRef = null;
@@ -197,7 +188,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         const idx = cellCoord2CellIdx(coord, grid);
 
         let arrowIdToDelete: null | string = null;
-        for (const [ arrowId, { bulb } ] of Object.entries(stateRef.get<schema.ArrowElement['value']>() || {})) {
+        for (const [arrowId, { bulb }] of Object.entries(stateRef.get<schema.ArrowElement['value']>() || {})) {
             if (arrayObj2array(bulb || {}).includes(idx)) {
                 arrowIdToDelete = arrowId;
                 break;
@@ -218,15 +209,11 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
             pointerHandler.mouseUp();
         },
 
-        blur(_event: FocusEvent): void {
-        },
+        blur(_event: FocusEvent): void {},
 
-        keydown(_event: KeyboardEvent): void {
-        },
-        keyup(_event: KeyboardEvent): void {
-        },
-        padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {
-        },
+        keydown(_event: KeyboardEvent): void {},
+        keyup(_event: KeyboardEvent): void {},
+        padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {},
 
         mouseDown(event: MouseEvent): void {
             pointerHandler.mouseDown(event, grid, svg);
@@ -254,4 +241,3 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         },
     } as const;
 }
-

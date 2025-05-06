@@ -1,24 +1,25 @@
 <script lang="ts">
-    import Modal from "../Modal.svelte";
-    import { boardRepr, solutionToString, gridToBoxSizeMap } from "@sudoku-studio/board-utils/src";
-    import { setupUserState } from "$lib/js/user";
-    import { createElement } from "$lib/js/elements";
-    import { boardState } from "$lib/js/board";
+    import Modal from '../Modal.svelte';
+    import { boardRepr, gridToBoxSizeMap } from '@sudoku-studio/board-utils/src';
+    import { setupUserState } from '$lib/js/user';
+    import { createElement } from '$lib/js/elements';
+    import { boardState } from '$lib/js/board';
+    import type { Update } from '@sudoku-studio/state-manager/src';
 
     export let visible: boolean;
 
     function resetGrid(dimensions: readonly [number, number]): void {
         const newBoardState = boardRepr.createNewBoard(createElement, ...dimensions);
         setupUserState(newBoardState);
-        boardState.update(newBoardState as any);
+        boardState.update(newBoardState as unknown as Update);
         visible = false;
     }
 </script>
 
-<Modal bind:visible={visible}>
+<Modal bind:visible>
     <div class="size-choices">
         <ol class="nolist">
-            {#each Object.entries(gridToBoxSizeMap) as [size, dimensions]}
+            {#each Object.entries(gridToBoxSizeMap) as [size, dimensions] (size)}
                 <li>
                     <button class="size-item nobutton" on:click={() => resetGrid(dimensions)}>
                         {size}x{size}
@@ -44,7 +45,8 @@
         text-align: inherit;
 
         @include vars.hoverborder();
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
             @include vars.hoverborder-hover();
         }
     }

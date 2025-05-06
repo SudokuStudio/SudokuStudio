@@ -1,15 +1,15 @@
-import { derived, readable } from "svelte/store";
-import type { StateRef } from "@sudoku-studio/state-manager/src";
-import type { ElementInfo } from "./element/element";
-import { boardGridRef, boardState, boardSvg, warningState } from "./board";
-import type { Geometry, Grid, IdxBitset, schema } from "@sudoku-studio/schema";
-import { createElement, ELEMENT_HANDLERS } from "./elements";
-import { userPrevToolState, userState, userToolState } from "./user";
-import type { InputHandler } from "./input/inputHandler";
-import { pushHistory } from "./history";
-import { boardRepr, buildRegionMap, getDigits } from "@sudoku-studio/board-utils/src";
+import { derived, readable } from 'svelte/store';
+import type { StateRef } from '@sudoku-studio/state-manager/src';
+import type { ElementInfo } from './element/element';
+import { boardGridRef, boardState, boardSvg, warningState } from './board';
+import type { Geometry, Grid, IdxBitset, schema } from '@sudoku-studio/schema';
+import { createElement, ELEMENT_HANDLERS } from './elements';
+import { userPrevToolState, userState, userToolState } from './user';
+import type { InputHandler } from './input/inputHandler';
+import { pushHistory } from './history';
+import { boardRepr, buildRegionMap, getDigits } from '@sudoku-studio/board-utils/src';
 
-export type ElementHandlerItem = { id: string, elementRef: StateRef, info: ElementInfo, type: schema.ElementType };
+export type ElementHandlerItem = { id: string; elementRef: StateRef; info: ElementInfo; type: schema.ElementType };
 export type ElementHandlerList = ElementHandlerItem[];
 
 export function addElement<E extends schema.Element>(type: E['type'], value?: E['value']): string {
@@ -20,8 +20,7 @@ export function addElement<E extends schema.Element>(type: E['type'], value?: E[
     if ('checkbox' === handler.menu?.type && null == elementValue) {
         if (!Array.isArray(handler.menu.checkbox)) {
             elementValue = true;
-        }
-        else {
+        } else {
             const dict: Record<string, boolean> = {};
             for (const { refPath } of handler.menu.checkbox) {
                 dict[refPath] = true;
@@ -34,9 +33,7 @@ export function addElement<E extends schema.Element>(type: E['type'], value?: E[
     if (null == handler) throw Error(`Cannot add unimplmeneted element type: ${type}.`);
 
     const id = boardRepr.makeUid();
-    const diff = boardState.update({
-        [`elements/${id}`]: element,
-    });
+    const diff = boardState.update({ [`elements/${id}`]: element });
     pushHistory(diff);
 
     if ('select' === handler.menu?.type) {
@@ -48,9 +45,7 @@ export function addElement<E extends schema.Element>(type: E['type'], value?: E[
 }
 
 export function removeElement(id: string): void {
-    const diff = boardState.update({
-        [`elements/${id}`]: null,
-    });
+    const diff = boardState.update({ [`elements/${id}`]: null });
     pushHistory(diff);
 
     // If deleting the selected tool, switch to filled.
@@ -61,10 +56,10 @@ export function removeElement(id: string): void {
     }
 }
 
-export const elementHandlers = readable<ElementHandlerList>([], set => {
+export const elementHandlers = readable<ElementHandlerList>([], (set) => {
     const list: ElementHandlerList = [];
 
-    boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
+    boardState.ref('elements/*').watch<schema.Element>(([_elements, elementId], oldVal, newVal) => {
         const type = oldVal?.type || newVal?.type;
 
         // Element has been deleted via undo/redo
@@ -90,30 +85,21 @@ export const elementHandlers = readable<ElementHandlerList>([], set => {
         if (null == newVal || null == newVal.type) {
             // Deleted.
             list.splice(i, 1);
-        }
-        else {
+        } else {
             // Add or change.
             if (null == oldVal) {
-                const elementRef = boardState.ref(_elements, elementId)
+                const elementRef = boardState.ref(_elements, elementId);
 
                 // Add.
-                list.push({
-                    id: elementId,
-                    elementRef,
-                    info: elementInfo,
-                    type,
-                });
-            }
-            else {
+                list.push({ id: elementId, elementRef, info: elementInfo, type });
+            } else {
                 // Change.
                 if (oldVal.type !== newVal.type)
                     console.error(`Cannot change type of constraint! ${oldVal.type} -> ${newVal.type}`);
                 // Do nothing.
             }
         }
-        list.sort((a, b) =>
-            (+(b.info.permanent || 0) - +(a.info.permanent || 0))
-            || a.info.order - b.info.order);
+        list.sort((a, b) => +(b.info.permanent || 0) - +(a.info.permanent || 0) || a.info.order - b.info.order);
 
         set(list);
     }, true);
@@ -132,12 +118,12 @@ boardState.ref('elements').watch<schema.Board['elements']>((_path, _oldElements,
 
         handler.getWarnings(value, grid, gridRegionMap, digits, warnings);
     }
-    warningState.update({ 'cells': warnings });
+    warningState.update({ cells: warnings });
 }, true);
 
-export const currentElement = readable<null | ElementHandlerItem>(null, set => {
+export const currentElement = readable<null | ElementHandlerItem>(null, (set) => {
     let list: ElementHandlerList = [];
-    elementHandlers.subscribe(value => list = value);
+    elementHandlers.subscribe((value) => (list = value));
 
     userToolState.watch((_path, _oldVal, newVal) => {
         const toolId = newVal;
@@ -147,15 +133,16 @@ export const currentElement = readable<null | ElementHandlerItem>(null, set => {
     }, true);
 });
 
-export const currentInputHandler = derived<[ typeof currentElement, typeof boardSvg, typeof boardGridRef ], null | InputHandler>(
-    [ currentElement, boardSvg, boardGridRef ],
-    ([ $currentElement, $boardSvg, $boardGridRef ]) => {
-        if (null == $currentElement) return null;
-        const { info, elementRef } = $currentElement;
-        const valueRef = elementRef.ref('value');
-        if (null == info || null == info.getInputHandler) return null;
+export const currentInputHandler = derived<
+    [typeof currentElement, typeof boardSvg, typeof boardGridRef],
+    null | InputHandler
+>([currentElement, boardSvg, boardGridRef], ([$currentElement, $boardSvg, $boardGridRef]) => {
+    if (null == $currentElement) return null;
+    const { info, elementRef } = $currentElement;
+    const valueRef = elementRef.ref('value');
+    if (null == info || null == info.getInputHandler) return null;
 
-        const inputHandler = info.getInputHandler(valueRef, $boardGridRef, $boardSvg);
-        inputHandler.load();
-        return inputHandler;
-    });
+    const inputHandler = info.getInputHandler(valueRef, $boardGridRef, $boardSvg);
+    inputHandler.load();
+    return inputHandler;
+});

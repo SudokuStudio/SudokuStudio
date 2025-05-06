@@ -1,12 +1,12 @@
 <script lang="ts">
-    import debounce from "debounce";
-    import type { schema, Geometry, IdxMap } from "@sudoku-studio/schema";
-    import { boardState, getTypeForElementKey, setCellValue } from "../../../js/board";
-    import type { Diff } from "@sudoku-studio/state-manager/src";
-    import { MARK_TYPES } from "../../../js/user";
-    import { pushHistoryList } from "../../../js/history";
-    import { SatSolver } from "../../../js/solver/satSolver";
-    import { solutionToString } from "@sudoku-studio/board-utils/src";
+    import debounce from 'debounce';
+    import type { schema, Geometry, IdxMap } from '@sudoku-studio/schema';
+    import { boardState, getTypeForElementKey, setCellValue } from '../../../js/board';
+    import type { Diff } from '@sudoku-studio/state-manager/src';
+    import { MARK_TYPES } from '../../../js/user';
+    import { pushHistoryList } from '../../../js/history';
+    import { SatSolver } from '../../../js/solver/satSolver';
+    import { solutionToString } from '@sudoku-studio/board-utils/src';
 
     const MAX_SOLUTIONS = 10; // TODO.
 
@@ -28,8 +28,7 @@
                 running = false;
                 cancelFn = null;
             }
-        }
-        else {
+        } else {
             run();
         }
     }
@@ -45,30 +44,33 @@
         }
     }
 
-    boardState.watch(debounce(async (path, _oldData, _newData) => {
-        const elementType = getTypeForElementKey(path[1]);
-        if (MARK_TYPES.some(type => elementType === type)) {
-            // Do not run solver for changes to pencil marks
-            return;
-        }
+    boardState.watch(
+        debounce(async (path, _oldData, _newData) => {
+            const elementType = getTypeForElementKey(path[1]);
+            if (MARK_TYPES.some((type) => elementType === type)) {
+                // Do not run solver for changes to pencil marks
+                return;
+            }
 
-        if (autoRun) {
-            const success = await cancelRun();
-            if (success) {
-                await run();
+            if (autoRun) {
+                const success = await cancelRun();
+                if (success) {
+                    await run();
+                }
             }
-        }
-        if (trueCandidates) {
-            const success = await cancelRunTrueCandidates();
-            if (success) {
-                await runTrueCandidates();
+            if (trueCandidates) {
+                const success = await cancelRunTrueCandidates();
+                if (success) {
+                    await runTrueCandidates();
+                }
             }
-        }
-    }, 500), true, 'elements/*');
+        }, 500),
+        true,
+        'elements/*',
+    );
 
     async function cancelRun(): Promise<boolean> {
-        if (!running || null == cancelFn)
-            return true;
+        if (!running || null == cancelFn) return true;
 
         const success = await cancelFn();
         if (success) {
@@ -94,7 +96,7 @@
         solutions = 0;
         message = 'Solutions: ?';
 
-        cancelFn = SatSolver.solve(board, MAX_SOLUTIONS, solution => {
+        cancelFn = SatSolver.solve(board, MAX_SOLUTIONS, (solution) => {
             if (null == solutions) {
                 console.warn('solutions null');
                 return;
@@ -105,8 +107,7 @@
                 message = `Solutions: ${solutions < MAX_SOLUTIONS ? '' : '≥'}${solutions} (${timeStr})`;
                 running = false;
                 cancelFn = null;
-            }
-            else {
+            } else {
                 solutions++;
                 message = `Solutions: ≥${solutions} (${timeStr})`;
                 console.log(`Solution ${solutions}:\n${solutionToString(solution, board.grid)}`);
@@ -115,8 +116,7 @@
     }
 
     async function cancelRunTrueCandidates(): Promise<boolean> {
-        if (!runningTC || null == cancelTCFn)
-            return true;
+        if (!runningTC || null == cancelTCFn) return true;
 
         const success = await cancelTCFn();
         if (success) {
@@ -139,7 +139,7 @@
 
         runningTC = true;
 
-        cancelTCFn = SatSolver.solveTrueCandidates(board, candidates => {
+        cancelTCFn = SatSolver.solveTrueCandidates(board, (candidates) => {
             if (null == trueCandidatesResult) {
                 console.warn('candidates null');
                 return;
@@ -160,7 +160,7 @@
                         diffList.push(setCellValue('center', cellIndexNum, null));
                     } else {
                         const updatedCenterMarks = [...possibleDigits.keys()].reduce(
-                            (accumulator: {[key: number]: number}, digit) => {
+                            (accumulator: { [key: number]: number }, digit) => {
                                 const count = possibleDigits.get(digit) || 0;
                                 if (count > 0) {
                                     accumulator[digit] = count;
@@ -187,7 +187,13 @@
         {running || runningTC ? 'Running...' : 'Idle'}
     </div>
     <div class="solver-row">
-        <input id="sat-solver-truecandidates" type="checkbox" name="truecandidates" on:change={trueCandidatesToggled} bind:checked={trueCandidates} />
+        <input
+            id="sat-solver-truecandidates"
+            type="checkbox"
+            name="truecandidates"
+            on:change={trueCandidatesToggled}
+            bind:checked={trueCandidates}
+        />
         <label for="sat-solver-truecandidates">True Candidates</label>
     </div>
     <div class="solver-row">

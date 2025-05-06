@@ -1,7 +1,25 @@
 import { load as loadCryptoMiniSat } from '@sudoku-studio/cryptominisat';
 import type { Module } from '@sudoku-studio/cryptominisat';
 import { load as loadPbLib } from '@sudoku-studio/pblib';
-import { arrayObj2array, buildRegionMap, cellCoord2CellIdx, cellIdx2cellCoord, cornerCoord2cellCoords, cornerIdx2cornerCoord, diagonalIdx2diagonalCellCoords, edgeIdx2cellIdxes, getBorderCellPairs, getMajorDiagonal, idxMapToKeysArray, kingMoves, knightMoves, getOrthogonallyAdjacentPairs, product, seriesIdx2CellCoords, solutionToString } from '@sudoku-studio/board-utils/src';
+import {
+    arrayObj2array,
+    buildRegionMap,
+    cellCoord2CellIdx,
+    cellIdx2cellCoord,
+    cornerCoord2cellCoords,
+    cornerIdx2cornerCoord,
+    diagonalIdx2diagonalCellCoords,
+    edgeIdx2cellIdxes,
+    getBorderCellPairs,
+    getMajorDiagonal,
+    idxMapToKeysArray,
+    kingMoves,
+    knightMoves,
+    getOrthogonallyAdjacentPairs,
+    product,
+    seriesIdx2CellCoords,
+    solutionToString,
+} from '@sudoku-studio/board-utils/src';
 import type { ArrayObj, Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 
 // TODO(mingwei): this is duplicated from cryptominisat due to `enum` being weird.
@@ -10,18 +28,18 @@ const LBOOL_FALSE = 1;
 const LBOOL_UNDEF = 2;
 
 type Context = {
-    clauses: number[][],
-    size: number,
-    grid: Grid,
-    regionMap: IdxMap<Geometry.CELL, number>,
-    getLiteral: (y: number, x: number, v: number) => number,
-    pbLib: ReturnType<typeof loadPbLib> extends Promise<infer T> ? T : never,
+    clauses: number[][];
+    size: number;
+    grid: Grid;
+    regionMap: IdxMap<Geometry.CELL, number>;
+    getLiteral: (y: number, x: number, v: number) => number;
+    pbLib: ReturnType<typeof loadPbLib> extends Promise<infer T> ? T : never;
 };
 
 const cryptoMiniSatPromise = loadCryptoMiniSat();
 const pbLibPromise = loadPbLib();
 
-const asyncYield = () => new Promise<void>(resolve => setTimeout(resolve, 0));
+const asyncYield = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 /**
  * CryptoMiniSat uses unsigned u32s with the lowest bit representing negation.
@@ -30,12 +48,10 @@ const asyncYield = () => new Promise<void>(resolve => setTimeout(resolve, 0));
  * @returns CMS literal.
  */
 function literalToCms(literal: number): number {
-    return 2 * (Math.abs(literal) - 1) + (+(literal < 0));
+    return 2 * (Math.abs(literal) - 1) + +(literal < 0);
 }
 
-export type CancellationToken = {
-    cancelled?: true
-};
+export type CancellationToken = { cancelled?: true };
 
 export function cantAttempt(board: schema.Board): null | string {
     if (board.grid.width !== board.grid.height) {
@@ -81,8 +97,7 @@ async function solveHelper(
                 status = sat.cmsat_solve(satSolverPtr);
             } while (LBOOL_UNDEF === status);
 
-            if (LBOOL_FALSE === status)
-                break;
+            if (LBOOL_FALSE === status) break;
 
             // SOLVED!
             const model = sat.cmsat_get_model(satSolverPtr);
@@ -107,15 +122,17 @@ async function solveHelper(
         // Complete.
         onComplete();
         return true;
-    }
-    finally {
+    } finally {
         sat.cmsat_free(satSolverPtr);
     }
 }
 
-export async function solve(board: schema.Board, maxSolutions: number,
+export async function solve(
+    board: schema.Board,
+    maxSolutions: number,
     onSolutionFoundOrComplete: (solution: null | IdxMap<Geometry.CELL, number>) => void,
-    cancellationToken: CancellationToken = {}): Promise<boolean> {
+    cancellationToken: CancellationToken = {},
+): Promise<boolean> {
     const pbLib = await pbLibPromise;
 
     const size = board.grid.width;
@@ -126,7 +143,7 @@ export async function solve(board: schema.Board, maxSolutions: number,
         regionMap: buildRegionMap(board.elements),
         getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
         pbLib,
-    }
+    };
 
     const numBaseVars = Math.pow(context.size, 3);
     let numLits = numBaseVars;
@@ -134,8 +151,9 @@ export async function solve(board: schema.Board, maxSolutions: number,
     for (const element of Object.values(board.elements)) {
         if (cancellationToken.cancelled) return false;
 
-        const handler: null | ((numLits: number, element: schema.Element, context: Context) => number) =
-            ELEMENT_HANDLERS[element.type as keyof typeof ELEMENT_HANDLERS] as any;
+        const handler: undefined | null | ((numLits: number, element: schema.Element, context: Context) => number) =
+            ELEMENT_HANDLERS[element.type as keyof typeof ELEMENT_HANDLERS] as typeof handler;
+
         if (undefined === handler) console.warn(`Ignoring constraint: ${element.type}`);
         if (null != handler) {
             numLits = handler(numLits, element, context);
@@ -179,9 +197,11 @@ function updateValidCandidatesForSolutions(
     }
 }
 
-export async function solveTrueCandidates(board: schema.Board,
+export async function solveTrueCandidates(
+    board: schema.Board,
     onComplete: (candidates: null | IdxMap<Geometry.CELL, Map<number, number>>) => void,
-    cancellationToken: CancellationToken = {}): Promise<boolean> {
+    cancellationToken: CancellationToken = {},
+): Promise<boolean> {
     const pbLib = await pbLibPromise;
 
     const size = board.grid.width;
@@ -192,7 +212,7 @@ export async function solveTrueCandidates(board: schema.Board,
         regionMap: buildRegionMap(board.elements),
         getLiteral: (y, x, v) => 1 + y * size * size + x * size + v,
         pbLib,
-    }
+    };
 
     const numBaseVars = Math.pow(context.size, 3);
     let numLits = numBaseVars;
@@ -209,7 +229,7 @@ export async function solveTrueCandidates(board: schema.Board,
         }
 
         const handler: null | ((numLits: number, element: schema.Element, context: Context) => number) =
-            ELEMENT_HANDLERS[element.type as keyof typeof ELEMENT_HANDLERS] as any;
+            ELEMENT_HANDLERS[element.type as keyof typeof ELEMENT_HANDLERS] as typeof handler;
         if (undefined === handler) console.warn(`Ignoring constraint: ${element.type}`);
         if (null != handler) {
             numLits = handler(numLits, element, context);
@@ -244,7 +264,7 @@ export async function solveTrueCandidates(board: schema.Board,
         [],
         cancellationToken,
         (solution: IdxMap<Geometry.CELL, number>) => initialSolutions.push(solution),
-        () => { },
+        () => {},
     );
 
     if (!returnValue) {
@@ -300,7 +320,7 @@ export async function solveTrueCandidates(board: schema.Board,
                 additionalClauses,
                 cancellationToken,
                 (solution: IdxMap<Geometry.CELL, number>) => solutions.push(solution),
-                () => { },
+                () => {},
             );
 
             if (!returnValue) {
@@ -345,8 +365,7 @@ export const ELEMENT_HANDLERS = {
         if (!regions) throw Error(`Invalid region with no cells.`);
 
         for (const bx of arrayObj2array(regions)) {
-            const coords = idxMapToKeysArray<Geometry.CELL>(bx)
-                .map(idx => cellIdx2cellCoord(idx, context.grid))
+            const coords = idxMapToKeysArray<Geometry.CELL>(bx).map((idx) => cellIdx2cellCoord(idx, context.grid));
             const ones = Array(coords.length).fill(1);
             for (let val = 0; val < context.size; val++) {
                 const literals = coords.map(([x, y]) => context.getLiteral(y, x, val));
@@ -363,7 +382,9 @@ export const ELEMENT_HANDLERS = {
             for (const [val, pos] of product(context.size, context.size)) {
                 const box: number[] = [];
                 for (const [bx] of product(context.size)) {
-                    box.push(context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val));
+                    box.push(
+                        context.getLiteral(Math.floor(bx / 3) * 3 + Math.floor(pos / 3), (bx % 3) * 3 + (pos % 3), val),
+                    );
                 }
                 numLits = context.pbLib.encodeBoth(ones, box, 1, 1, context.clauses, 1 + numLits);
             }
@@ -389,24 +410,14 @@ export const ELEMENT_HANDLERS = {
 
     knight(numLits: number, element: schema.BooleanElement, context: Context): number {
         if (element.value) {
-            numLits = encodeGlobalCellPairs(
-                numLits,
-                context,
-                knightMoves,
-                (v0, v1) => v0 === v1,
-            );
+            numLits = encodeGlobalCellPairs(numLits, context, knightMoves, (v0, v1) => v0 === v1);
         }
         return numLits;
     },
 
     king(numLits: number, element: schema.BooleanElement, context: Context): number {
         if (element.value) {
-            numLits = encodeGlobalCellPairs(
-                numLits,
-                context,
-                kingMoves,
-                (v0, v1) => v0 === v1,
-            );
+            numLits = encodeGlobalCellPairs(numLits, context, kingMoves, (v0, v1) => v0 === v1);
         }
         return numLits;
     },
@@ -427,24 +438,14 @@ export const ELEMENT_HANDLERS = {
 
     antiX(numLits: number, element: schema.BooleanElement, context: Context): number {
         if (element.value) {
-            numLits = encodeGlobalCellPairs(
-                numLits,
-                context,
-                getOrthogonallyAdjacentPairs,
-                (v0, v1) => (v0 + v1) === 10,
-            );
+            numLits = encodeGlobalCellPairs(numLits, context, getOrthogonallyAdjacentPairs, (v0, v1) => v0 + v1 === 10);
         }
         return numLits;
     },
 
     antiV(numLits: number, element: schema.BooleanElement, context: Context): number {
         if (element.value) {
-            numLits = encodeGlobalCellPairs(
-                numLits,
-                context,
-                getOrthogonallyAdjacentPairs,
-                (v0, v1) => (v0 + v1) === 5,
-            );
+            numLits = encodeGlobalCellPairs(numLits, context, getOrthogonallyAdjacentPairs, (v0, v1) => v0 + v1 === 5);
         }
         return numLits;
     },
@@ -464,13 +465,13 @@ export const ELEMENT_HANDLERS = {
     },
 
     even(numLits: number, element: schema.RegionElement, context: Context): number {
-        const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
-        return encodeExcludeValues(numLits, cellCoords, v => 1 === (v + 1) % 2, context);
+        const cellCoords = idxMapToKeysArray(element.value || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
+        return encodeExcludeValues(numLits, cellCoords, (v) => 1 === (v + 1) % 2, context);
     },
 
     odd(numLits: number, element: schema.RegionElement, context: Context): number {
-        const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
-        return encodeExcludeValues(numLits, cellCoords, v => 0 === (v + 1) % 2, context);
+        const cellCoords = idxMapToKeysArray(element.value || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
+        return encodeExcludeValues(numLits, cellCoords, (v) => 0 === (v + 1) % 2, context);
     },
 
     min(numLits: number, element: schema.RegionElement, context: Context): number {
@@ -496,7 +497,7 @@ export const ELEMENT_HANDLERS = {
 
     killer(numLits: number, element: schema.KillerElement, context: Context): number {
         for (const { sum, cells } of Object.values(element.value || {})) {
-            const cellCoords = idxMapToKeysArray(cells || {}).map(idx => cellIdx2cellCoord(+idx, context.grid));
+            const cellCoords = idxMapToKeysArray(cells || {}).map((idx) => cellIdx2cellCoord(+idx, context.grid));
 
             // Cage no repeats.
             numLits = encodeNoRepeats(numLits, cellCoords, context);
@@ -523,10 +524,12 @@ export const ELEMENT_HANDLERS = {
         for (const { a, b } of Object.values(element.value || {})) {
             if (null == a || null == b) continue;
 
-            const cellCoordsA = arrayObj2array(a).map(idx => cellIdx2cellCoord(idx, context.grid));
-            const cellCoordsB = arrayObj2array(b).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const cellCoordsA = arrayObj2array(a).map((idx) => cellIdx2cellCoord(idx, context.grid));
+            const cellCoordsB = arrayObj2array(b).map((idx) => cellIdx2cellCoord(idx, context.grid));
             if (cellCoordsA.length !== cellCoordsB.length) {
-                console.error(`Clone element has two different lengths (${cellCoordsA.length} !== ${cellCoordsB.length})`);
+                console.error(
+                    `Clone element has two different lengths (${cellCoordsA.length} !== ${cellCoordsB.length})`,
+                );
                 continue;
             }
 
@@ -537,7 +540,7 @@ export const ELEMENT_HANDLERS = {
 
     thermo(numLits: number, element: schema.LineElement, context: Context): number {
         for (const thermoCells of Object.values(element.value || {})) {
-            const cellCoords = arrayObj2array(thermoCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const cellCoords = arrayObj2array(thermoCells || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
             numLits = encodeIncreasing(numLits, cellCoords, true, context);
         }
         return numLits;
@@ -545,51 +548,42 @@ export const ELEMENT_HANDLERS = {
 
     slowThermo(numLits: number, element: schema.LineElement, context: Context): number {
         for (const slowThermoCells of Object.values(element.value || {})) {
-            const cellCoords = arrayObj2array(slowThermoCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const cellCoords = arrayObj2array(slowThermoCells || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
             numLits = encodeIncreasing(numLits, cellCoords, false, context);
         }
         return numLits;
     },
 
     whisper(numLits: number, element: schema.LineElement, context: Context): number {
-        return whisperConstraint(
-            (gridWidth) => (gridWidth + 1) >> 1,
-            numLits,
-            element,
-            context,
-        );
+        return whisperConstraint((gridWidth) => (gridWidth + 1) >> 1, numLits, element, context);
     },
 
     dutchWhisper(numLits: number, element: schema.LineElement, context: Context): number {
-        return whisperConstraint(
-            (gridWidth) => ((gridWidth + 1) >> 1) - 1,
-            numLits,
-            element,
-            context,
-        );
+        return whisperConstraint((gridWidth) => ((gridWidth + 1) >> 1) - 1, numLits, element, context);
     },
 
     renban(numLits: number, element: schema.LineElement, context: Context): number {
         for (const renbanCells of Object.values(element.value || {})) {
-            const cellCoords = arrayObj2array(renbanCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const cellCoords = arrayObj2array(renbanCells || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
             if (0 >= cellCoords.length) continue;
 
             // 1: Ensure that no cell is included multiple times.
-            const uniqueCoords = cellCoords.filter(
-                (n, i, arr) => {
-                    return arr.findIndex(
-                        t => {
-                            if (n === t)
-                                return true;
-                            return n[0] === t[0] && n[1] === t[1];
-                        }) === i;
-                })
+            const uniqueCoords = cellCoords.filter((n, i, arr) => {
+                return (
+                    arr.findIndex((t) => {
+                        if (n === t) return true;
+                        return n[0] === t[0] && n[1] === t[1];
+                    }) === i
+                );
+            });
 
             // 2: Encode no repeats.
             numLits = encodeNoRepeats(numLits, uniqueCoords, context);
 
             // 3: CREATE LITERALS to mark if V is in the region.
-            const isVInRegion = Array<void>(context.size).fill().map(() => ++numLits);
+            const isVInRegion = Array<void>(context.size)
+                .fill()
+                .map(() => ++numLits);
             for (const [v] of product(context.size)) {
                 // Forward: if isVInRegion then some cell must contain v.
                 const forwardClause = [-isVInRegion[v]];
@@ -620,7 +614,7 @@ export const ELEMENT_HANDLERS = {
 
     palindrome(numLits: number, element: schema.LineElement, context: Context): number {
         for (const cells of Object.values(element.value || {})) {
-            const cellCoords = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const cellCoords = arrayObj2array(cells || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
 
             const cellCoordsA = cellCoords.slice(0, cellCoords.length >> 1);
             const cellCoordsB = cellCoords.slice(-cellCoordsA.length);
@@ -633,7 +627,7 @@ export const ELEMENT_HANDLERS = {
 
     between(numLits: number, element: schema.LineElement, context: Context): number {
         for (const cells of Object.values(element.value || {})) {
-            const betweenCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const betweenCells = arrayObj2array(cells || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
             if (3 > betweenCells.length) continue;
 
             const isAscendingLit = ++numLits;
@@ -646,13 +640,29 @@ export const ELEMENT_HANDLERS = {
                         // Using De Morgan's law.
                         context.clauses.push(
                             // Cannot be ASCENDING  & HEAD >= BETW
-                            [-isAscendingLit, -context.getLiteral(headY, headX, large), -context.getLiteral(betwY, betwX, small)],
+                            [
+                                -isAscendingLit,
+                                -context.getLiteral(headY, headX, large),
+                                -context.getLiteral(betwY, betwX, small),
+                            ],
                             // Cannot be ASCENDING  & BETW >= TAIL
-                            [-isAscendingLit, -context.getLiteral(betwY, betwX, large), -context.getLiteral(tailY, tailX, small)],
+                            [
+                                -isAscendingLit,
+                                -context.getLiteral(betwY, betwX, large),
+                                -context.getLiteral(tailY, tailX, small),
+                            ],
                             // Cannot be DESCENDING & HEAD <= BETW.
-                            [isAscendingLit, -context.getLiteral(headY, headX, small), -context.getLiteral(betwY, betwX, large)],
+                            [
+                                isAscendingLit,
+                                -context.getLiteral(headY, headX, small),
+                                -context.getLiteral(betwY, betwX, large),
+                            ],
                             // Cannot be DESCENDING & BETW <= TAIL.
-                            [isAscendingLit, -context.getLiteral(betwY, betwX, small), -context.getLiteral(tailY, tailX, large)],
+                            [
+                                isAscendingLit,
+                                -context.getLiteral(betwY, betwX, small),
+                                -context.getLiteral(tailY, tailX, large),
+                            ],
                         );
                     }
                 }
@@ -663,7 +673,7 @@ export const ELEMENT_HANDLERS = {
 
     doubleArrow(numLits: number, element: schema.LineElement, context: Context): number {
         for (const cells of Object.values(element.value || {})) {
-            const lineCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const lineCells = arrayObj2array(cells || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
             if (3 > lineCells.length) continue;
 
             const head = lineCells.shift()!;
@@ -695,7 +705,7 @@ export const ELEMENT_HANDLERS = {
         const delta = ((context.size + 1) >> 1) - 1; // TODO: make this configurable somehow.
 
         for (const cells of Object.values(element.value || {})) {
-            const lineCells = arrayObj2array(cells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const lineCells = arrayObj2array(cells || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
 
             const [headX, headY] = lineCells.shift()!;
             const [tailX, tailY] = lineCells.pop()!;
@@ -706,9 +716,17 @@ export const ELEMENT_HANDLERS = {
                         for (let small = 0; small <= medium; small++) {
                             context.clauses.push(
                                 // Cannot be HEAD >= LINE >= TAIL
-                                [-context.getLiteral(headY, headX, large), -context.getLiteral(lineY, lineX, medium), -context.getLiteral(tailY, tailX, small)],
+                                [
+                                    -context.getLiteral(headY, headX, large),
+                                    -context.getLiteral(lineY, lineX, medium),
+                                    -context.getLiteral(tailY, tailX, small),
+                                ],
                                 // Cannot be TAIL >= LINE >= HEAD
-                                [-context.getLiteral(tailY, tailX, large), -context.getLiteral(lineY, lineX, medium), -context.getLiteral(headY, headX, small)],
+                                [
+                                    -context.getLiteral(tailY, tailX, large),
+                                    -context.getLiteral(lineY, lineX, medium),
+                                    -context.getLiteral(headY, headX, small),
+                                ],
                             );
                         }
                     }
@@ -716,7 +734,8 @@ export const ELEMENT_HANDLERS = {
             }
 
             for (const [v0, v1] of product(context.size, context.size)) {
-                if (Math.abs(v0 - v1) < delta) { // If the difference is too small, we can't have both.
+                if (Math.abs(v0 - v1) < delta) {
+                    // If the difference is too small, we can't have both.
                     const lit0 = context.getLiteral(headY, headX, v0);
                     const lit1 = context.getLiteral(tailY, tailX, v1);
                     context.clauses.push([-lit0, -lit1]);
@@ -805,7 +824,7 @@ export const ELEMENT_HANDLERS = {
 
             // Arrow body.
             {
-                const cellCoords = bodyArrRest.map(idx => cellIdx2cellCoord(idx, context.grid));
+                const cellCoords = bodyArrRest.map((idx) => cellIdx2cellCoord(idx, context.grid));
                 writeSum(cellCoords, context, weights, lits); // Write weights into existing arrays.
             }
 
@@ -819,7 +838,9 @@ export const ELEMENT_HANDLERS = {
         for (const [edgeIdx, sum] of Object.entries(element.value || {})) {
             if ('number' !== typeof sum) continue;
 
-            const cellPair = edgeIdx2cellIdxes(+edgeIdx, context.grid).map(idx => cellIdx2cellCoord(idx, context.grid));
+            const cellPair = edgeIdx2cellIdxes(+edgeIdx, context.grid).map((idx) =>
+                cellIdx2cellCoord(idx, context.grid),
+            );
             numLits = encodeSum(numLits, sum, cellPair, context);
         }
         return numLits;
@@ -828,7 +849,7 @@ export const ELEMENT_HANDLERS = {
     difference(numLits: number, element: schema.EdgeNumberElement, context: Context): number {
         const DEFAULT_DELTA = 1;
         for (const [edgeIdx, deltaOrTrue] of Object.entries(element.value || {})) {
-            const delta = ('number' === typeof deltaOrTrue) ? deltaOrTrue : DEFAULT_DELTA;
+            const delta = 'number' === typeof deltaOrTrue ? deltaOrTrue : DEFAULT_DELTA;
 
             const [cellIdxA, cellIdxB] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
             const [xA, yA] = cellIdx2cellCoord(cellIdxA, context.grid);
@@ -857,7 +878,7 @@ export const ELEMENT_HANDLERS = {
     ratio(numLits: number, element: schema.EdgeNumberElement, context: Context): number {
         const DEFAULT_RATIO = 2;
         for (const [edgeIdx, ratioOrTrue] of Object.entries(element.value || {})) {
-            const ratio = ('number' === typeof ratioOrTrue) ? ratioOrTrue : DEFAULT_RATIO;
+            const ratio = 'number' === typeof ratioOrTrue ? ratioOrTrue : DEFAULT_RATIO;
             if (ratio <= 0) throw Error(`Ratio must be positive: ${ratio}.`);
 
             const [cellIdxA, cellIdxB] = edgeIdx2cellIdxes(+edgeIdx, context.grid);
@@ -890,7 +911,7 @@ export const ELEMENT_HANDLERS = {
     quadruple(numLits: number, element: schema.QuadrupleElement, context: Context): number {
         for (const [cornerIdx, values] of Object.entries(element.value || {})) {
             const cellCoords = cornerCoord2cellCoords(cornerIdx2cornerCoord(+cornerIdx, context.grid), context.grid);
-            const vs = arrayObj2array(values as ArrayObj<number>).map(value1 => value1 - 1);
+            const vs = arrayObj2array(values as ArrayObj<number>).map((value1) => value1 - 1);
             numLits = encodeCellsMustContain(numLits, cellCoords, vs, context);
         }
         return numLits;
@@ -937,13 +958,20 @@ export const ELEMENT_HANDLERS = {
                         // Skip 1 and 9 (max).
                         for (let v = 1; v < context.size - 1; v++) {
                             const value = 1 + v;
-                            weights.push(value)
+                            weights.push(value);
                             literals.push(context.getLiteral(y, x, v));
                         }
                     }
                     // Encode sum.
                     const sumClauses: number[][] = [];
-                    numLits = context.pbLib.encodeBoth(weights, literals, sandwichSumOrTrue, sandwichSumOrTrue, sumClauses, 1 + numLits);
+                    numLits = context.pbLib.encodeBoth(
+                        weights,
+                        literals,
+                        sandwichSumOrTrue,
+                        sandwichSumOrTrue,
+                        sumClauses,
+                        1 + numLits,
+                    );
                     // Sum only need be true if this is where the bread is.
                     makeConditional([isBreadLits[frst], isBreadLits[last]], sumClauses);
                     context.clauses.push(...sumClauses);
@@ -989,7 +1017,9 @@ export const ELEMENT_HANDLERS = {
             const cellCoords = seriesIdx2CellCoords(+seriesIdx, context.grid);
 
             // 1: CREATE LITERALS to mark if a cell is visible. Skip the first one (always visible).
-            const isVisibleLits = Array<void>(context.size - 1).fill().map(() => ++numLits);
+            const isVisibleLits = Array<void>(context.size - 1)
+                .fill()
+                .map(() => ++numLits);
             for (let i = 1; i < context.size; i++) {
                 const [x, y] = cellCoords[i];
 
@@ -1017,7 +1047,14 @@ export const ELEMENT_HANDLERS = {
 
             // 2: Number visible must add up to the clue (first cell is ignored).
             const ones = Array(isVisibleLits.length).fill(1);
-            numLits = context.pbLib.encodeBoth(ones, isVisibleLits, numVisible - 1, numVisible - 1, context.clauses, 1 + numLits);
+            numLits = context.pbLib.encodeBoth(
+                ones,
+                isVisibleLits,
+                numVisible - 1,
+                numVisible - 1,
+                context.clauses,
+                1 + numLits,
+            );
         }
         return numLits;
     },
@@ -1047,8 +1084,14 @@ function makeConditional(conditionConjunction: number[], clauses: number[][]): v
     }
 }
 
-function encodeClones(numLits: number, cellsA: Coord<Geometry.CELL>[], cellsB: Coord<Geometry.CELL>[], context: Context): number {
-    if (cellsA.length !== cellsB.length) throw Error(`Cloned cells must be of equal length (${cellsA.length} !== ${cellsB.length}).`);
+function encodeClones(
+    numLits: number,
+    cellsA: Coord<Geometry.CELL>[],
+    cellsB: Coord<Geometry.CELL>[],
+    context: Context,
+): number {
+    if (cellsA.length !== cellsB.length)
+        throw Error(`Cloned cells must be of equal length (${cellsA.length} !== ${cellsB.length}).`);
     for (let i = 0; i < cellsA.length; i++) {
         const [xA, yA] = cellsA[i];
         const [xB, yB] = cellsB[i];
@@ -1061,7 +1104,6 @@ function encodeClones(numLits: number, cellsA: Coord<Geometry.CELL>[], cellsB: C
                 // B implies A.
                 [-litB, litA],
             );
-
         }
     }
     return numLits;
@@ -1091,7 +1133,12 @@ function encodeIncreasing(numLits: number, cells: Coord<Geometry.CELL>[], strict
     return numLits; // Unchanged.
 }
 
-function encodeCellsMustContain(numLits: number, cells: Coord<Geometry.CELL>[], vs: number[], context: Context): number {
+function encodeCellsMustContain(
+    numLits: number,
+    cells: Coord<Geometry.CELL>[],
+    vs: number[],
+    context: Context,
+): number {
     const valueOccurrences = new Map<number, number>();
     for (const v of vs) {
         valueOccurrences.set(v, 1 + (valueOccurrences.get(v) || 0));
@@ -1130,7 +1177,12 @@ function encodeSum(numLits: number, sum: number, cells: Coord<Geometry.CELL>[], 
     return context.pbLib.encodeBoth(weights, lits, sum, sum, context.clauses, 1 + numLits);
 }
 
-function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: number[] = [], literals: number[] = []): [weights: number[], literals: number[]] {
+function writeSum(
+    cells: Coord<Geometry.CELL>[],
+    context: Context,
+    weights: number[] = [],
+    literals: number[] = [],
+): [weights: number[], literals: number[]] {
     for (const [x, y] of cells) {
         for (const [v] of product(context.size)) {
             const value = 1 + v;
@@ -1144,8 +1196,9 @@ function writeSum(cells: Coord<Geometry.CELL>[], context: Context, weights: numb
 
 function encodeGlobalCellPairs(
     numLits: number,
-    context: Context, cellPairsFunc: typeof knightMoves,
-    constraintFunc: (v0: number, v1: number) => boolean
+    context: Context,
+    cellPairsFunc: typeof knightMoves,
+    constraintFunc: (v0: number, v1: number) => boolean,
 ): number {
     for (const [[x0, y0], [x1, y1]] of cellPairsFunc(context.grid)) {
         for (const [v0, v1] of product(context.size, context.size)) {
@@ -1159,7 +1212,12 @@ function encodeGlobalCellPairs(
     return numLits;
 }
 
-function encodeExcludeValues(numLits: number, cells: Coord<Geometry.CELL>[], excludeValues: (v: number) => boolean, context: Context): number {
+function encodeExcludeValues(
+    numLits: number,
+    cells: Coord<Geometry.CELL>[],
+    excludeValues: (v: number) => boolean,
+    context: Context,
+): number {
     for (const [x, y] of cells) {
         for (const [v] of product(context.size)) {
             if (excludeValues(v)) {
@@ -1171,17 +1229,23 @@ function encodeExcludeValues(numLits: number, cells: Coord<Geometry.CELL>[], exc
     return numLits;
 }
 
-function whisperConstraint(deltaFunc: (gridWidth: number) => number, numLits: number, element: schema.LineElement, context: Context) {
+function whisperConstraint(
+    deltaFunc: (gridWidth: number) => number,
+    numLits: number,
+    element: schema.LineElement,
+    context: Context,
+) {
     const delta = deltaFunc(context.size); // TODO: make this configurable somehow.
 
     for (const whisperCells of Object.values(element.value || {})) {
-        const cellCoords = arrayObj2array(whisperCells || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+        const cellCoords = arrayObj2array(whisperCells || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
         for (let i = 1; i < cellCoords.length; i++) {
             const [x0, y0] = cellCoords[i - 1];
             const [x1, y1] = cellCoords[i];
 
             for (const [v0, v1] of product(context.size, context.size)) {
-                if (Math.abs(v0 - v1) < delta) { // If the difference is too small, we can't have both.
+                if (Math.abs(v0 - v1) < delta) {
+                    // If the difference is too small, we can't have both.
                     const lit0 = context.getLiteral(y0, x0, v0);
                     const lit1 = context.getLiteral(y1, x1, v1);
                     context.clauses.push([-lit0, -lit1]);
@@ -1192,16 +1256,17 @@ function whisperConstraint(deltaFunc: (gridWidth: number) => number, numLits: nu
     return numLits;
 }
 
-function generalIndexer(element: schema.RegionElement, context: Context, f: (r: number, c: number, v: number) => [number, number, number]): void {
-    const cellCoords = idxMapToKeysArray(element.value || {}).map(idx => cellIdx2cellCoord(idx, context.grid));
+function generalIndexer(
+    element: schema.RegionElement,
+    context: Context,
+    f: (r: number, c: number, v: number) => [number, number, number],
+): void {
+    const cellCoords = idxMapToKeysArray(element.value || {}).map((idx) => cellIdx2cellCoord(idx, context.grid));
     for (const [c, r] of cellCoords) {
         for (const [v] of product(context.size)) {
             const indexer = context.getLiteral(r, c, v);
             const indexee = context.getLiteral(...f(r, c, v));
-            context.clauses.push(
-                [-indexer, indexee],
-                [-indexee, indexer],
-            );
+            context.clauses.push([-indexer, indexee], [-indexee, indexer]);
         }
     }
 }

@@ -1,16 +1,14 @@
 <script lang="ts">
-    import type { Component, ComponentInternals } from "svelte";
-    import type { ElementHandlerList } from "../../js/elementStores";
-    import type { ElementInfo } from "../../js/element/element";
-    import type { schema } from "@sudoku-studio/schema";
-
-    import EditSection from "./EditSection.svelte";
-    import { elementHandlers } from "../../js/elementStores";
-    import { derived } from "svelte/store";
-    import SelectMenuComponent from "./constraint/SelectMenuComponent.svelte";
-    import CheckboxMenuComponent from "./constraint/CheckboxMenuComponent.svelte";
-    import SatSolver from "./solver/SatSolver.svelte";
-    import AddModal from "./AddModal.svelte";
+    import type { Component, ComponentInternals, ComponentProps } from 'svelte';
+    import type { ElementHandlerList } from '$lib/js/elementStores';
+    import type { ElementInfo, AbstractMenuProps } from '$lib/js/element/element';
+    import EditSection from './EditSection.svelte';
+    import { elementHandlers } from '$lib/js/elementStores';
+    import { derived } from 'svelte/store';
+    import SelectMenuComponent from './constraint/SelectMenuComponent.svelte';
+    import CheckboxMenuComponent from './constraint/CheckboxMenuComponent.svelte';
+    import SatSolver from './solver/SatSolver.svelte';
+    import AddModal from './AddModal.svelte';
 
     function isNewConstraint(key: string): boolean {
         return !$elementHandlers.some(({ type }) => key === type);
@@ -24,33 +22,35 @@
         return null != info.menu && !info.inGlobalMenu;
     }
 
-    const constraintsGlobal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
-        return $elementHandlers.filter(({ info }) => isGlobalConstraint(info));
-    });
-    const constraintsLocal = derived<typeof elementHandlers, ElementHandlerList>(elementHandlers, $elementHandlers => {
-        return $elementHandlers.filter(({ info }) => isLocalConstraint(info));
-    });
-
-    const globalConstraintFilter = (key: string, info: ElementInfo) => (
-        isNewConstraint(key) && isGlobalConstraint(info)
+    const constraintsGlobal = derived<typeof elementHandlers, ElementHandlerList>(
+        elementHandlers,
+        ($elementHandlers) => {
+            return $elementHandlers.filter(({ info }) => isGlobalConstraint(info));
+        },
     );
-    const localConstraintFilter = (key: string, info: ElementInfo) => (
-        isNewConstraint(key) && isLocalConstraint(info)
+    const constraintsLocal = derived<typeof elementHandlers, ElementHandlerList>(
+        elementHandlers,
+        ($elementHandlers) => {
+            return $elementHandlers.filter(({ info }) => isLocalConstraint(info));
+        },
     );
 
-    function componentFor(element: ElementInfo): Component | null {
+    const globalConstraintFilter = (key: string, info: ElementInfo) => isNewConstraint(key) && isGlobalConstraint(info);
+    const localConstraintFilter = (key: string, info: ElementInfo) => isNewConstraint(key) && isLocalConstraint(info);
+
+    function componentFor(element: ElementInfo): Component<AbstractMenuProps> | null {
         const menuInfo = element.menu;
         if (null == menuInfo) return null;
-        return (internals: ComponentInternals, props: any) => {
+        return (internals: ComponentInternals, props: AbstractMenuProps) => {
             if ('select' === menuInfo.type) {
                 props.info = menuInfo;
-                return SelectMenuComponent(internals, props);
+                return SelectMenuComponent(internals, props as ComponentProps<typeof SelectMenuComponent>);
             }
             if ('checkbox' === menuInfo.type) {
                 props.info = menuInfo;
-                return CheckboxMenuComponent(internals, props);
+                return CheckboxMenuComponent(internals, props as ComponentProps<typeof CheckboxMenuComponent>);
             }
-            throw Error(`Unknown menu type "${(menuInfo as any).type}".`);
+            throw Error(`Unknown menu type "${(menuInfo as { type: unknown }).type}".`);
         };
     }
 
@@ -82,7 +82,7 @@
             <ul class="nolist">
                 {#each $constraintsGlobal as { id, elementRef, info } (id)}
                     <li>
-                        <svelte:component this={componentFor(info)} {id} {elementRef} deletable={!info.permanent}  />
+                        <svelte:component this={componentFor(info)} {id} {elementRef} deletable={!info.permanent} />
                     </li>
                 {:else}
                     <li><div class="empty-placeholder">Nothing here!</div></li>
@@ -103,7 +103,7 @@
             <ul class="nolist">
                 {#each $constraintsLocal as { id, elementRef, info } (id)}
                     <li>
-                        <svelte:component this={componentFor(info)} {id} {elementRef} deletable={!info.permanent}  />
+                        <svelte:component this={componentFor(info)} {id} {elementRef} deletable={!info.permanent} />
                     </li>
                 {:else}
                     <li><div class="empty-placeholder">Nothing here!</div></li>

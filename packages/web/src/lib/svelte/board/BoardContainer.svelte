@@ -1,25 +1,28 @@
 <script lang="ts">
-    import type { StateManager } from "@sudoku-studio/state-manager/src";
-    import { Board } from "@sudoku-studio/board/src";
-    import { boardDiv, boardSvg, warningState } from "$lib/js/board";
-    import { currentInputHandler } from "$lib/js/elementStores";
-    import type { InputHandler } from "$lib/js/input/inputHandler";
-    import { userState } from "$lib/js/user";
+    import type { StateManager } from '@sudoku-studio/state-manager/src';
+    import { Board } from '@sudoku-studio/board/src';
+    import { boardDiv, boardSvg, warningState } from '$lib/js/board';
+    import { currentInputHandler } from '$lib/js/elementStores';
+    import type { InputHandler } from '$lib/js/input/inputHandler';
+    import { userState } from '$lib/js/user';
 
     function wrapListener(inputHandler: null | InputHandler, key: keyof InputHandler): (event: any) => void {
-        return event => {
-            if (null != inputHandler && (document.activeElement === $boardDiv || document.activeElement === document.body))
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        return (event) => {
+            if (
+                null != inputHandler &&
+                (document.activeElement === $boardDiv || document.activeElement === document.body)
+            )
                 inputHandler[key](event);
         };
     }
 
     export let boardState: StateManager;
-
 </script>
 
 <svelte:window
     on:blur={wrapListener($currentInputHandler, 'blur')}
-    on:click={event => {
+    on:click={(event) => {
         if (null != $currentInputHandler && document.activeElement !== $boardDiv) {
             $currentInputHandler.blur(event);
         }
@@ -27,25 +30,28 @@
     on:mouseup={wrapListener($currentInputHandler, 'mouseUp')}
     on:touchend={wrapListener($currentInputHandler, 'touchUp')}
     on:keydown={wrapListener($currentInputHandler, 'keydown')}
-    on:keyup={wrapListener($currentInputHandler, 'keyup')} />
+    on:keyup={wrapListener($currentInputHandler, 'keyup')}
+/>
 
-<div bind:this={$boardDiv} class="overlay" tabindex="0" role="grid"
-    on:mousedown|capture|stopPropagation|preventDefault={event => {
+<div
+    bind:this={$boardDiv}
+    class="overlay"
+    tabindex="0"
+    role="grid"
+    on:mousedown|capture|stopPropagation|preventDefault={(event) => {
         event.currentTarget.focus();
         return $currentInputHandler && $currentInputHandler.mouseDown(event);
     }}
-    on:touchstart|capture|stopPropagation|preventDefault={event => {
+    on:touchstart|capture|stopPropagation|preventDefault={(event) => {
         event.currentTarget.focus();
         return $currentInputHandler && $currentInputHandler.touchDown(event);
     }}
     on:mousemove|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'mouseMove')}
     on:touchmove|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'touchMove')}
-
     on:click|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'click')}
     on:contextmenu|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'click')}
-
-    on:mouseleave|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'leave')}>
-</div>
+    on:mouseleave|capture|stopPropagation|preventDefault={wrapListener($currentInputHandler, 'leave')}
+></div>
 <Board bind:svg={$boardSvg} {boardState} {userState} {warningState} />
 
 <style lang="scss">

@@ -1,11 +1,12 @@
 <script lang="ts" context="module">
     let counter = 0;
 </script>
-<script lang="ts">
-    import type { MouseEventHandler } from "svelte/elements";
 
-    import { boardDiv } from "../../../js/board";
-    import { userToolState, TOOL_INPUT_NAME, userPrevToolState } from "../../../js/user";
+<script lang="ts">
+    import type { MouseEventHandler } from 'svelte/elements';
+
+    import { boardDiv } from '../../../js/board';
+    import { userToolState, TOOL_INPUT_NAME, userPrevToolState } from '../../../js/user';
 
     export let id: string;
     export let name: string;
@@ -13,28 +14,48 @@
     export let deletable: boolean;
 
     export let isLocal: boolean = false;
-    export let onClick: MouseEventHandler<HTMLDivElement> | undefined =
-        isLocal ? (() => $userPrevToolState = $userToolState = id) : undefined;
+    export let onClick: MouseEventHandler<HTMLDivElement> | undefined = isLocal
+        ? () => ($userPrevToolState = $userToolState = id)
+        : undefined;
 
     export let onTrash: MouseEventHandler<HTMLButtonElement> | undefined = undefined;
 </script>
 
 <div class="constraint-row-container">
     {#if isLocal}
-        <input class="radio-select-button" type="radio" id="local-radio-{++counter}" value={id} name={TOOL_INPUT_NAME}
-            bind:group={$userToolState} />
+        <input
+            class="radio-select-button"
+            type="radio"
+            id="local-radio-{++counter}"
+            value={id}
+            name={TOOL_INPUT_NAME}
+            bind:group={$userToolState}
+        />
         <button class="nobutton focus-skip" on:click={() => $boardDiv && $boardDiv.focus()}>Jump To Board</button>
     {/if}
-    <div class="constraint-row" role="button" on:click|stopPropagation={onClick} title={isLocal ? `${name} Tool` : undefined} aria-labelledby="label-{counter}" tabindex="0">
+    <div
+        class="constraint-row"
+        role="button"
+        on:click|stopPropagation={onClick}
+        title={isLocal ? `${name} Tool` : undefined}
+        aria-labelledby="label-{counter}"
+        tabindex="0"
+    >
         <div class="constraint-row-left">
             {#if deletable}
-                <button class="delete-button nobutton hoverable" on:click|stopPropagation={onTrash} aria-label="Delete {name}">
+                <button
+                    class="delete-button nobutton hoverable"
+                    on:click|stopPropagation={onTrash}
+                    aria-label="Delete {name}"
+                >
                     <span class="icon hoverable-icon icon-inline icon-c-clickable icon-trash"></span>
                 </button><!-- no whitespace
          -->{/if}{#if isLocal}
-                <label class:unused={unused} class="name clickable" for="local-radio-{counter}" id="label-{counter}">{name}</label>
+                <label class:unused class="name clickable" for="local-radio-{counter}" id="label-{counter}"
+                    >{name}</label
+                >
             {:else}
-                <span class:unused={unused} class="name">{name}</span>
+                <span class:unused class="name">{name}</span>
             {/if}
         </div>
         <div class="constraint-row-right">
@@ -44,7 +65,7 @@
 </div>
 
 <style lang="scss">
-    @use "@material/ripple";
+    @use '@material/ripple';
     @use '$lib/css/vars';
     @use '$lib/css/clearfix';
 
@@ -91,7 +112,8 @@
         // TODO: pick our own color for keyboard accessibility.
         outline-offset: -0.1em;
     }
-    .constraint-row:hover, .radio-select-button:focus-visible ~ .constraint-row  {
+    .constraint-row:hover,
+    .radio-select-button:focus-visible ~ .constraint-row {
         @include vars.hoverborder-hover();
     }
     .radio-select-button:checked ~ .constraint-row {

@@ -1,35 +1,47 @@
-import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from "@sudoku-studio/board-utils/src";
-import type { Geometry, Grid, Idx, IdxBitset } from "@sudoku-studio/schema";
-import type { StateRef, Update } from "@sudoku-studio/state-manager/src";
-import { boardState, getCellValue, getDigits } from "../board";
-import { pushHistory } from "../history";
-import { MARK_TYPES, userToolState, userSelectState, userState, userPrevToolState, userCursorIsShownState, userCursorIndexState, getUserToolStateName } from "../user";
-import { AdjacentCellPointerHandler } from "./adjacentCellPointerHandler";
-import type { CellDragTapEvent } from "./adjacentCellPointerHandler";
-import { parseDigit } from "./inputHandler";
-import type { InputHandler } from "./inputHandler";
-
+import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
+import type { Geometry, Grid, Idx, IdxBitset } from '@sudoku-studio/schema';
+import type { StateRef, Update } from '@sudoku-studio/state-manager/src';
+import { boardState, getCellValue, getDigits } from '../board';
+import { pushHistory } from '../history';
+import {
+    MARK_TYPES,
+    userToolState,
+    userSelectState,
+    userState,
+    userPrevToolState,
+    userCursorIsShownState,
+    userCursorIndexState,
+    getUserToolStateName,
+} from '../user';
+import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler';
+import type { CellDragTapEvent } from './adjacentCellPointerHandler';
+import { parseDigit } from './inputHandler';
+import type { InputHandler } from './inputHandler';
 
 const selectPointerHandler = new AdjacentCellPointerHandler(false);
 
 export type DigitInputHandlerOptions = {
-    multipleDigits: boolean,
-    blockedByGivens: boolean,
-    blockedByFilled: boolean,
-    nextMode: string,
-    digitMapping?: null | (string | number)[],
+    multipleDigits: boolean;
+    blockedByGivens: boolean;
+    blockedByFilled: boolean;
+    nextMode: string;
+    digitMapping?: null | (string | number)[];
 };
 
-export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, options: DigitInputHandlerOptions): InputHandler {
+export function getSelectDigitInputHandler(
+    stateRef: StateRef,
+    grid: Grid,
+    svg: SVGSVGElement,
+    options: DigitInputHandlerOptions,
+): InputHandler {
     const { multipleDigits, blockedByGivens, blockedByFilled, digitMapping, nextMode } = options;
 
-    const DELETE_ORDER = [ 'filled', 'corner', 'center', 'colors' ];
+    const DELETE_ORDER = ['filled', 'corner', 'center', 'colors'];
 
     function onDigitInput(code: string): boolean {
         let digit: undefined | null | number | string = parseDigit(code);
 
-        if (digitMapping && (null != digit) && digit in digitMapping)
-            digit = digitMapping[digit];
+        if (digitMapping && null != digit && digit in digitMapping) digit = digitMapping[digit];
 
         if (undefined === digit) return false;
 
@@ -61,8 +73,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
             if (multipleDigits && null != digit) {
                 update[`${cellIdx}/${digit}`] = true;
                 allAlreadySet &&= !!stateRef.ref(`${cellIdx}`, `${digit}`).get();
-            }
-            else {
+            } else {
                 update[`${cellIdx}`] = digit;
                 // Use `==` so `null == undefined`.
                 allAlreadySet &&= digit == stateRef.ref(`${cellIdx}`).get();
@@ -73,8 +84,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
             if (null == digit) {
                 // Everything we wanted to delete is already deleted, so delete something else.
                 return true;
-            }
-            else {
+            } else {
                 // All already set, so we need to delete instead of add.
                 for (const key of Object.keys(update)) {
                     update[key] = null;
@@ -88,20 +98,9 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         return false;
     }
 
-    const HELD_MODE_KEYS = new Set([
-        'Shift',
-        'Control',
-        'Alt',
-        'Meta',
-    ]);
+    const HELD_MODE_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta']);
 
-    const MODE_SHORTCUTS = {
-        KeyZ: 'filled',
-        KeyX: 'corner',
-        KeyC: 'center',
-        KeyV: 'colors',
-        Space: nextMode,
-    } as const;
+    const MODE_SHORTCUTS = { KeyZ: 'filled', KeyX: 'corner', KeyC: 'center', KeyV: 'colors', Space: nextMode } as const;
 
     function updateToolState(event: KeyboardEvent, newTool: string | null) {
         // Add delay to handle numpad numbers force-releasing shift
@@ -115,34 +114,26 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
 
     function onQuickshift(event: KeyboardEvent): boolean {
         if ('keydown' === event.type && event.code in MODE_SHORTCUTS) {
-            const newToolState = userState.get(
-                'marks',
-                MODE_SHORTCUTS[event.code as keyof typeof MODE_SHORTCUTS]
-            );
+            const newToolState = userState.get('marks', MODE_SHORTCUTS[event.code as keyof typeof MODE_SHORTCUTS]);
             userToolState.replace(newToolState);
             userPrevToolState.replace(newToolState);
             return true;
         }
 
-        if (!HELD_MODE_KEYS.has(event.key))
-            return false;
+        if (!HELD_MODE_KEYS.has(event.key)) return false;
 
         const oldTool = userToolState.get();
         if (event.shiftKey) {
             if (event.ctrlKey || event.metaKey) {
                 updateToolState(event, userState.get('marks', 'colors'));
-            }
-            else {
+            } else {
                 updateToolState(event, userState.get('marks', 'corner'));
             }
-        }
-        else if (event.ctrlKey || event.metaKey) {
+        } else if (event.ctrlKey || event.metaKey) {
             updateToolState(event, userState.get('marks', 'center'));
-        }
-        else if (event.altKey) {
+        } else if (event.altKey) {
             updateToolState(event, userState.get('marks', 'colors'));
-        }
-        else {
+        } else {
             updateToolState(event, userPrevToolState.get());
             return true;
         }
@@ -156,41 +147,37 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
     }
 
     const DIRECTIONAL_KEYS = {
-        ArrowLeft: [ -1, 0 ],
-        ArrowUp: [ 0, -1 ],
-        ArrowRight: [ 1, 0 ],
-        ArrowDown: [ 0, 1 ],
-        KeyA: [ -1, 0 ],
-        KeyW: [ 0, -1 ],
-        KeyD: [ 1, 0 ],
-        KeyS: [ 0, 1 ],
+        ArrowLeft: [-1, 0],
+        ArrowUp: [0, -1],
+        ArrowRight: [1, 0],
+        ArrowDown: [0, 1],
+        KeyA: [-1, 0],
+        KeyW: [0, -1],
+        KeyD: [1, 0],
+        KeyS: [0, 1],
     } as const;
 
     function onDirectionalKey(event: KeyboardEvent): boolean {
         if (!(event.code in DIRECTIONAL_KEYS)) return false;
         if (event.ctrlKey || event.metaKey) return false; // Prevent Ctrl+A from triggering directional key
 
-        const [ dx, dy ] = DIRECTIONAL_KEYS[event.code as keyof typeof DIRECTIONAL_KEYS];
-        let [ x, y ] = cellIdx2cellCoord(userCursorIndexState.get() || 0, grid);
+        const [dx, dy] = DIRECTIONAL_KEYS[event.code as keyof typeof DIRECTIONAL_KEYS];
+        let [x, y] = cellIdx2cellCoord(userCursorIndexState.get() || 0, grid);
         x += dx + grid.width;
         y += dy + grid.height;
         x %= grid.width;
         y %= grid.height;
 
-        const idx = cellCoord2CellIdx([ x, y ], grid);
+        const idx = cellCoord2CellIdx([x, y], grid);
         userCursorIndexState.replace(idx);
         userCursorIsShownState.replace(true);
 
         if (event.shiftKey) {
             userSelectState.ref(`${idx}`).replace(true);
-        }
-        else if (event.ctrlKey) {
+        } else if (event.ctrlKey) {
             userSelectState.ref(`${idx}`).replace(null);
-        }
-        else {
-            userSelectState.replace({
-                [idx]: true,
-            });
+        } else {
+            userSelectState.replace({ [idx]: true });
         }
         return true;
     }
@@ -201,7 +188,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         const selectAll: IdxBitset<Geometry.CELL> = {};
         for (let y = 0; y < grid.height; y++) {
             for (let x = 0; x < grid.width; x++) {
-                selectAll[cellCoord2CellIdx([ x, y ], grid)] = true;
+                selectAll[cellCoord2CellIdx([x, y], grid)] = true;
             }
         }
         userSelectState.replace(selectAll);
@@ -210,8 +197,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
     }
 
     return {
-        load(): void {
-        },
+        load(): void {},
         unload(): void {
             selectPointerHandler.mouseUp();
         },
@@ -224,7 +210,12 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         },
 
         keydown(event: KeyboardEvent): void {
-            if (onDigitInput(event.code) || onQuickshift(event) || onDirectionalKey(event) || onSelectionShortcut(event)) {
+            if (
+                onDigitInput(event.code) ||
+                onQuickshift(event) ||
+                onDirectionalKey(event) ||
+                onSelectionShortcut(event)
+            ) {
                 event.stopImmediatePropagation();
                 event.preventDefault();
             }
@@ -287,16 +278,13 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         if (mouseEvent.shiftKey) {
             // Shift: always select.
             return Mode.SELECTING;
-        }
-        else if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+        } else if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
             // Ctrl: deselect if clicked cell is selected, otherwise select.
             return Mode.DYNAMIC;
-        }
-        else if (mouseEvent.altKey) {
+        } else if (mouseEvent.altKey) {
             // Alt: always deselect.
             return Mode.DESELECTING;
-        }
-        else {
+        } else {
             // No modifier: reset and select only this cell.
             return Mode.RESETTING;
         }
@@ -315,19 +303,14 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
     }
 
     type CellMarks = {
-        filled: number | null,
-        colors: string[] | null,
-        center: string[] | null,
-        corner: string[] | null,
+        filled: number | null;
+        colors: string[] | null;
+        center: string[] | null;
+        corner: string[] | null;
     };
 
     function getMarksInCell(cellIndex: Idx<Geometry.CELL>) {
-        const cellMarks: CellMarks = {
-            filled: null,
-            colors: null,
-            center: null,
-            corner: null
-        };
+        const cellMarks: CellMarks = { filled: null, colors: null, center: null, corner: null };
 
         for (const type of MARK_TYPES) {
             const cellValue = getCellValue(type, cellIndex) as number | object | null;
@@ -380,7 +363,11 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         return null;
     }
 
-    function cellMatchesCriteria(criteria: keyof CellMarks, selectedCellMarks: CellMarks, otherCellMarks: CellMarks): boolean {
+    function cellMatchesCriteria(
+        criteria: keyof CellMarks,
+        selectedCellMarks: CellMarks,
+        otherCellMarks: CellMarks,
+    ): boolean {
         if ('filled' === criteria) {
             return otherCellMarks.filled === selectedCellMarks.filled!;
         }
@@ -396,7 +383,11 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         return false;
     }
 
-    function getCellsByCriteria(criteria: keyof CellMarks, selectedCellMarks: CellMarks, grid: Grid): Record<string, true> {
+    function getCellsByCriteria(
+        criteria: keyof CellMarks,
+        selectedCellMarks: CellMarks,
+        grid: Grid,
+    ): Record<string, true> {
         const matchingCells: Record<string, true> = {};
 
         for (let x = 0; x < grid.width; x++) {
@@ -417,7 +408,7 @@ export function getSelectDigitInputHandler(stateRef: StateRef, grid: Grid, svg: 
         const { coord, grid } = event;
 
         const cellIndex = cellCoord2CellIdx(coord, grid);
-        const selectedCellMarks = getMarksInCell(cellIndex)
+        const selectedCellMarks = getMarksInCell(cellIndex);
         const criteria = getDoubleClickCriteria(selectedCellMarks);
 
         if (null == criteria) {

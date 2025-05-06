@@ -1,26 +1,26 @@
 {
-  "name": "@sudoku-studio/board-format",
-  "description": "Sudoku puzzles format converter",
-  "type": "module",
-  "version": "0.0.0",
-  "exports": {
-    ".": {
-      "types": "./dist/board-format.d.ts",
-      "import": "./dist/board-format.js"
+    "name": "@sudoku-studio/board-format",
+    "description": "Sudoku puzzles format converter",
+    "type": "module",
+    "version": "0.0.0",
+    "exports": {
+        ".": {
+            "types": "./dist/board-format.d.ts",
+            "import": "./dist/board-format.js"
+        },
+        "./src": {
+            "import": "./src/board-format.ts"
+        }
     },
-    "./src": {
-      "import": "./src/board-format.ts"
+    "scripts": {
+        "clean": "rm -rf dist node_modules",
+        "build": "tsc",
+        "check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@sudoku-studio/schema": "workspace:*",
+        "@sudoku-studio/board-utils": "workspace:*",
+        "hsluv": "^0.1.0",
+        "lz-string": "^1.4.4"
     }
-  },
-  "scripts": {
-    "clean": "rm -rf dist node_modules",
-    "build": "tsc",
-    "check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@sudoku-studio/schema": "workspace:*",
-    "@sudoku-studio/board-utils": "workspace:*",
-    "hsluv": "^0.1.0",
-    "lz-string": "^1.4.4"
-  }
 }

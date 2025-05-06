@@ -1,24 +1,32 @@
-import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from "@sudoku-studio/schema";
-import type { Diff, StateRef } from "@sudoku-studio/state-manager/src";
-import { AdjacentCellPointerHandler } from "../input/adjacentCellPointerHandler";
-import type { CellDragTapEvent } from "../input/adjacentCellPointerHandler";
-import type { InputHandler } from "../input/inputHandler";
-import { parseDigit } from "../input/inputHandler";
-import { boardRepr, cellCoord2CellIdx, idxMapToKeysArray, warnSum, writeRepeatingDigits } from "@sudoku-studio/board-utils/src";
-import { userCursorIsShownState, userSelectState } from "../user";
-import type { ElementInfo } from "./element";
-import { pushHistory } from "../history";
+import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
+import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
+import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
+import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
+import type { InputHandler } from '../input/inputHandler';
+import { parseDigit } from '../input/inputHandler';
+import {
+    boardRepr,
+    cellCoord2CellIdx,
+    idxMapToKeysArray,
+    warnSum,
+    writeRepeatingDigits,
+} from '@sudoku-studio/board-utils/src';
+import { userCursorIsShownState, userSelectState } from '../user';
+import type { ElementInfo } from './element';
+import { pushHistory } from '../history';
 
 export const killerInfo: ElementInfo = {
     getInputHandler,
     order: 120,
     inGlobalMenu: false,
-    menu: {
-        type: 'select',
-        name: 'Killer Cage',
-        icon: 'killer',
-    },
-    getWarnings(value: schema.KillerElement['value'], _grid: Grid, _regionMap: IdxMap<Geometry.CELL, number>, digits: IdxMap<Geometry.CELL, number>, warnings: IdxBitset<Geometry.CELL>): void {
+    menu: { type: 'select', name: 'Killer Cage', icon: 'killer' },
+    getWarnings(
+        value: schema.KillerElement['value'],
+        _grid: Grid,
+        _regionMap: IdxMap<Geometry.CELL, number>,
+        digits: IdxMap<Geometry.CELL, number>,
+        warnings: IdxBitset<Geometry.CELL>,
+    ): void {
         for (const { sum, cells } of Object.values(value || {})) {
             const cellsArr = idxMapToKeysArray<Geometry.CELL>(cells);
             writeRepeatingDigits(digits, cellsArr, warnings);
@@ -29,8 +37,8 @@ export const killerInfo: ElementInfo = {
     },
     meta: {
         description: 'Digits in cages must sum to the given cage total (if given); digits may not repeat.',
-        tags: [ 'partial', 'cage', 'sum' ],
-        category: [ 'local', 'area' ],
+        tags: ['partial', 'cage', 'sum'],
+        category: ['local', 'area'],
     },
 };
 
@@ -43,29 +51,27 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         DYNAMIC,
         ADDING,
         REMOVING,
-    };
+    }
     let mode = Mode.DYNAMIC;
 
     const max = 100;
     function onDigitInput(code: string): boolean {
         if (null == cageRef) return false;
 
-        let digit = parseDigit(code)
+        let digit = parseDigit(code);
         if (undefined === digit) return false;
 
         const oldVal = cageRef.ref('sum').get<true | number>();
         if (null != digit && 'number' === typeof oldVal) {
             const multiDigit = oldVal * 10 + digit;
-            if (multiDigit < max)
-                digit = multiDigit;
+            if (multiDigit < max) digit = multiDigit;
         }
 
         if (null === digit && null == oldVal) {
             // If delete on empty, delete the whole cage.
             const diff = cageRef.replace(null);
             pushHistory(diff);
-        }
-        else {
+        } else {
             const diff = cageRef.ref('sum').replace(digit);
             pushHistory(diff);
         }
@@ -73,7 +79,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
     }
 
     function getExistingCageAtIdx(idx: Idx<Geometry.CELL>): null | string {
-        for (const [ cageId, { sum: _, cells } ] of Object.entries(stateRef.get<schema.KillerElement['value']>() || {})) {
+        for (const [cageId, { sum: _, cells }] of Object.entries(stateRef.get<schema.KillerElement['value']>() || {})) {
             if (cells[idx]) {
                 return cageId;
             }
@@ -89,10 +95,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         }
     }
 
-    const fullDiff: Diff = {
-        redo: {},
-        undo: {},
-    };
+    const fullDiff: Diff = { redo: {}, undo: {} };
 
     function handle(event: CellDragTapEvent) {
         const { coord, grid } = event;
@@ -151,8 +154,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
             pointerHandler.mouseUp();
         },
 
-        blur(_event: FocusEvent): void {
-        },
+        blur(_event: FocusEvent): void {},
 
         keydown(event: KeyboardEvent): void {
             if (onDigitInput(event.code)) {
@@ -160,8 +162,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
                 event.preventDefault();
             }
         },
-        keyup(_event: KeyboardEvent): void {
-        },
+        keyup(_event: KeyboardEvent): void {},
         padClick(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {
             if (onDigitInput(event.currentTarget.value)) {
                 event.stopImmediatePropagation();

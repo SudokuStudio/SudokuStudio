@@ -1,18 +1,20 @@
 <script lang="ts">
-    import type { ArrayObj, Geometry, Idx } from "@sudoku-studio/schema";
-    import type { StateRef } from "@sudoku-studio/state-manager/src";
-    import { makePath, arrayObj2array } from "@sudoku-studio/board-utils/src";
+    import type { ArrayObj, Geometry, Idx } from '@sudoku-studio/schema';
+    import type { StateRef } from '@sudoku-studio/state-manager/src';
+    import { makePath, arrayObj2array } from '@sudoku-studio/board-utils/src';
 
     export let id: string;
     export let ref: StateRef;
-    export let grid: { width: number, height: number };
+    export let grid: { width: number; height: number };
     export let isSlow: boolean = false;
 
     const bulbRadius = 0.375;
 
-    export function getThermos(thermos: Record<string, ArrayObj<Idx<Geometry.CELL>>>): { thermoId: string, d: string, invalid: boolean }[] {
-        const out: { thermoId: string, d: string, invalid: boolean }[] = [];
-        for (const [ thermoId, idxArrObj ] of Object.entries(thermos)) {
+    export function getThermos(
+        thermos: Record<string, ArrayObj<Idx<Geometry.CELL>>>,
+    ): { thermoId: string; d: string; invalid: boolean }[] {
+        const out: { thermoId: string; d: string; invalid: boolean }[] = [];
+        for (const [thermoId, idxArrObj] of Object.entries(thermos)) {
             const idxArr = arrayObj2array(idxArrObj);
             out.push({
                 thermoId,
@@ -24,20 +26,27 @@
     }
 </script>
 
-
-<marker id="thermo-bulb-{id}"
-    viewBox="0 0 1 1" refX="0.5" refY="0.5"
+<marker
+    id="thermo-bulb-{id}"
+    viewBox="0 0 1 1"
+    refX="0.5"
+    refY="0.5"
     markerUnits="userSpaceOnUse"
-    markerWidth="1" markerHeight="1"
+    markerWidth="1"
+    markerHeight="1"
     orient="auto"
 >
     <circle cx="0.5" cy="0.5" r={bulbRadius} fill="#444" />
 </marker>
 
-<marker id="slow-thermo-bulb-{id}"
-    viewBox="0 0 1 1" refX="0.5" refY="0.5"
+<marker
+    id="slow-thermo-bulb-{id}"
+    viewBox="0 0 1 1"
+    refX="0.5"
+    refY="0.5"
     markerUnits="userSpaceOnUse"
-    markerWidth="1" markerHeight="1"
+    markerWidth="1"
+    markerHeight="1"
     orient="auto"
 >
     <path
@@ -48,28 +57,43 @@
     />
 </marker>
 
-<marker id="slow-thermo-endcap-{id}"
-    viewBox="0 0 1 1" refX="0.5" refY="0.5"
+<marker
+    id="slow-thermo-endcap-{id}"
+    viewBox="0 0 1 1"
+    refX="0.5"
+    refY="0.5"
     markerUnits="userSpaceOnUse"
-    markerWidth="1" markerHeight="1"
+    markerWidth="1"
+    markerHeight="1"
 >
     <circle cx="0.5" cy="0.5" r="0.1" fill="#444" />
 </marker>
 
 <mask id="thermo-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
-    {#each getThermos($ref || {}) as { thermoId, d, invalid } (thermoId)}
+    {#each getThermos(($ref || {}) as Record<string, ArrayObj<Idx<Geometry.CELL>>>) as { thermoId, d, invalid } (thermoId)}
         {#if isSlow}
-            <path {d} fill="none" stroke= "#111" stroke-width="0.2"
-            stroke-linejoin="round" />
-            <path {d} fill="none" stroke= "#444" stroke-width="0.2"
-            marker-start="url(#slow-thermo-bulb-{id})"
-            marker-end="url(#slow-thermo-endcap-{id})"
-            stroke-linejoin="round"
-            stroke-dasharray="0.4 0.1"
-            stroke-dashoffset="0.2" />
+            <path {d} fill="none" stroke="#111" stroke-width="0.2" stroke-linejoin="round" />
+            <path
+                {d}
+                fill="none"
+                stroke="#444"
+                stroke-width="0.2"
+                marker-start="url(#slow-thermo-bulb-{id})"
+                marker-end="url(#slow-thermo-endcap-{id})"
+                stroke-linejoin="round"
+                stroke-dasharray="0.4 0.1"
+                stroke-dashoffset="0.2"
+            />
         {:else}
-            <path {d} fill="none" stroke={invalid && ! isSlow ? "#fff" : "#444"} stroke-width="0.2"
-            marker-start="url(#thermo-bulb-{id})" stroke-linejoin="round" stroke-linecap="round" />
+            <path
+                {d}
+                fill="none"
+                stroke={invalid && !isSlow ? '#fff' : '#444'}
+                stroke-width="0.2"
+                marker-start="url(#thermo-bulb-{id})"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+            />
         {/if}
     {/each}
 </mask>

@@ -1,9 +1,9 @@
 // @import "./debug.scss";
-@import "./vars.scss";
-@import "./icons.scss";
-@import "./checkbox.scss";
+@import './vars.scss';
+@import './icons.scss';
+@import './checkbox.scss';
 
-@import "./mulish.scss";
+@import './mulish.scss';
 
 html {
     font-size: $font-size;
@@ -18,7 +18,9 @@ body {
     height: 100vh;
 }
 
-.anchor, a, a:visited {
+.anchor,
+a,
+a:visited {
     color: $color-clickable;
     text-decoration: underline;
     &:hover {

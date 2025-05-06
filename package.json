@@ -1,28 +1,36 @@
 {
-  "name": "sudoku-studio",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "clean": "pnpm -r run clean && rm -rf node_modules",
-    "build": "pnpm -r run build",
-    "dev": "pnpm --filter @sudoku-studio/web run dev",
-    "test": "pnpm -r run --parallel --aggregate-output --reporter=append-only test",
-    "check": "prettier --check . && pnpm -r --parallel --aggregate-output --reporter=append-only run check",
-    "format": "prettier --write ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.10.0",
-  "devDependencies": {
-    "prettier": "^3.5.3",
-    "prettier-plugin-svelte": "^3.3.3",
-    "typescript": "^5.8.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  }
+    "name": "sudoku-studio",
+    "version": "1.0.0",
+    "description": "SudokuStudio monorepo",
+    "type": "module",
+    "scripts": {
+        "clean": "pnpm -r --parallel run clean && rm -rf node_modules",
+        "build": "pnpm -r --parallel --aggregate-output --reporter=append-only run build",
+        "dev": "pnpm --filter @sudoku-studio/web run dev",
+        "test": "pnpm -r --parallel --aggregate-output --reporter=append-only run test",
+        "check": "pnpm -r --parallel --aggregate-output --reporter=append-only run check",
+        "format": "prettier --write .",
+        "lint": "prettier --check . && eslint ."
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.10.0",
+    "devDependencies": {
+        "@eslint/compat": "^1.2.5",
+        "@eslint/js": "^9.18.0",
+        "eslint-config-prettier": "^10.0.1",
+        "eslint-plugin-svelte": "^3.0.0",
+        "eslint": "^9.18.0",
+        "globals": "^16.0.0",
+        "prettier-plugin-svelte": "^3.3.3",
+        "prettier": "^3.5.3",
+        "typescript-eslint": "^8.20.0",
+        "typescript": "^5.8.3"
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "esbuild"
+        ]
+    }
 }

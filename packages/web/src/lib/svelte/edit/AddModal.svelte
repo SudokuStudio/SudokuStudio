@@ -1,35 +1,52 @@
-<script lang="ts">
-    import type { schema } from "@sudoku-studio/schema";
-    import type { ElementInfo } from "../../js/element/element";
-    import { search } from "../../js/elements";
-    import { addElement } from "../../js/elementStores";
-    import Modal from "../Modal.svelte";
+<script lang="ts" context="module">
+    export type Props = {
+        filterFunction: (key: string, info: ElementInfo) => boolean;
+        visible?: boolean;
+        searchPattern?: string;
+    };
+</script>
 
-    export let visible = false;
-    export let filterFunction: (key: string, info: ElementInfo) => boolean;
-    export let searchPattern: string = '';
+<script lang="ts">
+    import type { schema } from '@sudoku-studio/schema';
+    import type { ElementInfo } from '../../js/element/element';
+    import { search } from '../../js/elements';
+    import { addElement } from '../../js/elementStores';
+    import Modal from '../Modal.svelte';
+
+    let { filterFunction, visible = $bindable(false), searchPattern = $bindable('') }: Props = $props();
 
     let searchInput: HTMLInputElement = null!;
 
     function elementClicked(type: string): void {
-        addElement(type as any);
+        addElement(type as schema.ElementType);
         visible = false;
     }
 
-    $: visible && setTimeout(() => searchInput.select(), 0);
+    $effect(() => {
+        if (visible) {
+            setTimeout(() => {
+                searchInput.focus();
+            }, 0);
+        }
+    });
 </script>
 
-<Modal bind:visible={visible}>
+<Modal bind:visible>
     <div class="search-input-container">
         <span class="icon hoverable-icon icon-inline icon-c-clickable icon-search"></span>
         <input class="search-input" type="text" bind:this={searchInput} bind:value={searchPattern} />
     </div>
     <div class="search-results">
         <ol class="nolist">
-            {#each search(searchPattern, filterFunction) as { item }}
+            {#each search(searchPattern, filterFunction) as { item } (item.key)}
                 <li>
-                    <button class="result-item nobutton hoverable" title={item.info.meta?.description} on:click={() => elementClicked(item.key)}>
-                        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}"></span>
+                    <button
+                        class="result-item nobutton hoverable"
+                        title={item.info.meta?.description}
+                        on:click={() => elementClicked(item.key)}
+                    >
+                        <span class="icon hoverable-icon icon-inline icon-c-clickable icon-{item.info.menu?.icon}"
+                        ></span>
                         {item.info.menu?.name}
                     </button>
                 </li>
@@ -79,7 +96,8 @@
         text-align: inherit;
 
         @include vars.hoverborder();
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
             @include vars.hoverborder-hover();
         }
     }

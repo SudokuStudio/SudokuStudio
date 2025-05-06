@@ -1,13 +1,22 @@
 <script lang="ts" context="module">
-    import type { Component, ComponentInternals, ComponentProps } from "svelte";
-    import type { Geometry, Grid, Idx, schema } from "@sudoku-studio/schema";
-    import type { StateManager, StateRef } from "@sudoku-studio/state-manager/src";
+    import type { Component, ComponentInternals, ComponentProps } from 'svelte';
+    import type { Geometry, Grid, Idx, schema } from '@sudoku-studio/schema';
+    import type { StateManager, StateRef } from '@sudoku-studio/state-manager/src';
 
-    import { derived, readable } from "svelte/store";
-    import { idxMapToKeysArray, GRID_REGION_THICKNESS_HALF, edgeIdx2svgCoord, getDigits, getBorderPath, GRID_THICKNESS_HALF, num2roman, seriesIdx2seriesCoord } from "@sudoku-studio/board-utils/src";
+    import { derived, readable } from 'svelte/store';
+    import {
+        idxMapToKeysArray,
+        GRID_REGION_THICKNESS_HALF,
+        edgeIdx2svgCoord,
+        getDigits,
+        getBorderPath,
+        GRID_THICKNESS_HALF,
+        num2roman,
+        seriesIdx2seriesCoord,
+    } from '@sudoku-studio/board-utils/src';
 
     import SelectRender from './svelte/SelectRender.svelte';
-    import CursorRender from "./svelte/CursorRender.svelte";
+    import CursorRender from './svelte/CursorRender.svelte';
 
     import GridRender from './svelte/GridRender.svelte';
     import GridRegionRender from './svelte/GridRegionRender.svelte';
@@ -18,13 +27,13 @@
     import DoubleArrowRender from './svelte/DoubleArrowRender.svelte';
     import LockoutRender from './svelte/LockoutRender.svelte';
     import ArrowRender from './svelte/ArrowRender.svelte';
-    import LineRender from "./svelte/LineRender.svelte";
+    import LineRender from './svelte/LineRender.svelte';
 
     import MinRender from './svelte/MinRender.svelte';
     import MaxRender from './svelte/MaxRender.svelte';
-    import OddRender from "./svelte/OddRender.svelte";
-    import EvenRender from "./svelte/EvenRender.svelte";
-    import IndexerRender from "./svelte/IndexerRender.svelte";
+    import OddRender from './svelte/OddRender.svelte';
+    import EvenRender from './svelte/EvenRender.svelte';
+    import IndexerRender from './svelte/IndexerRender.svelte';
 
     import KillerRender from './svelte/KillerRender.svelte';
     import QuadrupleRender from './svelte/QuadrupleRender.svelte';
@@ -33,28 +42,28 @@
     import CenterRender from './svelte/CenterRender.svelte';
     import ColorsRender from './svelte/ColorsRender.svelte';
     import PositionNumberRender from './svelte/PositionNumberRender.svelte';
-    import LittleKillerRender from "./svelte/LittleKillerRender.svelte";
+    import LittleKillerRender from './svelte/LittleKillerRender.svelte';
     import NullRender from './svelte/NullRender.svelte';
-    import CloneRender from "./svelte/CloneRender.svelte";
+    import CloneRender from './svelte/CloneRender.svelte';
 
-    const WarningRender: Component<ComponentProps<SelectRender>> = (internals: ComponentInternals, props: ComponentProps<SelectRender>) => {
-        return SelectRender(internals, {
-            ...props,
-            fill: '#f33',
-            outlineOpacity: '#eee',
-            innerOpacity: '#333',
-        });
+    const WarningRender: Component<ComponentProps<SelectRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<SelectRender>,
+    ) => {
+        return SelectRender(internals, { ...props, fill: '#f33', outlineOpacity: '#eee', innerOpacity: '#333' });
     };
 
-    const FilledRender: Component<ComponentProps<DigitRender>> = (internals: ComponentInternals, props: ComponentProps<DigitRender>) => {
-        return DigitRender(internals, {
-            ...props,
-            color: '#4e72b0',
-            mask: 'url(#SUDOKU_MASK_GIVENS)',
-        });
+    const FilledRender: Component<ComponentProps<DigitRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<DigitRender>,
+    ) => {
+        return DigitRender(internals, { ...props, color: '#4e72b0', mask: 'url(#SUDOKU_MASK_GIVENS)' });
     };
 
-    const DifferenceRender: Component<ComponentProps<PositionNumberRender>> = (internals: ComponentInternals, props: ComponentProps<PositionNumberRender>) => {
+    const DifferenceRender: Component<ComponentProps<PositionNumberRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<PositionNumberRender>,
+    ) => {
         return PositionNumberRender(internals, {
             ...props,
             idx2coord: edgeIdx2svgCoord,
@@ -65,7 +74,10 @@
         });
     };
 
-    const RatioRender: Component<ComponentProps<PositionNumberRender>> = (internals: ComponentInternals, props: ComponentProps<PositionNumberRender>) => {
+    const RatioRender: Component<ComponentProps<PositionNumberRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<PositionNumberRender>,
+    ) => {
         return PositionNumberRender(internals, {
             ...props,
             idx2coord: edgeIdx2svgCoord,
@@ -75,7 +87,10 @@
         });
     };
 
-    const XVRender: Component<ComponentProps<PositionNumberRender>> = (internals: ComponentInternals, props: ComponentProps<PositionNumberRender>) => {
+    const XVRender: Component<ComponentProps<PositionNumberRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<PositionNumberRender>,
+    ) => {
         return PositionNumberRender(internals, {
             ...props,
             idx2coord: edgeIdx2svgCoord,
@@ -85,11 +100,14 @@
             radius: 0.17,
             fontSize: 0.3,
             fontWeight: 800,
-            mapDigits: (num: true | number) => true !== num ? num2roman(num) : '_',
+            mapDigits: (num: true | number) => (true !== num ? num2roman(num) : '_'),
         });
     };
 
-    const SeriesRender: Component<ComponentProps<PositionNumberRender>> = (internals: ComponentInternals, props: ComponentProps<PositionNumberRender>) => {
+    const SeriesRender: Component<ComponentProps<PositionNumberRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<PositionNumberRender>,
+    ) => {
         return PositionNumberRender(internals, {
             ...props,
             idx2coord: (idx: Idx<Geometry.SERIES>, grid: Grid) => {
@@ -99,96 +117,87 @@
             radius: 0,
             textColor: '#000',
             fontSize: 0.5,
-            mapDigits: (num: true | number) => true !== num ? `${num}` : '_',
+            mapDigits: (num: true | number) => (true !== num ? `${num}` : '_'),
         });
     };
 
-    const PalindromeRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
-        return LineRender(internals, {
-            ...props,
-            stroke: '#ed8',
-            strokeWidth: 0.125,
-        });
+    const PalindromeRender: Component<ComponentProps<LineRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<LineRender>,
+    ) => {
+        return LineRender(internals, { ...props, stroke: '#ed8', strokeWidth: 0.125 });
     };
 
-    const GermanWhisperRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+    const GermanWhisperRender: Component<ComponentProps<LineRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<LineRender>,
+    ) => {
         return LineRender(internals, {
             ...props,
             stroke: '#8c8',
             strokeWidth: 0.1,
-            pathOptions: {
-                shortenHead: 0.15,
-                shortenTail: 0.15,
-                bezierRounding: 0.15,
-                closeLoops: true,
-            },
+            pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
         });
     };
 
-    const DutchWhisperRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+    const DutchWhisperRender: Component<ComponentProps<LineRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<LineRender>,
+    ) => {
         return LineRender(internals, {
             ...props,
             stroke: '#ff8c00',
             strokeWidth: 0.1,
-            pathOptions: {
-                shortenHead: 0.15,
-                shortenTail: 0.15,
-                bezierRounding: 0.15,
-                closeLoops: true,
-            },
+            pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
         });
     };
 
-    const RenbanRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+    const RenbanRender: Component<ComponentProps<LineRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<LineRender>,
+    ) => {
         return LineRender(internals, {
             ...props,
             stroke: '#c8c',
             strokeWidth: 0.075,
-            pathOptions: {
-                shortenHead: 0.15,
-                shortenTail: 0.15,
-                bezierRounding: 0.15,
-                closeLoops: true,
-            },
+            pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
         });
     };
 
-    const RegionSumRender: Component<ComponentProps<LineRender>> = (internals: ComponentInternals, props: ComponentProps<LineRender>) => {
+    const RegionSumRender: Component<ComponentProps<LineRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<LineRender>,
+    ) => {
         return LineRender(internals, {
             ...props,
             stroke: '#2ECBFF',
             strokeWidth: 0.125,
-            pathOptions: {
-                shortenHead: 0.15,
-                shortenTail: 0.15,
-                bezierRounding: 0.15,
-                closeLoops: true,
-            },
+            pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
         });
     };
 
-    const SlowThermoRender: Component<ComponentProps<ThermoRender>> = (internals: ComponentInternals, props: ComponentProps<ThermoRender>) => {
-        return ThermoRender(internals, {
-            ...props,
-            isSlow: true,
-        });
+    const SlowThermoRender: Component<ComponentProps<ThermoRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<ThermoRender>,
+    ) => {
+        return ThermoRender(internals, { ...props, isSlow: true });
     };
 
-    const ColumnIndexerRender: Component<ComponentProps<IndexerRender>> = (internals: ComponentInternals, props: ComponentProps<IndexerRender>) => {
-        return IndexerRender(internals, {
-            ...props,
-            color: "#C77C7C",
-        });
+    const ColumnIndexerRender: Component<ComponentProps<IndexerRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<IndexerRender>,
+    ) => {
+        return IndexerRender(internals, { ...props, color: '#C77C7C' });
     };
 
-    const RowIndexerRender: Component<ComponentProps<IndexerRender>> = (internals: ComponentInternals, props: ComponentProps<IndexerRender>) => {
-        return IndexerRender(internals, {
-            ...props,
-            color: "#7CC77C",
-        });
+    const RowIndexerRender: Component<ComponentProps<IndexerRender>> = (
+        internals: ComponentInternals,
+        props: ComponentProps<IndexerRender>,
+    ) => {
+        return IndexerRender(internals, { ...props, color: '#7CC77C' });
     };
 
-    export type ElementRenderer = NonNullable<typeof ELEMENT_RENDERERS[keyof typeof ELEMENT_RENDERERS]>;
+    export type ElementRenderer = NonNullable<(typeof ELEMENT_RENDERERS)[keyof typeof ELEMENT_RENDERERS]>;
     export const ELEMENT_RENDERERS = {
         ['select']: SelectRender,
         ['cursor']: CursorRender,
@@ -256,10 +265,10 @@
         ['skyscraper']: 1,
         ['littleKiller']: 0.9,
     } as { [K in keyof typeof ELEMENT_RENDERERS]?: number };
-
 </script>
+
 <script lang="ts">
-    export let userState:  undefined | null | StateManager;
+    export let userState: undefined | null | StateManager;
     export let warningState: undefined | null | StateManager;
     export let boardState: StateManager;
     export let svg: SVGSVGElement = null!;
@@ -267,20 +276,35 @@
     const grid = boardState.ref('grid');
 
     const elementsRef = boardState.ref('elements');
-    const givensMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
-        getBorderPath(idxMapToKeysArray(getDigits(elements || {}, true, false)), grid, 0) || undefined);
-    const givensFilledMaskPath = derived([ elementsRef, grid ], ([ elements, grid ]) =>
-        getBorderPath(idxMapToKeysArray(getDigits(elements || {}, true, true)), grid, 0) || undefined);
+    const givensMaskPath = derived(
+        [elementsRef, grid],
+        ([elements, grid]) =>
+            getBorderPath(
+                idxMapToKeysArray(getDigits((elements || {}) as schema.Board['elements'], true, false)),
+                grid as Grid,
+                0,
+            ) || undefined,
+    );
+    const givensFilledMaskPath = derived(
+        [elementsRef, grid],
+        ([elements, grid]) =>
+            getBorderPath(
+                idxMapToKeysArray(getDigits((elements || {}) as schema.Board['elements'], true, true)),
+                grid as Grid,
+                0,
+            ) || undefined,
+    );
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     type ElementList<T extends keyof typeof ELEMENT_RENDERERS = any> = {
-        id: string,
-        type: T,
-        order: number,
-        ref: StateRef,
-        element: (typeof ELEMENT_RENDERERS)[T]
+        id: string;
+        type: T;
+        order: number;
+        ref: StateRef;
+        element: (typeof ELEMENT_RENDERERS)[T];
     }[];
 
-    const list = readable<ElementList>([], set => {
+    const list = readable<ElementList>([], (set) => {
         const list: ElementList = [];
         if (null != userState) {
             list.push(
@@ -310,7 +334,7 @@
             });
         }
 
-        boardState.ref('elements/*').watch<schema.Element>(([ _elements, elementId ], oldVal, newVal) => {
+        boardState.ref('elements/*').watch<schema.Element>(([_elements, elementId], oldVal, newVal) => {
             const type = oldVal?.type || newVal?.type;
 
             // Element has been deleted via undo/redo
@@ -330,8 +354,7 @@
             if (null == newVal || null == newVal.type) {
                 // Deleted.
                 list.splice(i, 1);
-            }
-            else {
+            } else {
                 const element = ELEMENT_RENDERERS[type];
                 if (null == element) {
                     console.warn(`Cannot render unknown constraint type: ${type}.`);
@@ -348,10 +371,8 @@
 
                 if (null == oldVal) {
                     list.push(item);
-                }
-                else {
-                    if (oldVal.type !== newVal.type)
-                        console.error('Cannot change type of constraint!');
+                } else {
+                    if (oldVal.type !== newVal.type) console.error('Cannot change type of constraint!');
                     list[i] = item;
                 }
             }
@@ -361,24 +382,24 @@
     });
 
     // TODO somehow update this based on elements.
-    const viewBox = derived([ grid, list ], ([ $grid, $list ]) => {
+    const viewBox = derived([grid, list], ([$grid, $list]) => {
+        const grid = $grid as Grid;
         const margin = $list
             .map(({ type }) => MARGINS[type as keyof typeof ELEMENT_RENDERERS] || 0)
             .filter<number>((margin): margin is number => null != margin)
-                .reduce((a, b) => a > b ? a : b, 0);
-        return {
-            x: -margin,
-            y: -margin,
-            width: $grid?.width + 2 * margin,
-            height: $grid?.height + 2 * margin,
-        };
+            .reduce((a, b) => (a > b ? a : b), 0);
+        return { x: -margin, y: -margin, width: grid.width + 2 * margin, height: grid.height + 2 * margin };
     });
 </script>
 
-<svg bind:this={svg} viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}" xmlns="http://www.w3.org/2000/svg">
+<svg
+    bind:this={svg}
+    viewBox="{$viewBox.x} {$viewBox.y} {$viewBox.width} {$viewBox.height}"
+    xmlns="http://www.w3.org/2000/svg"
+>
     <style>
         svg {
-            font-family: "Mulish", "Muli", sans-serif;
+            font-family: 'Mulish', 'Muli', sans-serif;
         }
         text {
             -webkit-user-select: none;
@@ -398,11 +419,11 @@
     </style>
     <defs>
         <mask id="SUDOKU_MASK_GIVENS" maskUnits="userSpaceOnUse">
-            <rect x="0" y="0" width={$grid?.width} height={$grid?.height} fill="#fff" />
+            <rect x="0" y="0" width={($grid as Grid).width} height={($grid as Grid).height} fill="#fff" />
             <path d={$givensMaskPath} fill="#000" stroke="none" />
         </mask>
         <mask id="SUDOKU_MASK_GIVENS_FILLED" maskUnits="userSpaceOnUse">
-            <rect x="0" y="0" width={$grid?.width} height={$grid?.height} fill="#fff" />
+            <rect x="0" y="0" width={($grid as Grid).width} height={($grid as Grid).height} fill="#fff" />
             <path d={$givensFilledMaskPath} fill="#000" stroke="none" />
         </mask>
         {#each $list as { id, ref, element: Element } (id)}

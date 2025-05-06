@@ -1,8 +1,8 @@
 export interface InputHandler {
-    load(): void,
-    unload(): void,
+    load(): void;
+    unload(): void;
 
-    blur(event: FocusEvent): void,
+    blur(event: FocusEvent): void;
 
     keydown(event: KeyboardEvent): void;
     keyup(event: KeyboardEvent): void;
@@ -20,11 +20,7 @@ export interface InputHandler {
 }
 
 const DIGIT_REGEX = /^(?:Digit|Numpad)?(\d)$/;
-const NULL_KEYCODES = {
-    Delete: null,
-    Backspace: null,
-    NumpadDecimal: null,
-} as const;
+const NULL_KEYCODES = { Delete: null, Backspace: null, NumpadDecimal: null } as const;
 
 export function parseDigit(code: string): undefined | null | number {
     if (code in NULL_KEYCODES) {
@@ -37,7 +33,7 @@ export function parseDigit(code: string): undefined | null | number {
     return undefined;
 }
 
-export function getTouchPosition(event: TouchEvent): { offsetX: number, offsetY: number } | null {
+export function getTouchPosition(event: TouchEvent): { offsetX: number; offsetY: number } | null {
     const eventTarget = event.target;
 
     if (eventTarget instanceof Element) {
@@ -45,10 +41,7 @@ export function getTouchPosition(event: TouchEvent): { offsetX: number, offsetY:
         const firstTouch = event.changedTouches[0];
 
         if (null != firstTouch) {
-            return {
-                offsetX: firstTouch.pageX - boundingRect.left,
-                offsetY: firstTouch.pageY - boundingRect.top,
-            };
+            return { offsetX: firstTouch.pageX - boundingRect.left, offsetY: firstTouch.pageY - boundingRect.top };
         }
     }
 

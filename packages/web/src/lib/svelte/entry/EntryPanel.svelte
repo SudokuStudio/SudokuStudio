@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { onDestroy } from "svelte";
-    import { boardState } from "../../js/board";
-    import ButtonPad from "./ButtonPad.svelte";
+    import { onDestroy } from 'svelte';
+    import { boardState } from '../../js/board';
+    import ButtonPad from './ButtonPad.svelte';
 
     // Hide spellcheck squiggles when the user is not editing the rules.
-    function setSpellcheck(event: FocusEvent & { currentTarget: EventTarget & HTMLTextAreaElement}): void {
+    function setSpellcheck(event: FocusEvent & { currentTarget: EventTarget & HTMLTextAreaElement }): void {
         event.currentTarget.setAttribute('spellcheck', `${document.activeElement === event.currentTarget}`);
     }
 
@@ -42,18 +42,37 @@
 </script>
 
 <div class="entry-column">
-	<div class="entry-pad" bind:this={entryPadEl}>
+    <div class="entry-pad" bind:this={entryPadEl}>
         <ButtonPad />
     </div>
     <div class="entry-info">
-        <input class="info-input title"  type="text" placeholder="Classic Sudoku" bind:value={$title} on:change={updateWindowTitle} />
-        <input class="info-input setter" type="text" placeholder="Anonymous" bind:value={$author} on:change={updateWindowTitle} />
-        <textarea class="rules-text" placeholder="Normal sudoku rules apply." spellcheck="false" bind:value={$description} on:focus={setSpellcheck} on:blur={setSpellcheck}></textarea>
+        <input
+            class="info-input title"
+            type="text"
+            placeholder="Classic Sudoku"
+            bind:value={$title}
+            on:change={updateWindowTitle}
+        />
+        <input
+            class="info-input setter"
+            type="text"
+            placeholder="Anonymous"
+            bind:value={$author}
+            on:change={updateWindowTitle}
+        />
+        <textarea
+            class="rules-text"
+            placeholder="Normal sudoku rules apply."
+            spellcheck="false"
+            bind:value={$description}
+            on:focus={setSpellcheck}
+            on:blur={setSpellcheck}
+        ></textarea>
     </div>
 </div>
 
 <style lang="scss">
-    @use "sass:math";
+    @use 'sass:math';
     @use '$lib/css/vars' as vars;
 
     .info-input {
@@ -73,7 +92,8 @@
         text-align: center;
 
         @include vars.hoverborder();
-        &:hover, &:focus {
+        &:hover,
+        &:focus {
             outline: none;
             @include vars.hoverborder-hover();
         }
@@ -126,11 +146,11 @@
 
                 outline: none;
                 @include vars.hoverborder();
-                &:hover, &:focus {
+                &:hover,
+                &:focus {
                     outline: none;
                     @include vars.hoverborder-hover();
                 }
-
             }
 
             // Reorder so entry-pad is before rules.

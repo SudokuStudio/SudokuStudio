@@ -1,16 +1,15 @@
 <script lang="ts">
-    import type { StateRef } from "@sudoku-studio/state-manager/src";
-    import type { SelectMenuComponent } from "../../../js/element/element";
-    import { removeElement } from "../../../js/elementStores";
+    import type { StateRef } from '@sudoku-studio/state-manager/src';
+    import type { SelectMenuInfo } from '../../../js/element/element';
+    import { removeElement } from '../../../js/elementStores';
 
-    import ConstraintRow from "./ConstraintRow.svelte";
+    import ConstraintRow from './ConstraintRow.svelte';
 
     export let id: string;
     export let elementRef: StateRef;
-    export let info: SelectMenuComponent;
+    export let info: SelectMenuInfo;
     export let deletable: boolean;
 
-    // @ts-ignore
     const _unused = elementRef;
 </script>
 
