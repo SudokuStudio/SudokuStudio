@@ -8,7 +8,7 @@ import type { InputHandler } from '../input/inputHandler';
 import { userCursorIsShownState, userSelectState } from '../user';
 import type { ElementInfo } from './element';
 
-export const arrowInfo: ElementInfo = {
+export const arrowInfo: ElementInfo<schema.ArrowElement['value']> = {
     getInputHandler: getArrowInputHandler,
     order: 90,
     inGlobalMenu: false,
@@ -89,7 +89,11 @@ function reorderArrowBulb(cells: Idx<Geometry.CELL>[], grid: Grid): void {
     cells.sort((a, b) => a - b);
 }
 
-export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export function getArrowInputHandler(
+    stateRef: StateRef<schema.ArrowElement['value']>,
+    grid: Grid,
+    svg: SVGSVGElement,
+): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
     enum Mode {
@@ -104,7 +108,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
     let bodyCells: Idx<Geometry.CELL>[] = [];
 
     function handleDragStart(idx: Idx<Geometry.CELL>): void {
-        const existingArrows = stateRef.get<schema.ArrowElement['value']>() || {};
+        const existingArrows = stateRef.get() || {};
         for (const [arrowId, { bulb, body }] of Object.entries(existingArrows)) {
             const bulbArr = arrayObj2array(bulb || {});
             if (bulbArr.includes(idx)) {
@@ -188,7 +192,7 @@ export function getArrowInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVG
         const idx = cellCoord2CellIdx(coord, grid);
 
         let arrowIdToDelete: null | string = null;
-        for (const [arrowId, { bulb }] of Object.entries(stateRef.get<schema.ArrowElement['value']>() || {})) {
+        for (const [arrowId, { bulb }] of Object.entries(stateRef.get() || {})) {
             if (arrayObj2array(bulb || {}).includes(idx)) {
                 arrowIdToDelete = arrowId;
                 break;

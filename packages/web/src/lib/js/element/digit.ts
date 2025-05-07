@@ -1,13 +1,13 @@
 import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { Grid } from '@sudoku-studio/schema';
+import type { Grid, schema } from '@sudoku-studio/schema';
 import type { InputHandler } from '../input/inputHandler';
 import { getSelectDigitInputHandler } from '../input/selectDigitInputHandler';
 import hsluv from 'hsluv';
 
 import type { ElementInfo } from './element';
 
-export const givensInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const givensInfo: ElementInfo<schema.DigitElement['value']> = {
+    getInputHandler(ref: StateRef<schema.DigitElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: false,
             blockedByGivens: false,
@@ -20,8 +20,8 @@ export const givensInfo: ElementInfo = {
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Given', icon: 'given' },
 } as const;
-export const filledInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const filledInfo: ElementInfo<schema.DigitElement['value']> = {
+    getInputHandler(ref: StateRef<schema.DigitElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: false,
             blockedByGivens: true,
@@ -32,8 +32,8 @@ export const filledInfo: ElementInfo = {
     order: 210,
 } as const;
 
-export const cornerInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const cornerInfo: ElementInfo<schema.PencilMarksElement['value']> = {
+    getInputHandler(ref: StateRef<schema.PencilMarksElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: true,
             blockedByGivens: true,
@@ -43,8 +43,8 @@ export const cornerInfo: ElementInfo = {
     },
     order: 200,
 } as const;
-export const centerInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const centerInfo: ElementInfo<schema.PencilMarksElement['value']> = {
+    getInputHandler(ref: StateRef<schema.PencilMarksElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: true,
             blockedByGivens: true,
@@ -55,8 +55,8 @@ export const centerInfo: ElementInfo = {
     order: 200,
 } as const;
 
-export const colorsInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const colorsInfo: ElementInfo<schema.ColorsElement['value']> = {
+    getInputHandler(ref: StateRef<schema.ColorsElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getSelectDigitInputHandler(ref, grid, svg, {
             multipleDigits: true,
             blockedByGivens: false,

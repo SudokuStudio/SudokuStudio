@@ -1,10 +1,10 @@
 import { browser } from '$app/environment';
-import { StateManager, StateRef } from '@sudoku-studio/state-manager/src';
-import type { schema } from '@sudoku-studio/schema';
+import { StateManager } from '@sudoku-studio/state-manager/src';
+import type { Geometry, Idx, IdxBitset, schema, user } from '@sudoku-studio/schema';
 
 export const MARK_TYPES = ['filled', 'corner', 'center', 'colors'] as const;
 
-export const userState = new StateManager();
+export const userState = new StateManager<user.UserState>();
 if (browser) {
     (window as any).userState = userState;
 }
@@ -25,7 +25,7 @@ userState.update({
     historyUndone: {},
 });
 
-export function getUserToolStateName(toolState: StateRef | null): string | null {
+export function getUserToolStateName(toolState: string | null): string | null {
     switch (toolState) {
         case userState.get('marks', 'filled'):
             return 'filled';
@@ -40,12 +40,12 @@ export function getUserToolStateName(toolState: StateRef | null): string | null 
     }
 }
 
-export const userSelectState = userState.ref('select');
-export const userCursorIndexState = userState.ref('cursor', 'index');
-export const userCursorIsShownState = userState.ref('cursor', 'isShown');
+export const userSelectState = userState.ref<IdxBitset<Geometry.CELL>>('select');
+export const userCursorIndexState = userState.ref<Idx<Geometry.CELL> | null>('cursor', 'index');
+export const userCursorIsShownState = userState.ref<boolean>('cursor', 'isShown');
 
-export const userPrevToolState = userState.ref('prevTool');
-export const userToolState = userState.ref('tool');
+export const userPrevToolState = userState.ref<string>('prevTool');
+export const userToolState = userState.ref<string>('tool');
 export const TOOL_INPUT_NAME = 'tool';
 
 /** Load tools and pencil marks for the user. */

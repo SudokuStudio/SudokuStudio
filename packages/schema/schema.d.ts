@@ -73,7 +73,6 @@ export declare namespace schema {
         | ConsecutiveElement
         | DiagonalElement
         | KillerElement
-        | KillerElement
         | CloneElement
         | QuadrupleElement
         | LineElement
@@ -114,7 +113,7 @@ export declare namespace schema {
 
     export interface BooleanElement extends AbstractElement {
         type: 'knight' | 'king' | 'disjointGroups' | 'antiX' | 'antiV' | 'selfTaxicab';
-        value?: { positive: boolean; negative: boolean };
+        value?: boolean;
     }
     export interface ConsecutiveElement extends AbstractElement {
         type: 'consecutive';
@@ -188,6 +187,18 @@ export declare namespace schema {
     export interface TODO_ELEMENTS extends AbstractElement {
         type: never;
         value?: unknown;
+    }
+}
+
+export declare namespace user {
+    export interface UserState {
+        select: IdxBitset<Geometry.CELL>;
+        cursor: { index: Idx<Geometry.CELL> | null; isShown: boolean };
+        tool: string;
+        prevTool: string;
+        marks: { filled: string; corner: string; center: string; colors: string };
+        history: unknown; // TODO
+        historyUndone: unknown; // TODO
     }
 }
 

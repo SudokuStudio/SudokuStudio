@@ -1,5 +1,5 @@
 import type { SvelteComponent } from 'svelte';
-import type { Geometry, Idx, IdxBitset, IdxMap } from '@sudoku-studio/schema';
+import type { Geometry, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { StateRef } from '@sudoku-studio/state-manager/src';
 import type { PointerHandler } from './pointerHandler';
 import type { InputHandler } from '../input/inputHandler';
@@ -21,8 +21,8 @@ export interface CheckboxMenuComponent extends AbstractMenuComponent {
 
 export type MenuComponent = SelectMenuComponent | CheckboxMenuComponent;
 
-export type ElementInfo = {
-    getInputHandler?: null | ((ref: StateRef, grid: Grid, svg: SVGSVGElement) => InputHandler);
+export type ElementInfo<V> = {
+    getInputHandler?: null | ((ref: StateRef<V>, grid: Grid, svg: SVGSVGElement) => InputHandler);
 
     /** Render order. */
     order: number;
@@ -36,7 +36,7 @@ export type ElementInfo = {
     getWarnings?:
         | null
         | ((
-              value: any,
+              value: V,
               grid: Grid,
               regionMap: IdxMap<Geometry.CELL, number>,
               digits: IdxMap<Geometry.CELL, number>,

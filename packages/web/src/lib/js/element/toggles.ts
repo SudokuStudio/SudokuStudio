@@ -10,7 +10,7 @@ import {
 } from '@sudoku-studio/board-utils/src';
 import type { ElementInfo } from './element';
 
-export const diagonalInfo: ElementInfo = {
+export const diagonalInfo: ElementInfo<schema.DiagonalElement['value']> = {
     inGlobalMenu: true,
     order: 0,
     menu: {
@@ -43,7 +43,7 @@ export const diagonalInfo: ElementInfo = {
     meta: { description: 'Digits along the marked diagonal(s) may not repeat.', tags: ['x'], category: ['global'] },
 };
 
-export const disjointGroupsInfo: ElementInfo = {
+export const disjointGroupsInfo: ElementInfo<schema.BooleanElement['value']> = {
     inGlobalMenu: true,
     order: 0,
     menu: {
@@ -81,7 +81,7 @@ export const disjointGroupsInfo: ElementInfo = {
     },
 };
 
-export const consecutiveInfo: ElementInfo = {
+export const consecutiveInfo: ElementInfo<schema.ConsecutiveElement['value']> = {
     inGlobalMenu: true,
     order: 0,
     menu: {
@@ -112,7 +112,7 @@ export const consecutiveInfo: ElementInfo = {
     meta: { description: '[Edge- | Corner-] adjacent digits may not be consecutive.', tags: [], category: ['global'] },
 };
 
-export const antiXInfo: ElementInfo = {
+export const antiXInfo: ElementInfo<schema.BooleanElement['value']> = {
     inGlobalMenu: true,
     order: 0,
     menu: { type: 'checkbox', name: 'Anti-X', checkbox: { name: 'Anti-X', icon: 'anti-x' }, icon: 'anti-x' },
@@ -130,7 +130,7 @@ export const antiXInfo: ElementInfo = {
     meta: { description: 'Adjacent digits may not sum to 10.', tags: [], category: ['global'] },
 };
 
-export const antiVInfo: ElementInfo = {
+export const antiVInfo: ElementInfo<schema.BooleanElement['value']> = {
     inGlobalMenu: true,
     order: 0,
     menu: { type: 'checkbox', name: 'Anti-V', checkbox: { name: 'Anti-V', icon: 'anti-v' }, icon: 'anti-v' },
@@ -148,7 +148,7 @@ export const antiVInfo: ElementInfo = {
     meta: { description: 'Adjacent digits may not sum to 5.', tags: [], category: ['global'] },
 };
 
-export const kingInfo: ElementInfo = {
+export const kingInfo: ElementInfo<schema.BooleanElement['value']> = {
     inGlobalMenu: true,
     order: 0,
     menu: { type: 'checkbox', name: 'Antiking', checkbox: { name: 'Antiking', icon: 'king' }, icon: 'king' },
@@ -174,7 +174,7 @@ export const kingInfo: ElementInfo = {
     },
 };
 
-export const knightInfo: ElementInfo = {
+export const knightInfo: ElementInfo<schema.BooleanElement['value']> = {
     inGlobalMenu: true,
     order: 0,
     menu: { type: 'checkbox', name: 'Antiknight', checkbox: { name: 'Antiknight', icon: 'knight' }, icon: 'knight' },
@@ -200,7 +200,7 @@ export const knightInfo: ElementInfo = {
     },
 };
 
-export const selfTaxicabInfo: ElementInfo = {
+export const selfTaxicabInfo: ElementInfo<schema.BooleanElement['value']> = {
     inGlobalMenu: true,
     order: 0,
     menu: {
@@ -209,6 +209,7 @@ export const selfTaxicabInfo: ElementInfo = {
         checkbox: { name: 'Self-Taxicab', icon: 'cityblock' },
         icon: 'cityblock',
     },
+    // TODO: getWarnings
 };
 
 function getConsecutiveWarnings(

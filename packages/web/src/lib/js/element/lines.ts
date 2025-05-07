@@ -1,12 +1,12 @@
-import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
+import type { ArrayObj, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { StateRef } from '@sudoku-studio/state-manager/src';
 import type { InputHandler } from '../input/inputHandler';
 import type { ElementInfo } from './element';
 import { getLineInputHandler } from '../input/lineInputHandler';
 import { arrayObj2array, warnClones } from '@sudoku-studio/board-utils/src';
 
-export const thermoInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: true,
             deletePrioritizeTail: false,
@@ -32,8 +32,8 @@ export const thermoInfo: ElementInfo = {
     },
 };
 
-export const slowThermoInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const slowThermoInfo: ElementInfo<schema.LineElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: true,
             deletePrioritizeTail: false,
@@ -105,8 +105,8 @@ function getThermoWarnings(
     }
 }
 
-export const betweenInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: true,
             deletePrioritizeTail: true,
@@ -155,8 +155,8 @@ export const betweenInfo: ElementInfo = {
     },
 };
 
-export const doubleArrowInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: true,
             deletePrioritizeTail: true,
@@ -210,8 +210,8 @@ export const doubleArrowInfo: ElementInfo = {
     },
 };
 
-export const lockoutInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: true,
             deletePrioritizeTail: true,
@@ -266,8 +266,8 @@ export const lockoutInfo: ElementInfo = {
     },
 };
 
-export const palindromeInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const palindromeInfo: ElementInfo<schema.LineElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,
@@ -307,9 +307,9 @@ function getWhisperInfo(
     icon: string,
     description: string,
     tags: string[],
-): ElementInfo {
+): ElementInfo<schema.LineElement['value']> {
     return {
-        getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+        getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
             return getLineInputHandler(ref, grid, svg, {
                 deletePrioritizeHead: false,
                 deletePrioritizeTail: false,
@@ -351,7 +351,7 @@ function getWhisperInfo(
     };
 }
 
-export const germanWhisperInfo: ElementInfo = getWhisperInfo(
+export const germanWhisperInfo: ElementInfo<schema.LineElement['value']> = getWhisperInfo(
     (gridWidth) => (gridWidth + 1) >> 1,
     'German Whisper',
     'whisper',
@@ -359,7 +359,7 @@ export const germanWhisperInfo: ElementInfo = getWhisperInfo(
     ['line', 'german', 'five', '5'],
 );
 
-export const dutchWhisperInfo: ElementInfo = getWhisperInfo(
+export const dutchWhisperInfo: ElementInfo<schema.LineElement['value']> = getWhisperInfo(
     (gridWidth) => ((gridWidth + 1) >> 1) - 1,
     'Dutch Whisper',
     'dutch-whisper',
@@ -367,8 +367,8 @@ export const dutchWhisperInfo: ElementInfo = getWhisperInfo(
     ['line', 'dutch', 'five', '4'],
 );
 
-export const renbanInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,
@@ -413,8 +413,8 @@ export const renbanInfo: ElementInfo = {
     },
 };
 
-export const regionSumInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const regionSumInfo: ElementInfo<schema.LineElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getLineInputHandler(ref, grid, svg, {
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,

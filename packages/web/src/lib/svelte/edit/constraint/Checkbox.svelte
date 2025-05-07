@@ -8,10 +8,10 @@
 
     export let name: string;
     export let icon: string;
-    export let checked: StateRef;
+    export let checked: StateRef<boolean>;
 
     function onClick() {
-        const diff = checked.replace(!checked.get<boolean>());
+        const diff = checked.replace(!checked.get());
         pushHistory(diff);
     }
 </script>

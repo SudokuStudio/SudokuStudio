@@ -15,7 +15,7 @@ import { userCursorIsShownState, userSelectState } from '../user';
 import type { ElementInfo } from './element';
 import { pushHistory } from '../history';
 
-export const killerInfo: ElementInfo = {
+export const killerInfo: ElementInfo<schema.KillerElement['value']> = {
     getInputHandler,
     order: 120,
     inGlobalMenu: false,
@@ -42,10 +42,14 @@ export const killerInfo: ElementInfo = {
     },
 };
 
-function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+function getInputHandler(
+    stateRef: StateRef<schema.KillerElement['value']>,
+    grid: Grid,
+    svg: SVGSVGElement,
+): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(false);
 
-    let cageRef: null | StateRef = null;
+    let cageRef: null | StateRef<{ sum?: number; cells: IdxBitset<Geometry.CELL> }> = null;
 
     enum Mode {
         DYNAMIC,
@@ -61,7 +65,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         let digit = parseDigit(code);
         if (undefined === digit) return false;
 
-        const oldVal = cageRef.ref('sum').get<true | number>();
+        const oldVal = cageRef.ref<true | number>('sum').get();
         if (null != digit && 'number' === typeof oldVal) {
             const multiDigit = oldVal * 10 + digit;
             if (multiDigit < max) digit = multiDigit;
@@ -72,14 +76,14 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
             const diff = cageRef.replace(null);
             pushHistory(diff);
         } else {
-            const diff = cageRef.ref('sum').replace(digit);
+            const diff = cageRef.ref<number>('sum').replace(digit);
             pushHistory(diff);
         }
         return true;
     }
 
     function getExistingCageAtIdx(idx: Idx<Geometry.CELL>): null | string {
-        for (const [cageId, { sum: _, cells }] of Object.entries(stateRef.get<schema.KillerElement['value']>() || {})) {
+        for (const [cageId, { sum: _, cells }] of Object.entries(stateRef.get() || {})) {
             if (cells[idx]) {
                 return cageId;
             }

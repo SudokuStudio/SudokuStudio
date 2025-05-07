@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
     import type { Component, ComponentInternals, ComponentProps } from 'svelte';
-    import type { Geometry, Grid, Idx, schema } from '@sudoku-studio/schema';
+    import type { Geometry, Grid, Idx, schema, user } from '@sudoku-studio/schema';
     import type { StateManager, StateRef } from '@sudoku-studio/state-manager/src';
 
     import { derived, readable } from 'svelte/store';
@@ -268,7 +268,7 @@
 </script>
 
 <script lang="ts">
-    export let userState: undefined | null | StateManager;
+    export let userState: undefined | null | StateManager<user.UserState>;
     export let warningState: undefined | null | StateManager;
     export let boardState: StateManager;
     export let svg: SVGSVGElement = null!;
@@ -325,7 +325,7 @@
             });
         }
 
-        boardState.ref('elements/*').watch<schema.Element>(([_elements, elementId], oldVal, newVal) => {
+        boardState.ref<schema.Element>('elements/*').watch(([_elements, elementId], oldVal, newVal) => {
             const type = oldVal?.type || newVal?.type;
 
             // Element has been deleted via undo/redo

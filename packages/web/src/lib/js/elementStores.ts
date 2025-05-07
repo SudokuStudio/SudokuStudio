@@ -9,7 +9,12 @@ import type { InputHandler } from './input/inputHandler';
 import { pushHistory } from './history';
 import { boardRepr, buildRegionMap, getDigits } from '@sudoku-studio/board-utils/src';
 
-export type ElementHandlerItem = { id: string; elementRef: StateRef; info: ElementInfo; type: schema.ElementType };
+export type ElementHandlerItem = {
+    id: string;
+    elementRef: StateRef;
+    info: ElementInfo<unknown>;
+    type: schema.ElementType;
+};
 export type ElementHandlerList = ElementHandlerItem[];
 
 export function addElement<E extends schema.Element>(type: E['type'], value?: E['value']): string {
@@ -59,7 +64,7 @@ export function removeElement(id: string): void {
 export const elementHandlers = readable<ElementHandlerList>([], (set) => {
     const list: ElementHandlerList = [];
 
-    boardState.ref('elements/*').watch<schema.Element>(([_elements, elementId], oldVal, newVal) => {
+    boardState.ref<schema.Element>('elements/*').watch(([_elements, elementId], oldVal, newVal) => {
         const type = oldVal?.type || newVal?.type;
 
         // Element has been deleted via undo/redo
@@ -105,12 +110,12 @@ export const elementHandlers = readable<ElementHandlerList>([], (set) => {
     }, true);
 });
 
-boardState.ref('elements').watch<schema.Board['elements']>((_path, _oldElements, newElements) => {
+boardState.ref<schema.Board['elements']>('elements').watch((_path, _oldElements, newElements) => {
     if (null == newElements) return;
     const digits = getDigits(newElements);
 
     const warnings: IdxBitset<Geometry.CELL> = {};
-    const grid = boardGridRef.get<Grid>();
+    const grid = boardGridRef.get();
     const gridRegionMap = buildRegionMap(newElements);
     for (const { type, value } of Object.values(newElements)) {
         const handler = ELEMENT_HANDLERS[type];
@@ -139,7 +144,7 @@ export const currentInputHandler = derived<
 >([currentElement, boardSvg, boardGridRef], ([$currentElement, $boardSvg, $boardGridRef]) => {
     if (null == $currentElement) return null;
     const { info, elementRef } = $currentElement;
-    const valueRef = elementRef.ref('value');
+    const valueRef = elementRef.ref<any>('value');
     if (null == info || null == info.getInputHandler) return null;
 
     const inputHandler = info.getInputHandler(valueRef, $boardGridRef, $boardSvg);

@@ -34,11 +34,11 @@ function undefToNull<T>(val: T): null | NonNullable<T> | null {
     return val!;
 }
 
-export class StateRef {
-    private readonly _stateManager: StateManager;
+export class StateRef<T extends Data = Data> {
+    private readonly _stateManager: StateManager<any>;
     private readonly _path: string[] = [];
 
-    constructor(stateManager: StateManager, path: string[]) {
+    constructor(stateManager: StateManager<any>, path: string[]) {
         this._stateManager = stateManager;
         for (const seg of path) {
             if ('..' === seg) this._path.pop();
@@ -51,24 +51,24 @@ export class StateRef {
         return [...this._path];
     }
 
-    ref(...path: string[]): StateRef {
+    ref<U extends Data = Data>(...path: string[]): StateRef<U> {
         return new StateRef(this._stateManager, [...this._path, ...path]);
     }
 
-    get<T extends Data>(): null | T {
-        return this._stateManager.get(...this._path);
+    get(): null | T {
+        return this._stateManager.get<T>(...this._path);
     }
 
-    watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean): Watcher<T> {
+    watch(watcher: Watcher<T>, triggerNow: boolean): Watcher<T> {
         this._stateManager.watch(watcher, triggerNow, this._path.join('/'));
         return watcher;
     }
 
-    unwatch<T extends Data>(watcher: Watcher<T>) {
+    unwatch(watcher: Watcher<T>) {
         this._stateManager.unwatch(watcher);
     }
 
-    replace(newData: Data): null | Diff {
+    replace(newData: null | T): null | Diff {
         return this._stateManager.update({ [this._path.join('/')]: newData });
     }
 
@@ -95,9 +95,9 @@ export class StateRef {
 /// undo/redo diff to the caller.
 ///
 /// This is where the magic happens.
-export class StateManager {
+export class StateManager<T extends Data = Data> {
     /// The data contained in and managed by this StateManager.
-    private _data: Data = null;
+    private _data: T | null = null;
 
     /// Map from each watcher to the paths it's watching.
     private readonly _watchers: Map<Watcher<any>, Set<string>> = new Map();
@@ -105,21 +105,21 @@ export class StateManager {
 
     constructor() {}
 
-    ref(...path: string[]): StateRef {
+    ref<U extends Data = Data>(...path: string[]): StateRef<U> {
         return new StateRef(this, path);
     }
 
-    get<T extends Data>(...path: string[]): T | null {
+    get<U>(...path: string[]): U | null {
         let target = this._data;
         for (const seg of path) {
             if (null == target) break;
             if (seg.includes('/')) throw Error('Path cannot contain "/", split into varargs.');
             target = (target as any)[seg];
         }
-        return undefToNull(target) as unknown as T | null;
+        return undefToNull(target) as unknown as U | null;
     }
 
-    watch<T extends Data>(watcher: Watcher<T>, triggerNow: boolean, ...patterns: [string, ...string[]]): Watcher<T> {
+    watch(watcher: Watcher<T>, triggerNow: boolean, ...patterns: [string, ...string[]]): Watcher<T> {
         let patternSet = this._watchers.get(watcher);
         if (null == patternSet) {
             patternSet = new Set();
@@ -132,7 +132,7 @@ export class StateManager {
         return watcher;
     }
 
-    unwatch<T extends Data>(watcher: Watcher<T>): void {
+    unwatch(watcher: Watcher<T>): void {
         if (!this._watchers.has(watcher)) throw Error('Cannot find watcher.');
 
         const patterns = this._watchers.get(watcher)!;
@@ -162,7 +162,7 @@ export class StateManager {
             if (!isEq(this._data, newData)) {
                 changed = true;
 
-                this._data = newData;
+                this._data = newData as any;
                 redo.push(...newRedo);
                 undo.push(...newUndo);
             }

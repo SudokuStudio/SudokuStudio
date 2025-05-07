@@ -15,7 +15,7 @@ import { userCursorIsShownState, userSelectState } from '../user';
 import type { ElementInfo } from './element';
 import { pushHistory } from '../history';
 
-export const quadrupleInfo: ElementInfo = {
+export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     getInputHandler,
     order: 110,
     inGlobalMenu: false,
@@ -55,9 +55,13 @@ export const quadrupleInfo: ElementInfo = {
     },
 };
 
-function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+function getInputHandler(
+    ref: StateRef<schema.QuadrupleElement['value']>,
+    grid: Grid,
+    svg: SVGSVGElement,
+): InputHandler {
     const digits: number[] = [];
-    let cornerRef: null | StateRef = null;
+    let cornerRef: null | StateRef<true | ArrayObj<number>> = null;
     let maxLen = 4;
 
     function onDigitInput(code: string): boolean {
@@ -67,7 +71,7 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHa
         if (undefined === digit) return false;
 
         if (null == digit) {
-            if (true === cornerRef.get<true | ArrayObj<number>>()) {
+            if (true === cornerRef.get()) {
                 // Already empty -> delete.
                 const diff = cornerRef.replace(null);
                 pushHistory(diff);
@@ -93,7 +97,7 @@ function getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHa
         if (null == coord) return;
 
         const idx = cornerCoord2cornerIdx(coord, grid);
-        const clickedCornerRef = ref.ref(`${idx}`);
+        const clickedCornerRef = ref.ref<true | ArrayObj<number>>(`${idx}`);
 
         maxLen = 4;
         if (coord[0] <= 0 || grid.width <= coord[0]) maxLen *= 0.5;

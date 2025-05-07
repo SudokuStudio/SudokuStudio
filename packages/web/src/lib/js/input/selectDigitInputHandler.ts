@@ -1,5 +1,5 @@
 import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
-import type { Geometry, Grid, Idx, IdxBitset } from '@sudoku-studio/schema';
+import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema, user } from '@sudoku-studio/schema';
 import type { StateRef, Update } from '@sudoku-studio/state-manager/src';
 import { boardState, getCellValue, getDigits } from '../board';
 import { pushHistory } from '../history';
@@ -28,8 +28,18 @@ export type DigitInputHandlerOptions = {
     digitMapping?: null | (string | number)[];
 };
 
+type StateRefSelectDigitInputHandler =
+    | StateRef<schema.DigitElement['value']>
+    | StateRef<schema.PencilMarksElement['value']>
+    | StateRef<schema.ColorsElement['value']>
+    | StateRef<SelectDigitInputHandlerValue>;
+type SelectDigitInputHandlerValue =
+    | schema.DigitElement['value']
+    | schema.PencilMarksElement['value']
+    | schema.ColorsElement['value'];
+
 export function getSelectDigitInputHandler(
-    stateRef: StateRef,
+    stateRef: StateRefSelectDigitInputHandler,
     grid: Grid,
     svg: SVGSVGElement,
     options: DigitInputHandlerOptions,
@@ -41,31 +51,34 @@ export function getSelectDigitInputHandler(
     function onDigitInput(code: string): boolean {
         let digit: undefined | null | number | string = parseDigit(code);
 
-        if (digitMapping && null != digit && digit in digitMapping) digit = digitMapping[digit];
-
-        if (undefined === digit) return false;
+        if (digitMapping && null != digit && digit in digitMapping) {
+            digit = digitMapping[digit];
+        }
+        if (undefined === digit) {
+            return false;
+        }
 
         const shouldDelegate = onDigitInputHelper(stateRef, digit);
         if (shouldDelegate) {
             for (const type of DELETE_ORDER) {
-                const elementId = userState.get('marks', type);
+                const elementId = userState.get<string>('marks', type);
                 if (null == elementId) continue;
 
-                const otherRef = boardState.ref('elements', `${elementId}`, 'value');
+                const otherRef = boardState.ref<SelectDigitInputHandlerValue>('elements', `${elementId}`, 'value');
                 if (!onDigitInputHelper(otherRef, digit)) break;
             }
         }
         return true;
     }
 
-    function onDigitInputHelper(stateRef: StateRef, digit: null | number | string): boolean {
+    function onDigitInputHelper(stateRef: StateRefSelectDigitInputHandler, digit: null | number | string): boolean {
         const blockingDigits = getDigits(null != digit && blockedByGivens, null != digit && blockedByFilled);
 
         const update: Update = {};
         // Keep track of if all marks are already set, and if so delete them instead of adding them.
         let allAlreadySet = true;
 
-        for (const cellIdx of idxMapToKeysArray(userSelectState.get<IdxBitset<Geometry.CELL>>())) {
+        for (const cellIdx of idxMapToKeysArray(userSelectState.get())) {
             // Ignore filled/given digits as needed.
             if (null != blockingDigits[cellIdx]) continue;
 
@@ -114,7 +127,10 @@ export function getSelectDigitInputHandler(
 
     function onQuickshift(event: KeyboardEvent): boolean {
         if ('keydown' === event.type && event.code in MODE_SHORTCUTS) {
-            const newToolState = userState.get('marks', MODE_SHORTCUTS[event.code as keyof typeof MODE_SHORTCUTS]);
+            const newToolState = userState.get<string>(
+                'marks',
+                MODE_SHORTCUTS[event.code as keyof typeof MODE_SHORTCUTS],
+            );
             userToolState.replace(newToolState);
             userPrevToolState.replace(newToolState);
             return true;
@@ -426,7 +442,7 @@ export function getSelectDigitInputHandler(
         if (Mode.RESETTING === mode) {
             const { coord, grid } = event;
             const cellIndex = cellCoord2CellIdx(coord, grid);
-            const selection = userSelectState.get<Record<string, true>>() || {};
+            const selection = userSelectState.get() || {};
 
             // Special: Tapping on a single cell acts as a toggle
             if (1 === Object.keys(selection).length && selection[cellIndex]) {

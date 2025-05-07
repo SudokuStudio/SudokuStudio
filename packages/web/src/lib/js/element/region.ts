@@ -15,8 +15,8 @@ import { pushHistory } from '../history';
 import { userCursorIsShownState, userSelectState } from '../user';
 import type { ElementInfo } from './element';
 
-export const minInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const minInfo: ElementInfo<schema.RegionElement['value']> = {
+    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, 'max');
     },
     order: 20,
@@ -47,8 +47,8 @@ export const minInfo: ElementInfo = {
     },
 };
 
-export const maxInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const maxInfo: ElementInfo<schema.RegionElement['value']> = {
+    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, 'min');
     },
     order: 21,
@@ -80,8 +80,8 @@ export const maxInfo: ElementInfo = {
     },
 };
 
-export const evenInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const evenInfo: ElementInfo<schema.RegionElement['value']> = {
+    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, 'odd');
     },
     order: 40,
@@ -104,8 +104,8 @@ export const evenInfo: ElementInfo = {
     },
 };
 
-export const oddInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const oddInfo: ElementInfo<schema.RegionElement['value']> = {
+    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, 'even');
     },
     order: 41,
@@ -128,9 +128,9 @@ export const oddInfo: ElementInfo = {
     },
 };
 
-export const columnIndexerInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, '');
+export const columnIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
+    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg);
     },
     order: 42,
     inGlobalMenu: false,
@@ -159,9 +159,9 @@ export const columnIndexerInfo: ElementInfo = {
     },
 };
 
-export const rowIndexerInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, '');
+export const rowIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
+    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
+        return getInputHandler(ref, grid, svg);
     },
     order: 42,
     inGlobalMenu: false,
@@ -190,7 +190,16 @@ export const rowIndexerInfo: ElementInfo = {
     },
 };
 
-function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, oppositeConstraint: string): InputHandler {
+/**
+ * @param oppositeConstraint - Another constraint that this constraint cannot share cells with. So attempting to place
+ *      this constraint there will ignore that cell.
+ */
+function getInputHandler(
+    stateRef: StateRef<schema.RegionElement['value']>,
+    grid: Grid,
+    svg: SVGSVGElement,
+    oppositeConstraint?: string,
+): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
     enum Mode {
@@ -209,13 +218,15 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement, opp
         if (Mode.DYNAMIC === mode) {
             // If the first cell already has the constraint, set mode to removing
             // Otherwise, set mode to adding
-            mode = stateRef.ref(`${idx}`).get<true>() ? Mode.REMOVING : Mode.ADDING;
+            mode = stateRef.ref<true>(`${idx}`).get() ? Mode.REMOVING : Mode.ADDING;
         }
 
-        const oppositeConstraintValue = getCellValue(oppositeConstraint, idx);
-        if (oppositeConstraintValue) {
-            // Cannot place constraint if the opposite constraint is already in the cell
-            return;
+        if (null != oppositeConstraint) {
+            const oppositeConstraintValue = getCellValue(oppositeConstraint, idx);
+            if (oppositeConstraintValue) {
+                // Cannot place constraint if the opposite constraint is already in the cell
+                return;
+            }
         }
 
         const stateValue = mode === Mode.ADDING ? true : null;
