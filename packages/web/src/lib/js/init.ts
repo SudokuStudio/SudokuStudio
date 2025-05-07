@@ -3,7 +3,7 @@ import LZString from 'lz-string';
 import type { Geometry, IdxMap, schema } from '@sudoku-studio/schema';
 import { boardState } from './board';
 import { setupUserState } from './user';
-import { fPuzzles } from '@sudoku-studio/board-format/src';
+import { fPuzzles, parseSudokuStudio } from '@sudoku-studio/board-format/src';
 import { createElement } from './elements';
 
 import { SatSolver } from './solver/satSolver';
@@ -60,6 +60,7 @@ export function initUserAndBoard(): void {
 
     const thisUrl = new URL(window.location.href);
 
+    // FPuzzles url
     if (thisUrl.searchParams.has('f')) {
         try {
             const b64 = thisUrl.searchParams.get('f')!.replace(/ /g, '+');
@@ -77,6 +78,7 @@ export function initUserAndBoard(): void {
         }
     }
 
+    // Basic digits url
     if (thisUrl.searchParams.has('c')) {
         const DIGIT_REGEX = /[1-9]/;
         const digitsString = thisUrl.searchParams.get('c')!;
@@ -102,15 +104,12 @@ export function initUserAndBoard(): void {
     }
 
     if (thisUrl.searchParams.has('b')) {
-        const boardString = thisUrl.searchParams.get('b')!;
+        const boardString = thisUrl.searchParams.get('b')!.replace(/ /g, '+');
         try {
-            const json = LZString.decompressFromBase64(boardString);
-            if (null != json) {
-                const newBoardState: schema.Board = JSON.parse(json);
-                setupUserState(newBoardState);
-                boardState.update(newBoardState as any);
-                return;
-            }
+            const newBoardState = parseSudokuStudio(boardString); // throws if invalid
+            setupUserState(newBoardState);
+            boardState.update(newBoardState as any);
+            return;
         } catch (e) {
             console.error('Failed to update board from `b` param.');
             console.error(e);

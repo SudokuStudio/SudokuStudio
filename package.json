@@ -25,7 +25,7 @@
         "test": "pnpm -r --parallel --aggregate-output --reporter=append-only run test",
         "check": "pnpm -r --parallel --aggregate-output --reporter=append-only run check",
         "format": "prettier --write .",
-        "lint": "prettier --check"
+        "lint": "prettier --check ."
     },
     "devDependencies": {
         "prettier": "^3.5.3",
