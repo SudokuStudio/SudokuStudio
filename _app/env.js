@@ -1,1 +1,1 @@
-export const env={"SUDOKU_STUDIO_VERSION":"8dd8f11"}
+export const env={"SUDOKU_STUDIO_VERSION":"95e0ece"}
