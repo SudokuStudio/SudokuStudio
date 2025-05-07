@@ -17,8 +17,8 @@ import { userCursorIsShownState, userSelectState } from '../user';
 import type { ElementInfo } from './element';
 import { pushHistory } from '../history';
 
-export const differenceInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const differenceInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
+    getInputHandler(ref: StateRef<schema.EdgeNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2edgeIdx, max: 10 });
     },
     order: 140,
@@ -53,8 +53,8 @@ export const differenceInfo: ElementInfo = {
     },
 };
 
-export const ratioInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const ratioInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
+    getInputHandler(ref: StateRef<schema.EdgeNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2edgeIdx, max: 10 });
     },
     order: 141,
@@ -89,12 +89,12 @@ export const ratioInfo: ElementInfo = {
     },
 };
 
-export const xvInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const xvInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
+    getInputHandler(ref: StateRef<schema.EdgeNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, {
             svgCoord2idx: svgCoord2edgeIdx,
             keymap: {
-                // TODO this is jank.
+                // TODO(mingwei) this is jank in that it is only used for XV.
                 KeyX: 10,
                 KeyV: 5,
             },
@@ -132,8 +132,8 @@ export const xvInfo: ElementInfo = {
     },
 };
 
-export const littleKillerInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const littleKillerInfo: ElementInfo<schema.LittleKillerElement['value']> = {
+    getInputHandler(ref: StateRef<schema.LittleKillerElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2diagonalIdx, max: 100 });
     },
     order: 160,
@@ -162,8 +162,8 @@ export const littleKillerInfo: ElementInfo = {
     },
 };
 
-export const sandwichInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const sandwichInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
+    getInputHandler(ref: StateRef<schema.SeriesNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2seriesIdx, max: 100 });
     },
     order: 150,
@@ -203,8 +203,8 @@ export const sandwichInfo: ElementInfo = {
     },
 };
 
-export const skyscraperInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const skyscraperInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
+    getInputHandler(ref: StateRef<schema.SeriesNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, {
             svgCoord2idx: svgCoord2seriesIdx,
             max: Math.max(grid.width, grid.height),
@@ -255,8 +255,8 @@ export const skyscraperInfo: ElementInfo = {
     },
 };
 
-export const xsumInfo: ElementInfo = {
-    getInputHandler(ref: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+export const xsumInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
+    getInputHandler(ref: StateRef<schema.SeriesNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
         return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2seriesIdx, max: 100 });
     },
     order: 152,
@@ -296,7 +296,7 @@ type PositionNumberInputHandlerOptions<TAG extends Geometry> = {
 };
 
 function getInputHandler<TAG extends Geometry>(
-    ref: StateRef,
+    ref: StateRef<IdxMap<TAG, true | number> | undefined>,
     grid: Grid,
     svg: SVGSVGElement,
     options: PositionNumberInputHandlerOptions<TAG>,
@@ -304,7 +304,7 @@ function getInputHandler<TAG extends Geometry>(
     const keymap = options.keymap || {};
     const { max, svgCoord2idx } = options;
 
-    let idxRef: null | StateRef = null;
+    let idxRef: null | StateRef<true | number> = null;
 
     function onDigitInput(code: string): boolean {
         if (null == idxRef) return false;
@@ -317,7 +317,7 @@ function getInputHandler<TAG extends Geometry>(
         }
         if (undefined === digit) return false;
 
-        const oldVal = idxRef.get<true | number>();
+        const oldVal = idxRef.get();
         if (null != digit && 'number' === typeof oldVal) {
             const multiDigit = oldVal * 10 + digit;
             if (multiDigit < max) digit = multiDigit;
@@ -332,7 +332,7 @@ function getInputHandler<TAG extends Geometry>(
     function handleClick(mousePosition: { offsetX: number; offsetY: number }) {
         const idx = svgCoord2idx(click2svgCoord(mousePosition, svg), grid);
         if (null == idx) return;
-        const clickedIdxRef = ref.ref(`${idx}`);
+        const clickedIdxRef = ref.ref<number | true>(`${idx}`);
 
         if (true === clickedIdxRef.get()) {
             // Delete empty.

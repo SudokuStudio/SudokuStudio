@@ -6,7 +6,7 @@
     import Modal from '../Modal.svelte';
 
     export let visible = false;
-    export let filterFunction: (key: string, info: ElementInfo) => boolean;
+    export let filterFunction: (key: string, info: ElementInfo<unknown>) => boolean;
     export let searchPattern: string = '';
 
     let searchInput: HTMLInputElement = null!;

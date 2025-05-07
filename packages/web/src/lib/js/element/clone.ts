@@ -17,7 +17,7 @@ import { pushHistory } from '../history';
 import * as hsluv from 'hsluv';
 import { makeA1Column } from '../util';
 
-export const cloneInfo: ElementInfo = {
+export const cloneInfo: ElementInfo<schema.CloneElement['value']> = {
     getInputHandler,
     order: 10,
     inGlobalMenu: false,
@@ -45,10 +45,14 @@ export const cloneInfo: ElementInfo = {
     },
 };
 
-function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): InputHandler {
+function getInputHandler(
+    stateRef: StateRef<schema.CloneElement['value']>,
+    grid: Grid,
+    svg: SVGSVGElement,
+): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
-    let cloneRef: null | StateRef = null;
+    let cloneRef: null | StateRef<typeof cloneEntry> = null;
     let moveStart: null | Coord<Geometry.CELL> = null;
     let cloneEntry = {
         label: null as null | string,
@@ -73,7 +77,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
         let digit = parseDigit(code);
         if (undefined === digit) return false;
 
-        const oldVal = cloneRef.ref('sum').get<true | number>();
+        const oldVal = cloneRef.ref<true | number>('sum').get();
         if (null != digit && 'number' === typeof oldVal) {
             const multiDigit = oldVal * 10 + digit;
             if (multiDigit < max) digit = multiDigit;
@@ -83,7 +87,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
     }
 
     function getExistingCloneAtIdx(idx: Idx<Geometry.CELL>): null | [string, 'a' | 'b'] {
-        for (const [cloneId, { a, b }] of Object.entries(stateRef.get<schema.CloneElement['value']>() || {})) {
+        for (const [cloneId, { a, b }] of Object.entries(stateRef.get() || {})) {
             if (arrayObj2array(a || {}).includes(idx)) {
                 return [cloneId, 'a'];
             }
@@ -96,7 +100,7 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
 
     function makeNewClone(): typeof cloneEntry {
         const existingLabels = new Set();
-        for (const { label } of Object.values(stateRef.get<schema.CloneElement['value']>() || {})) {
+        for (const { label } of Object.values(stateRef.get() || {})) {
             if (null != label) existingLabels.add(label);
         }
         for (let i = 0; ; i++) {
@@ -113,9 +117,9 @@ function getInputHandler(stateRef: StateRef, grid: Grid, svg: SVGSVGElement): In
             const [cloneId, clickedAB] = existingClone;
             const unclickedAB = 'a' === clickedAB ? 'b' : 'a';
 
-            cloneRef = stateRef.ref(cloneId);
+            cloneRef = stateRef.ref<typeof cloneEntry>(cloneId);
             mode = Mode.MOVING;
-            cloneEntry = Object.assign({}, cloneRef.get<typeof cloneEntry>());
+            cloneEntry = Object.assign({}, cloneRef.get());
 
             if (null != cloneEntry[unclickedAB]) {
                 const clickedArr = arrayObj2array(cloneEntry[clickedAB]);

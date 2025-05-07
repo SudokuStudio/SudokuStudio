@@ -18,9 +18,13 @@
     onDestroy(() => window.removeEventListener('resize', onResize));
     requestAnimationFrame(onResize); // Run on load.
 
+    const title = boardState.ref<string>('meta', 'title');
+    const author = boardState.ref<string>('meta', 'author');
+    const description = boardState.ref<string>('meta', 'description');
+
     function updateWindowTitle() {
-        const puzzleTitle = title.get<string>();
-        const puzzleAuthor = author.get<string>();
+        const puzzleTitle = title.get();
+        const puzzleAuthor = author.get();
         let windowTitle: string;
 
         if (puzzleTitle && puzzleAuthor) {
@@ -33,10 +37,6 @@
 
         document.title = windowTitle;
     }
-
-    const title = boardState.ref('meta', 'title');
-    const author = boardState.ref('meta', 'author');
-    const description = boardState.ref('meta', 'description');
 
     updateWindowTitle();
 </script>

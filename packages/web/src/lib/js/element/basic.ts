@@ -8,7 +8,7 @@ import {
 } from '@sudoku-studio/board-utils/src';
 import type { ElementInfo } from './element';
 
-export const gridInfo: ElementInfo = {
+export const gridInfo: ElementInfo<undefined> = {
     order: 101,
     permanent: true,
 
@@ -28,7 +28,7 @@ export const gridInfo: ElementInfo = {
     },
 } as const;
 
-export const gridRegionInfo: ElementInfo = {
+export const gridRegionInfo: ElementInfo<schema.GridRegionElement['value']> = {
     order: 100,
     permanent: true,
 

@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import type { Geometry, Idx, IdxMap, schema } from '@sudoku-studio/schema';
+import type { Geometry, Grid, Idx, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Data, Diff } from '@sudoku-studio/state-manager/src';
 import { StateManager } from '@sudoku-studio/state-manager/src';
 import { getDigits as getDigitsHelper } from '@sudoku-studio/board-utils/src';
@@ -13,7 +13,7 @@ if (browser) {
     (window as any).boardState = boardState;
 }
 
-export const boardGridRef = boardState.ref('grid');
+export const boardGridRef = boardState.ref<Grid>('grid');
 
 function getElements(): Record<string, schema.Element> | null {
     return boardState.get<schema.Board['elements']>('elements');

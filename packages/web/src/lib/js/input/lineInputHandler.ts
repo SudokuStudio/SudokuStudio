@@ -1,5 +1,5 @@
 import { arrayObj2array, boardRepr, cellCoord2CellIdx } from '@sudoku-studio/board-utils/src';
-import type { ArrayObj, Geometry, Grid, Idx } from '@sudoku-studio/schema';
+import type { ArrayObj, Geometry, Grid, Idx, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { pushHistory } from '../history';
 import { userCursorIsShownState, userSelectState } from '../user';
@@ -14,7 +14,7 @@ export type LineInputHandlerOptions = {
 };
 
 export function getLineInputHandler(
-    stateRef: StateRef,
+    stateRef: StateRef<schema.LineElement['value']>,
     grid: Grid,
     svg: SVGSVGElement,
     options: LineInputHandlerOptions,
@@ -76,9 +76,7 @@ export function getLineInputHandler(
         const idx = cellCoord2CellIdx(coord, grid);
 
         let lineIdToDelete: null | string = null;
-        for (const [lineId, lineValArrObj] of Object.entries(
-            stateRef.get<Record<string, ArrayObj<Idx<Geometry.CELL>>>>() || {},
-        )) {
+        for (const [lineId, lineValArrObj] of Object.entries(stateRef.get() || {})) {
             const lineValCells = arrayObj2array(lineValArrObj);
             if (deletePrioritizeHead && idx === lineValCells[0]) {
                 lineIdToDelete = lineId;
