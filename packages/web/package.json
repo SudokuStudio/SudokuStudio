@@ -10,13 +10,16 @@
         "preview": "vite preview",
         "prepare": "svelte-kit sync || echo ''",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+        "test": "playwright test"
     },
     "devDependencies": {
         "@material/ripple": "^14.0.0",
-        "@sudoku-studio/board": "workspace:*",
+        "@playwright/test": "^1.52.0",
+        "@sudoku-studio/board-examples": "workspace:*",
         "@sudoku-studio/board-format": "workspace:*",
         "@sudoku-studio/board-utils": "workspace:*",
+        "@sudoku-studio/board": "workspace:*",
         "@sudoku-studio/schema": "workspace:*",
         "@sudoku-studio/solver-sat": "workspace:*",
         "@sudoku-studio/state-manager": "workspace:*",
@@ -25,7 +28,6 @@
         "@sveltejs/vite-plugin-svelte": "^5.0.0",
         "@types/debounce": "^1.2.0",
         "comlink": "^4.4.2",
-        "cross-env": "^7.0.3",
         "debounce": "^1.2.1",
         "fuse.js": "^6.6.2",
         "hsluv": "0.1.0",

@@ -1,1 +1,1 @@
-{ "recommendations": ["svelte.svelte-vscode", "esbenp.prettier-vscode"] }
+{ "recommendations": ["svelte.svelte-vscode", "esbenp.prettier-vscode", "ms-playwright.playwright"] }

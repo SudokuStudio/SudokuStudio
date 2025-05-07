@@ -1,0 +1,23 @@
+{
+    "name": "@sudoku-studio/board-examples",
+    "description": "Sudoku example puzzles in various formats",
+    "type": "module",
+    "version": "0.0.0",
+    "exports": {
+        ".": {
+            "types": "./dist/board-examples.d.ts",
+            "import": "./dist/board-examples.js"
+        },
+        "./src": {
+            "import": "./src/board-examples.ts"
+        }
+    },
+    "scripts": {
+        "clean": "rm -rf dist node_modules",
+        "build": "tsc",
+        "check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@sudoku-studio/schema": "workspace:*"
+    }
+}
