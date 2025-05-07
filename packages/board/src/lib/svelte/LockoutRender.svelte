@@ -30,7 +30,7 @@
                 d: makePath(idxArr, grid, {
                     shortenHead: diamondSize / 2,
                     shortenTail: diamondSize / 2,
-                    bezierRounding: 0.2,
+                    bezierRounding: 0.3,
                 }),
             });
         }

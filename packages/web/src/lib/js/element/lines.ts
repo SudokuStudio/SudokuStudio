@@ -260,7 +260,7 @@ export const lockoutInfo: ElementInfo = {
     },
     meta: {
         description:
-            'Digits on lockout lines must not be between or equal to the digits in the circles. Circles must differ by at least 4. Digits may repeat.',
+            'Digits on lockout lines must not be between or equal to the digits in the circles. Ends must differ by at least 4. Digits may repeat.',
         tags: ['line', 'range'],
         category: ['local', 'line'],
     },

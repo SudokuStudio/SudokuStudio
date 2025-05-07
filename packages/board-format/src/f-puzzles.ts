@@ -46,6 +46,8 @@ type FPuzzlesBoard = {
     quadruple?: FPuzzlesQuadruple[];
     betweenline?: FPuzzlesLines[];
     sandwichsum?: FPuzzlesCell[];
+    xsum?: FPuzzlesCell[];
+    skyscraper?: FPuzzlesCell[];
     // disabledlogic?: string[],
     // truecandidatesoptions?: string[],
 };
@@ -273,6 +275,8 @@ export function parseFpuzzles(b64: string, createElement: boardRepr.CreateElemen
     }
 
     if (fBoard.sandwichsum) addSeriesElement('sandwich', fBoard.sandwichsum);
+    if (fBoard.xsum) addSeriesElement('xsum', fBoard.xsum);
+    if (fBoard.skyscraper) addSeriesElement('skyscraper', fBoard.skyscraper);
 
     if (fBoard.killercage) addKillerElement(fBoard.killercage);
     if (fBoard.extraregion) {

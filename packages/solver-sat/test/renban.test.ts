@@ -19,7 +19,7 @@ describe('Renban Puzzles', () => {
         ],
     ];
 
-    test.each(boards)('"%s"', async (_name, board64) => {
+    test.concurrent.each(boards)('"%s"', async (_name, board64) => {
         const board = fPuzzles.parseFpuzzles(board64, (type, value) => ({ type, value }) as any);
 
         const reason = cantAttempt(board);
