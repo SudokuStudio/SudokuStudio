@@ -11,7 +11,8 @@
         "prepare": "svelte-kit sync || echo ''",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-        "test": "playwright test"
+        "test": "playwright test",
+        "test:e2e": "playwright test"
     },
     "devDependencies": {
         "@material/ripple": "^14.0.0",

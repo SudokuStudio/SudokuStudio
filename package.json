@@ -23,6 +23,8 @@
         "build": "pnpm --filter @sudoku-studio/web run build",
         "dev": "pnpm --filter @sudoku-studio/web run dev",
         "test": "pnpm -r --parallel --aggregate-output --reporter=append-only run test",
+        "test:e2e": "pnpm -r --parallel --aggregate-output --reporter=append-only run test:e2e",
+        "test:unit": "pnpm -r --parallel --aggregate-output --reporter=append-only run test:unit",
         "check": "pnpm -r --parallel --aggregate-output --reporter=append-only run check",
         "format": "prettier --write .",
         "lint": "prettier --check ."

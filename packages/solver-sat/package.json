@@ -15,7 +15,8 @@
         "clean": "rm -rf dist node_modules",
         "build": "tsc",
         "check": "tsc --noEmit",
-        "test": "vitest"
+        "test": "vitest",
+        "test:unit": "vitest"
     },
     "devDependencies": {
         "@babel/core": "^7.14.8",
