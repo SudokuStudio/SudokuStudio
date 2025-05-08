@@ -5,6 +5,7 @@ import { sudokuStudioBoards, sudokuStudioCoverageBoards } from '@sudoku-studio/b
 test('full page', async ({ page }) => {
     const [_name, board, _solution] = sudokuStudioCoverageBoards[0];
     await page.goto(`?b=${board}`);
+    await page.waitForSelector('svg');
     await expect(page).toHaveScreenshot();
 });
 

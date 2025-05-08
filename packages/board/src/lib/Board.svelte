@@ -369,6 +369,8 @@
             }
             list.sort((a, b) => a.order - b.order);
             set(list);
+
+            svg.dispatchEvent(new CustomEvent('boardElementsUpdated', { bubbles: true }));
         }, true);
     });
 

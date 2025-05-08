@@ -20,11 +20,11 @@
     "scripts": {
         "clean": "pnpm -r --parallel run clean && rm -rf node_modules",
         "build:all": "pnpm -r --parallel --aggregate-output --reporter=append-only run build",
-        "build": "pnpm --filter @sudoku-studio/web run build",
-        "dev": "pnpm --filter @sudoku-studio/web run dev",
+        "build": "pnpm --filter=web run build",
+        "dev": "pnpm --filter=web run dev",
         "test": "pnpm -r --parallel --aggregate-output --reporter=append-only run test",
-        "test:e2e": "pnpm -r --parallel --aggregate-output --reporter=append-only run test:e2e",
         "test:unit": "pnpm -r --parallel --aggregate-output --reporter=append-only run test:unit",
+        "test:e2e": "pnpm --filter=web run test:e2e",
         "check": "pnpm -r --parallel --aggregate-output --reporter=append-only run check",
         "format": "prettier --write .",
         "lint": "prettier --check ."

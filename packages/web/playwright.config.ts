@@ -34,13 +34,29 @@ export default defineConfig({
         trace: 'on-first-retry',
     },
 
+    /*
+     * https://playwright.dev/docs/api/class-testconfig#test-config-snapshot-path-template
+     * Setup snapshot to ignore browser and OS specific differences.
+     */
+    snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}{ext}',
+
+    expect: {
+        toMatchSnapshot: {
+            maxDiffPixelRatio: 0.02,
+        },
+        toHaveScreenshot: {
+            maxDiffPixelRatio: 0.02,
+        },
+    },
+
     /* Configure projects for major browsers */
     projects: [
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
 
         { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
 
-        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+        // Ignore webkit/Safari, has formatting issues with svg text baselines.
+        // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
 
         /* Test against mobile viewports. */
         // {
