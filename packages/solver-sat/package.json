@@ -15,7 +15,8 @@
         "clean": "rm -rf dist node_modules",
         "build": "tsc",
         "check": "tsc --noEmit",
-        "test": "vitest"
+        "test": "vitest",
+        "test:unit": "vitest"
     },
     "devDependencies": {
         "@babel/core": "^7.14.8",
@@ -25,6 +26,7 @@
         "@rollup/plugin-node-resolve": "^15.0.0",
         "@rollup/plugin-replace": "^5.0.0",
         "@rollup/plugin-typescript": "^9.0.0",
+        "@sudoku-studio/board-examples": "workspace:*",
         "@sudoku-studio/board-format": "workspace:*",
         "@sudoku-studio/board-utils": "workspace:*",
         "@sudoku-studio/cryptominisat": "^0.0.9",
