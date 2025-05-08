@@ -1,9 +1,10 @@
 import { buffer } from 'node:stream/consumers';
 import { test, expect } from '@playwright/test';
-import { sudokuStudioBoards, sudokuStudioScreenshotBoards } from '@sudoku-studio/board-examples/src';
+import { sudokuStudioBoards, sudokuStudioCoverageBoards } from '@sudoku-studio/board-examples/src';
 
 test('full page', async ({ page }) => {
-    await page.goto(`?b=${sudokuStudioScreenshotBoards[0][1]}`);
+    const [_name, board, _solution] = sudokuStudioCoverageBoards[0];
+    await page.goto(`?b=${board}`);
     await expect(page).toHaveScreenshot();
 });
 
@@ -18,7 +19,7 @@ test.describe('board', () => {
 });
 
 test.describe('save image', () => {
-    for (const [name, board, _solution] of sudokuStudioScreenshotBoards) {
+    for (const [name, board, _solution] of sudokuStudioCoverageBoards) {
         test(name, async ({ page }) => {
             await page.goto(`?b=${board}`);
             const downloadPromise = page.waitForEvent('download');
