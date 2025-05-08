@@ -40,14 +40,7 @@ export default defineConfig({
      */
     snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}{ext}',
 
-    expect: {
-        toMatchSnapshot: {
-            maxDiffPixelRatio: 0.02,
-        },
-        toHaveScreenshot: {
-            maxDiffPixelRatio: 0.02,
-        },
-    },
+    expect: { toMatchSnapshot: { maxDiffPixelRatio: 0.02 }, toHaveScreenshot: { maxDiffPixelRatio: 0.02 } },
 
     /* Configure projects for major browsers */
     projects: [
