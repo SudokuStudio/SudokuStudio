@@ -1,13 +1,12 @@
 <script lang="ts">
     import { cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
+    import type { Grid, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.RegionElement>; grid: Grid } = $props();
 </script>
 
-<!-- Path for ><. -->
+<!-- Path for `><`. -->
 <path
     id="min-{id}"
     d="M 0.08,0.38 L 0.12,0.50 L 0.08,0.62 M 0.38,0.08 L 0.50,0.12 L 0.62,0.08 M 0.92,0.62 L 0.88,0.50 L 0.92,0.38 M 0.62,0.92 L 0.50,0.88 L 0.38,0.92"
@@ -30,22 +29,22 @@
 >
     <!-- Mask out board edges. -->
     <rect x="0.25" y="0.25" width={grid.width - 0.5} height={grid.height - 0.5} fill="#fff" />
-    {#each Object.entries($ref || {}) as [idx, _true] (idx)}
+    {#each Object.entries($ref || {}) as [cellIdx, _true] (cellIdx)}
         <!-- Mask for each cell. -->
         <use
             href="#min-{id}-maskitem"
-            transform="translate({cellIdx2cellCoord(+idx, grid)[0]},{cellIdx2cellCoord(+idx, grid)[1]})"
+            transform="translate({cellIdx2cellCoord(+cellIdx, grid)[0]},{cellIdx2cellCoord(+cellIdx, grid)[1]})"
             fill="#000"
         />
     {/each}
 </mask>
 <rect width={grid.width} height={grid.height} fill="#fff" />
 <g {id}>
-    {#each Object.entries($ref || {}) as [idx, _true] (idx)}
+    {#each Object.entries($ref || {}) as [cellIdx, _true] (cellIdx)}
         <!-- Background color. -->
         <rect
-            x={cellIdx2cellCoord(+idx, grid)[0]}
-            y={cellIdx2cellCoord(+idx, grid)[1]}
+            x={cellIdx2cellCoord(+cellIdx, grid)[0]}
+            y={cellIdx2cellCoord(+cellIdx, grid)[1]}
             width="1"
             height="1"
             fill="#694b7d"
@@ -53,11 +52,11 @@
         />
     {/each}
     <g mask="url(#min-{id}-mask)">
-        {#each Object.entries($ref || {}) as [idx, _true] (idx)}
+        {#each Object.entries($ref || {}) as [cellIdx, _true] (cellIdx)}
             <!-- Each >< cell. -->
             <use
                 href="#min-{id}"
-                transform="translate({cellIdx2cellCoord(+idx, grid)[0]},{cellIdx2cellCoord(+idx, grid)[1]})"
+                transform="translate({cellIdx2cellCoord(+cellIdx, grid)[0]},{cellIdx2cellCoord(+cellIdx, grid)[1]})"
             />
         {/each}
     </g>

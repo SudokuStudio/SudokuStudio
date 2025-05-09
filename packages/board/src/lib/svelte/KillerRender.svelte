@@ -1,11 +1,9 @@
 <script lang="ts">
     import { idxMapToKeysArray, getBorderPath, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
-    import type { Geometry, schema } from '@sudoku-studio/schema';
+    import type { Geometry, Grid, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.KillerElement['value']>; grid: Grid } = $props();
 
     const inset = 0.075;
     const fontSize = 0.2;

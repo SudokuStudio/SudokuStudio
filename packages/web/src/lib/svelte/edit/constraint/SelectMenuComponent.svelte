@@ -6,11 +6,10 @@
     import ConstraintRow from './ConstraintRow.svelte';
 
     export let id: string;
-    export let elementRef: StateRef;
+    export let elementRef: StateRef<any>;
     export let info: SelectMenuComponent;
     export let deletable: boolean;
 
-    // @ts-ignore
     const _unused = elementRef;
 </script>
 

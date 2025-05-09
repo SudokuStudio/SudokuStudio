@@ -34,7 +34,7 @@ function undefToNull<T>(val: T): null | NonNullable<T> | null {
     return val!;
 }
 
-export class StateRef<T extends Data = Data> {
+export class StateRef<T extends Data> {
     private readonly _stateManager: StateManager<any>;
     private readonly _path: string[] = [];
 
@@ -51,7 +51,7 @@ export class StateRef<T extends Data = Data> {
         return [...this._path];
     }
 
-    ref<U extends Data = Data>(...path: string[]): StateRef<U> {
+    ref<U extends Data>(...path: string[]): StateRef<U> {
         return new StateRef(this._stateManager, [...this._path, ...path]);
     }
 
@@ -79,11 +79,11 @@ export class StateRef<T extends Data = Data> {
     }
 
     // https://svelte.dev/docs#Store_contract
-    subscribe(subscription: (value: any) => void): () => void {
+    subscribe(subscription: (value: T | null) => void): () => void {
         const watch = this.watch((_path, _oldData, newData) => subscription(newData), true);
         return () => this.unwatch(watch);
     }
-    set(value: any) {
+    set(value: T | null) {
         this.replace(value);
     }
 }
@@ -95,7 +95,7 @@ export class StateRef<T extends Data = Data> {
 /// undo/redo diff to the caller.
 ///
 /// This is where the magic happens.
-export class StateManager<T extends Data = Data> {
+export class StateManager<T extends Data> {
     /// The data contained in and managed by this StateManager.
     private _data: T | null = null;
 
@@ -105,7 +105,7 @@ export class StateManager<T extends Data = Data> {
 
     constructor() {}
 
-    ref<U extends Data = Data>(...path: string[]): StateRef<U> {
+    ref<U extends Data>(...path: string[]): StateRef<U> {
         return new StateRef(this, path);
     }
 

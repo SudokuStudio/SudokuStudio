@@ -1,12 +1,10 @@
 <script lang="ts">
-    import type { Geometry, IdxMap } from '@sudoku-studio/schema';
+    import type { Geometry, Grid, IdxMap, schema } from '@sudoku-studio/schema';
     import { makeConicalCellSlice } from '@sudoku-studio/board-utils/src';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
     import hsluv from 'hsluv';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.ColorsElement['value']>; grid: Grid } = $props();
 
     type Item = { idx: number; slices: { d: string; fill: string }[] };
     function getMarks(cells: IdxMap<Geometry.CELL, Record<string, boolean>>): Item[] {

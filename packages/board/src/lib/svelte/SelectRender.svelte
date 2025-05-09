@@ -1,22 +1,29 @@
 <script lang="ts">
-    import { derived } from 'svelte/store';
-
     import { getBorderPath, idxMapToKeysArray } from '@sudoku-studio/board-utils/src';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
+    import type { Geometry, Grid, IdxBitset } from '@sudoku-studio/schema';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const {
+        id,
+        ref,
+        grid,
+        fill = '#08f',
+        outlineOpacity = '#b2b2b2',
+        innerOpacity = '#080808',
+    }: {
+        id: string;
+        ref: StateRef<IdxBitset<Geometry.CELL>>;
+        grid: Grid;
+        fill?: string;
+        outlineOpacity?: string;
+        innerOpacity?: string;
+    } = $props();
 
     const inset = 0.075;
     const innerRadius = 0.05;
 
-    export let fill = '#08f';
-    export let outlineOpacity = '#b2b2b2';
-    export let innerOpacity = '#080808';
-
-    const dMask = derived(ref, (select) => getBorderPath(idxMapToKeysArray(select), grid, inset) || undefined);
-    const dFill = derived(ref, (select) => getBorderPath(idxMapToKeysArray(select), grid, 0) || undefined);
+    const dMask = $derived(getBorderPath(idxMapToKeysArray($ref), grid, inset) || undefined);
+    const dFill = $derived(getBorderPath(idxMapToKeysArray($ref), grid, 0) || undefined);
 </script>
 
 <filter id="select-{id}-blur">
@@ -30,6 +37,6 @@
 </filter>
 <mask id="select-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
     <rect x="0" y="0" width={grid.width} height={grid.height} fill={outlineOpacity} />
-    <path d={$dMask} fill={innerOpacity} stroke="none" filter="url(#select-{id}-blur)" />
+    <path d={dMask} fill={innerOpacity} stroke="none" filter="url(#select-{id}-blur)" />
 </mask>
-<path {id} d={$dFill} {fill} stroke="none" mask="url(#select-{id}-mask)" />
+<path {id} d={dFill} {fill} stroke="none" mask="url(#select-{id}-mask)" />

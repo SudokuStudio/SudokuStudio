@@ -1,13 +1,9 @@
 <script lang="ts">
     import { GRID_THICKNESS, GRID_THICKNESS_HALF } from '@sudoku-studio/board-utils/src';
+    import type { Grid } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
-
-    // @ts-ignore
-    const _ = ref; // Unused.
+    const { id, ref: _, grid }: { id: string; ref: StateRef<null>; grid: Grid } = $props();
 </script>
 
 <pattern id="grid-{id}" width="1" height="1" patternUnits="userSpaceOnUse">

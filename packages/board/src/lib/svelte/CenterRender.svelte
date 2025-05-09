@@ -1,24 +1,9 @@
 <script lang="ts">
-    import type { Geometry, Idx, IdxMap } from '@sudoku-studio/schema';
+    import type { Grid, schema } from '@sudoku-studio/schema';
     import { idxMapToKeysArray, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
-
-    function getMarks(
-        cells: IdxMap<Geometry.CELL, Record<string, number>>,
-    ): { idx: number; x: number; y: number; keys: Idx<Geometry.CELL>[]; nums: Record<string, number> }[] {
-        const out: { idx: number; x: number; y: number; keys: Idx<Geometry.CELL>[]; nums: Record<string, number> }[] =
-            [];
-        for (const [idx, nums] of Object.entries(cells)) {
-            const [x, y] = cellIdx2cellCoord(+idx, grid).map((x) => x + 0.5);
-            out.push({ idx: +idx, x, y, keys: idxMapToKeysArray(nums), nums: nums || {} });
-        }
-
-        return out;
-    }
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.PencilMarksElement['value']>; grid: Grid } = $props();
 
     /// This function determines the color based on the count of numbers.
     /// `count` is a `true` when center marks are entered manually.
@@ -39,7 +24,9 @@
 </script>
 
 <g {id} mask="url(#SUDOKU_MASK_GIVENS_FILLED)">
-    {#each getMarks($ref || {}) as { idx, x, y, keys, nums } (idx)}
+    {#each Object.entries($ref || {}) as [cellIdx, nums] (cellIdx)}
+        {@const [x, y] = cellIdx2cellCoord(+cellIdx, grid).map((z) => z + 0.5)}
+        {@const keys = idxMapToKeysArray(nums)}
         <text
             {x}
             {y}
@@ -51,7 +38,7 @@
             lengthAdjust="spacingAndGlyphs"
         >
             {#each keys as key}
-                <tspan fill={color(nums[key])}>{key}</tspan>
+                <tspan fill={color(nums![key])}>{key}</tspan>
             {/each}
         </text>
     {/each}

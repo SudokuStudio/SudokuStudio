@@ -1,20 +1,28 @@
 <script lang="ts">
     import { cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
+    import type { Grid, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
-
-    export let color: string = '#000';
-    export let mask: string | undefined = undefined;
+    const {
+        id,
+        ref,
+        grid,
+        color = '#000',
+        mask = undefined,
+    }: {
+        id: string;
+        ref: StateRef<schema.DigitElement['value']>;
+        grid: Grid;
+        color?: string;
+        mask?: string;
+    } = $props();
 </script>
 
 <g {id} {mask}>
-    {#each Object.entries($ref || {}) as [idx, num] (idx)}
+    {#each Object.entries($ref || {}) as [cellIdx, num] (cellIdx)}
         <text
-            x={cellIdx2cellCoord(+idx, grid)[0] + 0.5}
-            y={cellIdx2cellCoord(+idx, grid)[1] + 0.5}
+            x={cellIdx2cellCoord(+cellIdx, grid)[0] + 0.5}
+            y={cellIdx2cellCoord(+cellIdx, grid)[1] + 0.5}
             fill={color}
             text-anchor="middle"
             dominant-baseline="central"

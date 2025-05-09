@@ -1,25 +1,27 @@
 <script lang="ts">
-    import type { ArrayObj, Geometry, Idx } from '@sudoku-studio/schema';
+    import type { ArrayObj, Geometry, Grid, Idx, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
     import type { MakePathOptions } from '@sudoku-studio/board-utils/src';
     import { makePath, arrayObj2array } from '@sudoku-studio/board-utils/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
-
-    export let stroke = '#c7855c';
-    export let strokeWidth = 0.125;
-
-    export let pathOptions: MakePathOptions = {
-        shortenHead: 0.2,
-        shortenTail: 0.2,
-        bezierRounding: 0.2,
-        closeLoops: false,
-    };
+    const {
+        id,
+        ref,
+        grid,
+        stroke = '#c7855c',
+        strokeWidth = 0.125,
+        pathOptions = { shortenHead: 0.2, shortenTail: 0.2, bezierRounding: 0.2, closeLoops: false },
+    }: {
+        id: string;
+        ref: StateRef<schema.LineElement['value']>;
+        grid: Grid;
+        stroke?: string;
+        strokeWidth?: number;
+        pathOptions?: MakePathOptions;
+    } = $props();
 
     type Item = { itemId: string; d: string };
-    function each(items: null | Record<string, ArrayObj<Idx<Geometry.CELL>>>): Item[] {
+    function each(items: schema.LineElement['value'] | null): Item[] {
         if (null == items) return [];
         const out: Item[] = [];
         for (const [itemId, idxArrObj] of Object.entries(items)) {

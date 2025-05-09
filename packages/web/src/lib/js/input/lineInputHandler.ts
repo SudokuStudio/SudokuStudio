@@ -23,7 +23,7 @@ export function getLineInputHandler(
 
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
-    let lineRef: null | StateRef = null;
+    let lineRef: null | StateRef<schema.LineElementItem> = null;
     const lineCells: Idx<Geometry.CELL>[] = [];
 
     function handle(event: CellDragTapEvent) {

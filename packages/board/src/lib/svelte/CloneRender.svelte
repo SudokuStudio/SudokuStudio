@@ -1,11 +1,9 @@
 <script lang="ts">
     import { getBorderPath, cellIdx2cellCoord, arrayObj2array } from '@sudoku-studio/board-utils/src';
-    import type { schema } from '@sudoku-studio/schema';
+    import type { Grid, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.CloneElement['value']>; grid: Grid } = $props();
 
     const inset = 0.05;
     const fontSize = 0.2;

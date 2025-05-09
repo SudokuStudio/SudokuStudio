@@ -32,7 +32,7 @@
 </button>
 
 <style lang="scss">
-    @use '../../css/padbutton';
+    @use '$lib/css/padbutton';
 
     .padbutton {
         &.center {

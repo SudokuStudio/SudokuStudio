@@ -7,7 +7,7 @@
     import { removeElement } from '$lib/js/elementStores';
 
     export let id: string;
-    export let elementRef: StateRef;
+    export let elementRef: StateRef<{ value?: boolean | Record<string, boolean> }>;
     export let info: CheckboxMenuComponent;
     export let deletable: boolean;
 
