@@ -1,12 +1,10 @@
 <script lang="ts">
     import { diagonalIdx2dirVec, diagonalIdx2svgCoord } from '@sudoku-studio/board-utils/src';
 
-    import type { Idx, Geometry, schema } from '@sudoku-studio/schema';
+    import type { schema, Grid } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.LittleKillerElement['value']>; grid: Grid } = $props();
 
     const color: string = '#000';
     const fontSize = 0.4;
@@ -15,24 +13,6 @@
 
     const arrowStart = 0.48 * fontSize;
     const arrowEnd = arrowStart + 0.15;
-
-    type Item = { idx: Idx<Geometry.EDGE>; x: number; y: number; text: string; d: string };
-    function each(value: schema.SeriesNumberElement['value']): Item[] {
-        const out: Item[] = [];
-        for (const [diagIdx, digitOrTrue] of Object.entries(value || {})) {
-            const text = true !== digitOrTrue ? `${digitOrTrue}` : '_';
-            const [x, y] = diagonalIdx2svgCoord(+diagIdx, grid, -0.9);
-            const vec = diagonalIdx2dirVec(+diagIdx);
-            out.push({
-                idx: +diagIdx,
-                x,
-                y,
-                text,
-                d: `M${x + arrowStart * vec[0]},${y + arrowStart * vec[1]}L${x + arrowEnd * vec[0]},${y + arrowEnd * vec[1]}`,
-            });
-        }
-        return out;
-    }
 </script>
 
 <marker
@@ -48,7 +28,11 @@
     <path d="M 0.4,0.425 L 0.5,0.5 L 0.4,0.575" fill="none" stroke={color} stroke-width={strokeWidth} />
 </marker>
 <g {id}>
-    {#each each($ref || {}) as { idx, x, y, text, d } (idx)}
+    {#each Object.entries($ref || {}) as [diagIdx, digitOrTrue] (diagIdx)}
+        {@const text = true !== digitOrTrue ? `${digitOrTrue}` : '_'}
+        {@const [x, y] = diagonalIdx2svgCoord(+diagIdx, grid, -0.9)}
+        {@const vec = diagonalIdx2dirVec(+diagIdx)}
+        {@const d = `M${x + arrowStart * vec[0]},${y + arrowStart * vec[1]}L${x + arrowEnd * vec[0]},${y + arrowEnd * vec[1]}`}
         <path {d} stroke={color} stroke-width={strokeWidth} marker-end="url(#lk-arrow-{id})" />
         <text
             {x}

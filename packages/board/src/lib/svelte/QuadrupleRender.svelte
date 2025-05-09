@@ -1,11 +1,9 @@
 <script lang="ts">
     import { arrayObj2array, cornerIdx2cornerCoord } from '@sudoku-studio/board-utils/src';
-    import type { schema } from '@sudoku-studio/schema';
+    import type { Grid, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.QuadrupleElement['value']>; grid: Grid } = $props();
 
     const radius = 0.2125;
     const strokeWidth = 0.02;

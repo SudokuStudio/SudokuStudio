@@ -1,6 +1,7 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import process from 'process';
+import { join } from 'path';
 
 if (null == process.env.SUDOKU_STUDIO_VERSION) {
     process.env.SUDOKU_STUDIO_VERSION = 'dev';
@@ -10,7 +11,16 @@ if (null == process.env.SUDOKU_STUDIO_VERSION) {
 const config = {
     // Consult https://svelte.dev/docs/kit/integrations
     // for more information about preprocessors
-    preprocess: vitePreprocess(),
+    preprocess: vitePreprocess({
+        style: {
+            resolve: {
+                alias: {
+                    // https://github.com/sveltejs/language-tools/issues/1986#issuecomment-2317238374
+                    $lib: join(import.meta.dirname, 'src/lib'),
+                },
+            },
+        },
+    }),
 
     kit: {
         // See https://svelte.dev/docs/kit/adapters for more information about adapters.

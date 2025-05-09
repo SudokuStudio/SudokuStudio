@@ -11,7 +11,7 @@ import { boardRepr, buildRegionMap, getDigits } from '@sudoku-studio/board-utils
 
 export type ElementHandlerItem = {
     id: string;
-    elementRef: StateRef;
+    elementRef: StateRef<any>;
     info: ElementInfo<unknown>;
     type: schema.ElementType;
 };

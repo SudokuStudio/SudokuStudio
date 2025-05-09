@@ -5,6 +5,7 @@
     import { currentInputHandler } from '$lib/js/elementStores';
     import type { InputHandler } from '$lib/js/input/inputHandler';
     import { userState } from '$lib/js/user';
+    import type { schema } from '@sudoku-studio/schema';
 
     function wrapListener(inputHandler: null | InputHandler, key: keyof InputHandler): (event: any) => void {
         return (event) => {
@@ -16,7 +17,7 @@
         };
     }
 
-    export let boardState: StateManager;
+    export let boardState: StateManager<schema.Board>;
 </script>
 
 <svelte:window

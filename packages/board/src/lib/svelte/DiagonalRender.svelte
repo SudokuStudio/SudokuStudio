@@ -1,9 +1,8 @@
 <script lang="ts">
+    import type { Grid, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.DiagonalElement['value']>; grid: Grid } = $props();
 
     const positive = ref.ref('positive');
     const negative = ref.ref('negative');

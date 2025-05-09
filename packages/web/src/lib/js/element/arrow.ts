@@ -103,7 +103,7 @@ export function getArrowInputHandler(
     }
 
     let mode: Mode = Mode.DYNAMIC;
-    let arrowRef: null | StateRef = null;
+    let arrowRef: null | StateRef<schema.ArrowElementItem> = null;
     let bulbCells: Idx<Geometry.CELL>[] = [];
     let bodyCells: Idx<Geometry.CELL>[] = [];
 

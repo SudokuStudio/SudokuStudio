@@ -7,7 +7,7 @@
 // `declare` creates the types without actually creating the variable values.
 // `unique symbol` is a _generative_ type -- even though it looks like CELL and CORNER
 // look like the same type, they are distinct and incompatible.
-export declare module Geometry {
+export declare namespace Geometry {
     const CELL: unique symbol;
     /** Grid cells -- where numbers go. */
     export type CELL = typeof CELL;
@@ -43,9 +43,9 @@ export type Idx<_TAG extends Geometry> = number;
 export type Coord<_TAG extends Geometry> = [x: number, y: number];
 /** JS Object map from Idx<TAG> to boolean flag representing set membership. */
 export type IdxBitset<TAG extends Geometry> = IdxMap<TAG, boolean>;
-/** JS Object map from Idx<TAG> to any value. */
-export type IdxMap<TAG extends Geometry, V> = { [K in Idx<TAG>]?: V };
-/** JS Object with numeric keys. A "stable array"; insertions/deletions do not change keys. */
+/** JS Object map from Idx<TAG> to a value `V`. */
+export type IdxMap<TAG extends Geometry, V> = { [K in Idx<TAG>]: V };
+/** JS Object with numeric keys and values `V`. A "stable array"; insertions/deletions do not change keys. */
 export type ArrayObj<V> = { [K in number]: V };
 
 /** Width and height of the grid. */
@@ -85,7 +85,7 @@ export declare namespace schema {
     export type ElementType = Element['type'];
 
     export interface AbstractElement {
-        type: Element['type'];
+        type: ElementType;
         order: number;
         value?: unknown;
     }
@@ -104,7 +104,8 @@ export declare namespace schema {
     }
     export interface PencilMarksElement extends AbstractElement {
         type: 'corner' | 'center';
-        value?: IdxMap<Geometry.CELL, { [K: number]: true }>;
+        // Final value is either `true` or the number of occurances for that candidate digit.
+        value?: IdxMap<Geometry.CELL, { [K: number]: true | number }>;
     }
     export interface ColorsElement extends AbstractElement {
         type: 'colors';
@@ -133,6 +134,7 @@ export declare namespace schema {
             [K: string]: {
                 label?: string;
                 color?: string;
+                // TODO(mingwei): allow for more than two clones.
                 a?: ArrayObj<Idx<Geometry.CELL>>;
                 b?: ArrayObj<Idx<Geometry.CELL>>;
             };
@@ -145,27 +147,28 @@ export declare namespace schema {
     }
     export interface LineElement extends AbstractElement {
         type:
-            | 'thermo'
             | 'between'
             | 'doubleArrow'
+            | 'dutchWhisper'
             | 'lockout'
             | 'palindrome'
-            | 'whisper'
-            | 'dutchWhisper'
+            | 'regionSum'
             | 'renban'
-            | 'regionSum';
-        value?: { [K: string]: ArrayObj<Idx<Geometry.CELL>> };
+            | 'slowThermo'
+            | 'thermo'
+            | 'whisper';
+        value?: { [K: string]: LineElementItem };
     }
+    export type LineElementItem = ArrayObj<Idx<Geometry.CELL>>;
     export interface ArrowElement extends AbstractElement {
         type: 'arrow';
-        value?: {
-            [K: string]: {
-                bulb: ArrayObj<Idx<Geometry.CELL>>;
-                /** The first cell of the body is within the bulb and should not be considered for the sum. */
-                body: ArrayObj<Idx<Geometry.CELL>>;
-            };
-        };
+        value?: { [K: string]: ArrowElementItem };
     }
+    export type ArrowElementItem = {
+        bulb: ArrayObj<Idx<Geometry.CELL>>;
+        /** The first cell of the body is within the bulb and should not be considered for the sum. */
+        body: ArrayObj<Idx<Geometry.CELL>>;
+    };
     export interface EdgeNumberElement extends AbstractElement {
         type: 'difference' | 'ratio' | 'xv';
         value?: IdxMap<Geometry.EDGE, true | number>;

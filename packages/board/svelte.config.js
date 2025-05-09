@@ -1,11 +1,21 @@
 import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { join } from 'path';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
     // Consult https://svelte.dev/docs/kit/integrations
     // for more information about preprocessors
-    preprocess: vitePreprocess(),
+    preprocess: vitePreprocess({
+        style: {
+            resolve: {
+                alias: {
+                    // https://github.com/sveltejs/language-tools/issues/1986#issuecomment-2317238374
+                    $lib: join(import.meta.dirname, 'src/lib'),
+                },
+            },
+        },
+    }),
 
     kit: {
         // adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.

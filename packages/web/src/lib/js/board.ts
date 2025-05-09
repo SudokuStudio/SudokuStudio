@@ -1,5 +1,5 @@
 import { browser } from '$app/environment';
-import type { Geometry, Grid, Idx, IdxMap, schema } from '@sudoku-studio/schema';
+import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Data, Diff } from '@sudoku-studio/state-manager/src';
 import { StateManager } from '@sudoku-studio/state-manager/src';
 import { getDigits as getDigitsHelper } from '@sudoku-studio/board-utils/src';
@@ -8,7 +8,7 @@ import { writable } from 'svelte/store';
 export const boardSvg = writable<SVGSVGElement>();
 export const boardDiv = writable<HTMLDivElement>();
 
-export const boardState = new StateManager();
+export const boardState = new StateManager<schema.Board>();
 if (browser) {
     (window as any).boardState = boardState;
 }
@@ -54,7 +54,7 @@ export function setCellValue(markType: string, cellIndex: Idx<Geometry.CELL>, ne
     return elementRef.replace(newValue);
 }
 
-export const warningState = new StateManager();
+export const warningState = new StateManager<IdxBitset<Geometry.CELL>>();
 if (browser) {
     (window as any).warningState = warningState;
 }

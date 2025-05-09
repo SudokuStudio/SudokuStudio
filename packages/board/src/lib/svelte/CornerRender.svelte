@@ -1,21 +1,18 @@
 <script lang="ts">
-    import type { Geometry, IdxMap } from '@sudoku-studio/schema';
+    import type { Grid, schema } from '@sudoku-studio/schema';
     import { idxMapToKeysArray, cellIdx2cellCoord, cornerMarkPos } from '@sudoku-studio/board-utils/src';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    export let id: string;
-    export let ref: StateRef;
-    export let grid: { width: number; height: number };
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.PencilMarksElement['value']>; grid: Grid } = $props();
 
-    function getMarks(
-        cells: IdxMap<Geometry.CELL, true | Record<string, boolean>>,
-    ): { idx: number; nums: { x: number; y: number; num: number }[] }[] {
-        const out: { idx: number; nums: { x: number; y: number; num: number }[] }[] = [];
-        for (const [idx, numsBitset] of Object.entries(cells)) {
+    type Item = { idx: number; nums: { x: number; y: number; num: number }[] };
+    function getMarks(cells: schema.PencilMarksElement['value']): Item[] {
+        const out: Item[] = [];
+        for (const [idx, numsBitset] of Object.entries(cells || {})) {
             const x = cellIdx2cellCoord(+idx, grid)[0] + 0.5;
             const y = cellIdx2cellCoord(+idx, grid)[1] + 0.5;
             const nums =
-                true === numsBitset
+                typeof numsBitset !== 'object'
                     ? []
                     : idxMapToKeysArray(numsBitset).map((num, i, arr) => {
                           const [dx, dy] = cornerMarkPos(i, arr.length);
