@@ -378,12 +378,7 @@
             .map(({ type }) => MARGINS[type as keyof typeof ELEMENT_RENDERERS] || 0)
             .filter<number>((margin): margin is number => null != margin)
             .reduce((a, b) => (a > b ? a : b), 0);
-        return {
-            x: -margin,
-            y: -margin,
-            width: ($grid!.width || 0) + 2 * margin,
-            height: ($grid!.height || 0) + 2 * margin,
-        };
+        return { x: -margin, y: -margin, width: $grid!.width + 2 * margin, height: $grid!.height + 2 * margin };
     });
 </script>
 

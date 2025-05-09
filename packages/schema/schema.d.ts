@@ -85,7 +85,7 @@ export declare namespace schema {
     export type ElementType = Element['type'];
 
     export interface AbstractElement {
-        type: Element['type'];
+        type: ElementType;
         order: number;
         value?: unknown;
     }
