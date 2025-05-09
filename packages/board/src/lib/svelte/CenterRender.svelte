@@ -38,7 +38,7 @@
             lengthAdjust="spacingAndGlyphs"
         >
             {#each keys as key}
-                <tspan fill={color(nums![key])}>{key}</tspan>
+                <tspan fill={color(nums[key])}>{key}</tspan>
             {/each}
         </text>
     {/each}

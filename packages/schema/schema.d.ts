@@ -44,7 +44,7 @@ export type Coord<_TAG extends Geometry> = [x: number, y: number];
 /** JS Object map from Idx<TAG> to boolean flag representing set membership. */
 export type IdxBitset<TAG extends Geometry> = IdxMap<TAG, boolean>;
 /** JS Object map from Idx<TAG> to a value `V`. */
-export type IdxMap<TAG extends Geometry, V> = { [K in Idx<TAG>]?: V };
+export type IdxMap<TAG extends Geometry, V> = { [K in Idx<TAG>]: V };
 /** JS Object with numeric keys and values `V`. A "stable array"; insertions/deletions do not change keys. */
 export type ArrayObj<V> = { [K in number]: V };
 
