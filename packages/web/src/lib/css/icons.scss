@@ -1,3 +1,5 @@
+@use './vars.scss';
+
 .sr-only {
     position: absolute;
     width: 1px;
@@ -118,12 +120,12 @@
     background-color: #fff;
 }
 .icon-c-clickable {
-    background-color: $color-clickable;
+    background-color: vars.$color-clickable;
 }
 .icon-c-warning {
-    background-color: $color-warning;
+    background-color: vars.$color-warning;
 }
 
 .hoverable .hoverable-icon.icon-c-clickable:hover {
-    background-color: $color-clickable-light;
+    background-color: vars.$color-clickable-light;
 }

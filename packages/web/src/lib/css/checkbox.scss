@@ -1,3 +1,5 @@
+@use './vars.scss';
+
 input[type='checkbox'] {
     $size: 1.1em;
     $border: 0.125em;
@@ -19,13 +21,13 @@ input[type='checkbox'] {
         display: inline-block;
     }
 
-    border: $border solid $color-clickable;
+    border: $border solid vars.$color-clickable;
     border-radius: 0.2em;
 
     cursor: pointer;
 
     &:checked {
-        background-color: $color-clickable;
+        background-color: vars.$color-clickable;
 
         &::after {
             content: '';
@@ -45,6 +47,6 @@ input[type='checkbox'] {
     }
 
     &:disabled {
-        border-color: $color-disabled;
+        border-color: vars.$color-disabled;
     }
 }
