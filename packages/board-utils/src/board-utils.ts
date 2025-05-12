@@ -431,11 +431,11 @@ export function makePath(
             bc[0] += b[0];
             bc[1] += b[1];
 
-            out.push('L', ba.join(','), 'Q', b.join(','), bc.join(','));
+            out.push('L', ba.join(','), 'Q', b.join(','), ' ', bc.join(','));
         }
         out.push('L', points[points.length - 1].join(','));
 
-        return out.join(' ');
+        return out.join('');
     }
 
     return 'M' + points.map((xy) => xy.join(',')).join('L');

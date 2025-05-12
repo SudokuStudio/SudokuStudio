@@ -14,12 +14,13 @@
     "scripts": {
         "clean": "rm -rf dist node_modules",
         "build": "tsc",
-        "check": "tsc --noEmit"
-    },
-    "dependencies": {
-        "@sudoku-studio/schema": "workspace:*"
+        "check": "tsc --noEmit",
+        "test": "vitest",
+        "test:unit": "vitest"
     },
     "devDependencies": {
-        "typescript": "^5.0.0"
+        "@sudoku-studio/schema": "workspace:*",
+        "typescript": "^5.0.0",
+        "vitest": "^3.1.2"
     }
 }
