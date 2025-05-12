@@ -1,14 +1,14 @@
 // @import "./debug.scss";
-@import './vars.scss';
-@import './icons.scss';
-@import './checkbox.scss';
+@use './vars.scss';
+@use './icons.scss';
+@use './checkbox.scss';
 
-@import './mulish.scss';
+@use './mulish.scss';
 
 html {
-    font-size: $font-size;
+    font-size: vars.$font-size;
     font-family: 'Mulish', 'Muli', sans-serif;
-    font-weight: $font-weight-normal;
+    font-weight: vars.$font-weight-normal;
 }
 
 body {
@@ -21,16 +21,16 @@ body {
 .anchor,
 a,
 a:visited {
-    color: $color-clickable;
+    color: vars.$color-clickable;
     text-decoration: underline;
     &:hover {
-        color: $color-clickable-light;
+        color: vars.$color-clickable-light;
     }
 }
 
 // Flexbox shared between header and main.
 .content {
-    max-width: $max-aspect-ratio * 100vh;
+    max-width: vars.$max-aspect-ratio * 100vh;
     margin: 0 auto;
     display: flex;
     flex: 1;
@@ -39,15 +39,15 @@ a:visited {
     display: flex;
     flex: 1;
 
-    margin: 0 $content-margin;
+    margin: 0 vars.$content-margin;
 
     display: flex;
     align-items: stretch;
     flex-direction: row;
     justify-content: space-between;
 
-    @include gap($content-gap);
-    @include breakpoint-mobile {
+    @include vars.gap(vars.$content-gap);
+    @include vars.breakpoint-mobile {
         > * {
             margin: 0;
         }
