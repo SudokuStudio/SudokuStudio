@@ -410,35 +410,46 @@ export function makePath(
     }
 
     if (bezierRounding) {
-        const out = ['M', points[0].join(',')];
-        for (let i = 2; i < points.length; i++) {
-            const a = points[i - 2];
-            const b = points[i - 1];
-            const c = points[i];
-
-            const ba = [a[0] - b[0], a[1] - b[1]] as [number, number];
-            const bc = [c[0] - b[0], c[1] - b[1]] as [number, number];
-            normalize2d(ba);
-            normalize2d(bc);
-
-            ba[0] *= bezierRounding;
-            ba[1] *= bezierRounding;
-            bc[0] *= bezierRounding;
-            bc[1] *= bezierRounding;
-
-            ba[0] += b[0];
-            ba[1] += b[1];
-            bc[0] += b[0];
-            bc[1] += b[1];
-
-            out.push('L', ba.join(','), 'Q', b.join(','), ' ', bc.join(','));
-        }
-        out.push('L', points[points.length - 1].join(','));
-
-        return out.join('');
+        return pathBezierRounding(points, bezierRounding, false);
     }
 
     return 'M' + points.map((xy) => xy.join(',')).join('L');
+}
+
+export function pathBezierRounding(points: [number, number][], bezierRounding: number, loop: boolean): string {
+    const out = loop ? [] : ['M', points[0].join(',')];
+    // Don't round the first and last points if not looping.
+    const len = loop ? points.length : points.length - 2;
+    for (let i = 0; i < len; i++) {
+        const a = points[i];
+        const b = points[(i + 1) % points.length];
+        const c = points[(i + 2) % points.length];
+
+        const ba = [a[0] - b[0], a[1] - b[1]] as [number, number];
+        const bc = [c[0] - b[0], c[1] - b[1]] as [number, number];
+        normalize2d(ba);
+        normalize2d(bc);
+
+        ba[0] *= bezierRounding;
+        ba[1] *= bezierRounding;
+        bc[0] *= bezierRounding;
+        bc[1] *= bezierRounding;
+
+        ba[0] += b[0];
+        ba[1] += b[1];
+        bc[0] += b[0];
+        bc[1] += b[1];
+
+        out.push('L', ba.join(','), 'Q', b.join(','), ' ', bc.join(','));
+    }
+    if (loop) {
+        out.push('Z');
+    } else {
+        out.push('L', points[points.length - 1].join(','));
+    }
+    out[0] = 'M'; // Overwrite first `L` in the `loop` case.
+
+    return out.join('');
 }
 
 export function normalize2d(vec: [number, number]): void {
@@ -547,17 +558,24 @@ export function getBorderAdjList(
     return adjList;
 }
 
+export type GetBorderPathOptions = {
+    // Amount to inset the outline.
+    inset?: number;
+    // If true, diagonally connect touching corners.
+    connectDiag?: boolean;
+    // If true, round the corners.
+    bezierRounding?: number;
+};
 /**
  * @param cellIdxes Cell indexes (0 to 80 for 9x9).
  * @param grid Grid width and height.
- * @param inset (Optional) Amount to inset the outline.
- * @returns SVG <path d="..." /> string.
+ * @param options Special options, see GetBorderPathOptions.
+ * @returns `d` string for SVG `<path d="..." />`.
  */
 export function getBorderPath(
     cellIdxes: Idx<Geometry.CELL>[],
     grid: Grid,
-    inset = 0,
-    connectDiag = false,
+    { inset = 0, connectDiag = false, bezierRounding = 0 }: GetBorderPathOptions = {},
 ): string | null {
     const adjList = getBorderAdjList(cellIdxes, grid);
     if (0 >= adjList.size) return null;
@@ -579,7 +597,7 @@ export function getBorderPath(
         let b = cornerIdx2cornerCoord(secondVertId, grid);
         let vertId = secondVertId;
 
-        const points: string[] = [];
+        const points: [number, number][] = [];
         do {
             // Find all the next edges.
             const adj = adjList.get(vertId)!;
@@ -616,10 +634,10 @@ export function getBorderPath(
                 x += dx;
                 y += dy;
                 if (connectedDiags.has(vertId)) {
-                    points.push(`${x - 3 * ax},${y - 3 * ay}`);
-                    points.push(`${x - 3 * bx},${y - 3 * by}`);
+                    points.push([x - 3 * ax, y - 3 * ay]);
+                    points.push([x - 3 * bx, y - 3 * by]);
                 } else {
-                    points.push(`${x},${y}`);
+                    points.push([x, y]);
                 }
             }
 
@@ -629,7 +647,11 @@ export function getBorderPath(
             vertId = nextVertId;
         } while (secondVertId !== vertId);
 
-        loops.push('M' + points.join('L') + 'Z');
+        loops.push(
+            bezierRounding
+                ? pathBezierRounding(points, bezierRounding, true)
+                : 'M' + points.map(([x, y]) => `${x},${y}`).join('L') + 'Z',
+        );
     }
     return loops.join('');
 }

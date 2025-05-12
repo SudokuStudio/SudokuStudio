@@ -20,23 +20,14 @@
     } = $props();
 
     const inset = 0.075;
-    const innerRadius = 0.05;
+    const bezierRounding = 0.125;
 
-    const dMask = $derived(getBorderPath(idxMapToKeysArray($ref), grid, inset) || undefined);
-    const dFill = $derived(getBorderPath(idxMapToKeysArray($ref), grid, 0) || undefined);
+    const dMask = $derived(getBorderPath(idxMapToKeysArray($ref), grid, { inset, bezierRounding }) || undefined);
+    const dFill = $derived(getBorderPath(idxMapToKeysArray($ref), grid) || undefined);
 </script>
 
-<filter id="select-{id}-blur">
-    <feGaussianBlur in="SourceGraphic" stdDeviation={innerRadius} />
-    <feComponentTransfer>
-        <feFuncR type="identity" />
-        <feFuncG type="identity" />
-        <feFuncB type="identity" />
-        <feFuncA type="linear" slope="20" intercept="-9.5" />
-    </feComponentTransfer>
-</filter>
 <mask id="select-{id}-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={grid.width} height={grid.height}>
     <rect x="0" y="0" width={grid.width} height={grid.height} fill={outlineOpacity} />
-    <path d={dMask} fill={innerOpacity} stroke="none" filter="url(#select-{id}-blur)" />
+    <path d={dMask} fill={innerOpacity} stroke="none" />
 </mask>
 <path {id} d={dFill} {fill} stroke="none" mask="url(#select-{id}-mask)" />

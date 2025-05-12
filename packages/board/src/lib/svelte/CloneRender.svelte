@@ -20,7 +20,7 @@
                 cellsArr.sort((a, b) => a - b);
                 if (0 >= cellsArr.length) continue;
                 const lastIdx = cellsArr[cellsArr.length - 1];
-                const d = getBorderPath(cellsArr, grid, inset, true);
+                const d = getBorderPath(cellsArr, grid, { inset, connectDiag: true });
                 if (null == d) continue;
                 const lastCoord = cellIdx2cellCoord(lastIdx, grid);
                 const labelPos = {

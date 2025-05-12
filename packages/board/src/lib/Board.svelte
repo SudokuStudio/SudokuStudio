@@ -279,12 +279,12 @@
     const givensMaskPath = derived(
         [elementsRef, grid],
         ([elements, grid]) =>
-            getBorderPath(idxMapToKeysArray(getDigits(elements || {}, true, false)), grid!, 0) || undefined,
+            getBorderPath(idxMapToKeysArray(getDigits(elements || {}, true, false)), grid!) || undefined,
     );
     const givensFilledMaskPath = derived(
         [elementsRef, grid],
         ([elements, grid]) =>
-            getBorderPath(idxMapToKeysArray(getDigits(elements || {}, true, true)), grid!, 0) || undefined,
+            getBorderPath(idxMapToKeysArray(getDigits(elements || {}, true, true)), grid!) || undefined,
     );
 
     type ElementList<T extends keyof typeof ELEMENT_RENDERERS = any> = {
