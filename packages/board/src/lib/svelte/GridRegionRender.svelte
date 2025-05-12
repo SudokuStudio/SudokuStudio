@@ -13,7 +13,7 @@
 
 <g {id}>
     {#each arrayObj2array($ref || {}) as region, i (i)}
-        {@const d = getBorderPath(idxMapToKeysArray(region), grid, 0, false)}
+        {@const d = getBorderPath(idxMapToKeysArray(region), grid)}
         {#if d != null && 0 < d.length}
             <path {d} fill="none" stroke="#000" stroke-width={GRID_REGION_THICKNESS} />
         {/if}
