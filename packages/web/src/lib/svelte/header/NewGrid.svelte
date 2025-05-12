@@ -21,7 +21,7 @@
             {#each Object.entries(gridToBoxSizeMap) as [size, dimensions]}
                 <li>
                     <button class="size-item nobutton" on:click={() => resetGrid(dimensions)}>
-                        {size}x{size}
+                        {size}&times;{size}
                     </button>
                 </li>
             {/each}
