@@ -420,12 +420,11 @@
             <rect x="0" y="0" width={$grid?.width} height={$grid?.height} fill="#fff" />
             <path d={$givensFilledMaskPath} fill="#000" stroke="none" />
         </mask>
-        {#each $list as { id, ref, element } (id)}
-            <svelte:component this={element} {id} {ref} grid={$grid} />
+        {#each $list as { id, ref, element: Element } (id)}
+            <Element {id} {ref} grid={$grid} />
         {/each}
     </defs>
     {#each $list as { id } (id)}
         <use href="#{id}" />
     {/each}
 </svg>
-{JSON.stringify($grid)}
