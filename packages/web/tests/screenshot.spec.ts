@@ -72,3 +72,24 @@ test('selection/input', async ({ page }) => {
     await page.keyboard.press('7');
     await expect(page.locator('svg')).toHaveScreenshot();
 });
+
+test('resize board', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForSelector('svg');
+    await page.getByRole('button', { name: 'New Grid' }).click();
+    await page.getByRole('button', { name: '16\u00D716' }).click();
+
+    const overlay = page.locator('div.overlay');
+    const bbox = (await overlay.boundingBox())!;
+    await page.mouse.move(bbox.x + bbox.width * (1 / 32), bbox.y + bbox.height * (1 / 32)); // 1,1
+    await page.mouse.down();
+    await page.mouse.move(bbox.x + bbox.width * (3 / 32), bbox.y + bbox.height * (3 / 32)); // 2,2
+    await page.mouse.move(bbox.x + bbox.width * (5 / 32), bbox.y + bbox.height * (5 / 32)); // 3,3
+    await page.mouse.move(bbox.x + bbox.width * (7 / 32), bbox.y + bbox.height * (5 / 32)); // 4,3
+    await page.mouse.move(bbox.x + bbox.width * (9 / 32), bbox.y + bbox.height * (7 / 32)); // 5,4
+    await page.mouse.move(bbox.x + bbox.width * (11 / 32), bbox.y + bbox.height * (9 / 32)); // 6,5
+    await page.mouse.up();
+
+    await page.keyboard.press('5');
+    await expect(page.locator('svg')).toHaveScreenshot();
+});
