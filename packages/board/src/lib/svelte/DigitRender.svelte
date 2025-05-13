@@ -20,14 +20,9 @@
 
 <g {id} {mask}>
     {#each Object.entries($ref || {}) as [cellIdx, num] (cellIdx)}
-        <text
-            x={cellIdx2cellCoord(+cellIdx, grid)[0] + 0.5}
-            y={cellIdx2cellCoord(+cellIdx, grid)[1] + 0.5}
-            fill={color}
-            text-anchor="middle"
-            dominant-baseline="central"
-            font-size="0.775"
-            font-weight="600">{num}</text
+        {@const [x, y] = cellIdx2cellCoord(+cellIdx, grid).map((z) => z + 0.5)}
+        <text {x} {y} fill={color} text-anchor="middle" dominant-baseline="central" font-size="0.775" font-weight="600"
+            >{num}{JSON.stringify(grid)}</text
         >
     {/each}
 </g>
