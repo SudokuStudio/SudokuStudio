@@ -50,49 +50,46 @@
         internals: ComponentInternals,
         props: ComponentProps<typeof SelectRender>,
     ) => {
-        return SelectRender(internals, { ...props, fill: '#f33', outlineOpacity: '#eee', innerOpacity: '#333' });
+        // Do not use spread syntax as it breaks svelte's reactivity, https://github.com/SudokuStudio/SudokuStudio/issues/100#issuecomment-2874805215
+        Object.assign(props, { fill: '#f33', outlineOpacity: '#eee', innerOpacity: '#333' });
+        return SelectRender(internals, props);
     };
 
     const FilledRender: Component<ComponentProps<typeof DigitRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof DigitRender>,
     ) => {
-        return DigitRender(internals, { ...props, color: '#4e72b0', mask: 'url(#SUDOKU_MASK_GIVENS)' });
+        Object.assign(props, { color: '#4e72b0', mask: 'url(#SUDOKU_MASK_GIVENS)' });
+        return DigitRender(internals, props);
     };
 
     const DifferenceRender: Component<ComponentProps<typeof PositionNumberRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof PositionNumberRender>,
     ) => {
-        return PositionNumberRender(internals, {
-            ...props,
+        Object.assign(props, {
             idx2coord: edgeIdx2svgCoord,
             stroke: '#242424',
             fill: '#fff',
             textColor: '#000',
             strokeWidth: 0.02,
         });
+        return PositionNumberRender(internals, props);
     };
 
     const RatioRender: Component<ComponentProps<typeof PositionNumberRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof PositionNumberRender>,
     ) => {
-        return PositionNumberRender(internals, {
-            ...props,
-            idx2coord: edgeIdx2svgCoord,
-            stroke: 'none',
-            fill: '#000',
-            textColor: '#fff',
-        });
+        Object.assign(props, { idx2coord: edgeIdx2svgCoord, stroke: 'none', fill: '#000', textColor: '#fff' });
+        return PositionNumberRender(internals, props);
     };
 
     const XVRender: Component<ComponentProps<typeof PositionNumberRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof PositionNumberRender>,
     ) => {
-        return PositionNumberRender(internals, {
-            ...props,
+        Object.assign(props, {
             idx2coord: edgeIdx2svgCoord,
             stroke: 'none',
             fill: '#fff',
@@ -102,14 +99,14 @@
             fontWeight: 800,
             mapDigits: (num: true | number) => (true !== num ? num2roman(num) : '_'),
         });
+        return PositionNumberRender(internals, props);
     };
 
     const SeriesRender: Component<ComponentProps<typeof PositionNumberRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof PositionNumberRender>,
     ) => {
-        return PositionNumberRender(internals, {
-            ...props,
+        Object.assign(props, {
             idx2coord: (idx: Idx<Geometry.SERIES>, grid: Grid) => {
                 const [x, y] = seriesIdx2seriesCoord(idx, grid);
                 return [x + 0.5, y + 0.5];
@@ -119,82 +116,87 @@
             fontSize: 0.5,
             mapDigits: (num: true | number) => (true !== num ? `${num}` : '_'),
         });
+        return PositionNumberRender(internals, props);
     };
 
     const PalindromeRender: Component<ComponentProps<typeof LineRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof LineRender>,
     ) => {
-        return LineRender(internals, { ...props, stroke: '#ed8', strokeWidth: 0.125 });
+        Object.assign(props, { stroke: '#ed8', strokeWidth: 0.125 });
+        return LineRender(internals, props);
     };
 
     const GermanWhisperRender: Component<ComponentProps<typeof LineRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof LineRender>,
     ) => {
-        return LineRender(internals, {
-            ...props,
+        Object.assign(props, {
             stroke: '#8c8',
             strokeWidth: 0.1,
             pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
         });
+        return LineRender(internals, props);
     };
 
     const DutchWhisperRender: Component<ComponentProps<typeof LineRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof LineRender>,
     ) => {
-        return LineRender(internals, {
-            ...props,
+        Object.assign(props, {
             stroke: '#ff8c00',
             strokeWidth: 0.1,
             pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
         });
+        return LineRender(internals, props);
     };
 
     const RenbanRender: Component<ComponentProps<typeof LineRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof LineRender>,
     ) => {
-        return LineRender(internals, {
-            ...props,
+        Object.assign(props, {
             stroke: '#c8c',
             strokeWidth: 0.075,
             pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
         });
+        return LineRender(internals, props);
     };
 
     const RegionSumRender: Component<ComponentProps<typeof LineRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof LineRender>,
     ) => {
-        return LineRender(internals, {
-            ...props,
+        Object.assign(props, {
             stroke: '#2ECBFF',
             strokeWidth: 0.125,
             pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
         });
+        return LineRender(internals, props);
     };
 
     const SlowThermoRender: Component<ComponentProps<typeof ThermoRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof ThermoRender>,
     ) => {
-        return ThermoRender(internals, { ...props, isSlow: true });
+        Object.assign(props, { isSlow: true });
+        return ThermoRender(internals, props);
     };
 
     const ColumnIndexerRender: Component<ComponentProps<typeof IndexerRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof IndexerRender>,
     ) => {
-        return IndexerRender(internals, { ...props, color: '#C77C7C' });
+        Object.assign(props, { color: '#C77C7C' });
+        return IndexerRender(internals, props);
     };
 
     const RowIndexerRender: Component<ComponentProps<typeof IndexerRender>> = (
         internals: ComponentInternals,
         props: ComponentProps<typeof IndexerRender>,
     ) => {
-        return IndexerRender(internals, { ...props, color: '#7CC77C' });
+        Object.assign(props, { color: '#7CC77C' });
+        return IndexerRender(internals, props);
     };
 
     export type ElementRenderer = NonNullable<(typeof ELEMENT_RENDERERS)[keyof typeof ELEMENT_RENDERERS]>;
@@ -274,6 +276,7 @@
     export let svg: SVGSVGElement = null!;
 
     const grid = boardState.ref<Grid>('grid');
+    grid.watch((_grid, old, news) => console.log('grid watch', old, news), true);
 
     const elementsRef = boardState.ref<schema.Board['elements']>('elements');
     const givensMaskPath = derived(
@@ -340,8 +343,9 @@
                 }
             }
 
-            // newVal is null when deleting manually
-            // newVal.type is null when deleting via undo/redo
+            // `newVal` is null when deleting manually
+            // `newVal.type` is null when deleting via undo/redo
+            // TODO(mingwei): why is this the case?
             if (null == newVal || null == newVal.type) {
                 // Deleted.
                 list.splice(i, 1);
