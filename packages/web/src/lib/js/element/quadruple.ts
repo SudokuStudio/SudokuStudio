@@ -1,5 +1,7 @@
 import type { ArrayObj, Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
+import type { InputHandler } from '../input/inputHandler';
+import type { ElementInfo } from './element';
 import {
     arrayObj2array,
     cellCoord2CellIdx,
@@ -10,9 +12,7 @@ import {
     svgCoord2cornerCoord,
 } from '@sudoku-studio/board-utils/src';
 import { getTouchPosition, parseDigit } from '../input/inputHandler';
-import type { InputHandler } from '../input/inputHandler';
 import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
 
 export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     getInputHandler,

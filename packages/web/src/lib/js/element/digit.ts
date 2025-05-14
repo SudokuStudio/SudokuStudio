@@ -1,7 +1,5 @@
-import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import type { Grid, schema } from '@sudoku-studio/schema';
+import type { schema } from '@sudoku-studio/schema';
 import type { ElementInfo } from './element';
-import type { InputHandler } from '../input/inputHandler';
 import hsluv from 'hsluv';
 import { makeSelectDigitGetInputHandler } from '../input/selectDigitInputHandler';
 

@@ -40,19 +40,19 @@ type SelectDigitInputHandlerValue =
     | schema.PencilMarksElement['value']
     | schema.ColorsElement['value'];
 
-export function makeSelectDigitGetInputHandler(
+export function makeSelectDigitGetInputHandler<V extends SelectDigitInputHandlerValue>(
     options: DigitInputHandlerOptions,
-): GetInputHandler<SelectDigitInputHandlerValue> {
+): GetInputHandler<V> {
     return (
-        stateRef: StateRefSelectDigitInputHandler,
+        stateRef: StateRef<V>,
         grid: Grid,
         svg: SVGSVGElement,
         pushHistory: (history: Diff | null) => boolean,
     ): InputHandler => getSelectDigitInputHandler(stateRef, grid, svg, pushHistory, options);
 }
 
-export function getSelectDigitInputHandler(
-    stateRef: StateRefSelectDigitInputHandler,
+export function getSelectDigitInputHandler<V extends SelectDigitInputHandlerValue>(
+    stateRef: StateRef<V>,
     grid: Grid,
     svg: SVGSVGElement,
     pushHistory: (history: Diff | null) => boolean,
@@ -78,14 +78,14 @@ export function getSelectDigitInputHandler(
                 const elementId = userState.get<string>('marks', type);
                 if (null == elementId) continue;
 
-                const otherRef = boardState.ref<SelectDigitInputHandlerValue>('elements', `${elementId}`, 'value');
+                const otherRef = boardState.ref<V>('elements', `${elementId}`, 'value');
                 if (!onDigitInputHelper(otherRef, digit)) break;
             }
         }
         return true;
     }
 
-    function onDigitInputHelper(stateRef: StateRefSelectDigitInputHandler, digit: null | number | string): boolean {
+    function onDigitInputHelper(stateRef: StateRef<V>, digit: null | number | string): boolean {
         const blockingDigits = getDigits(null != digit && blockedByGivens, null != digit && blockedByFilled);
 
         const update: Update = {};
