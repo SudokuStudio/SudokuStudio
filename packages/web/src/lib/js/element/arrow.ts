@@ -1,7 +1,6 @@
 import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
-import { pushHistory } from '../history';
 import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
 import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
 import type { InputHandler } from '../input/inputHandler';
@@ -93,6 +92,7 @@ export function getArrowInputHandler(
     stateRef: StateRef<schema.ArrowElement['value']>,
     grid: Grid,
     svg: SVGSVGElement,
+    pushHistory: (history: Diff | null) => boolean,
 ): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 

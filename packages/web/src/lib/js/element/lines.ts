@@ -1,18 +1,14 @@
-import type { ArrayObj, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { InputHandler } from '../input/inputHandler';
+import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { ElementInfo } from './element';
-import { getLineInputHandler } from '../input/lineInputHandler';
+import { makeLineGetInputHandler } from '../input/lineInputHandler';
 import { arrayObj2array, warnClones } from '@sudoku-studio/board-utils/src';
 
 export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: false,
-        });
-    },
+    getInputHandler: makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: false,
+    }),
     order: 30,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Thermo', icon: 'thermo' },
@@ -33,13 +29,11 @@ export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const slowThermoInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: false,
-        });
-    },
+    getInputHandler: makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: false,
+    }),
     order: 30,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Slow Thermo', icon: 'slow-thermo' },
@@ -106,13 +100,11 @@ function getThermoWarnings(
 }
 
 export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: true,
-            allowSelfIntersection: true,
-        });
-    },
+    getInputHandler: makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: true,
+        allowSelfIntersection: true,
+    }),
     order: 50,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Between', icon: 'between' },
@@ -156,13 +148,11 @@ export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: true,
-            allowSelfIntersection: true,
-        });
-    },
+    getInputHandler: makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: true,
+        allowSelfIntersection: true,
+    }),
     order: 50,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Double Arrow', icon: 'double-arrow' },
@@ -211,13 +201,11 @@ export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: true,
-            allowSelfIntersection: true,
-        });
-    },
+    getInputHandler: makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: true,
+        allowSelfIntersection: true,
+    }),
     order: 50,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Lockout', icon: 'lockout' },
@@ -267,13 +255,11 @@ export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const palindromeInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: false,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: true,
-        });
-    },
+    getInputHandler: makeLineGetInputHandler({
+        deletePrioritizeHead: false,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: true,
+    }),
     order: 60,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Palindrome', icon: 'palindrome' },
@@ -309,13 +295,11 @@ function getWhisperInfo(
     tags: string[],
 ): ElementInfo<schema.LineElement['value']> {
     return {
-        getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-            return getLineInputHandler(ref, grid, svg, {
-                deletePrioritizeHead: false,
-                deletePrioritizeTail: false,
-                allowSelfIntersection: true,
-            });
-        },
+        getInputHandler: makeLineGetInputHandler({
+            deletePrioritizeHead: false,
+            deletePrioritizeTail: false,
+            allowSelfIntersection: true,
+        }),
         order: 70,
         inGlobalMenu: false,
         menu: { type: 'select', name: constraintName, icon: icon },
@@ -368,13 +352,11 @@ export const dutchWhisperInfo: ElementInfo<schema.LineElement['value']> = getWhi
 );
 
 export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: false,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: true,
-        });
-    },
+    getInputHandler: makeLineGetInputHandler({
+        deletePrioritizeHead: false,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: true,
+    }),
     order: 80,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Renban', icon: 'renban' },
@@ -414,13 +396,11 @@ export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const regionSumInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: false,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: true,
-        });
-    },
+    getInputHandler: makeLineGetInputHandler({
+        deletePrioritizeHead: false,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: true,
+    }),
     order: 80,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Region Sum', icon: 'region-sum' },

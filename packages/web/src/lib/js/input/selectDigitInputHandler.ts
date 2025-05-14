@@ -1,8 +1,13 @@
 import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
-import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema, user } from '@sudoku-studio/schema';
-import type { StateRef, Update } from '@sudoku-studio/state-manager/src';
+import type { Geometry, Grid, Idx, IdxBitset, schema } from '@sudoku-studio/schema';
+import type { Diff, StateRef, Update } from '@sudoku-studio/state-manager/src';
+
+import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler';
+import type { CellDragTapEvent } from './adjacentCellPointerHandler';
+import { parseDigit } from './inputHandler';
+import type { InputHandler } from './inputHandler';
+
 import { boardState, getCellValue, getDigits } from '../board';
-import { pushHistory } from '../history';
 import {
     MARK_TYPES,
     userToolState,
@@ -13,10 +18,7 @@ import {
     userCursorIndexState,
     getUserToolStateName,
 } from '../user';
-import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler';
-import type { CellDragTapEvent } from './adjacentCellPointerHandler';
-import { parseDigit } from './inputHandler';
-import type { InputHandler } from './inputHandler';
+import type { GetInputHandler } from '../element/element';
 
 const selectPointerHandler = new AdjacentCellPointerHandler(false);
 
@@ -38,10 +40,22 @@ type SelectDigitInputHandlerValue =
     | schema.PencilMarksElement['value']
     | schema.ColorsElement['value'];
 
+export function makeSelectDigitGetInputHandler(
+    options: DigitInputHandlerOptions,
+): GetInputHandler<SelectDigitInputHandlerValue> {
+    return (
+        stateRef: StateRefSelectDigitInputHandler,
+        grid: Grid,
+        svg: SVGSVGElement,
+        pushHistory: (history: Diff | null) => boolean,
+    ): InputHandler => getSelectDigitInputHandler(stateRef, grid, svg, pushHistory, options);
+}
+
 export function getSelectDigitInputHandler(
     stateRef: StateRefSelectDigitInputHandler,
     grid: Grid,
     svg: SVGSVGElement,
+    pushHistory: (history: Diff | null) => boolean,
     options: DigitInputHandlerOptions,
 ): InputHandler {
     const { multipleDigits, blockedByGivens, blockedByFilled, digitMapping, nextMode } = options;

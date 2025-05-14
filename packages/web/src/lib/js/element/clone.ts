@@ -1,8 +1,9 @@
 import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
 import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
 import type { InputHandler } from '../input/inputHandler';
+import type { ElementInfo } from './element';
+import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
 import { parseDigit } from '../input/inputHandler';
 import {
     arrayObj2array,
@@ -12,8 +13,6 @@ import {
     warnClones,
 } from '@sudoku-studio/board-utils/src';
 import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
-import { pushHistory } from '../history';
 import * as hsluv from 'hsluv';
 import { makeA1Column } from '../util';
 
@@ -49,6 +48,7 @@ function getInputHandler(
     stateRef: StateRef<schema.CloneElement['value']>,
     grid: Grid,
     svg: SVGSVGElement,
+    pushHistory: (history: Diff | null) => boolean,
 ): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 

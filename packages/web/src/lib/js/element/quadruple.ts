@@ -1,5 +1,5 @@
 import type { ArrayObj, Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import type { StateRef } from '@sudoku-studio/state-manager/src';
+import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import {
     arrayObj2array,
     cellCoord2CellIdx,
@@ -13,7 +13,6 @@ import { getTouchPosition, parseDigit } from '../input/inputHandler';
 import type { InputHandler } from '../input/inputHandler';
 import { userCursorIsShownState, userSelectState } from '../user';
 import type { ElementInfo } from './element';
-import { pushHistory } from '../history';
 
 export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     getInputHandler,
@@ -59,6 +58,7 @@ function getInputHandler(
     ref: StateRef<schema.QuadrupleElement['value']>,
     grid: Grid,
     svg: SVGSVGElement,
+    pushHistory: (history: Diff | null) => boolean,
 ): InputHandler {
     const digits: number[] = [];
     let cornerRef: null | StateRef<true | ArrayObj<number>> = null;

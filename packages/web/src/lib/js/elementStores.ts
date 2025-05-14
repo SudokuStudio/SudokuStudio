@@ -147,7 +147,7 @@ export const currentInputHandler = derived<
     const valueRef = elementRef.ref<any>('value');
     if (null == info || null == info.getInputHandler) return null;
 
-    const inputHandler = info.getInputHandler(valueRef, $boardGridRef, $boardSvg);
+    const inputHandler = info.getInputHandler(valueRef, $boardGridRef, $boardSvg, pushHistory);
     inputHandler.load();
     return inputHandler;
 });

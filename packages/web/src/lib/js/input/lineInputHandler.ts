@@ -1,11 +1,11 @@
 import { arrayObj2array, boardRepr, cellCoord2CellIdx } from '@sudoku-studio/board-utils/src';
-import type { ArrayObj, Geometry, Grid, Idx, schema } from '@sudoku-studio/schema';
+import type { Geometry, Grid, Idx, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import { pushHistory } from '../history';
 import { userCursorIsShownState, userSelectState } from '../user';
 import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler';
-import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
+import type { CellDragTapEvent } from './adjacentCellPointerHandler';
 import type { InputHandler } from './inputHandler';
+import type { GetInputHandler } from '../element/element';
 
 export type LineInputHandlerOptions = {
     deletePrioritizeHead: boolean;
@@ -13,10 +13,22 @@ export type LineInputHandlerOptions = {
     allowSelfIntersection: boolean;
 };
 
+export function makeLineGetInputHandler(
+    options: LineInputHandlerOptions,
+): GetInputHandler<schema.LineElement['value']> {
+    return (
+        stateRef: StateRef<schema.LineElement['value']>,
+        grid: Grid,
+        svg: SVGSVGElement,
+        pushHistory: (history: Diff | null) => boolean,
+    ): InputHandler => getLineInputHandler(stateRef, grid, svg, pushHistory, options);
+}
+
 export function getLineInputHandler(
     stateRef: StateRef<schema.LineElement['value']>,
     grid: Grid,
     svg: SVGSVGElement,
+    pushHistory: (history: Diff | null) => boolean,
     options: LineInputHandlerOptions,
 ): InputHandler {
     const { deletePrioritizeHead, deletePrioritizeTail, allowSelfIntersection } = options;

@@ -11,14 +11,11 @@ import {
     idxMapToKeysArray,
     markDigitsFailingCondition,
 } from '@sudoku-studio/board-utils/src';
-import { pushHistory } from '../history';
 import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
+import type { ElementInfo, GetInputHandler } from './element';
 
 export const minInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, 'max');
-    },
+    getInputHandler: makeGetInputHandler('max'),
     order: 20,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Min', icon: 'min' },
@@ -48,9 +45,7 @@ export const minInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const maxInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, 'min');
-    },
+    getInputHandler: makeGetInputHandler('min'),
     order: 21,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Max', icon: 'max' },
@@ -81,9 +76,7 @@ export const maxInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const evenInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, 'odd');
-    },
+    getInputHandler: makeGetInputHandler('odd'),
     order: 40,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Even', icon: 'odd-even' },
@@ -105,9 +98,7 @@ export const evenInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const oddInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, 'even');
-    },
+    getInputHandler: makeGetInputHandler('even'),
     order: 41,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Odd', icon: 'odd-even' },
@@ -129,9 +120,7 @@ export const oddInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const columnIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg);
-    },
+    getInputHandler,
     order: 42,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Column Indexer', icon: 'odd-even' },
@@ -160,9 +149,7 @@ export const columnIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const rowIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg);
-    },
+    getInputHandler,
     order: 42,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Row Indexer', icon: 'odd-even' },
@@ -190,6 +177,15 @@ export const rowIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
     },
 };
 
+function makeGetInputHandler(oppositeConstraint?: string): GetInputHandler<schema.RegionElement['value']> {
+    return (
+        stateRef: StateRef<schema.RegionElement['value']>,
+        grid: Grid,
+        svg: SVGSVGElement,
+        pushHistory: (history: Diff | null) => boolean,
+    ) => getInputHandler(stateRef, grid, svg, pushHistory, oppositeConstraint);
+}
+
 /**
  * @param oppositeConstraint - Another constraint that this constraint cannot share cells with. So attempting to place
  *      this constraint there will ignore that cell.
@@ -198,6 +194,7 @@ function getInputHandler(
     stateRef: StateRef<schema.RegionElement['value']>,
     grid: Grid,
     svg: SVGSVGElement,
+    pushHistory: (history: Diff | null) => boolean,
     oppositeConstraint?: string,
 ): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);

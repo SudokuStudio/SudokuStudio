@@ -13,7 +13,6 @@ import {
 } from '@sudoku-studio/board-utils/src';
 import { userCursorIsShownState, userSelectState } from '../user';
 import type { ElementInfo } from './element';
-import { pushHistory } from '../history';
 
 export const killerInfo: ElementInfo<schema.KillerElement['value']> = {
     getInputHandler,
@@ -46,6 +45,7 @@ function getInputHandler(
     stateRef: StateRef<schema.KillerElement['value']>,
     grid: Grid,
     svg: SVGSVGElement,
+    pushHistory: (history: Diff | null) => boolean,
 ): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(false);
 
