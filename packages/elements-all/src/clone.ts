@@ -11,7 +11,6 @@ import {
     warnClones,
 } from '@sudoku-studio/board-utils/src';
 import * as hsluv from 'hsluv';
-import { makeA1Column } from '../../web/src/lib/js/util.js';
 
 export const cloneInfo: ElementInfo<schema.CloneElement['value']> = {
     getInputHandler,
@@ -264,4 +263,18 @@ function getInputHandler(
             pointerHandler.touchUp(event, ctx.grid, ctx.svg);
         },
     } as const;
+}
+
+/** Converts a number to a column name in A1 notation (1 -> A, 2 -> B, ..., 27 -> AA, etc.) */
+function makeA1Column(x: number) {
+    x++;
+
+    const out: string[] = [];
+    while (0 < x) {
+        x--;
+        const mod = x % 26;
+        x = Math.floor(x / 26);
+        out.unshift(String.fromCharCode(65 + mod));
+    }
+    return out.join('');
 }
