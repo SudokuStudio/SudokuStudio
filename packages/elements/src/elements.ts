@@ -1,7 +1,7 @@
 import type { Geometry, Grid, IdxBitset, IdxMap } from '@sudoku-studio/schema';
 import type { Component } from 'svelte';
 import type { InputHandler, InputHandlerContext } from './inputHandler.js';
-import { type Data, StateRef } from '@sudoku-studio/state-manager/src';
+import type { Data, StateRef } from '@sudoku-studio/state-manager/src';
 
 export * as adjacentCellPointerHandler from './adjacentCellPointerHandler.js';
 export * as inputHandler from './inputHandler.js';
