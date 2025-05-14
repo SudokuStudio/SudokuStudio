@@ -1,5 +1,5 @@
 import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
+import type { StateRef } from '@sudoku-studio/state-manager/src';
 import {
     cellCoord2CellIdx,
     click2svgCoord,
@@ -12,7 +12,7 @@ import {
     warnSum,
 } from '@sudoku-studio/board-utils/src';
 import { getTouchPosition, parseDigit } from '../input/inputHandler';
-import type { InputHandler } from '../input/inputHandler';
+import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
 import { userCursorIsShownState, userSelectState } from '../user';
 import type { ElementInfo, GetInputHandler } from './element';
 
@@ -193,15 +193,10 @@ export const sandwichInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
 };
 
 export const skyscraperInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
-    getInputHandler(
-        ref: StateRef<schema.SeriesNumberElement['value']>,
-        grid: Grid,
-        svg: SVGSVGElement,
-        pushHistory: (history: Diff | null) => boolean,
-    ): InputHandler {
-        return getInputHandler(ref, grid, svg, pushHistory, {
+    getInputHandler(ctx: InputHandlerContext<schema.SeriesNumberElement['value']>): InputHandler {
+        return getInputHandler(ctx, {
             svgCoord2idx: svgCoord2seriesIdx,
-            max: Math.max(grid.width, grid.height),
+            max: Math.max(ctx.grid.width, ctx.grid.height),
         });
     },
     order: 151,
@@ -290,14 +285,11 @@ type PositionNumberInputHandlerOptions<TAG extends Geometry> = {
 function makeGetInputHandler<TAG extends Geometry>(
     options: PositionNumberInputHandlerOptions<TAG>,
 ): GetInputHandler<IdxMap<TAG, true | number> | undefined> {
-    return (ref, grid, svg, pushHistory) => getInputHandler(ref, grid, svg, pushHistory, options);
+    return (ctx) => getInputHandler(ctx, options);
 }
 
 function getInputHandler<TAG extends Geometry>(
-    ref: StateRef<IdxMap<TAG, true | number> | undefined>,
-    grid: Grid,
-    svg: SVGSVGElement,
-    pushHistory: (history: Diff | null) => boolean,
+    ctx: InputHandlerContext<IdxMap<TAG, true | number> | undefined>,
     options: PositionNumberInputHandlerOptions<TAG>,
 ): InputHandler {
     const keymap = options.keymap || {};
@@ -323,15 +315,15 @@ function getInputHandler<TAG extends Geometry>(
         }
 
         const diff = idxRef.replace(digit ?? (true !== oldVal || null));
-        pushHistory(diff);
+        ctx.pushHistory(diff);
 
         return true;
     }
 
     function handleClick(mousePosition: { offsetX: number; offsetY: number }) {
-        const idx = svgCoord2idx(click2svgCoord(mousePosition, svg), grid);
+        const idx = svgCoord2idx(click2svgCoord(mousePosition, ctx.svg), ctx.grid);
         if (null == idx) return;
-        const clickedIdxRef = ref.ref<number | true>(`${idx}`);
+        const clickedIdxRef = ctx.stateRef.ref<number | true>(`${idx}`);
 
         if (true === clickedIdxRef.get()) {
             // Delete empty.

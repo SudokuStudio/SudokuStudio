@@ -5,7 +5,7 @@ import { boardGridRef, boardState, boardSvg, warningState } from './board';
 import type { Geometry, Grid, IdxBitset, schema } from '@sudoku-studio/schema';
 import { createElement, ELEMENT_HANDLERS } from './elements';
 import { userPrevToolState, userState, userToolState } from './user';
-import type { InputHandler } from './input/inputHandler';
+import { InputHandlerContext, type InputHandler } from './input/inputHandler';
 import { pushHistory } from './history';
 import { boardRepr, buildRegionMap, getDigits } from '@sudoku-studio/board-utils/src';
 
@@ -155,7 +155,8 @@ export const currentInputHandler = (() => {
             if (null == info || null == info.getInputHandler) {
                 return null;
             }
-            inputHandler = info.getInputHandler(valueRef, $boardGridRef, $boardSvg, pushHistory);
+            const ctx = new InputHandlerContext(valueRef, $boardGridRef!, $boardSvg);
+            inputHandler = info.getInputHandler(ctx);
             inputHandler.load();
             return inputHandler;
         },

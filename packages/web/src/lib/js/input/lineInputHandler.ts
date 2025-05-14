@@ -1,10 +1,10 @@
 import { arrayObj2array, boardRepr, cellCoord2CellIdx } from '@sudoku-studio/board-utils/src';
-import type { Geometry, Grid, Idx, schema } from '@sudoku-studio/schema';
+import type { Geometry, Idx, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { userCursorIsShownState, userSelectState } from '../user';
 import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler';
 import type { CellDragTapEvent } from './adjacentCellPointerHandler';
-import type { InputHandler } from './inputHandler';
+import type { InputHandler, InputHandlerContext } from './inputHandler';
 import type { GetInputHandler } from '../element/element';
 
 export type LineInputHandlerOptions = {
@@ -16,19 +16,11 @@ export type LineInputHandlerOptions = {
 export function makeLineGetInputHandler(
     options: LineInputHandlerOptions,
 ): GetInputHandler<schema.LineElement['value']> {
-    return (
-        stateRef: StateRef<schema.LineElement['value']>,
-        grid: Grid,
-        svg: SVGSVGElement,
-        pushHistory: (history: Diff | null) => boolean,
-    ): InputHandler => getLineInputHandler(stateRef, grid, svg, pushHistory, options);
+    return (ctx) => getLineInputHandler(ctx, options);
 }
 
 export function getLineInputHandler(
-    stateRef: StateRef<schema.LineElement['value']>,
-    grid: Grid,
-    svg: SVGSVGElement,
-    pushHistory: (history: Diff | null) => boolean,
+    ctx: InputHandlerContext<schema.LineElement['value']>,
     options: LineInputHandlerOptions,
 ): InputHandler {
     const { deletePrioritizeHead, deletePrioritizeTail, allowSelfIntersection } = options;
@@ -56,7 +48,7 @@ export function getLineInputHandler(
 
     pointerHandler.onDragStart = (event: CellDragTapEvent) => {
         lineCells.length = 0;
-        lineRef = stateRef.ref(boardRepr.makeUid());
+        lineRef = ctx.stateRef.ref(boardRepr.makeUid());
 
         handle(event);
     };
@@ -78,7 +70,7 @@ export function getLineInputHandler(
             for (let i = 0; i < lineCells.length; i++) {
                 diff.redo[`${path}/${i}`] = lineCells[i];
             }
-            pushHistory(diff);
+            ctx.pushHistory(diff);
         }
         lineRef = null;
     };
@@ -88,7 +80,7 @@ export function getLineInputHandler(
         const idx = cellCoord2CellIdx(coord, grid);
 
         let lineIdToDelete: null | string = null;
-        for (const [lineId, lineValArrObj] of Object.entries(stateRef.get() || {})) {
+        for (const [lineId, lineValArrObj] of Object.entries(ctx.stateRef.get() || {})) {
             const lineValCells = arrayObj2array(lineValArrObj);
             if (deletePrioritizeHead && idx === lineValCells[0]) {
                 lineIdToDelete = lineId;
@@ -103,7 +95,7 @@ export function getLineInputHandler(
             }
         }
         if (null != lineIdToDelete) {
-            pushHistory(stateRef.ref(`${lineIdToDelete}`).replace(null));
+            ctx.pushHistory(ctx.stateRef.ref(`${lineIdToDelete}`).replace(null));
         }
     };
 
@@ -124,28 +116,28 @@ export function getLineInputHandler(
         padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {},
 
         mouseDown(event: MouseEvent): void {
-            pointerHandler.mouseDown(event, grid, svg);
+            pointerHandler.mouseDown(event, ctx.grid, ctx.svg);
         },
         mouseMove(event: MouseEvent): void {
-            pointerHandler.mouseMove(event, grid, svg);
+            pointerHandler.mouseMove(event, ctx.grid, ctx.svg);
         },
         mouseUp(_event: MouseEvent): void {
             pointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
-            pointerHandler.leave(event, grid, svg);
+            pointerHandler.leave(event, ctx.grid, ctx.svg);
         },
         click(event: MouseEvent): void {
-            pointerHandler.click(event, grid, svg);
+            pointerHandler.click(event, ctx.grid, ctx.svg);
         },
         touchDown(event: TouchEvent): void {
-            pointerHandler.touchDown(event, grid, svg);
+            pointerHandler.touchDown(event, ctx.grid, ctx.svg);
         },
         touchMove(event: TouchEvent): void {
-            pointerHandler.touchMove(event, grid, svg);
+            pointerHandler.touchMove(event, ctx.grid, ctx.svg);
         },
         touchUp(event: TouchEvent): void {
-            pointerHandler.touchUp(event, grid, svg);
+            pointerHandler.touchUp(event, ctx.grid, ctx.svg);
         },
     } as const;
 }

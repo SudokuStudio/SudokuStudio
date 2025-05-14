@@ -21,12 +21,7 @@ export interface CheckboxMenuComponent extends AbstractMenuComponent {
 
 export type MenuComponent = SelectMenuComponent | CheckboxMenuComponent;
 
-export type GetInputHandler<V> = (
-    ref: StateRef<V>,
-    grid: Grid,
-    svg: SVGSVGElement,
-    pushHistory: (history: Diff | null) => boolean,
-) => InputHandler;
+export type GetInputHandler<V> = (ctx: InputHandlerContext<V>) => InputHandler;
 
 export type ElementInfo<V> = {
     getInputHandler?: null | GetInputHandler<V>;

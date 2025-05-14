@@ -1,9 +1,8 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import { getCellValue } from '../board';
+import type { Diff } from '@sudoku-studio/state-manager/src';
 import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
 import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
-import type { InputHandler } from '../input/inputHandler';
+import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
 import {
     cellCoord2CellIdx,
     cellIdx2cellCoord,
@@ -178,12 +177,7 @@ export const rowIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 function makeGetInputHandler(oppositeConstraint?: string): GetInputHandler<schema.RegionElement['value']> {
-    return (
-        stateRef: StateRef<schema.RegionElement['value']>,
-        grid: Grid,
-        svg: SVGSVGElement,
-        pushHistory: (history: Diff | null) => boolean,
-    ) => getInputHandler(stateRef, grid, svg, pushHistory, oppositeConstraint);
+    return (ctx) => getInputHandler(ctx, oppositeConstraint);
 }
 
 /**
@@ -191,10 +185,7 @@ function makeGetInputHandler(oppositeConstraint?: string): GetInputHandler<schem
  *      this constraint there will ignore that cell.
  */
 function getInputHandler(
-    stateRef: StateRef<schema.RegionElement['value']>,
-    grid: Grid,
-    svg: SVGSVGElement,
-    pushHistory: (history: Diff | null) => boolean,
+    ctx: InputHandlerContext<schema.RegionElement['value']>,
     oppositeConstraint?: string,
 ): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
@@ -215,11 +206,11 @@ function getInputHandler(
         if (Mode.DYNAMIC === mode) {
             // If the first cell already has the constraint, set mode to removing
             // Otherwise, set mode to adding
-            mode = stateRef.ref<true>(`${idx}`).get() ? Mode.REMOVING : Mode.ADDING;
+            mode = ctx.stateRef.ref<true>(`${idx}`).get() ? Mode.REMOVING : Mode.ADDING;
         }
 
         if (null != oppositeConstraint) {
-            const oppositeConstraintValue = getCellValue(oppositeConstraint, idx);
+            const oppositeConstraintValue = ctx.getCellValue(oppositeConstraint, idx);
             if (oppositeConstraintValue) {
                 // Cannot place constraint if the opposite constraint is already in the cell
                 return;
@@ -227,7 +218,7 @@ function getInputHandler(
         }
 
         const stateValue = mode === Mode.ADDING ? true : null;
-        const diff = stateRef.ref(`${idx}`).replace(stateValue);
+        const diff = ctx.stateRef.ref(`${idx}`).replace(stateValue);
         if (null != diff) {
             Object.assign(fullDiff.redo, diff.redo);
             Object.assign(fullDiff.undo, diff.undo);
@@ -244,7 +235,7 @@ function getInputHandler(
     };
 
     pointerHandler.onDragEnd = () => {
-        pushHistory(fullDiff);
+        ctx.pushHistory(fullDiff);
         fullDiff.redo = {};
         fullDiff.undo = {};
     };
@@ -266,28 +257,28 @@ function getInputHandler(
         padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {},
 
         mouseDown(event: MouseEvent): void {
-            pointerHandler.mouseDown(event, grid, svg);
+            pointerHandler.mouseDown(event, ctx.grid, ctx.svg);
         },
         mouseMove(event: MouseEvent): void {
-            pointerHandler.mouseMove(event, grid, svg);
+            pointerHandler.mouseMove(event, ctx.grid, ctx.svg);
         },
         mouseUp(_event: MouseEvent): void {
             pointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
-            pointerHandler.leave(event, grid, svg);
+            pointerHandler.leave(event, ctx.grid, ctx.svg);
         },
         click(event: MouseEvent): void {
-            pointerHandler.click(event, grid, svg);
+            pointerHandler.click(event, ctx.grid, ctx.svg);
         },
         touchDown(event: TouchEvent): void {
-            pointerHandler.touchDown(event, grid, svg);
+            pointerHandler.touchDown(event, ctx.grid, ctx.svg);
         },
         touchMove(event: TouchEvent): void {
-            pointerHandler.touchMove(event, grid, svg);
+            pointerHandler.touchMove(event, ctx.grid, ctx.svg);
         },
         touchUp(event: TouchEvent): void {
-            pointerHandler.touchUp(event, grid, svg);
+            pointerHandler.touchUp(event, ctx.grid, ctx.svg);
         },
     } as const;
 }

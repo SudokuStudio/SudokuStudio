@@ -1,3 +1,19 @@
+import type { Data, Diff, StateRef } from '@sudoku-studio/state-manager/src';
+import { pushHistory } from '../history';
+import type { Grid } from '@sudoku-studio/schema';
+import { getCellValue } from '../board';
+
+export class InputHandlerContext<V extends Data> {
+    constructor(
+        public readonly stateRef: StateRef<V>,
+        public readonly grid: Grid,
+        public readonly svg: SVGSVGElement,
+    ) {}
+
+    public readonly pushHistory = pushHistory;
+    public readonly getCellValue = getCellValue;
+}
+
 export interface InputHandler {
     load(): void;
     unload(): void;

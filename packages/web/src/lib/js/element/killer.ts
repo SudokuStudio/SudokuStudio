@@ -2,7 +2,7 @@ import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-stu
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
 import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
-import type { InputHandler } from '../input/inputHandler';
+import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
 import { parseDigit } from '../input/inputHandler';
 import {
     boardRepr,
@@ -41,12 +41,7 @@ export const killerInfo: ElementInfo<schema.KillerElement['value']> = {
     },
 };
 
-function getInputHandler(
-    stateRef: StateRef<schema.KillerElement['value']>,
-    grid: Grid,
-    svg: SVGSVGElement,
-    pushHistory: (history: Diff | null) => boolean,
-): InputHandler {
+function getInputHandler(ctx: InputHandlerContext<schema.KillerElement['value']>): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(false);
 
     let cageRef: null | StateRef<{ sum?: number; cells: IdxBitset<Geometry.CELL> }> = null;
@@ -74,16 +69,16 @@ function getInputHandler(
         if (null === digit && null == oldVal) {
             // If delete on empty, delete the whole cage.
             const diff = cageRef.replace(null);
-            pushHistory(diff);
+            ctx.pushHistory(diff);
         } else {
             const diff = cageRef.ref<number>('sum').replace(digit);
-            pushHistory(diff);
+            ctx.pushHistory(diff);
         }
         return true;
     }
 
     function getExistingCageAtIdx(idx: Idx<Geometry.CELL>): null | string {
-        for (const [cageId, { sum: _, cells }] of Object.entries(stateRef.get() || {})) {
+        for (const [cageId, { sum: _, cells }] of Object.entries(ctx.stateRef.get() || {})) {
             if (cells[idx]) {
                 return cageId;
             }
@@ -94,7 +89,7 @@ function getInputHandler(
     function startDrag(idx: Idx<Geometry.CELL>): void {
         if (Mode.DYNAMIC === mode) {
             const cageId = getExistingCageAtIdx(idx);
-            cageRef = stateRef.ref(cageId || boardRepr.makeUid());
+            cageRef = ctx.stateRef.ref(cageId || boardRepr.makeUid());
             mode = null == cageId ? Mode.ADDING : Mode.REMOVING;
         }
     }
@@ -128,7 +123,7 @@ function getInputHandler(
     };
 
     pointerHandler.onDragEnd = () => {
-        pushHistory(fullDiff);
+        ctx.pushHistory(fullDiff);
         fullDiff.redo = {};
         fullDiff.undo = {};
     };
@@ -143,8 +138,8 @@ function getInputHandler(
         const cageId = getExistingCageAtIdx(idx);
         if (null != cageId) {
             // Delete
-            const diff = stateRef.ref(cageId).replace(null);
-            pushHistory(diff);
+            const diff = ctx.stateRef.ref(cageId).replace(null);
+            ctx.pushHistory(diff);
         }
     };
 
@@ -175,28 +170,28 @@ function getInputHandler(
         },
 
         mouseDown(event: MouseEvent): void {
-            pointerHandler.mouseDown(event, grid, svg);
+            pointerHandler.mouseDown(event, ctx.grid, ctx.svg);
         },
         mouseMove(event: MouseEvent): void {
-            pointerHandler.mouseMove(event, grid, svg);
+            pointerHandler.mouseMove(event, ctx.grid, ctx.svg);
         },
         mouseUp(_event: MouseEvent): void {
             pointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
-            pointerHandler.leave(event, grid, svg);
+            pointerHandler.leave(event, ctx.grid, ctx.svg);
         },
         click(event: MouseEvent): void {
-            pointerHandler.click(event, grid, svg);
+            pointerHandler.click(event, ctx.grid, ctx.svg);
         },
         touchDown(event: TouchEvent): void {
-            pointerHandler.touchDown(event, grid, svg);
+            pointerHandler.touchDown(event, ctx.grid, ctx.svg);
         },
         touchMove(event: TouchEvent): void {
-            pointerHandler.touchMove(event, grid, svg);
+            pointerHandler.touchMove(event, ctx.grid, ctx.svg);
         },
         touchUp(event: TouchEvent): void {
-            pointerHandler.touchUp(event, grid, svg);
+            pointerHandler.touchUp(event, ctx.grid, ctx.svg);
         },
     } as const;
 }
