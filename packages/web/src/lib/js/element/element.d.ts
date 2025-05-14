@@ -29,7 +29,7 @@ export type GetInputHandler<V> = (
 ) => InputHandler;
 
 export type ElementInfo<V> = {
-    getInputHandler?: null | GetInputHandler;
+    getInputHandler?: null | GetInputHandler<V>;
 
     /** Render order. */
     order: number;
