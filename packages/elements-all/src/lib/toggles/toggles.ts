@@ -9,8 +9,11 @@ import {
     writeRepeatingDigits,
 } from '@sudoku-studio/board-utils/src';
 import type { ElementInfo } from '@sudoku-studio/elements/src';
+import DiagonalRender from './DiagonalRender.svelte';
+import NullRender from './NullRender.svelte';
 
 export const diagonalInfo: ElementInfo<schema.DiagonalElement['value']> = {
+    component: DiagonalRender,
     inGlobalMenu: true,
     order: 0,
     menu: {
@@ -44,6 +47,7 @@ export const diagonalInfo: ElementInfo<schema.DiagonalElement['value']> = {
 };
 
 export const disjointGroupsInfo: ElementInfo<schema.BooleanElement['value']> = {
+    component: NullRender,
     inGlobalMenu: true,
     order: 0,
     menu: {
@@ -82,6 +86,7 @@ export const disjointGroupsInfo: ElementInfo<schema.BooleanElement['value']> = {
 };
 
 export const consecutiveInfo: ElementInfo<schema.ConsecutiveElement['value']> = {
+    component: NullRender,
     inGlobalMenu: true,
     order: 0,
     menu: {
@@ -113,6 +118,7 @@ export const consecutiveInfo: ElementInfo<schema.ConsecutiveElement['value']> = 
 };
 
 export const antiXInfo: ElementInfo<schema.BooleanElement['value']> = {
+    component: NullRender,
     inGlobalMenu: true,
     order: 0,
     menu: { type: 'checkbox', name: 'Anti-X', checkbox: { name: 'Anti-X', icon: 'anti-x' }, icon: 'anti-x' },
@@ -131,6 +137,7 @@ export const antiXInfo: ElementInfo<schema.BooleanElement['value']> = {
 };
 
 export const antiVInfo: ElementInfo<schema.BooleanElement['value']> = {
+    component: NullRender,
     inGlobalMenu: true,
     order: 0,
     menu: { type: 'checkbox', name: 'Anti-V', checkbox: { name: 'Anti-V', icon: 'anti-v' }, icon: 'anti-v' },
@@ -149,6 +156,7 @@ export const antiVInfo: ElementInfo<schema.BooleanElement['value']> = {
 };
 
 export const kingInfo: ElementInfo<schema.BooleanElement['value']> = {
+    component: NullRender,
     inGlobalMenu: true,
     order: 0,
     menu: { type: 'checkbox', name: 'Antiking', checkbox: { name: 'Antiking', icon: 'king' }, icon: 'king' },
@@ -175,6 +183,7 @@ export const kingInfo: ElementInfo<schema.BooleanElement['value']> = {
 };
 
 export const knightInfo: ElementInfo<schema.BooleanElement['value']> = {
+    component: NullRender,
     inGlobalMenu: true,
     order: 0,
     menu: { type: 'checkbox', name: 'Antiknight', checkbox: { name: 'Antiknight', icon: 'knight' }, icon: 'knight' },
@@ -201,6 +210,7 @@ export const knightInfo: ElementInfo<schema.BooleanElement['value']> = {
 };
 
 export const selfTaxicabInfo: ElementInfo<schema.BooleanElement['value']> = {
+    component: NullRender,
     inGlobalMenu: true,
     order: 0,
     menu: {

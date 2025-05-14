@@ -26,11 +26,12 @@ export type MenuComponent = SelectMenuComponent | CheckboxMenuComponent;
 
 export type GetInputHandler<V extends Data> = (ctx: InputHandlerContext<V>) => InputHandler;
 
-export type ElementComponentProps = { id: string; ref: StateRef<IdxBitset<Geometry.CELL>>; grid: Grid };
+export type ElementComponentProps<V extends Data> = { id: string; ref: StateRef<V>; grid: Grid };
 
 export type ElementInfo<V extends Data> = {
-    // TODO(mingwei): Make this required.
-    component?: Component<ElementComponentProps>;
+    component: Component<ElementComponentProps<V>>;
+    /** Additional space needed on every side of the board to display the component. `0` if not specified. */
+    margin?: number;
 
     getInputHandler?: null | GetInputHandler<V>;
 

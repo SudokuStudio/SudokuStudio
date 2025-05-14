@@ -1,6 +1,7 @@
 {
     "name": "@sudoku-studio/board",
-    "version": "0.0.1",
+    "type": "module",
+    "version": "0.0.0",
     "scripts": {
         "clean": "rm -rf .svelte-kit dist node_modules",
         "dev": "vite dev",
@@ -21,7 +22,6 @@
     ],
     "svelte": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "type": "module",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -36,7 +36,7 @@
         "svelte": "^5.0.0"
     },
     "devDependencies": {
-        "@sudoku-studio/board-utils": "workspace:*",
+        "@sudoku-studio/elements": "workspace:*",
         "@sudoku-studio/schema": "workspace:*",
         "@sudoku-studio/state-manager": "workspace:*",
         "@sveltejs/adapter-auto": "^6.0.0",

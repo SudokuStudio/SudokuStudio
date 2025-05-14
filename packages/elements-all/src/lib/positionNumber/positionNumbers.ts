@@ -1,3 +1,4 @@
+import type { Component } from 'svelte';
 import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { StateRef } from '@sudoku-studio/state-manager/src';
 import {
@@ -5,15 +6,36 @@ import {
     click2svgCoord,
     diagonalIdx2diagonalCellCoords,
     edgeIdx2cellIdxes,
+    edgeIdx2svgCoord,
+    num2roman,
     seriesIdx2CellCoords,
+    seriesIdx2seriesCoord,
     svgCoord2diagonalIdx,
     svgCoord2edgeIdx,
     svgCoord2seriesIdx,
     warnSum,
 } from '@sudoku-studio/board-utils/src';
-import { type ElementInfo, type GetInputHandler, inputHandler } from '@sudoku-studio/elements/src';
+import {
+    type ElementComponentProps,
+    type ElementInfo,
+    type GetInputHandler,
+    inputHandler,
+} from '@sudoku-studio/elements/src';
+import PositionNumberRender from './PositionNumberRender.svelte';
+import LittleKillerRender from './LittleKillerRender.svelte';
 
 export const differenceInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
+    component: (internals, props) =>
+        PositionNumberRender(
+            internals,
+            Object.assign(props, {
+                idx2coord: edgeIdx2svgCoord,
+                stroke: '#242424',
+                fill: '#fff',
+                textColor: '#000',
+                strokeWidth: 0.02,
+            }),
+        ),
     getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2edgeIdx, max: 10 }),
     order: 140,
     inGlobalMenu: false,
@@ -48,6 +70,11 @@ export const differenceInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
 };
 
 export const ratioInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
+    component: (internals, props) =>
+        PositionNumberRender(
+            internals,
+            Object.assign(props, { idx2coord: edgeIdx2svgCoord, stroke: 'none', fill: '#000', textColor: '#fff' }),
+        ),
     getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2edgeIdx, max: 10 }),
     order: 141,
     inGlobalMenu: false,
@@ -82,6 +109,20 @@ export const ratioInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
 };
 
 export const xvInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
+    component: (internals, props) =>
+        PositionNumberRender(
+            internals,
+            Object.assign(props, {
+                idx2coord: edgeIdx2svgCoord,
+                stroke: 'none',
+                fill: '#fff',
+                textColor: '#000',
+                radius: 0.17,
+                fontSize: 0.3,
+                fontWeight: 800,
+                mapDigits: (num: true | number) => (true !== num ? num2roman(num) : '_'),
+            }),
+        ),
     getInputHandler: makeGetInputHandler({
         svgCoord2idx: svgCoord2edgeIdx,
         keymap: {
@@ -123,6 +164,8 @@ export const xvInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
 };
 
 export const littleKillerInfo: ElementInfo<schema.LittleKillerElement['value']> = {
+    component: LittleKillerRender,
+    margin: 0.9,
     getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2diagonalIdx, max: 100 }),
     order: 160,
     inGlobalMenu: false,
@@ -150,7 +193,24 @@ export const littleKillerInfo: ElementInfo<schema.LittleKillerElement['value']> 
     },
 };
 
+const SeriesRender: Component<ElementComponentProps<schema.SeriesNumberElement['value']>> = (internals, props) =>
+    PositionNumberRender(
+        internals,
+        Object.assign(props, {
+            idx2coord: (idx: Idx<Geometry.SERIES>, grid: Grid) => {
+                const [x, y] = seriesIdx2seriesCoord(idx, grid);
+                return [x + 0.5, y + 0.5] as Coord<Geometry.SVG>;
+            },
+            radius: 0,
+            textColor: '#000',
+            fontSize: 0.5,
+            mapDigits: (num: true | number) => (true !== num ? `${num}` : '_'),
+        }),
+    );
+
 export const sandwichInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
+    component: SeriesRender,
+    margin: 1,
     getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2seriesIdx, max: 100 }),
     order: 150,
     inGlobalMenu: false,
@@ -190,6 +250,8 @@ export const sandwichInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
 };
 
 export const skyscraperInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
+    component: SeriesRender,
+    margin: 1,
     getInputHandler(
         ctx: inputHandler.InputHandlerContext<schema.SeriesNumberElement['value']>,
     ): inputHandler.InputHandler {
@@ -244,6 +306,8 @@ export const skyscraperInfo: ElementInfo<schema.SeriesNumberElement['value']> = 
 };
 
 export const xsumInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
+    component: SeriesRender,
+    margin: 1,
     getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2seriesIdx, max: 100 }),
     order: 152,
     inGlobalMenu: false,

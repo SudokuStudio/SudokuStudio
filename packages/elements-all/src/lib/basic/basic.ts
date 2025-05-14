@@ -3,12 +3,18 @@ import {
     arrayObj2array,
     getColCellIdxes,
     getRowCellIdxes,
+    GRID_REGION_THICKNESS_HALF,
+    GRID_THICKNESS_HALF,
     idxMapToKeysArray,
     writeRepeatingDigits,
 } from '@sudoku-studio/board-utils/src';
 import type { ElementInfo } from '@sudoku-studio/elements/src';
+import GridRender from './GridRender.svelte';
+import GridRegionRender from './GridRegionRender.svelte';
 
 export const gridInfo: ElementInfo<undefined> = {
+    component: GridRender,
+    margin: GRID_THICKNESS_HALF,
     order: 101,
     permanent: true,
 
@@ -29,6 +35,8 @@ export const gridInfo: ElementInfo<undefined> = {
 } as const;
 
 export const gridRegionInfo: ElementInfo<schema.GridRegionElement['value']> = {
+    component: GridRegionRender,
+    margin: GRID_REGION_THICKNESS_HALF,
     order: 100,
     permanent: true,
 

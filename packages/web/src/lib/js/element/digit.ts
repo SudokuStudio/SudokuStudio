@@ -1,9 +1,14 @@
 import type { schema } from '@sudoku-studio/schema';
 import type { ElementInfo } from '@sudoku-studio/elements/src';
 import hsluv from 'hsluv';
-import { makeSelectDigitGetInputHandler } from '../input/selectDigitInputHandler.js';
+import { makeSelectDigitGetInputHandler } from './selectDigitInputHandler.js';
+import DigitRender from './DigitRender.svelte';
+import CornerRender from './CornerRender.svelte';
+import CenterRender from './CenterRender.svelte';
+import ColorsRender from './ColorsRender.svelte';
 
 export const givensInfo: ElementInfo<schema.DigitElement['value']> = {
+    component: DigitRender,
     getInputHandler: makeSelectDigitGetInputHandler({
         multipleDigits: false,
         blockedByGivens: false,
@@ -15,7 +20,10 @@ export const givensInfo: ElementInfo<schema.DigitElement['value']> = {
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Given', icon: 'given' },
 } as const;
+
 export const filledInfo: ElementInfo<schema.DigitElement['value']> = {
+    component: (internals, props) =>
+        DigitRender(internals, Object.assign(props, { color: '#4e72b0', mask: 'url(#SUDOKU_MASK_GIVENS)' })),
     getInputHandler: makeSelectDigitGetInputHandler({
         multipleDigits: false,
         blockedByGivens: true,
@@ -26,6 +34,7 @@ export const filledInfo: ElementInfo<schema.DigitElement['value']> = {
 } as const;
 
 export const cornerInfo: ElementInfo<schema.PencilMarksElement['value']> = {
+    component: CornerRender,
     getInputHandler: makeSelectDigitGetInputHandler({
         multipleDigits: true,
         blockedByGivens: true,
@@ -34,7 +43,9 @@ export const cornerInfo: ElementInfo<schema.PencilMarksElement['value']> = {
     }),
     order: 200,
 } as const;
+
 export const centerInfo: ElementInfo<schema.PencilMarksElement['value']> = {
+    component: CenterRender,
     getInputHandler: makeSelectDigitGetInputHandler({
         multipleDigits: true,
         blockedByGivens: true,
@@ -58,6 +69,7 @@ export const colorsList: string[] = [
 ];
 
 export const colorsInfo: ElementInfo<schema.ColorsElement['value']> = {
+    component: ColorsRender,
     getInputHandler: makeSelectDigitGetInputHandler({
         multipleDigits: true,
         blockedByGivens: false,

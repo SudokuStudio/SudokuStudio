@@ -2,26 +2,56 @@
     "name": "@sudoku-studio/elements-all",
     "type": "module",
     "version": "0.0.0",
+    "scripts": {
+        "clean": "rm -rf .svelte-kit dist node_modules",
+        "dev": "vite dev",
+        "build": "vite build && pnpm run prepack",
+        "preview": "vite preview",
+        "prepare": "svelte-kit sync || echo ''",
+        "prepack": "svelte-kit sync && svelte-package && publint",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+    },
+    "files": [
+        "dist",
+        "!dist/**/*.test.*",
+        "!dist/**/*.spec.*"
+    ],
+    "sideEffects": [
+        "**/*.css"
+    ],
+    "svelte": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
+            "svelte": "./dist/index.js"
         },
         "./src": {
-            "import": "./src/index.ts"
+            "types": "./src/lib/index.ts",
+            "svelte": "./src/lib/index.ts"
         }
     },
-    "scripts": {
-        "clean": "rm -rf dist node_modules",
-        "build": "tsc",
-        "check": "tsc --noEmit"
+    "peerDependencies": {
+        "svelte": "^5.0.0"
     },
     "devDependencies": {
         "@sudoku-studio/board-utils": "workspace:*",
         "@sudoku-studio/elements": "workspace:*",
         "@sudoku-studio/schema": "workspace:*",
         "@sudoku-studio/state-manager": "workspace:*",
-        "hsluv": "0.1.0",
-        "typescript": "^5.0.0"
-    }
+        "@sveltejs/adapter-auto": "^6.0.0",
+        "@sveltejs/kit": "^2.16.0",
+        "@sveltejs/package": "^2.0.0",
+        "@sveltejs/vite-plugin-svelte": "^5.0.0",
+        "hsluv": "^0.1.0",
+        "publint": "^0.3.2",
+        "svelte-check": "^4.0.0",
+        "svelte": "^5.0.0",
+        "typescript": "^5.0.0",
+        "vite": "^6.2.6"
+    },
+    "keywords": [
+        "svelte"
+    ]
 }

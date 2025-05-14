@@ -10,8 +10,10 @@ import {
     cornerIdx2cornerCoord,
     svgCoord2cornerCoord,
 } from '@sudoku-studio/board-utils/src';
+import QuadrupleRender from './QuadrupleRender.svelte';
 
 export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
+    component: QuadrupleRender,
     getInputHandler,
     order: 110,
     inGlobalMenu: false,

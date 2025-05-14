@@ -8,8 +8,10 @@ import {
     warnSum,
     writeRepeatingDigits,
 } from '@sudoku-studio/board-utils/src';
+import KillerRender from './KillerRender.svelte';
 
 export const killerInfo: ElementInfo<schema.KillerElement['value']> = {
+    component: KillerRender,
     getInputHandler,
     order: 120,
     inGlobalMenu: false,

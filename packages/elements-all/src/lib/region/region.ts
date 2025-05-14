@@ -1,3 +1,4 @@
+import type { Component } from 'svelte';
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff } from '@sudoku-studio/state-manager/src';
 import {
@@ -12,9 +13,16 @@ import {
     type GetInputHandler,
     inputHandler,
     adjacentCellPointerHandler,
+    type ElementComponentProps,
 } from '@sudoku-studio/elements/src';
+import EvenRender from './EvenRender.svelte';
+import OddRender from './OddRender.svelte';
+import MinRender from './MinRender.svelte';
+import MaxRender from './MaxRender.svelte';
+import IndexerRender from './IndexerRender.svelte';
 
 export const minInfo: ElementInfo<schema.RegionElement['value']> = {
+    component: MinRender,
     getInputHandler: makeGetInputHandler('max'),
     order: 20,
     inGlobalMenu: false,
@@ -45,6 +53,7 @@ export const minInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const maxInfo: ElementInfo<schema.RegionElement['value']> = {
+    component: MaxRender,
     getInputHandler: makeGetInputHandler('min'),
     order: 21,
     inGlobalMenu: false,
@@ -76,6 +85,7 @@ export const maxInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const evenInfo: ElementInfo<schema.RegionElement['value']> = {
+    component: EvenRender,
     getInputHandler: makeGetInputHandler('odd'),
     order: 40,
     inGlobalMenu: false,
@@ -98,6 +108,7 @@ export const evenInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const oddInfo: ElementInfo<schema.RegionElement['value']> = {
+    component: OddRender,
     getInputHandler: makeGetInputHandler('even'),
     order: 41,
     inGlobalMenu: false,
@@ -120,6 +131,7 @@ export const oddInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const columnIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
+    component: (internals, props) => IndexerRender(internals, Object.assign(props, { color: '#C77C7C' })),
     getInputHandler,
     order: 42,
     inGlobalMenu: false,
@@ -149,6 +161,7 @@ export const columnIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const rowIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
+    component: (internals, props) => IndexerRender(internals, Object.assign(props, { color: '#7CC77C' })),
     getInputHandler,
     order: 42,
     inGlobalMenu: false,

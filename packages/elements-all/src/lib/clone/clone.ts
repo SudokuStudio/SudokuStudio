@@ -11,8 +11,10 @@ import {
     warnClones,
 } from '@sudoku-studio/board-utils/src';
 import * as hsluv from 'hsluv';
+import CloneRender from './CloneRender.svelte';
 
 export const cloneInfo: ElementInfo<schema.CloneElement['value']> = {
+    component: CloneRender,
     getInputHandler,
     order: 10,
     inGlobalMenu: false,

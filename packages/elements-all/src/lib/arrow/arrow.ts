@@ -2,8 +2,10 @@ import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-stu
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
 import { type ElementInfo, inputHandler, adjacentCellPointerHandler } from '@sudoku-studio/elements/src';
+import ArrowRender from './ArrowRender.svelte';
 
 export const arrowInfo: ElementInfo<schema.ArrowElement['value']> = {
+    component: ArrowRender,
     getInputHandler: getArrowInputHandler,
     order: 90,
     inGlobalMenu: false,

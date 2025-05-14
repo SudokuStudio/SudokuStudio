@@ -1,8 +1,15 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import { type ElementInfo, lineInputHandler } from '@sudoku-studio/elements/src';
+import { type ElementComponentProps, type ElementInfo, lineInputHandler } from '@sudoku-studio/elements/src';
 import { arrayObj2array, warnClones } from '@sudoku-studio/board-utils/src';
+import LineRender from './LineRender.svelte';
+import BetweenRender from './BetweenRender.svelte';
+import LockoutRender from './LockoutRender.svelte';
+import ThermoRender from './ThermoRender.svelte';
+import DoubleArrowRender from './DoubleArrowRender.svelte';
+import type { ComponentProps } from 'svelte';
 
 export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
+    component: ThermoRender,
     getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: false,
@@ -28,6 +35,7 @@ export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const slowThermoInfo: ElementInfo<schema.LineElement['value']> = {
+    component: (internals, props) => ThermoRender(internals, Object.assign(props, { isSlow: true })),
     getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: false,
@@ -99,6 +107,7 @@ function getThermoWarnings(
 }
 
 export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
+    component: BetweenRender,
     getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: true,
@@ -147,6 +156,7 @@ export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
+    component: DoubleArrowRender,
     getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: true,
@@ -200,6 +210,7 @@ export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
+    component: LockoutRender,
     getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: true,
@@ -254,6 +265,8 @@ export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const palindromeInfo: ElementInfo<schema.LineElement['value']> = {
+    component: (internals, props) =>
+        LineRender(internals, Object.assign(props, { stroke: '#ed8', strokeWidth: 0.125 })),
     getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: false,
         deletePrioritizeTail: false,
@@ -292,8 +305,10 @@ function getWhisperInfo(
     icon: string,
     description: string,
     tags: string[],
+    lineProps: Omit<ComponentProps<typeof LineRender>, keyof ElementComponentProps<any>>,
 ): ElementInfo<schema.LineElement['value']> {
     return {
+        component: (internals, props) => LineRender(internals, Object.assign(props, lineProps)),
         getInputHandler: lineInputHandler.makeLineGetInputHandler({
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,
@@ -334,23 +349,44 @@ function getWhisperInfo(
     };
 }
 
+// TODO(mingwei): Update the description to be match gridWidth.
 export const germanWhisperInfo: ElementInfo<schema.LineElement['value']> = getWhisperInfo(
     (gridWidth) => (gridWidth + 1) >> 1,
     'German Whisper',
     'whisper',
     'Adjacent digits along German Whispers must differ by at least 5; digits may repeat.',
     ['line', 'german', 'five', '5'],
+    {
+        stroke: '#8c8',
+        strokeWidth: 0.1,
+        pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
+    },
 );
 
+// TODO(mingwei): Update the description to be match gridWidth.
 export const dutchWhisperInfo: ElementInfo<schema.LineElement['value']> = getWhisperInfo(
     (gridWidth) => ((gridWidth + 1) >> 1) - 1,
     'Dutch Whisper',
     'dutch-whisper',
     'Adjacent digits along Dutch Whispers must differ by at least 4; digits may repeat.',
     ['line', 'dutch', 'five', '4'],
+    {
+        stroke: '#ff8c00',
+        strokeWidth: 0.1,
+        pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
+    },
 );
 
 export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
+    component: (internals, props) =>
+        LineRender(
+            internals,
+            Object.assign(props, {
+                stroke: '#c8c',
+                strokeWidth: 0.075,
+                pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
+            }),
+        ),
     getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: false,
         deletePrioritizeTail: false,
@@ -395,6 +431,15 @@ export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const regionSumInfo: ElementInfo<schema.LineElement['value']> = {
+    component: (internals, props) =>
+        LineRender(
+            internals,
+            Object.assign(props, {
+                stroke: '#2ECBFF',
+                strokeWidth: 0.125,
+                pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
+            }),
+        ),
     getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: false,
         deletePrioritizeTail: false,
