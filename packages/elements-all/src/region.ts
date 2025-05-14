@@ -1,8 +1,5 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff } from '@sudoku-studio/state-manager/src';
-import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
-import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
-import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
 import {
     cellCoord2CellIdx,
     cellIdx2cellCoord,
@@ -10,8 +7,12 @@ import {
     idxMapToKeysArray,
     markDigitsFailingCondition,
 } from '@sudoku-studio/board-utils/src';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo, GetInputHandler } from './element';
+import {
+    type ElementInfo,
+    type GetInputHandler,
+    inputHandler,
+    adjacentCellPointerHandler,
+} from '@sudoku-studio/elements/src';
 
 export const minInfo: ElementInfo<schema.RegionElement['value']> = {
     getInputHandler: makeGetInputHandler('max'),
@@ -185,10 +186,10 @@ function makeGetInputHandler(oppositeConstraint?: string): GetInputHandler<schem
  *      this constraint there will ignore that cell.
  */
 function getInputHandler(
-    ctx: InputHandlerContext<schema.RegionElement['value']>,
+    ctx: inputHandler.InputHandlerContext<schema.RegionElement['value']>,
     oppositeConstraint?: string,
-): InputHandler {
-    const pointerHandler = new AdjacentCellPointerHandler(true);
+): inputHandler.InputHandler {
+    const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(true);
 
     enum Mode {
         DYNAMIC,
@@ -199,7 +200,7 @@ function getInputHandler(
 
     const fullDiff: Diff = { redo: {}, undo: {} };
 
-    function handle(event: CellDragTapEvent) {
+    function handle(event: adjacentCellPointerHandler.CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
@@ -225,12 +226,12 @@ function getInputHandler(
         }
     }
 
-    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+    pointerHandler.onDragStart = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         mode = Mode.DYNAMIC;
         handle(event);
     };
 
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    pointerHandler.onDrag = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         handle(event);
     };
 
@@ -242,9 +243,7 @@ function getInputHandler(
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {
             pointerHandler.mouseUp();

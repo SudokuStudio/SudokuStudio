@@ -1,0 +1,26 @@
+{
+    "name": "@sudoku-studio/elements",
+    "type": "module",
+    "version": "0.0.0",
+    "exports": {
+        ".": {
+            "types": "./dist/elements.d.ts",
+            "import": "./dist/elements.js"
+        },
+        "./src": {
+            "import": "./src/elements.ts"
+        }
+    },
+    "scripts": {
+        "clean": "rm -rf dist node_modules",
+        "build": "tsc",
+        "check": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "@sudoku-studio/board-utils": "workspace:*",
+        "@sudoku-studio/schema": "workspace:*",
+        "@sudoku-studio/state-manager": "workspace:*",
+        "svelte": "^5.0.0",
+        "typescript": "^5.0.0"
+    }
+}

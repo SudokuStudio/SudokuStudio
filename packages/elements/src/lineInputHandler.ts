@@ -1,11 +1,10 @@
 import { arrayObj2array, boardRepr, cellCoord2CellIdx } from '@sudoku-studio/board-utils/src';
 import type { Geometry, Idx, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import { userCursorIsShownState, userSelectState } from '../user';
-import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler';
-import type { CellDragTapEvent } from './adjacentCellPointerHandler';
-import type { InputHandler, InputHandlerContext } from './inputHandler';
-import type { GetInputHandler } from '../element/element';
+import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler.js';
+import type { CellDragTapEvent } from './adjacentCellPointerHandler.js';
+import type { InputHandler, InputHandlerContext } from './inputHandler.js';
+import type { GetInputHandler } from './elements.js';
 
 export type LineInputHandlerOptions = {
     deletePrioritizeHead: boolean;
@@ -101,9 +100,7 @@ export function getLineInputHandler(
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {
             pointerHandler.mouseUp();

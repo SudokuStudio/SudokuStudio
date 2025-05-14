@@ -1,98 +1,71 @@
 import Fuse from 'fuse.js';
 
-import type { ElementInfo } from './element/element';
+import type { ElementInfo } from '@sudoku-studio/elements/src';
 
-import { centerInfo, colorsInfo, cornerInfo, filledInfo, givensInfo } from './element/digit';
+import * as digit from './element/digit';
 import {
-    betweenInfo,
-    doubleArrowInfo,
-    lockoutInfo,
-    palindromeInfo,
-    regionSumInfo,
-    renbanInfo,
-    slowThermoInfo,
-    thermoInfo,
-    dutchWhisperInfo,
-    germanWhisperInfo,
-} from './element/lines';
-import {
-    consecutiveInfo,
-    disjointGroupsInfo,
-    diagonalInfo,
-    knightInfo,
-    kingInfo,
-    antiXInfo,
-    antiVInfo,
-    selfTaxicabInfo,
-} from './element/toggles';
-import { columnIndexerInfo, evenInfo, maxInfo, minInfo, oddInfo, rowIndexerInfo } from './element/region';
-import { quadrupleInfo } from './element/quadruple';
-import {
-    differenceInfo,
-    ratioInfo,
-    xvInfo,
-    sandwichInfo,
-    skyscraperInfo,
-    xsumInfo,
-    littleKillerInfo,
-} from './element/positionNumbers';
+    arrow,
+    basic,
+    clone,
+    killer,
+    lines,
+    positionNumbers,
+    quadruple,
+    region,
+    toggles,
+} from '@sudoku-studio/elements-all/src';
 import type { schema } from '@sudoku-studio/schema';
-import { gridRegionInfo, gridInfo } from './element/basic';
-import { arrowInfo } from './element/arrow';
-import { killerInfo } from './element/killer';
-import { cloneInfo } from './element/clone';
 
 export const ELEMENT_HANDLERS = {
-    ['givens']: givensInfo,
-    ['filled']: filledInfo,
-    ['center']: centerInfo,
-    ['corner']: cornerInfo,
-    ['colors']: colorsInfo,
+    ['givens']: digit.givensInfo,
+    ['filled']: digit.filledInfo,
+    ['center']: digit.centerInfo,
+    ['corner']: digit.cornerInfo,
+    ['colors']: digit.colorsInfo,
 
-    ['grid']: gridInfo,
-    ['gridRegion']: gridRegionInfo,
+    ['grid']: basic.gridInfo,
+    ['gridRegion']: basic.gridRegionInfo,
 
-    ['thermo']: thermoInfo,
-    ['slowThermo']: slowThermoInfo,
-    ['between']: betweenInfo,
-    ['lockout']: lockoutInfo,
-    ['doubleArrow']: doubleArrowInfo,
-    ['palindrome']: palindromeInfo,
-    ['whisper']: germanWhisperInfo,
-    ['dutchWhisper']: dutchWhisperInfo,
-    ['renban']: renbanInfo,
-    ['regionSum']: regionSumInfo,
-    ['arrow']: arrowInfo,
+    ['thermo']: lines.thermoInfo,
+    ['slowThermo']: lines.slowThermoInfo,
+    ['between']: lines.betweenInfo,
+    ['lockout']: lines.lockoutInfo,
+    ['doubleArrow']: lines.doubleArrowInfo,
+    ['palindrome']: lines.palindromeInfo,
+    ['whisper']: lines.germanWhisperInfo,
+    ['dutchWhisper']: lines.dutchWhisperInfo,
+    ['renban']: lines.renbanInfo,
+    ['regionSum']: lines.regionSumInfo,
 
-    ['min']: minInfo,
-    ['max']: maxInfo,
-    ['odd']: oddInfo,
-    ['even']: evenInfo,
-    ['columnIndexer']: columnIndexerInfo,
-    ['rowIndexer']: rowIndexerInfo,
+    ['min']: region.minInfo,
+    ['max']: region.maxInfo,
+    ['odd']: region.oddInfo,
+    ['even']: region.evenInfo,
+    ['columnIndexer']: region.columnIndexerInfo,
+    ['rowIndexer']: region.rowIndexerInfo,
 
-    ['quadruple']: quadrupleInfo,
-    ['killer']: killerInfo,
-    ['clone']: cloneInfo,
+    ['arrow']: arrow.arrowInfo,
+    ['quadruple']: quadruple.quadrupleInfo,
+    ['killer']: killer.killerInfo,
+    ['clone']: clone.cloneInfo,
 
-    ['difference']: differenceInfo,
-    ['ratio']: ratioInfo,
-    ['xv']: xvInfo,
+    ['difference']: positionNumbers.differenceInfo,
+    ['ratio']: positionNumbers.ratioInfo,
+    ['xv']: positionNumbers.xvInfo,
+    ['littleKiller']: positionNumbers.littleKillerInfo,
+    ['sandwich']: positionNumbers.sandwichInfo,
+    ['skyscraper']: positionNumbers.skyscraperInfo,
+    ['xsum']: positionNumbers.xsumInfo,
 
-    ['littleKiller']: littleKillerInfo,
-    ['sandwich']: sandwichInfo,
-    ['skyscraper']: skyscraperInfo,
-    ['xsum']: xsumInfo,
-
-    ['diagonal']: diagonalInfo,
-    ['knight']: knightInfo,
-    ['king']: kingInfo,
-    ['disjointGroups']: disjointGroupsInfo,
-    ['consecutive']: consecutiveInfo,
-    ['antiX']: antiXInfo,
-    ['antiV']: antiVInfo,
-    ['selfTaxicab']: selfTaxicabInfo,
-} as Record<schema.ElementType, ElementInfo<unknown>>;
+    ['diagonal']: toggles.diagonalInfo,
+    ['knight']: toggles.knightInfo,
+    ['king']: toggles.kingInfo,
+    ['disjointGroups']: toggles.disjointGroupsInfo,
+    ['consecutive']: toggles.consecutiveInfo,
+    ['antiX']: toggles.antiXInfo,
+    ['antiV']: toggles.antiVInfo,
+    ['selfTaxicab']: toggles.selfTaxicabInfo,
+} as Record<schema.ElementType, ElementInfo<any>>;
 
 export function createElement<E extends schema.Element>(type: E['type'], value?: E['value']): E {
     if (!(type in ELEMENT_HANDLERS)) throw Error(`Cannot add unknown element type: ${type}.`);
@@ -102,13 +75,13 @@ export function createElement<E extends schema.Element>(type: E['type'], value?:
     return { type, order: handler.order, value: value } as E;
 }
 
-function getSearchableElements(filterFunction: (key: string, info: ElementInfo<unknown>) => boolean) {
+function getSearchableElements(filterFunction: (key: string, info: ElementInfo<any>) => boolean) {
     return Object.entries(ELEMENT_HANDLERS)
         .filter(([key, info]) => null != info.menu && filterFunction(key, info))
         .map(([key, info]) => ({ key, info }));
 }
 
-function buildElementsFuse(searchableElements: { key: string; info: ElementInfo<unknown> }[]) {
+function buildElementsFuse(searchableElements: { key: string; info: ElementInfo<any> }[]) {
     return new Fuse(searchableElements, {
         keys: [
             { name: 'info.menu.name', weight: 1 },
@@ -119,7 +92,7 @@ function buildElementsFuse(searchableElements: { key: string; info: ElementInfo<
     });
 }
 
-export function search(fuzzyPattern: string, filterFunction: (key: string, info: ElementInfo<unknown>) => boolean) {
+export function search(fuzzyPattern: string, filterFunction: (key: string, info: ElementInfo<any>) => boolean) {
     const searchableElements = getSearchableElements(filterFunction);
 
     if (!fuzzyPattern) {

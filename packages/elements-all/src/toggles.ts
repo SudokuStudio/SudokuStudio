@@ -8,7 +8,7 @@ import {
     product,
     writeRepeatingDigits,
 } from '@sudoku-studio/board-utils/src';
-import type { ElementInfo } from './element';
+import type { ElementInfo } from '@sudoku-studio/elements/src';
 
 export const diagonalInfo: ElementInfo<schema.DiagonalElement['value']> = {
     inGlobalMenu: true,

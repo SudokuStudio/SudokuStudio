@@ -1,7 +1,6 @@
 import type { ArrayObj, Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
-import type { ElementInfo } from './element';
+import { type ElementInfo, inputHandler } from '@sudoku-studio/elements/src';
 import {
     arrayObj2array,
     cellCoord2CellIdx,
@@ -11,8 +10,6 @@ import {
     cornerIdx2cornerCoord,
     svgCoord2cornerCoord,
 } from '@sudoku-studio/board-utils/src';
-import { getTouchPosition, parseDigit } from '../input/inputHandler';
-import { userCursorIsShownState, userSelectState } from '../user';
 
 export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     getInputHandler,
@@ -54,7 +51,9 @@ export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     },
 };
 
-function getInputHandler(ctx: InputHandlerContext<schema.QuadrupleElement['value']>): InputHandler {
+function getInputHandler(
+    ctx: inputHandler.InputHandlerContext<schema.QuadrupleElement['value']>,
+): inputHandler.InputHandler {
     const digits: number[] = [];
     let cornerRef: null | StateRef<true | ArrayObj<number>> = null;
     let maxLen = 4;
@@ -62,7 +61,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.QuadrupleElement['value
     function onDigitInput(code: string): boolean {
         if (null == cornerRef) return false;
 
-        const digit = parseDigit(code);
+        const digit = inputHandler.parseDigit(code);
         if (undefined === digit) return false;
 
         if (null == digit) {
@@ -110,9 +109,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.QuadrupleElement['value
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {},
 
@@ -140,7 +137,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.QuadrupleElement['value
             handleClick(event);
         },
         touchDown(event: TouchEvent): void {
-            const touchPosition = getTouchPosition(event);
+            const touchPosition = inputHandler.getTouchPosition(event);
             if (null == touchPosition) return;
 
             handleClick(touchPosition);

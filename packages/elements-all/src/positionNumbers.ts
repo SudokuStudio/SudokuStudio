@@ -11,10 +11,7 @@ import {
     svgCoord2seriesIdx,
     warnSum,
 } from '@sudoku-studio/board-utils/src';
-import { getTouchPosition, parseDigit } from '../input/inputHandler';
-import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo, GetInputHandler } from './element';
+import { type ElementInfo, type GetInputHandler, inputHandler } from '@sudoku-studio/elements/src';
 
 export const differenceInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
     getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2edgeIdx, max: 10 }),
@@ -193,7 +190,9 @@ export const sandwichInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
 };
 
 export const skyscraperInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
-    getInputHandler(ctx: InputHandlerContext<schema.SeriesNumberElement['value']>): InputHandler {
+    getInputHandler(
+        ctx: inputHandler.InputHandlerContext<schema.SeriesNumberElement['value']>,
+    ): inputHandler.InputHandler {
         return getInputHandler(ctx, {
             svgCoord2idx: svgCoord2seriesIdx,
             max: Math.max(ctx.grid.width, ctx.grid.height),
@@ -289,9 +288,9 @@ function makeGetInputHandler<TAG extends Geometry>(
 }
 
 function getInputHandler<TAG extends Geometry>(
-    ctx: InputHandlerContext<IdxMap<TAG, true | number> | undefined>,
+    ctx: inputHandler.InputHandlerContext<IdxMap<TAG, true | number> | undefined>,
     options: PositionNumberInputHandlerOptions<TAG>,
-): InputHandler {
+): inputHandler.InputHandler {
     const keymap = options.keymap || {};
     const { max, svgCoord2idx } = options;
 
@@ -304,7 +303,7 @@ function getInputHandler<TAG extends Geometry>(
         if (code in keymap) {
             digit = keymap[code];
         } else {
-            digit = parseDigit(code);
+            digit = inputHandler.parseDigit(code);
         }
         if (undefined === digit) return false;
 
@@ -337,9 +336,7 @@ function getInputHandler<TAG extends Geometry>(
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {},
 
@@ -367,7 +364,7 @@ function getInputHandler<TAG extends Geometry>(
             handleClick(event);
         },
         touchDown(event: TouchEvent): void {
-            const touchPosition = getTouchPosition(event);
+            const touchPosition = inputHandler.getTouchPosition(event);
             if (null == touchPosition) return;
 
             handleClick(touchPosition);

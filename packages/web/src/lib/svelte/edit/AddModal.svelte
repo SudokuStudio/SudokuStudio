@@ -1,12 +1,11 @@
 <script lang="ts">
-    import type { schema } from '@sudoku-studio/schema';
-    import type { ElementInfo } from '$lib/js/element/element';
+    import type { ElementInfo } from '@sudoku-studio/elements/src';
     import { search } from '$lib/js/elements';
     import { addElement } from '$lib/js/elementStores';
     import Modal from '../Modal.svelte';
 
     export let visible = false;
-    export let filterFunction: (key: string, info: ElementInfo<unknown>) => boolean;
+    export let filterFunction: (key: string, info: ElementInfo<any>) => boolean;
     export let searchPattern: string = '';
 
     let searchInput: HTMLInputElement = null!;

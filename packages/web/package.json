@@ -21,6 +21,8 @@
         "@sudoku-studio/board-format": "workspace:*",
         "@sudoku-studio/board-utils": "workspace:*",
         "@sudoku-studio/board": "workspace:*",
+        "@sudoku-studio/elements": "workspace:*",
+        "@sudoku-studio/elements-all": "workspace:*",
         "@sudoku-studio/schema": "workspace:*",
         "@sudoku-studio/solver-sat": "workspace:*",
         "@sudoku-studio/state-manager": "workspace:*",

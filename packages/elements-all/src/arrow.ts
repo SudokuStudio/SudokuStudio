@@ -1,11 +1,7 @@
 import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
-import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
-import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
-import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
+import { type ElementInfo, inputHandler, adjacentCellPointerHandler } from '@sudoku-studio/elements/src';
 
 export const arrowInfo: ElementInfo<schema.ArrowElement['value']> = {
     getInputHandler: getArrowInputHandler,
@@ -88,8 +84,10 @@ function reorderArrowBulb(cells: Idx<Geometry.CELL>[], grid: Grid): void {
     cells.sort((a, b) => a - b);
 }
 
-export function getArrowInputHandler(ctx: InputHandlerContext<schema.ArrowElement['value']>): InputHandler {
-    const pointerHandler = new AdjacentCellPointerHandler(true);
+export function getArrowInputHandler(
+    ctx: inputHandler.InputHandlerContext<schema.ArrowElement['value']>,
+): inputHandler.InputHandler {
+    const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(true);
 
     enum Mode {
         DYNAMIC = '',
@@ -126,7 +124,7 @@ export function getArrowInputHandler(ctx: InputHandlerContext<schema.ArrowElemen
         bodyCells = [];
     }
 
-    function handle(event: CellDragTapEvent) {
+    function handle(event: adjacentCellPointerHandler.CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
@@ -153,12 +151,12 @@ export function getArrowInputHandler(ctx: InputHandlerContext<schema.ArrowElemen
         arrowRef.ref(mode).replace(minLength <= lineCells.length ? lineCells : null);
     }
 
-    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+    pointerHandler.onDragStart = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         mode = Mode.DYNAMIC;
         handle(event);
     };
 
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    pointerHandler.onDrag = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         handle(event);
     };
 
@@ -179,7 +177,7 @@ export function getArrowInputHandler(ctx: InputHandlerContext<schema.ArrowElemen
         arrowRef = null;
     };
 
-    pointerHandler.onTap = (event: CellDragTapEvent) => {
+    pointerHandler.onTap = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         if (Mode.BODY !== mode) return;
         // If we are in the arrow body mode but haven't dragged to a different cell, delete the arrow
 
@@ -200,9 +198,7 @@ export function getArrowInputHandler(ctx: InputHandlerContext<schema.ArrowElemen
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {
             pointerHandler.mouseUp();

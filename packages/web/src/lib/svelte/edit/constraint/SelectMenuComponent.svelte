@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { StateRef } from '@sudoku-studio/state-manager/src';
-    import type { SelectMenuComponent } from '$lib/js/element/element';
+    import type { SelectMenuComponent } from '@sudoku-studio/elements/src';
     import { removeElement } from '$lib/js/elementStores';
 
     import ConstraintRow from './ConstraintRow.svelte';

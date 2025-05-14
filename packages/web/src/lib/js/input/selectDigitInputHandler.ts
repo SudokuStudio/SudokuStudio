@@ -1,12 +1,7 @@
 import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
 import type { Geometry, Grid, Idx, IdxBitset, schema } from '@sudoku-studio/schema';
 import type { StateRef, Update } from '@sudoku-studio/state-manager/src';
-
-import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler';
-import type { CellDragTapEvent } from './adjacentCellPointerHandler';
-import { parseDigit } from './inputHandler';
-import type { InputHandler, InputHandlerContext } from './inputHandler';
-
+import { type GetInputHandler, inputHandler, adjacentCellPointerHandler } from '@sudoku-studio/elements/src';
 import { boardState, getCellValue, getDigits } from '../board';
 import {
     MARK_TYPES,
@@ -18,9 +13,8 @@ import {
     userCursorIndexState,
     getUserToolStateName,
 } from '../user';
-import type { GetInputHandler } from '../element/element';
 
-const selectPointerHandler = new AdjacentCellPointerHandler(false);
+const selectPointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(false);
 
 export type DigitInputHandlerOptions = {
     multipleDigits: boolean;
@@ -42,15 +36,15 @@ export function makeSelectDigitGetInputHandler<V extends SelectDigitInputHandler
 }
 
 export function getSelectDigitInputHandler<V extends SelectDigitInputHandlerValue>(
-    ctx: InputHandlerContext<V>,
+    ctx: inputHandler.InputHandlerContext<V>,
     options: DigitInputHandlerOptions,
-): InputHandler {
+): inputHandler.InputHandler {
     const { multipleDigits, blockedByGivens, blockedByFilled, digitMapping, nextMode } = options;
 
     const DELETE_ORDER = ['filled', 'corner', 'center', 'colors'];
 
     function onDigitInput(code: string): boolean {
-        let digit: undefined | null | number | string = parseDigit(code);
+        let digit: undefined | null | number | string = inputHandler.parseDigit(code);
 
         if (digitMapping && null != digit && digit in digitMapping) {
             digit = digitMapping[digit];
@@ -307,7 +301,7 @@ export function getSelectDigitInputHandler<V extends SelectDigitInputHandlerValu
         }
     }
 
-    function handle(event: CellDragTapEvent): void {
+    function handle(event: adjacentCellPointerHandler.CellDragTapEvent): void {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
         userCursorIndexState.replace(idx);
@@ -421,7 +415,7 @@ export function getSelectDigitInputHandler<V extends SelectDigitInputHandlerValu
         return matchingCells;
     }
 
-    function handleDoubleClick(event: CellDragTapEvent): void {
+    function handleDoubleClick(event: adjacentCellPointerHandler.CellDragTapEvent): void {
         const { coord, grid } = event;
 
         const cellIndex = cellCoord2CellIdx(coord, grid);
@@ -436,7 +430,7 @@ export function getSelectDigitInputHandler<V extends SelectDigitInputHandlerValu
         userSelectState.replace(matchingCells);
     }
 
-    selectPointerHandler.onDragStart = (event: CellDragTapEvent) => {
+    selectPointerHandler.onDragStart = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         const { event: mouseEvent } = event;
         mode = getMode(mouseEvent);
 
@@ -455,18 +449,18 @@ export function getSelectDigitInputHandler<V extends SelectDigitInputHandlerValu
         }
         handle(event);
     };
-    selectPointerHandler.onDrag = (event: CellDragTapEvent) => {
+    selectPointerHandler.onDrag = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         if (Mode.RESETTING === mode) {
             mode = Mode.SELECTING;
         }
         handle(event);
     };
-    selectPointerHandler.onTap = (_event: CellDragTapEvent) => {
+    selectPointerHandler.onTap = (_event: adjacentCellPointerHandler.CellDragTapEvent) => {
         if (Mode.RESETTING === mode) {
             userSelectState.replace({});
         }
     };
-    selectPointerHandler.onDoubleTap = (event: CellDragTapEvent) => {
+    selectPointerHandler.onDoubleTap = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         handleDoubleClick(event);
     };
 })();

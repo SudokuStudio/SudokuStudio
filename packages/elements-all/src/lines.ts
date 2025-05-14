@@ -1,10 +1,9 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import type { ElementInfo } from './element';
-import { makeLineGetInputHandler } from '../input/lineInputHandler';
+import { type ElementInfo, lineInputHandler } from '@sudoku-studio/elements/src';
 import { arrayObj2array, warnClones } from '@sudoku-studio/board-utils/src';
 
 export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler: makeLineGetInputHandler({
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: false,
         allowSelfIntersection: false,
@@ -29,7 +28,7 @@ export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const slowThermoInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler: makeLineGetInputHandler({
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: false,
         allowSelfIntersection: false,
@@ -100,7 +99,7 @@ function getThermoWarnings(
 }
 
 export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler: makeLineGetInputHandler({
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: true,
         allowSelfIntersection: true,
@@ -148,7 +147,7 @@ export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler: makeLineGetInputHandler({
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: true,
         allowSelfIntersection: true,
@@ -201,7 +200,7 @@ export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler: makeLineGetInputHandler({
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: true,
         deletePrioritizeTail: true,
         allowSelfIntersection: true,
@@ -255,7 +254,7 @@ export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const palindromeInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler: makeLineGetInputHandler({
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: false,
         deletePrioritizeTail: false,
         allowSelfIntersection: true,
@@ -295,7 +294,7 @@ function getWhisperInfo(
     tags: string[],
 ): ElementInfo<schema.LineElement['value']> {
     return {
-        getInputHandler: makeLineGetInputHandler({
+        getInputHandler: lineInputHandler.makeLineGetInputHandler({
             deletePrioritizeHead: false,
             deletePrioritizeTail: false,
             allowSelfIntersection: true,
@@ -352,7 +351,7 @@ export const dutchWhisperInfo: ElementInfo<schema.LineElement['value']> = getWhi
 );
 
 export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler: makeLineGetInputHandler({
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: false,
         deletePrioritizeTail: false,
         allowSelfIntersection: true,
@@ -396,7 +395,7 @@ export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const regionSumInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler: makeLineGetInputHandler({
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
         deletePrioritizeHead: false,
         deletePrioritizeTail: false,
         allowSelfIntersection: true,

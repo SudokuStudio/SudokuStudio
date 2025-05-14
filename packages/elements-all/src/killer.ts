@@ -1,9 +1,6 @@
 import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
-import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
-import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
-import { parseDigit } from '../input/inputHandler';
+import { type ElementInfo, inputHandler, adjacentCellPointerHandler } from '@sudoku-studio/elements/src';
 import {
     boardRepr,
     cellCoord2CellIdx,
@@ -11,8 +8,6 @@ import {
     warnSum,
     writeRepeatingDigits,
 } from '@sudoku-studio/board-utils/src';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
 
 export const killerInfo: ElementInfo<schema.KillerElement['value']> = {
     getInputHandler,
@@ -41,8 +36,10 @@ export const killerInfo: ElementInfo<schema.KillerElement['value']> = {
     },
 };
 
-function getInputHandler(ctx: InputHandlerContext<schema.KillerElement['value']>): InputHandler {
-    const pointerHandler = new AdjacentCellPointerHandler(false);
+function getInputHandler(
+    ctx: inputHandler.InputHandlerContext<schema.KillerElement['value']>,
+): inputHandler.InputHandler {
+    const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(false);
 
     let cageRef: null | StateRef<{ sum?: number; cells: IdxBitset<Geometry.CELL> }> = null;
 
@@ -57,7 +54,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.KillerElement['value']>
     function onDigitInput(code: string): boolean {
         if (null == cageRef) return false;
 
-        let digit = parseDigit(code);
+        let digit = inputHandler.parseDigit(code);
         if (undefined === digit) return false;
 
         const oldVal = cageRef.ref<true | number>('sum').get();
@@ -96,7 +93,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.KillerElement['value']>
 
     const fullDiff: Diff = { redo: {}, undo: {} };
 
-    function handle(event: CellDragTapEvent) {
+    function handle(event: adjacentCellPointerHandler.CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
@@ -112,12 +109,12 @@ function getInputHandler(ctx: InputHandlerContext<schema.KillerElement['value']>
         }
     }
 
-    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+    pointerHandler.onDragStart = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         mode = Mode.DYNAMIC;
         handle(event);
     };
 
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    pointerHandler.onDrag = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         mode = Mode.ADDING;
         handle(event);
     };
@@ -128,7 +125,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.KillerElement['value']>
         fullDiff.undo = {};
     };
 
-    pointerHandler.onTap = (event: CellDragTapEvent) => {
+    pointerHandler.onTap = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         if (Mode.REMOVING !== mode) return;
         // If we are still in the removing mode, delete the killer cage
 
@@ -145,9 +142,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.KillerElement['value']>
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {
             pointerHandler.mouseUp();

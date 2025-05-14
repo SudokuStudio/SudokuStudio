@@ -1,8 +1,11 @@
-import type { SvelteComponent } from 'svelte';
-import type { Geometry, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { PointerHandler } from './pointerHandler';
-import type { InputHandler } from '../input/inputHandler';
+import type { Geometry, Grid, IdxBitset, IdxMap } from '@sudoku-studio/schema';
+import type { Component } from 'svelte';
+import type { InputHandler, InputHandlerContext } from './inputHandler.js';
+import { type Data, StateRef } from '@sudoku-studio/state-manager/src';
+
+export * as adjacentCellPointerHandler from './adjacentCellPointerHandler.js';
+export * as inputHandler from './inputHandler.js';
+export * as lineInputHandler from './lineInputHandler.js';
 
 export interface AbstractMenuComponent {
     type: string;
@@ -21,9 +24,14 @@ export interface CheckboxMenuComponent extends AbstractMenuComponent {
 
 export type MenuComponent = SelectMenuComponent | CheckboxMenuComponent;
 
-export type GetInputHandler<V> = (ctx: InputHandlerContext<V>) => InputHandler;
+export type GetInputHandler<V extends Data> = (ctx: InputHandlerContext<V>) => InputHandler;
 
-export type ElementInfo<V> = {
+export type ElementComponentProps = { id: string; ref: StateRef<IdxBitset<Geometry.CELL>>; grid: Grid };
+
+export type ElementInfo<V extends Data> = {
+    // TODO(mingwei): Make this required.
+    component?: Component<ElementComponentProps>;
+
     getInputHandler?: null | GetInputHandler<V>;
 
     /** Render order. */

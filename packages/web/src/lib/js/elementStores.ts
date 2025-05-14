@@ -1,18 +1,18 @@
 import { derived, readable } from 'svelte/store';
 import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { ElementInfo } from './element/element';
-import { boardGridRef, boardState, boardSvg, warningState } from './board';
-import type { Geometry, Grid, IdxBitset, schema } from '@sudoku-studio/schema';
+import type { ElementInfo } from '@sudoku-studio/elements/src';
+import { boardGridRef, boardState, boardSvg, getCellValue, warningState } from './board';
+import type { Geometry, IdxBitset, schema } from '@sudoku-studio/schema';
 import { createElement, ELEMENT_HANDLERS } from './elements';
-import { userPrevToolState, userState, userToolState } from './user';
-import { InputHandlerContext, type InputHandler } from './input/inputHandler';
+import { userCursorIsShownState, userPrevToolState, userSelectState, userState, userToolState } from './user';
+import { inputHandler } from '@sudoku-studio/elements/src';
 import { pushHistory } from './history';
 import { boardRepr, buildRegionMap, getDigits } from '@sudoku-studio/board-utils/src';
 
 export type ElementHandlerItem = {
     id: string;
     elementRef: StateRef<any>;
-    info: ElementInfo<unknown>;
+    info: ElementInfo<any>;
     type: schema.ElementType;
 };
 export type ElementHandlerList = ElementHandlerItem[];
@@ -115,7 +115,7 @@ boardState.ref<schema.Board['elements']>('elements').watch((_path, _oldElements,
     const digits = getDigits(newElements);
 
     const warnings: IdxBitset<Geometry.CELL> = {};
-    const grid = boardGridRef.get();
+    const grid = boardGridRef.get()!;
     const gridRegionMap = buildRegionMap(newElements);
     for (const { type, value } of Object.values(newElements)) {
         const handler = ELEMENT_HANDLERS[type];
@@ -139,8 +139,8 @@ export const currentElement = readable<null | ElementHandlerItem>(null, (set) =>
 });
 
 export const currentInputHandler = (() => {
-    let inputHandler: null | InputHandler = null;
-    return derived<[typeof currentElement, typeof boardSvg, typeof boardGridRef], null | InputHandler>(
+    let inputHandler: null | inputHandler.InputHandler = null;
+    return derived<[typeof currentElement, typeof boardSvg, typeof boardGridRef], null | inputHandler.InputHandler>(
         [currentElement, boardSvg, boardGridRef],
         ([$currentElement, $boardSvg, $boardGridRef]) => {
             if (null != inputHandler) {
@@ -155,7 +155,17 @@ export const currentInputHandler = (() => {
             if (null == info || null == info.getInputHandler) {
                 return null;
             }
-            const ctx = new InputHandlerContext(valueRef, $boardGridRef!, $boardSvg);
+            const ctx = {
+                stateRef: valueRef,
+                grid: $boardGridRef!,
+                svg: $boardSvg,
+                pushHistory,
+                getCellValue,
+                clearUserSelection: () => {
+                    userSelectState.replace(null);
+                    userCursorIsShownState.replace(false);
+                },
+            };
             inputHandler = info.getInputHandler(ctx);
             inputHandler.load();
             return inputHandler;

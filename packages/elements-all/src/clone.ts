@@ -1,10 +1,8 @@
 import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
-import type { InputHandler, InputHandlerContext } from '../input/inputHandler';
-import type { ElementInfo } from './element';
-import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
-import { parseDigit } from '../input/inputHandler';
+import { inputHandler } from '@sudoku-studio/elements/src';
+import type { ElementInfo } from '@sudoku-studio/elements/src';
+import { adjacentCellPointerHandler } from '@sudoku-studio/elements/src';
 import {
     arrayObj2array,
     boardRepr,
@@ -12,9 +10,8 @@ import {
     cellIdx2cellCoord,
     warnClones,
 } from '@sudoku-studio/board-utils/src';
-import { userCursorIsShownState, userSelectState } from '../user';
 import * as hsluv from 'hsluv';
-import { makeA1Column } from '../util';
+import { makeA1Column } from '../../web/src/lib/js/util.js';
 
 export const cloneInfo: ElementInfo<schema.CloneElement['value']> = {
     getInputHandler,
@@ -44,8 +41,10 @@ export const cloneInfo: ElementInfo<schema.CloneElement['value']> = {
     },
 };
 
-function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>): InputHandler {
-    const pointerHandler = new AdjacentCellPointerHandler(true);
+function getInputHandler(
+    ctx: inputHandler.InputHandlerContext<schema.CloneElement['value']>,
+): inputHandler.InputHandler {
+    const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(true);
 
     let cloneRef: null | StateRef<typeof cloneEntry> = null;
     let moveStart: null | Coord<Geometry.CELL> = null;
@@ -69,7 +68,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>)
     function onDigitInput(code: string): boolean {
         if (null == cloneRef) return false;
 
-        let digit = parseDigit(code);
+        let digit = inputHandler.parseDigit(code);
         if (undefined === digit) return false;
 
         const oldVal = cloneRef.ref<true | number>('sum').get();
@@ -137,7 +136,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>)
 
     const fullDiff: Diff = { redo: {}, undo: {} };
 
-    function handle(event: CellDragTapEvent) {
+    function handle(event: adjacentCellPointerHandler.CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
@@ -182,7 +181,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>)
         ctx.pushHistory(diff);
     }
 
-    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+    pointerHandler.onDragStart = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         mode = Mode.DYNAMIC;
         moveStart = null;
         cloneRef = null;
@@ -190,7 +189,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>)
         handle(event);
     };
 
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    pointerHandler.onDrag = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         handle(event);
     };
 
@@ -200,7 +199,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>)
         fullDiff.undo = {};
     };
 
-    pointerHandler.onTap = (event: CellDragTapEvent) => {
+    pointerHandler.onTap = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         if (Mode.MOVING !== mode) return;
         // If we are in the clone moving mode but haven't dragged to a different cell, delete the clone
 
@@ -218,9 +217,7 @@ function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>)
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {
             pointerHandler.mouseUp();

@@ -3,11 +3,14 @@
     import { Board } from '@sudoku-studio/board/src';
     import { boardDiv, boardSvg, warningState } from '$lib/js/board';
     import { currentInputHandler } from '$lib/js/elementStores';
-    import type { InputHandler } from '$lib/js/input/inputHandler';
+    import type { inputHandler } from '@sudoku-studio/elements/src';
     import { userState } from '$lib/js/user';
     import type { schema } from '@sudoku-studio/schema';
 
-    function wrapListener(inputHandler: null | InputHandler, key: keyof InputHandler): (event: any) => void {
+    function wrapListener(
+        inputHandler: null | inputHandler.InputHandler,
+        key: keyof inputHandler.InputHandler,
+    ): (event: any) => void {
         return (event) => {
             if (
                 null != inputHandler &&

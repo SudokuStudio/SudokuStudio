@@ -1,7 +1,7 @@
 import type { schema } from '@sudoku-studio/schema';
-import type { ElementInfo } from './element';
+import type { ElementInfo } from '@sudoku-studio/elements/src';
 import hsluv from 'hsluv';
-import { makeSelectDigitGetInputHandler } from '../input/selectDigitInputHandler';
+import { makeSelectDigitGetInputHandler } from '../input/selectDigitInputHandler.js';
 
 export const givensInfo: ElementInfo<schema.DigitElement['value']> = {
     getInputHandler: makeSelectDigitGetInputHandler({
