@@ -138,16 +138,26 @@ export const currentElement = readable<null | ElementHandlerItem>(null, (set) =>
     }, true);
 });
 
-export const currentInputHandler = derived<
-    [typeof currentElement, typeof boardSvg, typeof boardGridRef],
-    null | InputHandler
->([currentElement, boardSvg, boardGridRef], ([$currentElement, $boardSvg, $boardGridRef]) => {
-    if (null == $currentElement) return null;
-    const { info, elementRef } = $currentElement;
-    const valueRef = elementRef.ref<any>('value');
-    if (null == info || null == info.getInputHandler) return null;
+export const currentInputHandler = (() => {
+    let inputHandler: null | InputHandler = null;
+    return derived<[typeof currentElement, typeof boardSvg, typeof boardGridRef], null | InputHandler>(
+        [currentElement, boardSvg, boardGridRef],
+        ([$currentElement, $boardSvg, $boardGridRef]) => {
+            if (null != inputHandler) {
+                inputHandler.unload();
+            }
+            if (null == $currentElement) {
+                return null;
+            }
+            const { info, elementRef } = $currentElement;
+            const valueRef = elementRef.ref<any>('value');
 
-    const inputHandler = info.getInputHandler(valueRef, $boardGridRef, $boardSvg, pushHistory);
-    inputHandler.load();
-    return inputHandler;
-});
+            if (null == info || null == info.getInputHandler) {
+                return null;
+            }
+            inputHandler = info.getInputHandler(valueRef, $boardGridRef, $boardSvg, pushHistory);
+            inputHandler.load();
+            return inputHandler;
+        },
+    );
+})();
