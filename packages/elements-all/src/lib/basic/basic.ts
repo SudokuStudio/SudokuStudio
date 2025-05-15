@@ -12,7 +12,7 @@ import type { ElementInfo } from '@sudoku-studio/elements/src';
 import GridRender from './GridRender.svelte';
 import GridRegionRender from './GridRegionRender.svelte';
 
-export const gridInfo: ElementInfo<undefined> = {
+export const gridInfo: ElementInfo<null> = {
     component: GridRender,
     margin: GRID_THICKNESS_HALF,
     order: 101,

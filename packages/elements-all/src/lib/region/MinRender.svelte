@@ -3,7 +3,7 @@
     import type { Grid, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
 
-    const { id, ref, grid }: { id: string; ref: StateRef<schema.RegionElement>; grid: Grid } = $props();
+    const { id, ref, grid }: { id: string; ref: StateRef<schema.RegionElement['value']>; grid: Grid } = $props();
 </script>
 
 <!-- Path for `><`. -->

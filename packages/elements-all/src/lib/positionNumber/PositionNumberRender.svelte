@@ -4,7 +4,7 @@
 
     export type Props = {
         id: string;
-        ref: StateRef<IdxMap<Geometry, true | number> | null>;
+        ref: StateRef<IdxMap<Geometry, true | number> | undefined>;
         grid: Grid;
         idx2coord: (idx: Idx<Geometry>, grid: Grid) => Coord<any>;
         stroke?: string;
