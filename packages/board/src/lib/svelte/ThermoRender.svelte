@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ArrayObj, Geometry, Grid, Idx, schema } from '@sudoku-studio/schema';
+    import type { Grid, schema } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
     import { makePath, arrayObj2array } from '@sudoku-studio/board-utils/src';
 
@@ -11,21 +11,6 @@
     }: { id: string; ref: StateRef<schema.LineElement['value']>; grid: Grid; isSlow?: boolean } = $props();
 
     const bulbRadius = 0.375;
-
-    export function getThermos(
-        thermos: schema.LineElement['value'],
-    ): { thermoId: string; d: string; invalid: boolean }[] {
-        const out: { thermoId: string; d: string; invalid: boolean }[] = [];
-        for (const [thermoId, idxArrObj] of Object.entries(thermos || {})) {
-            const idxArr = arrayObj2array(idxArrObj);
-            out.push({
-                thermoId,
-                d: makePath(idxArr, grid, { shortenTail: 0.25, bezierRounding: 0.2 }),
-                invalid: idxArr.length > grid.width,
-            });
-        }
-        return out;
-    }
 </script>
 
 {#if !isSlow}
