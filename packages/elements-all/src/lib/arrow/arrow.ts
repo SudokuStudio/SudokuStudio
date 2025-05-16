@@ -1,14 +1,12 @@
 import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
-import { pushHistory } from '../history';
-import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
-import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
-import type { InputHandler } from '../input/inputHandler';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
+import type { ElementInfo, InputHandlerContext, InputHandler } from '@sudoku-studio/elements-schema';
+import { adjacentCellPointerHandler } from '@sudoku-studio/elements-utils/src';
+import ArrowRender from './ArrowRender.svelte';
 
 export const arrowInfo: ElementInfo<schema.ArrowElement['value']> = {
+    component: ArrowRender,
     getInputHandler: getArrowInputHandler,
     order: 90,
     inGlobalMenu: false,
@@ -89,12 +87,8 @@ function reorderArrowBulb(cells: Idx<Geometry.CELL>[], grid: Grid): void {
     cells.sort((a, b) => a - b);
 }
 
-export function getArrowInputHandler(
-    stateRef: StateRef<schema.ArrowElement['value']>,
-    grid: Grid,
-    svg: SVGSVGElement,
-): InputHandler {
-    const pointerHandler = new AdjacentCellPointerHandler(true);
+export function getArrowInputHandler(ctx: InputHandlerContext<schema.ArrowElement['value']>): InputHandler {
+    const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(true);
 
     enum Mode {
         DYNAMIC = '',
@@ -108,14 +102,14 @@ export function getArrowInputHandler(
     let bodyCells: Idx<Geometry.CELL>[] = [];
 
     function handleDragStart(idx: Idx<Geometry.CELL>): void {
-        const existingArrows = stateRef.get() || {};
+        const existingArrows = ctx.stateRef.get() || {};
         for (const [arrowId, { bulb, body }] of Object.entries(existingArrows)) {
             const bulbArr = arrayObj2array(bulb || {});
             if (bulbArr.includes(idx)) {
                 // Adding body to existing arrow.
                 const bodyEmpty = 0 >= arrayObj2array(body || {}).length;
                 // If body is empty, use existing arrow entry. Otherwise create new with same bulb.
-                arrowRef = bodyEmpty ? stateRef.ref(arrowId) : stateRef.ref(boardRepr.makeUid());
+                arrowRef = bodyEmpty ? ctx.stateRef.ref(arrowId) : ctx.stateRef.ref(boardRepr.makeUid());
                 mode = Mode.BODY;
                 bulbCells = bulbArr;
                 bodyCells = [idx];
@@ -125,13 +119,13 @@ export function getArrowInputHandler(
             }
         }
         // Making bulb.
-        arrowRef = stateRef.ref(boardRepr.makeUid());
+        arrowRef = ctx.stateRef.ref(boardRepr.makeUid());
         mode = Mode.BULB;
         bulbCells = [idx];
         bodyCells = [];
     }
 
-    function handle(event: CellDragTapEvent) {
+    function handle(event: adjacentCellPointerHandler.CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
@@ -158,12 +152,12 @@ export function getArrowInputHandler(
         arrowRef.ref(mode).replace(minLength <= lineCells.length ? lineCells : null);
     }
 
-    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+    pointerHandler.onDragStart = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         mode = Mode.DYNAMIC;
         handle(event);
     };
 
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    pointerHandler.onDrag = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         handle(event);
     };
 
@@ -179,12 +173,12 @@ export function getArrowInputHandler(
             const diff: Diff = { redo: {}, undo: { [path]: null } };
             bulbCells.forEach((val, i) => (diff.redo[`${path}/bulb/${i}`] = val));
             bodyCells.forEach((val, i) => (diff.redo[`${path}/body/${i}`] = val));
-            pushHistory(diff);
+            ctx.pushHistory(diff);
         }
         arrowRef = null;
     };
 
-    pointerHandler.onTap = (event: CellDragTapEvent) => {
+    pointerHandler.onTap = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         if (Mode.BODY !== mode) return;
         // If we are in the arrow body mode but haven't dragged to a different cell, delete the arrow
 
@@ -192,22 +186,20 @@ export function getArrowInputHandler(
         const idx = cellCoord2CellIdx(coord, grid);
 
         let arrowIdToDelete: null | string = null;
-        for (const [arrowId, { bulb }] of Object.entries(stateRef.get() || {})) {
+        for (const [arrowId, { bulb }] of Object.entries(ctx.stateRef.get() || {})) {
             if (arrayObj2array(bulb || {}).includes(idx)) {
                 arrowIdToDelete = arrowId;
                 break;
             }
         }
         if (null != arrowIdToDelete) {
-            pushHistory(stateRef.ref(`${arrowIdToDelete}`).replace(null));
+            ctx.pushHistory(ctx.stateRef.ref(`${arrowIdToDelete}`).replace(null));
         }
     };
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {
             pointerHandler.mouseUp();
@@ -220,28 +212,28 @@ export function getArrowInputHandler(
         padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {},
 
         mouseDown(event: MouseEvent): void {
-            pointerHandler.mouseDown(event, grid, svg);
+            pointerHandler.mouseDown(event, ctx.grid, ctx.svg);
         },
         mouseMove(event: MouseEvent): void {
-            pointerHandler.mouseMove(event, grid, svg);
+            pointerHandler.mouseMove(event, ctx.grid, ctx.svg);
         },
         mouseUp(_event: MouseEvent): void {
             pointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
-            pointerHandler.leave(event, grid, svg);
+            pointerHandler.leave(event, ctx.grid, ctx.svg);
         },
         click(event: MouseEvent): void {
-            pointerHandler.click(event, grid, svg);
+            pointerHandler.click(event, ctx.grid, ctx.svg);
         },
         touchDown(event: TouchEvent): void {
-            pointerHandler.touchDown(event, grid, svg);
+            pointerHandler.touchDown(event, ctx.grid, ctx.svg);
         },
         touchMove(event: TouchEvent): void {
-            pointerHandler.touchMove(event, grid, svg);
+            pointerHandler.touchMove(event, ctx.grid, ctx.svg);
         },
         touchUp(event: TouchEvent): void {
-            pointerHandler.touchUp(event, grid, svg);
+            pointerHandler.touchUp(event, ctx.grid, ctx.svg);
         },
     } as const;
 }

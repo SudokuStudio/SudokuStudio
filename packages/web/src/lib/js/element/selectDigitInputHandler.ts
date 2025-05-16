@@ -1,8 +1,9 @@
 import { idxMapToKeysArray, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
-import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema, user } from '@sudoku-studio/schema';
+import type { Geometry, Grid, Idx, IdxBitset, schema } from '@sudoku-studio/schema';
 import type { StateRef, Update } from '@sudoku-studio/state-manager/src';
+import type { GetInputHandler, InputHandler, InputHandlerContext } from '@sudoku-studio/elements-schema';
+import { adjacentCellPointerHandler } from '@sudoku-studio/elements-utils/src';
 import { boardState, getCellValue, getDigits } from '../board';
-import { pushHistory } from '../history';
 import {
     MARK_TYPES,
     userToolState,
@@ -13,12 +14,9 @@ import {
     userCursorIndexState,
     getUserToolStateName,
 } from '../user';
-import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler';
-import type { CellDragTapEvent } from './adjacentCellPointerHandler';
-import { parseDigit } from './inputHandler';
-import type { InputHandler } from './inputHandler';
+import { parseDigit } from '@sudoku-studio/elements-utils/src';
 
-const selectPointerHandler = new AdjacentCellPointerHandler(false);
+const selectPointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(false);
 
 export type DigitInputHandlerOptions = {
     multipleDigits: boolean;
@@ -28,20 +26,19 @@ export type DigitInputHandlerOptions = {
     digitMapping?: null | (string | number)[];
 };
 
-type StateRefSelectDigitInputHandler =
-    | StateRef<schema.DigitElement['value']>
-    | StateRef<schema.PencilMarksElement['value']>
-    | StateRef<schema.ColorsElement['value']>
-    | StateRef<SelectDigitInputHandlerValue>;
 type SelectDigitInputHandlerValue =
     | schema.DigitElement['value']
     | schema.PencilMarksElement['value']
     | schema.ColorsElement['value'];
 
-export function getSelectDigitInputHandler(
-    stateRef: StateRefSelectDigitInputHandler,
-    grid: Grid,
-    svg: SVGSVGElement,
+export function makeSelectDigitGetInputHandler<V extends SelectDigitInputHandlerValue>(
+    options: DigitInputHandlerOptions,
+): GetInputHandler<V> {
+    return (ctx) => getSelectDigitInputHandler(ctx, options);
+}
+
+export function getSelectDigitInputHandler<V extends SelectDigitInputHandlerValue>(
+    ctx: InputHandlerContext<V>,
     options: DigitInputHandlerOptions,
 ): InputHandler {
     const { multipleDigits, blockedByGivens, blockedByFilled, digitMapping, nextMode } = options;
@@ -58,20 +55,20 @@ export function getSelectDigitInputHandler(
             return false;
         }
 
-        const shouldDelegate = onDigitInputHelper(stateRef, digit);
+        const shouldDelegate = onDigitInputHelper(ctx.stateRef, digit);
         if (shouldDelegate) {
             for (const type of DELETE_ORDER) {
                 const elementId = userState.get<string>('marks', type);
                 if (null == elementId) continue;
 
-                const otherRef = boardState.ref<SelectDigitInputHandlerValue>('elements', `${elementId}`, 'value');
+                const otherRef = boardState.ref<V>('elements', `${elementId}`, 'value');
                 if (!onDigitInputHelper(otherRef, digit)) break;
             }
         }
         return true;
     }
 
-    function onDigitInputHelper(stateRef: StateRefSelectDigitInputHandler, digit: null | number | string): boolean {
+    function onDigitInputHelper(stateRef: StateRef<V>, digit: null | number | string): boolean {
         const blockingDigits = getDigits(null != digit && blockedByGivens, null != digit && blockedByFilled);
 
         const update: Update = {};
@@ -106,7 +103,7 @@ export function getSelectDigitInputHandler(
         }
 
         const diff = stateRef.update(update);
-        pushHistory(diff);
+        ctx.pushHistory(diff);
 
         return false;
     }
@@ -178,13 +175,13 @@ export function getSelectDigitInputHandler(
         if (event.ctrlKey || event.metaKey) return false; // Prevent Ctrl+A from triggering directional key
 
         const [dx, dy] = DIRECTIONAL_KEYS[event.code as keyof typeof DIRECTIONAL_KEYS];
-        let [x, y] = cellIdx2cellCoord(userCursorIndexState.get() || 0, grid);
-        x += dx + grid.width;
-        y += dy + grid.height;
-        x %= grid.width;
-        y %= grid.height;
+        let [x, y] = cellIdx2cellCoord(userCursorIndexState.get() || 0, ctx.grid);
+        x += dx + ctx.grid.width;
+        y += dy + ctx.grid.height;
+        x %= ctx.grid.width;
+        y %= ctx.grid.height;
 
-        const idx = cellCoord2CellIdx([x, y], grid);
+        const idx = cellCoord2CellIdx([x, y], ctx.grid);
         userCursorIndexState.replace(idx);
         userCursorIsShownState.replace(true);
 
@@ -202,9 +199,9 @@ export function getSelectDigitInputHandler(
         if (!(event.ctrlKey || event.metaKey) || 'KeyA' !== event.code) return false;
 
         const selectAll: IdxBitset<Geometry.CELL> = {};
-        for (let y = 0; y < grid.height; y++) {
-            for (let x = 0; x < grid.width; x++) {
-                selectAll[cellCoord2CellIdx([x, y], grid)] = true;
+        for (let y = 0; y < ctx.grid.height; y++) {
+            for (let x = 0; x < ctx.grid.width; x++) {
+                selectAll[cellCoord2CellIdx([x, y], ctx.grid)] = true;
             }
         }
         userSelectState.replace(selectAll);
@@ -247,28 +244,28 @@ export function getSelectDigitInputHandler(
         },
 
         mouseDown(event: MouseEvent): void {
-            selectPointerHandler.mouseDown(event, grid, svg);
+            selectPointerHandler.mouseDown(event, ctx.grid, ctx.svg);
         },
         mouseMove(event: MouseEvent): void {
-            selectPointerHandler.mouseMove(event, grid, svg);
+            selectPointerHandler.mouseMove(event, ctx.grid, ctx.svg);
         },
         mouseUp(_event: MouseEvent): void {
             selectPointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
-            selectPointerHandler.leave(event, grid, svg);
+            selectPointerHandler.leave(event, ctx.grid, ctx.svg);
         },
         click(event: MouseEvent): void {
-            selectPointerHandler.click(event, grid, svg);
+            selectPointerHandler.click(event, ctx.grid, ctx.svg);
         },
         touchDown(event: TouchEvent): void {
-            selectPointerHandler.touchDown(event, grid, svg);
+            selectPointerHandler.touchDown(event, ctx.grid, ctx.svg);
         },
         touchMove(event: TouchEvent): void {
-            selectPointerHandler.touchMove(event, grid, svg);
+            selectPointerHandler.touchMove(event, ctx.grid, ctx.svg);
         },
         touchUp(event: TouchEvent): void {
-            selectPointerHandler.touchUp(event, grid, svg);
+            selectPointerHandler.touchUp(event, ctx.grid, ctx.svg);
         },
     } as const;
 }
@@ -306,7 +303,7 @@ export function getSelectDigitInputHandler(
         }
     }
 
-    function handle(event: CellDragTapEvent): void {
+    function handle(event: adjacentCellPointerHandler.CellDragTapEvent): void {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
         userCursorIndexState.replace(idx);
@@ -420,7 +417,7 @@ export function getSelectDigitInputHandler(
         return matchingCells;
     }
 
-    function handleDoubleClick(event: CellDragTapEvent): void {
+    function handleDoubleClick(event: adjacentCellPointerHandler.CellDragTapEvent): void {
         const { coord, grid } = event;
 
         const cellIndex = cellCoord2CellIdx(coord, grid);
@@ -435,7 +432,7 @@ export function getSelectDigitInputHandler(
         userSelectState.replace(matchingCells);
     }
 
-    selectPointerHandler.onDragStart = (event: CellDragTapEvent) => {
+    selectPointerHandler.onDragStart = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         const { event: mouseEvent } = event;
         mode = getMode(mouseEvent);
 
@@ -454,18 +451,18 @@ export function getSelectDigitInputHandler(
         }
         handle(event);
     };
-    selectPointerHandler.onDrag = (event: CellDragTapEvent) => {
+    selectPointerHandler.onDrag = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         if (Mode.RESETTING === mode) {
             mode = Mode.SELECTING;
         }
         handle(event);
     };
-    selectPointerHandler.onTap = (_event: CellDragTapEvent) => {
+    selectPointerHandler.onTap = (_event: adjacentCellPointerHandler.CellDragTapEvent) => {
         if (Mode.RESETTING === mode) {
             userSelectState.replace({});
         }
     };
-    selectPointerHandler.onDoubleTap = (event: CellDragTapEvent) => {
+    selectPointerHandler.onDoubleTap = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         handleDoubleClick(event);
     };
 })();

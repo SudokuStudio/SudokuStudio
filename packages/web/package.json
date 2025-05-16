@@ -21,6 +21,9 @@
         "@sudoku-studio/board-format": "workspace:*",
         "@sudoku-studio/board-utils": "workspace:*",
         "@sudoku-studio/board": "workspace:*",
+        "@sudoku-studio/elements-all": "workspace:*",
+        "@sudoku-studio/elements-schema": "workspace:*",
+        "@sudoku-studio/elements-utils": "workspace:*",
         "@sudoku-studio/schema": "workspace:*",
         "@sudoku-studio/solver-sat": "workspace:*",
         "@sudoku-studio/state-manager": "workspace:*",
@@ -36,8 +39,8 @@
         "normalize.css": "^8.0.1",
         "sass-embedded": "^1.87.0",
         "save-svg-as-png": "^1.4.17",
-        "svelte": "^5.0.0",
         "svelte-check": "^4.0.0",
+        "svelte": "^5.0.0",
         "typescript": "^5.0.0",
         "vite": "^6.2.6"
     }

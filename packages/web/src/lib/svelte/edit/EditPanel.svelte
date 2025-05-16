@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Component, ComponentInternals } from 'svelte';
     import type { ElementHandlerList } from '$lib/js/elementStores';
-    import type { ElementInfo } from '$lib/js/element/element';
+    import type { ElementInfo } from '@sudoku-studio/elements-schema';
 
     import EditSection from './EditSection.svelte';
     import { elementHandlers } from '$lib/js/elementStores';
@@ -15,11 +15,11 @@
         return !$elementHandlers.some(({ type }) => key === type);
     }
 
-    function isGlobalConstraint(info: ElementInfo<unknown>): boolean {
+    function isGlobalConstraint(info: ElementInfo<any>): boolean {
         return null != info.menu && !!info.inGlobalMenu;
     }
 
-    function isLocalConstraint(info: ElementInfo<unknown>): boolean {
+    function isLocalConstraint(info: ElementInfo<any>): boolean {
         return null != info.menu && !info.inGlobalMenu;
     }
 
@@ -36,12 +36,12 @@
         },
     );
 
-    const globalConstraintFilter = (key: string, info: ElementInfo<unknown>) =>
+    const globalConstraintFilter = (key: string, info: ElementInfo<any>) =>
         isNewConstraint(key) && isGlobalConstraint(info);
-    const localConstraintFilter = (key: string, info: ElementInfo<unknown>) =>
+    const localConstraintFilter = (key: string, info: ElementInfo<any>) =>
         isNewConstraint(key) && isLocalConstraint(info);
 
-    function componentFor(element: ElementInfo<unknown>): Component | null {
+    function componentFor(element: ElementInfo<any>): Component | null {
         const menuInfo = element.menu;
         if (null == menuInfo) return null;
         return (internals: ComponentInternals, props: any) => {
@@ -59,7 +59,7 @@
 
     let modalSearchPattern = '';
     let showAddModal: boolean = false;
-    let constraintFilterFunction = (_key: string, _info: ElementInfo<unknown>) => true;
+    let constraintFilterFunction = (_key: string, _info: ElementInfo<any>) => true;
 </script>
 
 <ul class="nolist">

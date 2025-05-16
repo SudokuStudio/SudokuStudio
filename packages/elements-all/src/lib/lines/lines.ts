@@ -1,18 +1,21 @@
-import type { ArrayObj, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { InputHandler } from '../input/inputHandler';
-import type { ElementInfo } from './element';
-import { getLineInputHandler } from '../input/lineInputHandler';
+import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
+import type { ElementComponentProps, ElementInfo } from '@sudoku-studio/elements-schema';
 import { arrayObj2array, warnClones } from '@sudoku-studio/board-utils/src';
+import LineRender from './LineRender.svelte';
+import BetweenRender from './BetweenRender.svelte';
+import LockoutRender from './LockoutRender.svelte';
+import ThermoRender from './ThermoRender.svelte';
+import DoubleArrowRender from './DoubleArrowRender.svelte';
+import type { ComponentProps } from 'svelte';
+import { lineInputHandler } from '@sudoku-studio/elements-utils/src';
 
 export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: false,
-        });
-    },
+    component: ThermoRender,
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: false,
+    }),
     order: 30,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Thermo', icon: 'thermo' },
@@ -33,13 +36,12 @@ export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const slowThermoInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: false,
-        });
-    },
+    component: (internals, props) => ThermoRender(internals, Object.assign(props, { isSlow: true })),
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: false,
+    }),
     order: 30,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Slow Thermo', icon: 'slow-thermo' },
@@ -106,13 +108,12 @@ function getThermoWarnings(
 }
 
 export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: true,
-            allowSelfIntersection: true,
-        });
-    },
+    component: BetweenRender,
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: true,
+        allowSelfIntersection: true,
+    }),
     order: 50,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Between', icon: 'between' },
@@ -156,13 +157,12 @@ export const betweenInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: true,
-            allowSelfIntersection: true,
-        });
-    },
+    component: DoubleArrowRender,
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: true,
+        allowSelfIntersection: true,
+    }),
     order: 50,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Double Arrow', icon: 'double-arrow' },
@@ -211,13 +211,12 @@ export const doubleArrowInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: true,
-            deletePrioritizeTail: true,
-            allowSelfIntersection: true,
-        });
-    },
+    component: LockoutRender,
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
+        deletePrioritizeHead: true,
+        deletePrioritizeTail: true,
+        allowSelfIntersection: true,
+    }),
     order: 50,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Lockout', icon: 'lockout' },
@@ -267,13 +266,13 @@ export const lockoutInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const palindromeInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: false,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: true,
-        });
-    },
+    component: (internals, props) =>
+        LineRender(internals, Object.assign(props, { stroke: '#ed8', strokeWidth: 0.125 })),
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
+        deletePrioritizeHead: false,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: true,
+    }),
     order: 60,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Palindrome', icon: 'palindrome' },
@@ -307,15 +306,15 @@ function getWhisperInfo(
     icon: string,
     description: string,
     tags: string[],
+    lineProps: Omit<ComponentProps<typeof LineRender>, keyof ElementComponentProps<any>>,
 ): ElementInfo<schema.LineElement['value']> {
     return {
-        getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-            return getLineInputHandler(ref, grid, svg, {
-                deletePrioritizeHead: false,
-                deletePrioritizeTail: false,
-                allowSelfIntersection: true,
-            });
-        },
+        component: (internals, props) => LineRender(internals, Object.assign(props, lineProps)),
+        getInputHandler: lineInputHandler.makeLineGetInputHandler({
+            deletePrioritizeHead: false,
+            deletePrioritizeTail: false,
+            allowSelfIntersection: true,
+        }),
         order: 70,
         inGlobalMenu: false,
         menu: { type: 'select', name: constraintName, icon: icon },
@@ -351,30 +350,49 @@ function getWhisperInfo(
     };
 }
 
+// TODO(mingwei): Update the description to be match gridWidth.
 export const germanWhisperInfo: ElementInfo<schema.LineElement['value']> = getWhisperInfo(
     (gridWidth) => (gridWidth + 1) >> 1,
     'German Whisper',
     'whisper',
     'Adjacent digits along German Whispers must differ by at least 5; digits may repeat.',
     ['line', 'german', 'five', '5'],
+    {
+        stroke: '#8c8',
+        strokeWidth: 0.1,
+        pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
+    },
 );
 
+// TODO(mingwei): Update the description to be match gridWidth.
 export const dutchWhisperInfo: ElementInfo<schema.LineElement['value']> = getWhisperInfo(
     (gridWidth) => ((gridWidth + 1) >> 1) - 1,
     'Dutch Whisper',
     'dutch-whisper',
     'Adjacent digits along Dutch Whispers must differ by at least 4; digits may repeat.',
     ['line', 'dutch', 'five', '4'],
+    {
+        stroke: '#ff8c00',
+        strokeWidth: 0.1,
+        pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
+    },
 );
 
 export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: false,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: true,
-        });
-    },
+    component: (internals, props) =>
+        LineRender(
+            internals,
+            Object.assign(props, {
+                stroke: '#c8c',
+                strokeWidth: 0.075,
+                pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
+            }),
+        ),
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
+        deletePrioritizeHead: false,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: true,
+    }),
     order: 80,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Renban', icon: 'renban' },
@@ -414,13 +432,20 @@ export const renbanInfo: ElementInfo<schema.LineElement['value']> = {
 };
 
 export const regionSumInfo: ElementInfo<schema.LineElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LineElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getLineInputHandler(ref, grid, svg, {
-            deletePrioritizeHead: false,
-            deletePrioritizeTail: false,
-            allowSelfIntersection: true,
-        });
-    },
+    component: (internals, props) =>
+        LineRender(
+            internals,
+            Object.assign(props, {
+                stroke: '#2ECBFF',
+                strokeWidth: 0.125,
+                pathOptions: { shortenHead: 0.15, shortenTail: 0.15, bezierRounding: 0.15, closeLoops: true },
+            }),
+        ),
+    getInputHandler: lineInputHandler.makeLineGetInputHandler({
+        deletePrioritizeHead: false,
+        deletePrioritizeTail: false,
+        allowSelfIntersection: true,
+    }),
     order: 80,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Region Sum', icon: 'region-sum' },

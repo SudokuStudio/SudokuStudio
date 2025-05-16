@@ -8,7 +8,8 @@
             "import": "./dist/state-manager.js"
         },
         "./src": {
-            "import": "./src/state-manager.ts"
+            "import": "./src/state-manager.ts",
+            "types": "./src/state-manager.ts"
         }
     },
     "scripts": {

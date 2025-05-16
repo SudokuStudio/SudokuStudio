@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { StateRef } from '@sudoku-studio/state-manager/src';
-    import type { CheckboxMenuComponent } from '$lib/js/element/element';
+    import type { CheckboxMenuComponent } from '@sudoku-studio/elements-schema';
     import ConstraintRow from './ConstraintRow.svelte';
     import Checkbox from './Checkbox.svelte';
     import { pushHistory } from '$lib/js/history';

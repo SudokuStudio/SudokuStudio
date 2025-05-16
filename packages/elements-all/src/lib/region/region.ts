@@ -1,9 +1,5 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import { getCellValue } from '../board';
-import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
-import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
-import type { InputHandler } from '../input/inputHandler';
+import type { Diff } from '@sudoku-studio/state-manager/src';
 import {
     cellCoord2CellIdx,
     cellIdx2cellCoord,
@@ -11,14 +7,18 @@ import {
     idxMapToKeysArray,
     markDigitsFailingCondition,
 } from '@sudoku-studio/board-utils/src';
-import { pushHistory } from '../history';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
+import type { ElementInfo, GetInputHandler } from '@sudoku-studio/elements-schema';
+import EvenRender from './EvenRender.svelte';
+import OddRender from './OddRender.svelte';
+import MinRender from './MinRender.svelte';
+import MaxRender from './MaxRender.svelte';
+import IndexerRender from './IndexerRender.svelte';
+import type { InputHandler, InputHandlerContext } from '@sudoku-studio/elements-schema';
+import { adjacentCellPointerHandler } from '@sudoku-studio/elements-utils/src';
 
 export const minInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, 'max');
-    },
+    component: MinRender,
+    getInputHandler: makeGetInputHandler('max'),
     order: 20,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Min', icon: 'min' },
@@ -48,9 +48,8 @@ export const minInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const maxInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, 'min');
-    },
+    component: MaxRender,
+    getInputHandler: makeGetInputHandler('min'),
     order: 21,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Max', icon: 'max' },
@@ -81,9 +80,8 @@ export const maxInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const evenInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, 'odd');
-    },
+    component: EvenRender,
+    getInputHandler: makeGetInputHandler('odd'),
     order: 40,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Even', icon: 'odd-even' },
@@ -105,9 +103,8 @@ export const evenInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const oddInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, 'even');
-    },
+    component: OddRender,
+    getInputHandler: makeGetInputHandler('even'),
     order: 41,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Odd', icon: 'odd-even' },
@@ -129,9 +126,8 @@ export const oddInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const columnIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg);
-    },
+    component: (internals, props) => IndexerRender(internals, Object.assign(props, { color: '#C77C7C' })),
+    getInputHandler,
     order: 42,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Column Indexer', icon: 'odd-even' },
@@ -160,9 +156,8 @@ export const columnIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
 };
 
 export const rowIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
-    getInputHandler(ref: StateRef<schema.RegionElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg);
-    },
+    component: (internals, props) => IndexerRender(internals, Object.assign(props, { color: '#7CC77C' })),
+    getInputHandler,
     order: 42,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Row Indexer', icon: 'odd-even' },
@@ -190,17 +185,19 @@ export const rowIndexerInfo: ElementInfo<schema.RegionElement['value']> = {
     },
 };
 
+function makeGetInputHandler(oppositeConstraint?: string): GetInputHandler<schema.RegionElement['value']> {
+    return (ctx) => getInputHandler(ctx, oppositeConstraint);
+}
+
 /**
  * @param oppositeConstraint - Another constraint that this constraint cannot share cells with. So attempting to place
  *      this constraint there will ignore that cell.
  */
 function getInputHandler(
-    stateRef: StateRef<schema.RegionElement['value']>,
-    grid: Grid,
-    svg: SVGSVGElement,
+    ctx: InputHandlerContext<schema.RegionElement['value']>,
     oppositeConstraint?: string,
 ): InputHandler {
-    const pointerHandler = new AdjacentCellPointerHandler(true);
+    const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(true);
 
     enum Mode {
         DYNAMIC,
@@ -211,18 +208,18 @@ function getInputHandler(
 
     const fullDiff: Diff = { redo: {}, undo: {} };
 
-    function handle(event: CellDragTapEvent) {
+    function handle(event: adjacentCellPointerHandler.CellDragTapEvent) {
         const { coord, grid } = event;
         const idx = cellCoord2CellIdx(coord, grid);
 
         if (Mode.DYNAMIC === mode) {
             // If the first cell already has the constraint, set mode to removing
             // Otherwise, set mode to adding
-            mode = stateRef.ref<true>(`${idx}`).get() ? Mode.REMOVING : Mode.ADDING;
+            mode = ctx.stateRef.ref<true>(`${idx}`).get() ? Mode.REMOVING : Mode.ADDING;
         }
 
         if (null != oppositeConstraint) {
-            const oppositeConstraintValue = getCellValue(oppositeConstraint, idx);
+            const oppositeConstraintValue = ctx.getCellValue(oppositeConstraint, idx);
             if (oppositeConstraintValue) {
                 // Cannot place constraint if the opposite constraint is already in the cell
                 return;
@@ -230,33 +227,31 @@ function getInputHandler(
         }
 
         const stateValue = mode === Mode.ADDING ? true : null;
-        const diff = stateRef.ref(`${idx}`).replace(stateValue);
+        const diff = ctx.stateRef.ref(`${idx}`).replace(stateValue);
         if (null != diff) {
             Object.assign(fullDiff.redo, diff.redo);
             Object.assign(fullDiff.undo, diff.undo);
         }
     }
 
-    pointerHandler.onDragStart = (event: CellDragTapEvent) => {
+    pointerHandler.onDragStart = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         mode = Mode.DYNAMIC;
         handle(event);
     };
 
-    pointerHandler.onDrag = (event: CellDragTapEvent) => {
+    pointerHandler.onDrag = (event: adjacentCellPointerHandler.CellDragTapEvent) => {
         handle(event);
     };
 
     pointerHandler.onDragEnd = () => {
-        pushHistory(fullDiff);
+        ctx.pushHistory(fullDiff);
         fullDiff.redo = {};
         fullDiff.undo = {};
     };
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {
             pointerHandler.mouseUp();
@@ -269,28 +264,28 @@ function getInputHandler(
         padClick(_event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }): void {},
 
         mouseDown(event: MouseEvent): void {
-            pointerHandler.mouseDown(event, grid, svg);
+            pointerHandler.mouseDown(event, ctx.grid, ctx.svg);
         },
         mouseMove(event: MouseEvent): void {
-            pointerHandler.mouseMove(event, grid, svg);
+            pointerHandler.mouseMove(event, ctx.grid, ctx.svg);
         },
         mouseUp(_event: MouseEvent): void {
             pointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
-            pointerHandler.leave(event, grid, svg);
+            pointerHandler.leave(event, ctx.grid, ctx.svg);
         },
         click(event: MouseEvent): void {
-            pointerHandler.click(event, grid, svg);
+            pointerHandler.click(event, ctx.grid, ctx.svg);
         },
         touchDown(event: TouchEvent): void {
-            pointerHandler.touchDown(event, grid, svg);
+            pointerHandler.touchDown(event, ctx.grid, ctx.svg);
         },
         touchMove(event: TouchEvent): void {
-            pointerHandler.touchMove(event, grid, svg);
+            pointerHandler.touchMove(event, ctx.grid, ctx.svg);
         },
         touchUp(event: TouchEvent): void {
-            pointerHandler.touchUp(event, grid, svg);
+            pointerHandler.touchUp(event, ctx.grid, ctx.svg);
         },
     } as const;
 }

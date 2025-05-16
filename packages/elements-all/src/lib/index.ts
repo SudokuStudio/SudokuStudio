@@ -1,0 +1,9 @@
+export * as arrow from './arrow/arrow.js';
+export * as basic from './basic/basic.js';
+export * as clone from './clone/clone.js';
+export * as killer from './killer/killer.js';
+export * as lines from './lines/lines.js';
+export * as positionNumbers from './positionNumber/positionNumbers.js';
+export * as quadruple from './quadruple/quadruple.js';
+export * as region from './region/region.js';
+export * as toggles from './toggles/toggles.js';
