@@ -1,6 +1,5 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff } from '@sudoku-studio/state-manager/src';
-import { getCellValue } from '../board';
 import { AdjacentCellPointerHandler } from '../input/adjacentCellPointerHandler';
 import type { CellDragTapEvent } from '../input/adjacentCellPointerHandler';
 import type { InputHandler } from '../input/inputHandler';
@@ -210,7 +209,7 @@ function getInputHandler(
         }
 
         if (null != oppositeConstraint) {
-            const oppositeConstraintValue = getCellValue(oppositeConstraint, idx);
+            const oppositeConstraintValue = ctx.getCellValue(oppositeConstraint, idx);
             if (oppositeConstraintValue) {
                 // Cannot place constraint if the opposite constraint is already in the cell
                 return;

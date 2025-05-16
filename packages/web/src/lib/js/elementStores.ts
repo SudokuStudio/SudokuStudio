@@ -1,6 +1,6 @@
 import { derived, readable } from 'svelte/store';
 import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { ElementInfo } from './element/element';
+import type { ElementInfo, InputHandlerContext } from './element/element';
 import { boardGridRef, boardState, boardSvg, getCellValue, warningState } from './board';
 import type { Geometry, IdxBitset, schema } from '@sudoku-studio/schema';
 import { createElement, ELEMENT_HANDLERS } from './elements';
@@ -155,7 +155,7 @@ export const currentInputHandler = (() => {
             if (null == info || null == info.getInputHandler) {
                 return null;
             }
-            const ctx = {
+            const ctx: InputHandlerContext<any> = {
                 stateRef: valueRef,
                 grid: $boardGridRef!,
                 svg: $boardSvg,
