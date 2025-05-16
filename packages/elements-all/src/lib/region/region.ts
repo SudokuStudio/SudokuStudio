@@ -7,7 +7,7 @@ import {
     idxMapToKeysArray,
     markDigitsFailingCondition,
 } from '@sudoku-studio/board-utils/src';
-import { type ElementInfo, type GetInputHandler } from '@sudoku-studio/elements-schema';
+import type { ElementInfo, GetInputHandler } from '@sudoku-studio/elements-schema';
 import EvenRender from './EvenRender.svelte';
 import OddRender from './OddRender.svelte';
 import MinRender from './MinRender.svelte';
