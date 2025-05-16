@@ -10,6 +10,9 @@ import { getTouchPosition } from './inputHandler';
 
 export type CellDragTapEvent = { event: MouseEvent | TouchEvent; coord: Coord<Geometry.CELL>; grid: Grid };
 
+/**
+ * An adapter which handles mouse and touch events, turning them into cell drag and tap events along adjacent cells.
+ */
 export class AdjacentCellPointerHandler {
     onTap: null | ((event: CellDragTapEvent) => void) = null;
     onDoubleTap: null | ((event: CellDragTapEvent) => void) = null;

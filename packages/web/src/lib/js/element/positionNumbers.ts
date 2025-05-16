@@ -13,14 +13,10 @@ import {
 } from '@sudoku-studio/board-utils/src';
 import { getTouchPosition, parseDigit } from '../input/inputHandler';
 import type { InputHandler } from '../input/inputHandler';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
-import { pushHistory } from '../history';
+import type { ElementInfo, GetInputHandler, InputHandlerContext } from './element';
 
 export const differenceInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
-    getInputHandler(ref: StateRef<schema.EdgeNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2edgeIdx, max: 10 });
-    },
+    getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2edgeIdx, max: 10 }),
     order: 140,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Difference', icon: 'kropki' },
@@ -54,9 +50,7 @@ export const differenceInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
 };
 
 export const ratioInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
-    getInputHandler(ref: StateRef<schema.EdgeNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2edgeIdx, max: 10 });
-    },
+    getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2edgeIdx, max: 10 }),
     order: 141,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Ratio', icon: 'kropki' },
@@ -90,17 +84,15 @@ export const ratioInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
 };
 
 export const xvInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
-    getInputHandler(ref: StateRef<schema.EdgeNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, {
-            svgCoord2idx: svgCoord2edgeIdx,
-            keymap: {
-                // TODO(mingwei) this is jank in that it is only used for XV.
-                KeyX: 10,
-                KeyV: 5,
-            },
-            max: 100,
-        });
-    },
+    getInputHandler: makeGetInputHandler({
+        svgCoord2idx: svgCoord2edgeIdx,
+        keymap: {
+            // TODO(mingwei) this is jank in that it is only used for XV.
+            KeyX: 10,
+            KeyV: 5,
+        },
+        max: 100,
+    }),
     order: 142,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'XV Sum', icon: 'xv' },
@@ -133,9 +125,7 @@ export const xvInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
 };
 
 export const littleKillerInfo: ElementInfo<schema.LittleKillerElement['value']> = {
-    getInputHandler(ref: StateRef<schema.LittleKillerElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2diagonalIdx, max: 100 });
-    },
+    getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2diagonalIdx, max: 100 }),
     order: 160,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Little Killer', icon: 'little-killer' },
@@ -163,9 +153,7 @@ export const littleKillerInfo: ElementInfo<schema.LittleKillerElement['value']> 
 };
 
 export const sandwichInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
-    getInputHandler(ref: StateRef<schema.SeriesNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2seriesIdx, max: 100 });
-    },
+    getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2seriesIdx, max: 100 }),
     order: 150,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Sandwich', icon: 'sandwich' },
@@ -204,12 +192,8 @@ export const sandwichInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
 };
 
 export const skyscraperInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
-    getInputHandler(ref: StateRef<schema.SeriesNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, {
-            svgCoord2idx: svgCoord2seriesIdx,
-            max: Math.max(grid.width, grid.height),
-        });
-    },
+    getInputHandler: (ctx) =>
+        getInputHandler(ctx, { svgCoord2idx: svgCoord2seriesIdx, max: Math.max(ctx.grid.width, ctx.grid.height) }),
     order: 151,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Skyscraper', icon: 'skyscraper' },
@@ -256,9 +240,7 @@ export const skyscraperInfo: ElementInfo<schema.SeriesNumberElement['value']> = 
 };
 
 export const xsumInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
-    getInputHandler(ref: StateRef<schema.SeriesNumberElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getInputHandler(ref, grid, svg, { svgCoord2idx: svgCoord2seriesIdx, max: 100 });
-    },
+    getInputHandler: makeGetInputHandler({ svgCoord2idx: svgCoord2seriesIdx, max: 100 }),
     order: 152,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'X-Sum', icon: 'xsum' },
@@ -295,10 +277,14 @@ type PositionNumberInputHandlerOptions<TAG extends Geometry> = {
     keymap?: Record<string, number | null>;
 };
 
+function makeGetInputHandler<TAG extends Geometry>(
+    options: PositionNumberInputHandlerOptions<TAG>,
+): GetInputHandler<IdxMap<TAG, true | number> | undefined> {
+    return (ctx) => getInputHandler(ctx, options);
+}
+
 function getInputHandler<TAG extends Geometry>(
-    ref: StateRef<IdxMap<TAG, true | number> | undefined>,
-    grid: Grid,
-    svg: SVGSVGElement,
+    ctx: InputHandlerContext<IdxMap<TAG, true | number> | undefined>,
     options: PositionNumberInputHandlerOptions<TAG>,
 ): InputHandler {
     const keymap = options.keymap || {};
@@ -324,15 +310,15 @@ function getInputHandler<TAG extends Geometry>(
         }
 
         const diff = idxRef.replace(digit ?? (true !== oldVal || null));
-        pushHistory(diff);
+        ctx.pushHistory(diff);
 
         return true;
     }
 
     function handleClick(mousePosition: { offsetX: number; offsetY: number }) {
-        const idx = svgCoord2idx(click2svgCoord(mousePosition, svg), grid);
+        const idx = svgCoord2idx(click2svgCoord(mousePosition, ctx.svg), ctx.grid);
         if (null == idx) return;
-        const clickedIdxRef = ref.ref<number | true>(`${idx}`);
+        const clickedIdxRef = ctx.stateRef.ref<number | true>(`${idx}`);
 
         if (true === clickedIdxRef.get()) {
             // Delete empty.
@@ -346,9 +332,7 @@ function getInputHandler<TAG extends Geometry>(
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {},
 

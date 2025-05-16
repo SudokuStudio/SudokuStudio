@@ -44,6 +44,11 @@ export const userSelectState = userState.ref<IdxBitset<Geometry.CELL>>('select')
 export const userCursorIndexState = userState.ref<Idx<Geometry.CELL> | null>('cursor', 'index');
 export const userCursorIsShownState = userState.ref<boolean>('cursor', 'isShown');
 
+export function clearUserSelection(): void {
+    userSelectState.replace({});
+    userCursorIndexState.replace(null);
+}
+
 export const userPrevToolState = userState.ref<string>('prevTool');
 export const userToolState = userState.ref<string>('tool');
 export const TOOL_INPUT_NAME = 'tool';

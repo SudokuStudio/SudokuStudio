@@ -4,9 +4,8 @@
         userToolState,
         userState,
         userPrevToolState,
-        userSelectState,
-        userCursorIsShownState,
         getUserToolStateName,
+        clearUserSelection,
     } from '$lib/js/user';
     import { currentInputHandler } from '$lib/js/elementStores';
     import DigitButton from './DigitButton.svelte';
@@ -43,8 +42,7 @@
 
     function saveImage(): void {
         // Clear selection.
-        userSelectState.replace(null);
-        userCursorIsShownState.replace(false);
+        clearUserSelection();
 
         const title = boardState.get<string>('meta', 'title') || 'Untitled';
         const author = boardState.get<string>('meta', 'author') || 'Anonymous';
