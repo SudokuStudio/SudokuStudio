@@ -1,5 +1,5 @@
 import type { schema } from '@sudoku-studio/schema';
-import type { ElementInfo } from '@sudoku-studio/elements/src';
+import type { ElementInfo } from '@sudoku-studio/elements-schema';
 import hsluv from 'hsluv';
 import { makeSelectDigitGetInputHandler } from './selectDigitInputHandler.js';
 import DigitRender from './DigitRender.svelte';

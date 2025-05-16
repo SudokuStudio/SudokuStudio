@@ -1,4 +1,3 @@
-import type { Component } from 'svelte';
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff } from '@sudoku-studio/state-manager/src';
 import {
@@ -8,18 +7,14 @@ import {
     idxMapToKeysArray,
     markDigitsFailingCondition,
 } from '@sudoku-studio/board-utils/src';
-import {
-    type ElementInfo,
-    type GetInputHandler,
-    inputHandler,
-    adjacentCellPointerHandler,
-    type ElementComponentProps,
-} from '@sudoku-studio/elements/src';
+import { type ElementInfo, type GetInputHandler } from '@sudoku-studio/elements-schema';
 import EvenRender from './EvenRender.svelte';
 import OddRender from './OddRender.svelte';
 import MinRender from './MinRender.svelte';
 import MaxRender from './MaxRender.svelte';
 import IndexerRender from './IndexerRender.svelte';
+import type { InputHandler, InputHandlerContext } from '@sudoku-studio/elements-schema';
+import { adjacentCellPointerHandler } from '@sudoku-studio/elements-utils/src';
 
 export const minInfo: ElementInfo<schema.RegionElement['value']> = {
     component: MinRender,
@@ -199,9 +194,9 @@ function makeGetInputHandler(oppositeConstraint?: string): GetInputHandler<schem
  *      this constraint there will ignore that cell.
  */
 function getInputHandler(
-    ctx: inputHandler.InputHandlerContext<schema.RegionElement['value']>,
+    ctx: InputHandlerContext<schema.RegionElement['value']>,
     oppositeConstraint?: string,
-): inputHandler.InputHandler {
+): InputHandler {
     const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(true);
 
     enum Mode {

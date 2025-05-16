@@ -6,7 +6,7 @@ import {
     distSq,
     cellLine,
 } from '@sudoku-studio/board-utils/src';
-import { getTouchPosition } from './inputHandler.js';
+import { getTouchPosition } from './elementUtils.js';
 
 export type CellDragTapEvent = { event: MouseEvent | TouchEvent; coord: Coord<Geometry.CELL>; grid: Grid };
 

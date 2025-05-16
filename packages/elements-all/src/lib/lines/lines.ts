@@ -1,5 +1,5 @@
 import type { Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
-import { type ElementComponentProps, type ElementInfo, lineInputHandler } from '@sudoku-studio/elements/src';
+import type { ElementComponentProps, ElementInfo } from '@sudoku-studio/elements-schema';
 import { arrayObj2array, warnClones } from '@sudoku-studio/board-utils/src';
 import LineRender from './LineRender.svelte';
 import BetweenRender from './BetweenRender.svelte';
@@ -7,6 +7,7 @@ import LockoutRender from './LockoutRender.svelte';
 import ThermoRender from './ThermoRender.svelte';
 import DoubleArrowRender from './DoubleArrowRender.svelte';
 import type { ComponentProps } from 'svelte';
+import { lineInputHandler } from '@sudoku-studio/elements-utils/src';
 
 export const thermoInfo: ElementInfo<schema.LineElement['value']> = {
     component: ThermoRender,

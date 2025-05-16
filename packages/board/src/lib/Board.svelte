@@ -2,7 +2,7 @@
     import type { Component, Snippet } from 'svelte';
     import type { Grid } from '@sudoku-studio/schema';
     import type { StateRef } from '@sudoku-studio/state-manager/src';
-    import type { ElementComponentProps } from '@sudoku-studio/elements/src';
+    import type { ElementComponentProps } from '@sudoku-studio/elements-schema';
 
     export type BoardElement = {
         id: string;

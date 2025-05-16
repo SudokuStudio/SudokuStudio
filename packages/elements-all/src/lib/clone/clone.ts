@@ -1,8 +1,7 @@
 import type { Coord, Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import { inputHandler } from '@sudoku-studio/elements/src';
-import type { ElementInfo } from '@sudoku-studio/elements/src';
-import { adjacentCellPointerHandler } from '@sudoku-studio/elements/src';
+import type { ElementInfo, InputHandler, InputHandlerContext } from '@sudoku-studio/elements-schema';
+import { adjacentCellPointerHandler, parseDigit } from '@sudoku-studio/elements-utils/src';
 import {
     arrayObj2array,
     boardRepr,
@@ -42,9 +41,7 @@ export const cloneInfo: ElementInfo<schema.CloneElement['value']> = {
     },
 };
 
-function getInputHandler(
-    ctx: inputHandler.InputHandlerContext<schema.CloneElement['value']>,
-): inputHandler.InputHandler {
+function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>): InputHandler {
     const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(true);
 
     let cloneRef: null | StateRef<typeof cloneEntry> = null;
@@ -69,7 +66,7 @@ function getInputHandler(
     function onDigitInput(code: string): boolean {
         if (null == cloneRef) return false;
 
-        let digit = inputHandler.parseDigit(code);
+        let digit = parseDigit(code);
         if (undefined === digit) return false;
 
         const oldVal = cloneRef.ref<true | number>('sum').get();

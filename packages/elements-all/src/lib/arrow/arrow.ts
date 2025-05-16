@@ -1,7 +1,8 @@
 import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { arrayObj2array, boardRepr, cellCoord2CellIdx, cellIdx2cellCoord } from '@sudoku-studio/board-utils/src';
-import { type ElementInfo, inputHandler, adjacentCellPointerHandler } from '@sudoku-studio/elements/src';
+import type { ElementInfo, InputHandlerContext, InputHandler } from '@sudoku-studio/elements-schema';
+import { adjacentCellPointerHandler } from '@sudoku-studio/elements-utils/src';
 import ArrowRender from './ArrowRender.svelte';
 
 export const arrowInfo: ElementInfo<schema.ArrowElement['value']> = {
@@ -86,9 +87,7 @@ function reorderArrowBulb(cells: Idx<Geometry.CELL>[], grid: Grid): void {
     cells.sort((a, b) => a - b);
 }
 
-export function getArrowInputHandler(
-    ctx: inputHandler.InputHandlerContext<schema.ArrowElement['value']>,
-): inputHandler.InputHandler {
+export function getArrowInputHandler(ctx: InputHandlerContext<schema.ArrowElement['value']>): InputHandler {
     const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(true);
 
     enum Mode {

@@ -8,7 +8,7 @@ import {
     idxMapToKeysArray,
     writeRepeatingDigits,
 } from '@sudoku-studio/board-utils/src';
-import type { ElementInfo } from '@sudoku-studio/elements/src';
+import type { ElementInfo } from '@sudoku-studio/elements-schema';
 import GridRender from './GridRender.svelte';
 import GridRegionRender from './GridRegionRender.svelte';
 

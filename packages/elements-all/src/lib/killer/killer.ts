@@ -1,6 +1,6 @@
 import type { Geometry, Grid, Idx, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
-import { type ElementInfo, inputHandler, adjacentCellPointerHandler } from '@sudoku-studio/elements/src';
+import { adjacentCellPointerHandler, parseDigit } from '@sudoku-studio/elements-utils/src';
 import {
     boardRepr,
     cellCoord2CellIdx,
@@ -9,6 +9,7 @@ import {
     writeRepeatingDigits,
 } from '@sudoku-studio/board-utils/src';
 import KillerRender from './KillerRender.svelte';
+import type { ElementInfo, InputHandler, InputHandlerContext } from '@sudoku-studio/elements-schema';
 
 export const killerInfo: ElementInfo<schema.KillerElement['value']> = {
     component: KillerRender,
@@ -38,9 +39,7 @@ export const killerInfo: ElementInfo<schema.KillerElement['value']> = {
     },
 };
 
-function getInputHandler(
-    ctx: inputHandler.InputHandlerContext<schema.KillerElement['value']>,
-): inputHandler.InputHandler {
+function getInputHandler(ctx: InputHandlerContext<schema.KillerElement['value']>): InputHandler {
     const pointerHandler = new adjacentCellPointerHandler.AdjacentCellPointerHandler(false);
 
     let cageRef: null | StateRef<{ sum?: number; cells: IdxBitset<Geometry.CELL> }> = null;
@@ -56,7 +55,7 @@ function getInputHandler(
     function onDigitInput(code: string): boolean {
         if (null == cageRef) return false;
 
-        let digit = inputHandler.parseDigit(code);
+        let digit = parseDigit(code);
         if (undefined === digit) return false;
 
         const oldVal = cageRef.ref<true | number>('sum').get();

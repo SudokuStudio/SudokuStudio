@@ -1,6 +1,6 @@
 import type { ArrayObj, Geometry, Grid, IdxBitset, IdxMap, schema } from '@sudoku-studio/schema';
 import type { StateRef } from '@sudoku-studio/state-manager/src';
-import { type ElementInfo, inputHandler } from '@sudoku-studio/elements/src';
+import type { ElementInfo, InputHandler, InputHandlerContext } from '@sudoku-studio/elements-schema';
 import {
     arrayObj2array,
     cellCoord2CellIdx,
@@ -11,6 +11,7 @@ import {
     svgCoord2cornerCoord,
 } from '@sudoku-studio/board-utils/src';
 import QuadrupleRender from './QuadrupleRender.svelte';
+import { getTouchPosition, parseDigit } from '@sudoku-studio/elements-utils/src';
 
 export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     component: QuadrupleRender,
@@ -53,9 +54,7 @@ export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     },
 };
 
-function getInputHandler(
-    ctx: inputHandler.InputHandlerContext<schema.QuadrupleElement['value']>,
-): inputHandler.InputHandler {
+function getInputHandler(ctx: InputHandlerContext<schema.QuadrupleElement['value']>): InputHandler {
     const digits: number[] = [];
     let cornerRef: null | StateRef<true | ArrayObj<number>> = null;
     let maxLen = 4;
@@ -63,7 +62,7 @@ function getInputHandler(
     function onDigitInput(code: string): boolean {
         if (null == cornerRef) return false;
 
-        const digit = inputHandler.parseDigit(code);
+        const digit = parseDigit(code);
         if (undefined === digit) return false;
 
         if (null == digit) {
@@ -139,7 +138,7 @@ function getInputHandler(
             handleClick(event);
         },
         touchDown(event: TouchEvent): void {
-            const touchPosition = inputHandler.getTouchPosition(event);
+            const touchPosition = getTouchPosition(event);
             if (null == touchPosition) return;
 
             handleClick(touchPosition);

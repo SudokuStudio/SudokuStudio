@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ElementInfo } from '@sudoku-studio/elements/src';
+    import type { ElementInfo } from '@sudoku-studio/elements-schema';
     import { search } from '$lib/js/elements';
     import { addElement } from '$lib/js/elementStores';
     import Modal from '../Modal.svelte';

@@ -1,14 +1,15 @@
 {
-    "name": "@sudoku-studio/elements",
+    "name": "@sudoku-studio/elements-utils",
     "type": "module",
     "version": "0.0.0",
     "exports": {
         ".": {
-            "types": "./dist/elements.d.ts",
-            "import": "./dist/elements.js"
+            "types": "./dist/elementUtils.d.ts",
+            "import": "./dist/elementUtils.js"
         },
         "./src": {
-            "import": "./src/elements.ts"
+            "import": "./src/elementUtils.ts",
+            "types": "./src/elementUtils.ts"
         }
     },
     "scripts": {
@@ -18,6 +19,7 @@
     },
     "devDependencies": {
         "@sudoku-studio/board-utils": "workspace:*",
+        "@sudoku-studio/elements-schema": "workspace:*",
         "@sudoku-studio/schema": "workspace:*",
         "@sudoku-studio/state-manager": "workspace:*",
         "svelte": "^5.0.0",

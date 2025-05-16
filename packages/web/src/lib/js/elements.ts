@@ -1,6 +1,6 @@
 import Fuse from 'fuse.js';
 
-import type { ElementInfo } from '@sudoku-studio/elements/src';
+import type { ElementInfo } from '@sudoku-studio/elements-schema';
 
 import * as digit from './element/digit';
 import {

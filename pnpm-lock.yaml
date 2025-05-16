@@ -23,9 +23,9 @@ importers:
 
   packages/board:
     devDependencies:
-      '@sudoku-studio/elements':
+      '@sudoku-studio/elements-schema':
         specifier: workspace:*
-        version: link:../elements
+        version: link:../elements-schema
       '@sudoku-studio/schema':
         specifier: workspace:*
         version: link:../schema
@@ -98,32 +98,17 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2(@types/node@22.15.15)(sass-embedded@1.87.0)(sass@1.87.0)
 
-  packages/elements:
-    devDependencies:
-      '@sudoku-studio/board-utils':
-        specifier: workspace:*
-        version: link:../board-utils
-      '@sudoku-studio/schema':
-        specifier: workspace:*
-        version: link:../schema
-      '@sudoku-studio/state-manager':
-        specifier: workspace:*
-        version: link:../state-manager
-      svelte:
-        specifier: ^5.0.0
-        version: 5.28.2
-      typescript:
-        specifier: ^5.0.0
-        version: 5.8.3
-
   packages/elements-all:
     devDependencies:
       '@sudoku-studio/board-utils':
         specifier: workspace:*
         version: link:../board-utils
-      '@sudoku-studio/elements':
+      '@sudoku-studio/elements-schema':
         specifier: workspace:*
-        version: link:../elements
+        version: link:../elements-schema
+      '@sudoku-studio/elements-utils':
+        specifier: workspace:*
+        version: link:../elements-utils
       '@sudoku-studio/schema':
         specifier: workspace:*
         version: link:../schema
@@ -160,6 +145,42 @@ importers:
       vite:
         specifier: ^6.2.6
         version: 6.3.4(@types/node@22.15.15)(sass-embedded@1.87.0)(sass@1.87.0)
+
+  packages/elements-schema:
+    devDependencies:
+      '@sudoku-studio/schema':
+        specifier: workspace:*
+        version: link:../schema
+      '@sudoku-studio/state-manager':
+        specifier: workspace:*
+        version: link:../state-manager
+      svelte:
+        specifier: ^5.0.0
+        version: 5.28.2
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+
+  packages/elements-utils:
+    devDependencies:
+      '@sudoku-studio/board-utils':
+        specifier: workspace:*
+        version: link:../board-utils
+      '@sudoku-studio/elements-schema':
+        specifier: workspace:*
+        version: link:../elements-schema
+      '@sudoku-studio/schema':
+        specifier: workspace:*
+        version: link:../schema
+      '@sudoku-studio/state-manager':
+        specifier: workspace:*
+        version: link:../state-manager
+      svelte:
+        specifier: ^5.0.0
+        version: 5.28.2
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
 
   packages/schema: {}
 
@@ -240,12 +261,15 @@ importers:
       '@sudoku-studio/board-utils':
         specifier: workspace:*
         version: link:../board-utils
-      '@sudoku-studio/elements':
-        specifier: workspace:*
-        version: link:../elements
       '@sudoku-studio/elements-all':
         specifier: workspace:*
         version: link:../elements-all
+      '@sudoku-studio/elements-schema':
+        specifier: workspace:*
+        version: link:../elements-schema
+      '@sudoku-studio/elements-utils':
+        specifier: workspace:*
+        version: link:../elements-utils
       '@sudoku-studio/schema':
         specifier: workspace:*
         version: link:../schema

@@ -15,14 +15,16 @@ import {
     svgCoord2seriesIdx,
     warnSum,
 } from '@sudoku-studio/board-utils/src';
-import {
-    type ElementComponentProps,
-    type ElementInfo,
-    type GetInputHandler,
-    inputHandler,
-} from '@sudoku-studio/elements/src';
+import type {
+    ElementComponentProps,
+    ElementInfo,
+    GetInputHandler,
+    InputHandler,
+    InputHandlerContext,
+} from '@sudoku-studio/elements-schema';
 import PositionNumberRender from './PositionNumberRender.svelte';
 import LittleKillerRender from './LittleKillerRender.svelte';
+import { getTouchPosition, parseDigit } from '@sudoku-studio/elements-utils/src';
 
 export const differenceInfo: ElementInfo<schema.EdgeNumberElement['value']> = {
     component: (internals, props) =>
@@ -252,9 +254,7 @@ export const sandwichInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
 export const skyscraperInfo: ElementInfo<schema.SeriesNumberElement['value']> = {
     component: SeriesRender,
     margin: 1,
-    getInputHandler(
-        ctx: inputHandler.InputHandlerContext<schema.SeriesNumberElement['value']>,
-    ): inputHandler.InputHandler {
+    getInputHandler(ctx: InputHandlerContext<schema.SeriesNumberElement['value']>): InputHandler {
         return getInputHandler(ctx, {
             svgCoord2idx: svgCoord2seriesIdx,
             max: Math.max(ctx.grid.width, ctx.grid.height),
@@ -352,9 +352,9 @@ function makeGetInputHandler<TAG extends Geometry>(
 }
 
 function getInputHandler<TAG extends Geometry>(
-    ctx: inputHandler.InputHandlerContext<IdxMap<TAG, true | number> | undefined>,
+    ctx: InputHandlerContext<IdxMap<TAG, true | number> | undefined>,
     options: PositionNumberInputHandlerOptions<TAG>,
-): inputHandler.InputHandler {
+): InputHandler {
     const keymap = options.keymap || {};
     const { max, svgCoord2idx } = options;
 
@@ -367,7 +367,7 @@ function getInputHandler<TAG extends Geometry>(
         if (code in keymap) {
             digit = keymap[code];
         } else {
-            digit = inputHandler.parseDigit(code);
+            digit = parseDigit(code);
         }
         if (undefined === digit) return false;
 
@@ -428,7 +428,7 @@ function getInputHandler<TAG extends Geometry>(
             handleClick(event);
         },
         touchDown(event: TouchEvent): void {
-            const touchPosition = inputHandler.getTouchPosition(event);
+            const touchPosition = getTouchPosition(event);
             if (null == touchPosition) return;
 
             handleClick(touchPosition);

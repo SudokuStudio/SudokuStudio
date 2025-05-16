@@ -37,7 +37,8 @@
     },
     "devDependencies": {
         "@sudoku-studio/board-utils": "workspace:*",
-        "@sudoku-studio/elements": "workspace:*",
+        "@sudoku-studio/elements-schema": "workspace:*",
+        "@sudoku-studio/elements-utils": "workspace:*",
         "@sudoku-studio/schema": "workspace:*",
         "@sudoku-studio/state-manager": "workspace:*",
         "@sveltejs/adapter-auto": "^6.0.0",

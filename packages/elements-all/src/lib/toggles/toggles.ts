@@ -8,7 +8,7 @@ import {
     product,
     writeRepeatingDigits,
 } from '@sudoku-studio/board-utils/src';
-import type { ElementInfo } from '@sudoku-studio/elements/src';
+import type { ElementInfo } from '@sudoku-studio/elements-schema';
 import DiagonalRender from './DiagonalRender.svelte';
 import NullRender from './NullRender.svelte';
 

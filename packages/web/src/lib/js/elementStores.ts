@@ -1,11 +1,10 @@
 import { derived, readable } from 'svelte/store';
 import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { ElementInfo } from '@sudoku-studio/elements/src';
+import type { ElementInfo, InputHandler } from '@sudoku-studio/elements-schema';
 import { boardGridRef, boardState, boardSvg, getCellValue, warningState } from './board';
 import type { Geometry, IdxBitset, schema } from '@sudoku-studio/schema';
 import { createElement, ELEMENT_HANDLERS } from './elements';
 import { userCursorIsShownState, userPrevToolState, userSelectState, userState, userToolState } from './user';
-import { inputHandler } from '@sudoku-studio/elements/src';
 import { pushHistory } from './history';
 import { boardRepr, buildRegionMap, getDigits } from '@sudoku-studio/board-utils/src';
 
@@ -139,8 +138,8 @@ export const currentElement = readable<null | ElementHandlerItem>(null, (set) =>
 });
 
 export const currentInputHandler = (() => {
-    let inputHandler: null | inputHandler.InputHandler = null;
-    return derived<[typeof currentElement, typeof boardSvg, typeof boardGridRef], null | inputHandler.InputHandler>(
+    let inputHandler: null | InputHandler = null;
+    return derived<[typeof currentElement, typeof boardSvg, typeof boardGridRef], null | InputHandler>(
         [currentElement, boardSvg, boardGridRef],
         ([$currentElement, $boardSvg, $boardGridRef]) => {
             if (null != inputHandler) {

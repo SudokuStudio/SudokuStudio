@@ -3,7 +3,7 @@
     import { Board, type BoardElement } from '@sudoku-studio/board/src';
     import { boardDiv, boardGridRef, boardSvg, warningState } from '$lib/js/board';
     import { currentInputHandler } from '$lib/js/elementStores';
-    import type { inputHandler } from '@sudoku-studio/elements/src';
+    import type { InputHandler } from '@sudoku-studio/elements-schema';
     import { userState } from '$lib/js/user';
     import type { schema } from '@sudoku-studio/schema';
     import { derived, readable } from 'svelte/store';
@@ -12,10 +12,7 @@
     import SelectRender from '$lib/js/element/SelectRender.svelte';
     import CursorRender from '$lib/js/element/CursorRender.svelte';
 
-    function wrapListener(
-        inputHandler: null | inputHandler.InputHandler,
-        key: keyof inputHandler.InputHandler,
-    ): (event: any) => void {
+    function wrapListener(inputHandler: null | InputHandler, key: keyof InputHandler): (event: any) => void {
         return (event) => {
             if (
                 null != inputHandler &&

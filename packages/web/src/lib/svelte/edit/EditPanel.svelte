@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Component, ComponentInternals } from 'svelte';
     import type { ElementHandlerList } from '$lib/js/elementStores';
-    import type { ElementInfo } from '@sudoku-studio/elements/src';
+    import type { ElementInfo } from '@sudoku-studio/elements-schema';
 
     import EditSection from './EditSection.svelte';
     import { elementHandlers } from '$lib/js/elementStores';

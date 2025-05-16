@@ -1,10 +1,9 @@
 import { arrayObj2array, boardRepr, cellCoord2CellIdx } from '@sudoku-studio/board-utils/src';
+import type { InputHandler, InputHandlerContext, GetInputHandler } from '@sudoku-studio/elements-schema';
 import type { Geometry, Idx, schema } from '@sudoku-studio/schema';
 import type { Diff, StateRef } from '@sudoku-studio/state-manager/src';
 import { AdjacentCellPointerHandler } from './adjacentCellPointerHandler.js';
 import type { CellDragTapEvent } from './adjacentCellPointerHandler.js';
-import type { InputHandler, InputHandlerContext } from './inputHandler.js';
-import type { GetInputHandler } from './elements.js';
 
 export type LineInputHandlerOptions = {
     deletePrioritizeHead: boolean;
