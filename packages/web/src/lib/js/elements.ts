@@ -92,7 +92,7 @@ export const ELEMENT_HANDLERS = {
     ['antiX']: antiXInfo,
     ['antiV']: antiVInfo,
     ['selfTaxicab']: selfTaxicabInfo,
-} as Record<schema.ElementType, ElementInfo<unknown>>;
+} as Record<schema.ElementType, ElementInfo<any>>;
 
 export function createElement<E extends schema.Element>(type: E['type'], value?: E['value']): E {
     if (!(type in ELEMENT_HANDLERS)) throw Error(`Cannot add unknown element type: ${type}.`);
@@ -102,13 +102,13 @@ export function createElement<E extends schema.Element>(type: E['type'], value?:
     return { type, order: handler.order, value: value } as E;
 }
 
-function getSearchableElements(filterFunction: (key: string, info: ElementInfo<unknown>) => boolean) {
+function getSearchableElements(filterFunction: (key: string, info: ElementInfo<any>) => boolean) {
     return Object.entries(ELEMENT_HANDLERS)
         .filter(([key, info]) => null != info.menu && filterFunction(key, info))
         .map(([key, info]) => ({ key, info }));
 }
 
-function buildElementsFuse(searchableElements: { key: string; info: ElementInfo<unknown> }[]) {
+function buildElementsFuse(searchableElements: { key: string; info: ElementInfo<any> }[]) {
     return new Fuse(searchableElements, {
         keys: [
             { name: 'info.menu.name', weight: 1 },
@@ -119,7 +119,7 @@ function buildElementsFuse(searchableElements: { key: string; info: ElementInfo<
     });
 }
 
-export function search(fuzzyPattern: string, filterFunction: (key: string, info: ElementInfo<unknown>) => boolean) {
+export function search(fuzzyPattern: string, filterFunction: (key: string, info: ElementInfo<any>) => boolean) {
     const searchableElements = getSearchableElements(filterFunction);
 
     if (!fuzzyPattern) {
