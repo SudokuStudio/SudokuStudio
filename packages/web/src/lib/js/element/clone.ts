@@ -11,11 +11,8 @@ import {
     cellIdx2cellCoord,
     warnClones,
 } from '@sudoku-studio/board-utils/src';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
-import { pushHistory } from '../history';
+import type { ElementInfo, InputHandlerContext } from './element';
 import * as hsluv from 'hsluv';
-import { makeA1Column } from '../util';
 
 export const cloneInfo: ElementInfo<schema.CloneElement['value']> = {
     getInputHandler,
@@ -45,11 +42,7 @@ export const cloneInfo: ElementInfo<schema.CloneElement['value']> = {
     },
 };
 
-function getInputHandler(
-    stateRef: StateRef<schema.CloneElement['value']>,
-    grid: Grid,
-    svg: SVGSVGElement,
-): InputHandler {
+function getInputHandler(ctx: InputHandlerContext<schema.CloneElement['value']>): InputHandler {
     const pointerHandler = new AdjacentCellPointerHandler(true);
 
     let cloneRef: null | StateRef<typeof cloneEntry> = null;
@@ -87,7 +80,7 @@ function getInputHandler(
     }
 
     function getExistingCloneAtIdx(idx: Idx<Geometry.CELL>): null | [string, 'a' | 'b'] {
-        for (const [cloneId, { a, b }] of Object.entries(stateRef.get() || {})) {
+        for (const [cloneId, { a, b }] of Object.entries(ctx.stateRef.get() || {})) {
             if (arrayObj2array(a || {}).includes(idx)) {
                 return [cloneId, 'a'];
             }
@@ -100,7 +93,7 @@ function getInputHandler(
 
     function makeNewClone(): typeof cloneEntry {
         const existingLabels = new Set();
-        for (const { label } of Object.values(stateRef.get() || {})) {
+        for (const { label } of Object.values(ctx.stateRef.get() || {})) {
             if (null != label) existingLabels.add(label);
         }
         for (let i = 0; ; i++) {
@@ -117,24 +110,24 @@ function getInputHandler(
             const [cloneId, clickedAB] = existingClone;
             const unclickedAB = 'a' === clickedAB ? 'b' : 'a';
 
-            cloneRef = stateRef.ref<typeof cloneEntry>(cloneId);
+            cloneRef = ctx.stateRef.ref<typeof cloneEntry>(cloneId);
             mode = Mode.MOVING;
             cloneEntry = Object.assign({}, cloneRef.get());
 
             if (null != cloneEntry[unclickedAB]) {
                 const clickedArr = arrayObj2array(cloneEntry[clickedAB]);
                 const clickedI = clickedArr.indexOf(idx);
-                moveStart = cellIdx2cellCoord(cloneEntry[unclickedAB][clickedI], grid);
+                moveStart = cellIdx2cellCoord(cloneEntry[unclickedAB][clickedI], ctx.grid);
 
                 cloneEntry.a = arrayObj2array(cloneEntry[unclickedAB]);
                 cloneEntry.b = [];
             } else {
-                moveStart = cellIdx2cellCoord(idx, grid);
+                moveStart = cellIdx2cellCoord(idx, ctx.grid);
                 cloneEntry.a = arrayObj2array(cloneEntry[clickedAB]);
                 cloneEntry.b = [];
             }
         } else {
-            cloneRef = stateRef.ref(boardRepr.makeUid());
+            cloneRef = ctx.stateRef.ref(boardRepr.makeUid());
             mode = Mode.SELECTING;
             cloneEntry = makeNewClone();
         }
@@ -184,7 +177,7 @@ function getInputHandler(
         } else throw 'UNREACHABLE';
 
         const diff = cloneRef.replace(cloneEntry);
-        pushHistory(diff);
+        ctx.pushHistory(diff);
     }
 
     pointerHandler.onDragStart = (event: CellDragTapEvent) => {
@@ -200,7 +193,7 @@ function getInputHandler(
     };
 
     pointerHandler.onDragEnd = () => {
-        pushHistory(fullDiff);
+        ctx.pushHistory(fullDiff);
         fullDiff.redo = {};
         fullDiff.undo = {};
     };
@@ -216,16 +209,14 @@ function getInputHandler(
         if (null != existingClone) {
             const [cloneId, _] = existingClone;
             // Delete
-            const diff = stateRef.ref(cloneId).replace(null);
-            pushHistory(diff);
+            const diff = ctx.stateRef.ref(cloneId).replace(null);
+            ctx.pushHistory(diff);
         }
     };
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {
             pointerHandler.mouseUp();
@@ -248,28 +239,46 @@ function getInputHandler(
         },
 
         mouseDown(event: MouseEvent): void {
-            pointerHandler.mouseDown(event, grid, svg);
+            pointerHandler.mouseDown(event, ctx.grid, ctx.svg);
         },
         mouseMove(event: MouseEvent): void {
-            pointerHandler.mouseMove(event, grid, svg);
+            pointerHandler.mouseMove(event, ctx.grid, ctx.svg);
         },
         mouseUp(_event: MouseEvent): void {
             pointerHandler.mouseUp();
         },
         leave(event: MouseEvent): void {
-            pointerHandler.leave(event, grid, svg);
+            pointerHandler.leave(event, ctx.grid, ctx.svg);
         },
         click(event: MouseEvent): void {
-            pointerHandler.click(event, grid, svg);
+            pointerHandler.click(event, ctx.grid, ctx.svg);
         },
         touchDown(event: TouchEvent): void {
-            pointerHandler.touchDown(event, grid, svg);
+            pointerHandler.touchDown(event, ctx.grid, ctx.svg);
         },
         touchMove(event: TouchEvent): void {
-            pointerHandler.touchMove(event, grid, svg);
+            pointerHandler.touchMove(event, ctx.grid, ctx.svg);
         },
         touchUp(event: TouchEvent): void {
-            pointerHandler.touchUp(event, grid, svg);
+            pointerHandler.touchUp(event, ctx.grid, ctx.svg);
         },
     } as const;
+}
+
+/**
+ * Converts a number to a column name in A0 notation (0 -> A, 1 -> B, ..., 26 -> AA, etc.)
+ * @param x The input number, zero-indexed.
+ * @returns The column name in capital letters.
+ */
+function makeA1Column(x: number) {
+    x++;
+
+    const out: string[] = [];
+    while (0 < x) {
+        x--;
+        const mod = x % 26;
+        x = Math.floor(x / 26);
+        out.push(String.fromCharCode(65 + mod));
+    }
+    return out.reverse().join('');
 }

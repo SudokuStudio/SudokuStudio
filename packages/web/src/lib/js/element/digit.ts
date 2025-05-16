@@ -1,71 +1,48 @@
-import type { StateRef } from '@sudoku-studio/state-manager/src';
-import type { Grid, schema } from '@sudoku-studio/schema';
-import type { InputHandler } from '../input/inputHandler';
-import { getSelectDigitInputHandler } from '../input/selectDigitInputHandler';
+import type { schema } from '@sudoku-studio/schema';
+import { makeSelectDigitGetInputHandler } from '../input/selectDigitInputHandler';
 import hsluv from 'hsluv';
 
 import type { ElementInfo } from './element';
 
 export const givensInfo: ElementInfo<schema.DigitElement['value']> = {
-    getInputHandler(ref: StateRef<schema.DigitElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getSelectDigitInputHandler(ref, grid, svg, {
-            multipleDigits: false,
-            blockedByGivens: false,
-            blockedByFilled: false,
-            nextMode: 'corner',
-        });
-    },
+    getInputHandler: makeSelectDigitGetInputHandler({
+        multipleDigits: false,
+        blockedByGivens: false,
+        blockedByFilled: false,
+        nextMode: 'corner',
+    }),
     order: 220,
     permanent: true,
     inGlobalMenu: false,
     menu: { type: 'select', name: 'Given', icon: 'given' },
 } as const;
 export const filledInfo: ElementInfo<schema.DigitElement['value']> = {
-    getInputHandler(ref: StateRef<schema.DigitElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getSelectDigitInputHandler(ref, grid, svg, {
-            multipleDigits: false,
-            blockedByGivens: true,
-            blockedByFilled: false,
-            nextMode: 'corner',
-        });
-    },
+    getInputHandler: makeSelectDigitGetInputHandler({
+        multipleDigits: false,
+        blockedByGivens: true,
+        blockedByFilled: false,
+        nextMode: 'corner',
+    }),
     order: 210,
 } as const;
 
 export const cornerInfo: ElementInfo<schema.PencilMarksElement['value']> = {
-    getInputHandler(ref: StateRef<schema.PencilMarksElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getSelectDigitInputHandler(ref, grid, svg, {
-            multipleDigits: true,
-            blockedByGivens: true,
-            blockedByFilled: true,
-            nextMode: 'center',
-        });
-    },
+    getInputHandler: makeSelectDigitGetInputHandler({
+        multipleDigits: true,
+        blockedByGivens: true,
+        blockedByFilled: true,
+        nextMode: 'center',
+    }),
     order: 200,
 } as const;
 export const centerInfo: ElementInfo<schema.PencilMarksElement['value']> = {
-    getInputHandler(ref: StateRef<schema.PencilMarksElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getSelectDigitInputHandler(ref, grid, svg, {
-            multipleDigits: true,
-            blockedByGivens: true,
-            blockedByFilled: true,
-            nextMode: 'colors',
-        });
-    },
+    getInputHandler: makeSelectDigitGetInputHandler({
+        multipleDigits: true,
+        blockedByGivens: true,
+        blockedByFilled: true,
+        nextMode: 'colors',
+    }),
     order: 200,
-} as const;
-
-export const colorsInfo: ElementInfo<schema.ColorsElement['value']> = {
-    getInputHandler(ref: StateRef<schema.ColorsElement['value']>, grid: Grid, svg: SVGSVGElement): InputHandler {
-        return getSelectDigitInputHandler(ref, grid, svg, {
-            multipleDigits: true,
-            blockedByGivens: false,
-            blockedByFilled: false,
-            nextMode: 'filled',
-            digitMapping: colorsList,
-        });
-    },
-    order: 10,
 } as const;
 
 export const colorsList: string[] = [
@@ -80,3 +57,14 @@ export const colorsList: string[] = [
     hsluv.hsluvToHex([260, 100, 55]),
     hsluv.hsluvToHex([300, 100, 70]),
 ];
+
+export const colorsInfo: ElementInfo<schema.ColorsElement['value']> = {
+    getInputHandler: makeSelectDigitGetInputHandler({
+        multipleDigits: true,
+        blockedByGivens: false,
+        blockedByFilled: false,
+        nextMode: 'filled',
+        digitMapping: colorsList,
+    }),
+    order: 10,
+} as const;

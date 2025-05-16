@@ -11,9 +11,7 @@ import {
 } from '@sudoku-studio/board-utils/src';
 import { getTouchPosition, parseDigit } from '../input/inputHandler';
 import type { InputHandler } from '../input/inputHandler';
-import { userCursorIsShownState, userSelectState } from '../user';
-import type { ElementInfo } from './element';
-import { pushHistory } from '../history';
+import type { ElementInfo, InputHandlerContext } from './element';
 
 export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     getInputHandler,
@@ -55,11 +53,7 @@ export const quadrupleInfo: ElementInfo<schema.QuadrupleElement['value']> = {
     },
 };
 
-function getInputHandler(
-    ref: StateRef<schema.QuadrupleElement['value']>,
-    grid: Grid,
-    svg: SVGSVGElement,
-): InputHandler {
+function getInputHandler(ctx: InputHandlerContext<schema.QuadrupleElement['value']>): InputHandler {
     const digits: number[] = [];
     let cornerRef: null | StateRef<true | ArrayObj<number>> = null;
     let maxLen = 4;
@@ -74,7 +68,7 @@ function getInputHandler(
             if (true === cornerRef.get()) {
                 // Already empty -> delete.
                 const diff = cornerRef.replace(null);
-                pushHistory(diff);
+                ctx.pushHistory(diff);
                 return true;
             }
             digits.length = 0;
@@ -87,21 +81,21 @@ function getInputHandler(
         }
 
         const diff = cornerRef.replace(0 < digits.length ? digits : true);
-        pushHistory(diff);
+        ctx.pushHistory(diff);
 
         return true;
     }
 
     function handleClick(mousePosition: { offsetX: number; offsetY: number }) {
-        const coord = svgCoord2cornerCoord(click2svgCoord(mousePosition, svg), grid);
+        const coord = svgCoord2cornerCoord(click2svgCoord(mousePosition, ctx.svg), ctx.grid);
         if (null == coord) return;
 
-        const idx = cornerCoord2cornerIdx(coord, grid);
-        const clickedCornerRef = ref.ref<true | ArrayObj<number>>(`${idx}`);
+        const idx = cornerCoord2cornerIdx(coord, ctx.grid);
+        const clickedCornerRef = ctx.stateRef.ref<true | ArrayObj<number>>(`${idx}`);
 
         maxLen = 4;
-        if (coord[0] <= 0 || grid.width <= coord[0]) maxLen *= 0.5;
-        if (coord[1] <= 0 || grid.height <= coord[1]) maxLen *= 0.5;
+        if (coord[0] <= 0 || ctx.grid.width <= coord[0]) maxLen *= 0.5;
+        if (coord[1] <= 0 || ctx.grid.height <= coord[1]) maxLen *= 0.5;
 
         if (true === clickedCornerRef.get()) {
             // Delete empty.
@@ -115,9 +109,7 @@ function getInputHandler(
 
     return {
         load(): void {
-            // TODO: not really that great of a way of doing this.
-            userSelectState.replace(null);
-            userCursorIsShownState.replace(false);
+            ctx.clearUserSelection();
         },
         unload(): void {},
 
