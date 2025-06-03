@@ -2,13 +2,13 @@
     "name": "sudoku-studio",
     "version": "0.0.0",
     "license": "GPL-3.0",
-    "homepage": "https://github.com/SudokuStudio/Sudoku#readme",
+    "homepage": "https://github.com/SudokuStudio/SudokuStudio#readme",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/SudokuStudio/Sudoku.git"
+        "url": "git+https://github.com/SudokuStudio/SudokuStudio.git"
     },
     "bugs": {
-        "url": "https://github.com/SudokuStudio/Sudoku/issues"
+        "url": "https://github.com/SudokuStudio/SudokuStudio/issues"
     },
     "contributors": [
         "David Clamage <dclamage@users.noreply.github.com>",
