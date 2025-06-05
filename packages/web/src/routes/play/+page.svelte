@@ -6,10 +6,10 @@
 <script lang="ts">
     import { boardDiv, boardState } from '$lib/js/board';
     import BoardContainer from '$lib/svelte/board/BoardContainer.svelte';
-    import EditPanel from '$lib/svelte/edit/EditPanel.svelte';
-    import EntryPanel from '$lib/svelte/entry/EntryPanel.svelte';
     import Header from '$lib/svelte/header/Header.svelte';
     import Footer from '$lib/svelte/Footer.svelte';
+    import EntryInfo from '$lib/svelte/entry/EntryInfo.svelte';
+    import ButtonPad from '$lib/svelte/entry/ButtonPad.svelte';
 </script>
 
 <header>
@@ -24,13 +24,13 @@
     <div class="content">
         <div class="content-row">
             <div class="left-panel">
-                <EditPanel />
+                <EntryInfo />
             </div>
             <div class="center-panel">
                 <BoardContainer {boardState} />
             </div>
             <div class="right-panel">
-                <EntryPanel />
+                <ButtonPad />
             </div>
         </div>
     </div>

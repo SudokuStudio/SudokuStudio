@@ -12,7 +12,7 @@
 
     // Button ripples.
     import { MDCRipple } from '@material/ripple';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import SaveSvgAsPng from 'save-svg-as-png';
     import { changeHistory } from '$lib/js/history';
     import { boardState, boardDiv, boardSvg } from '$lib/js/board';
@@ -58,10 +58,22 @@
         unsubscribe();
     }
 
+    // Automatically change font size as needed.
+    let containerDiv: HTMLDivElement;
+    {
+        function onResize() {
+            console.log('cw', containerDiv.clientWidth);
+            containerDiv.style.fontSize = `${0.12 * containerDiv.clientWidth}px`;
+        }
+        window.addEventListener('resize', onResize);
+        onDestroy(() => window.removeEventListener('resize', onResize));
+        requestAnimationFrame(onResize); // Run on load.
+    }
+
     $: userToolStateName = getUserToolStateName($userToolState) || '';
 </script>
 
-<div class="container" on:click|stopPropagation={onBubblingClick} role="none" tabindex="-1">
+<div class="container" on:click|stopPropagation={onBubblingClick} bind:this={containerDiv} role="none" tabindex="-1">
     <div class="mode-pad-container">
         <div class="mode-pad">
             <div>
