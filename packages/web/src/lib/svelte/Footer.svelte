@@ -15,7 +15,7 @@
 
 <footer>
     <div class="footer-text">
-        <a target="_blank" href="https://github.com/SudokuStudio/SudokuStudio/commit/{SUDOKU_STUDIO_VERSION}">
+        <a target="_blank" href={`https://github.com/SudokuStudio/SudokuStudio/commit/${SUDOKU_STUDIO_VERSION}`}>
             Sudoku Studio v.{SUDOKU_STUDIO_VERSION}
         </a>
         <a
