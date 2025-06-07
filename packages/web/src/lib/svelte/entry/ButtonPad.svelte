@@ -62,7 +62,6 @@
     let containerDiv: HTMLDivElement;
     {
         function onResize() {
-            console.log('cw', containerDiv.clientWidth);
             containerDiv.style.fontSize = `${0.12 * containerDiv.clientWidth}px`;
         }
         window.addEventListener('resize', onResize);
