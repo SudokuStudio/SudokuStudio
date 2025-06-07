@@ -31,8 +31,4 @@
 
     border-radius: vars.$padbutton-border-radius;
     background-color: vars.$color-clickable;
-
-    @include vars.breakpoint-mobile {
-        font-size: 5vw;
-    }
 }
